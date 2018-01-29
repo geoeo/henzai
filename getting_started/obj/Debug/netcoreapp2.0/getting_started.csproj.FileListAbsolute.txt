@@ -1,0 +1,10 @@
+/Users/marchaubenstock/Workspace/DotNet/henzai/getting_started/bin/Debug/netcoreapp2.0/getting_started.deps.json
+/Users/marchaubenstock/Workspace/DotNet/henzai/getting_started/bin/Debug/netcoreapp2.0/getting_started.runtimeconfig.json
+/Users/marchaubenstock/Workspace/DotNet/henzai/getting_started/bin/Debug/netcoreapp2.0/getting_started.runtimeconfig.dev.json
+/Users/marchaubenstock/Workspace/DotNet/henzai/getting_started/bin/Debug/netcoreapp2.0/getting_started.dll
+/Users/marchaubenstock/Workspace/DotNet/henzai/getting_started/bin/Debug/netcoreapp2.0/getting_started.pdb
+/Users/marchaubenstock/Workspace/DotNet/henzai/getting_started/obj/Debug/netcoreapp2.0/getting_started.csproj.CoreCompileInputs.cache
+/Users/marchaubenstock/Workspace/DotNet/henzai/getting_started/obj/Debug/netcoreapp2.0/getting_started.AssemblyInfoInputs.cache
+/Users/marchaubenstock/Workspace/DotNet/henzai/getting_started/obj/Debug/netcoreapp2.0/getting_started.AssemblyInfo.cs
+/Users/marchaubenstock/Workspace/DotNet/henzai/getting_started/obj/Debug/netcoreapp2.0/getting_started.dll
+/Users/marchaubenstock/Workspace/DotNet/henzai/getting_started/obj/Debug/netcoreapp2.0/getting_started.pdb
