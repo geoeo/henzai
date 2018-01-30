@@ -8,6 +8,14 @@
   <ItemGroup>
     <PackageReference Include="Veldrid" Version="4.0.0" />
     <PackageReference Include="Veldrid.StartupUtilities" Version="4.0.0" />
+    <PackageReference Include="NativeLibraryLoader" Version="1.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)/Shaders/**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <!-- <Link>Shaders/%(RecursiveDir)/%(FileName)%(Extension)</Link> -->
+    </Content>
   </ItemGroup>
 
 </Project>
