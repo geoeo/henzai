@@ -15,6 +15,7 @@ namespace getting_started
         private static DeviceBuffer _indexBuffer;
         private static Shader _vertexShader;
         private static Shader _fragmentShader;
+        private static Pipeline _pipeline;
 
         static void Main(string[] args)
         {
@@ -29,14 +30,18 @@ namespace getting_started
             };
             Sdl2Window window = VeldridStartup.CreateWindow(ref windowCI);
 
-            _graphicsDevice = VeldridStartup.CreateGraphicsDevice(window);
+            _graphicsDevice = VeldridStartup.CreateGraphicsDevice(window,GraphicsBackend.OpenGL);
+            //_graphicsDevice = VeldridStartup.CreateGraphicsDevice(window); // Defaults to metal on mac
 
             CreateResources();
 
             while (window.Exists)
             {
                 window.PumpEvents();
+                Draw();
             }
+
+            DisposeResources();
         }
 
         private static void CreateResources()
@@ -71,6 +76,32 @@ namespace getting_started
             _vertexShader = LoadShader(ShaderStages.Vertex);
             _fragmentShader = LoadShader(ShaderStages.Fragment);
 
+            GraphicsPipelineDescription pipelineDescription = new GraphicsPipelineDescription(){
+                BlendState = BlendStateDescription.SingleOverrideBlend,
+                DepthStencilState = new DepthStencilStateDescription(
+                    depthTestEnabled: true,
+                    depthWriteEnabled: true,
+                    comparisonKind: ComparisonKind.LessEqual),
+                RasterizerState = new RasterizerStateDescription(
+                    cullMode: FaceCullMode.Back,
+                    fillMode: PolygonFillMode.Solid,
+                    frontFace: FrontFace.Clockwise,
+                    depthClipEnabled: true,
+                    scissorTestEnabled: false
+                ),
+                PrimitiveTopology = PrimitiveTopology.TriangleStrip,
+                ResourceLayouts = System.Array.Empty<ResourceLayout>(),
+                ShaderSet = new ShaderSetDescription(
+                    vertexLayouts: new VertexLayoutDescription[] {vertexLayout},
+                    shaders: new Shader[] {_vertexShader,_fragmentShader}
+                ),
+                Outputs = _graphicsDevice.SwapchainFramebuffer.OutputDescription
+            };
+
+            _pipeline = _factory.CreateGraphicsPipeline(pipelineDescription);
+
+            _commandList = _factory.CreateCommandList();
+
         }
 
         
@@ -81,16 +112,45 @@ namespace getting_started
                     extension = "glsl";
                     break;
                 case GraphicsBackend.Metal:
-                    extension = "glsl";
-                    // extension = "metal";
+                    extension = "metal"; // TODO: needs metallib
                     break;
                 default: throw new System.InvalidOperationException();
             }
 
             string entryPoint = stage == ShaderStages.Vertex ? "VS" : "FS";
-            string path = Path.Combine(System.AppContext.BaseDirectory,"Shaders","${stage.ToString()}.{extension}");
+            string path = Path.Combine(System.AppContext.BaseDirectory,"Shaders",$"{stage.ToString()}.{extension}");
             byte[] shaderBytes = File.ReadAllBytes(path);
             return _graphicsDevice.ResourceFactory.CreateShader(new ShaderDescription(stage,shaderBytes,entryPoint));
+        }
+
+        private static void Draw(){
+            _commandList.Begin();
+            _commandList.SetFramebuffer(_graphicsDevice.SwapchainFramebuffer);
+            _commandList.SetFullViewports();
+            _commandList.ClearColorTarget(0,RgbaFloat.Black);
+            _commandList.SetVertexBuffer(0,_vertexBuffer);
+            _commandList.SetIndexBuffer(_indexBuffer,IndexFormat.UInt16);
+            _commandList.SetPipeline(_pipeline);
+            _commandList.DrawIndexed(
+                indexCount: 4,
+                instanceCount: 1,
+                indexStart: 0,
+                vertexOffset: 0,
+                instanceStart: 0
+            );
+            _commandList.End();
+            _graphicsDevice.SubmitCommands(_commandList);
+            _graphicsDevice.SwapBuffers();
+        }
+
+        private static void DisposeResources(){
+            _pipeline.Dispose();
+            _vertexShader.Dispose();
+            _fragmentShader.Dispose();
+            _commandList.Dispose();
+            _vertexBuffer.Dispose();
+            _indexBuffer.Dispose();
+            _graphicsDevice.Dispose();
         }
     }
     struct VertexPositionColor
