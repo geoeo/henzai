@@ -30,8 +30,8 @@ namespace getting_started
             };
             Sdl2Window window = VeldridStartup.CreateWindow(ref windowCI);
 
-            _graphicsDevice = VeldridStartup.CreateGraphicsDevice(window,GraphicsBackend.OpenGL);
-            //_graphicsDevice = VeldridStartup.CreateGraphicsDevice(window); // Defaults to metal on mac
+            //_graphicsDevice = VeldridStartup.CreateGraphicsDevice(window,GraphicsBackend.OpenGL);
+            _graphicsDevice = VeldridStartup.CreateGraphicsDevice(window); // Defaults to metal on mac
 
             CreateResources();
 
@@ -112,7 +112,7 @@ namespace getting_started
                     extension = "glsl";
                     break;
                 case GraphicsBackend.Metal:
-                    extension = "metal"; // TODO: needs metallib
+                    extension = "metallib";
                     break;
                 default: throw new System.InvalidOperationException();
             }
