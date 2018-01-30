@@ -30,8 +30,8 @@ namespace getting_started
             };
             Sdl2Window window = VeldridStartup.CreateWindow(ref windowCI);
 
-            //_graphicsDevice = VeldridStartup.CreateGraphicsDevice(window,GraphicsBackend.OpenGL);
-            _graphicsDevice = VeldridStartup.CreateGraphicsDevice(window); // Defaults to metal on mac
+            _graphicsDevice = VeldridStartup.CreateGraphicsDevice(window,GraphicsBackend.OpenGL);
+            //_graphicsDevice = VeldridStartup.CreateGraphicsDevice(window); // Defaults to metal on mac
 
             CreateResources();
 
@@ -56,6 +56,7 @@ namespace getting_started
             };
 
             ushort[] quadIndicies = { 0, 1, 2, 3 };
+
 
             // declare (VBO) buffers
             _vertexBuffer 
