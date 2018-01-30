@@ -261,3 +261,4 @@ launchSettings.json
 
 # Generated shaders
 Shaders.Generated
+getting_started/Shaders/*.metallib
