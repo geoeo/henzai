@@ -3,6 +3,7 @@ using System.Numerics;
 using Veldrid;
 using Veldrid.StartupUtilities;
 using Veldrid.Sdl2;
+using Henzai;
 
 namespace getting_started
 {
@@ -153,16 +154,16 @@ namespace getting_started
             _graphicsDevice.Dispose();
         }
     }
-    struct VertexPositionColour
-    {
-        public Vector2 Position; // Position in NDC
-        public RgbaFloat Colour;
-        public VertexPositionColour(Vector2 position, RgbaFloat colour)
-        {
-            Position = position;
-            Colour = colour;
-        }
-        // 2*4 Bytes for Position + 16 Bytes for Colour
-        public const uint SizeInBytes = 24;
-    }
+    // struct VertexPositionColour
+    // {
+    //     public Vector2 Position; // Position in NDC
+    //     public RgbaFloat Colour;
+    //     public VertexPositionColour(Vector2 position, RgbaFloat colour)
+    //     {
+    //         Position = position;
+    //         Colour = colour;
+    //     }
+    //     // 2*4 Bytes for Position + 16 Bytes for Colour
+    //     public const uint SizeInBytes = 24;
+    // }
 }

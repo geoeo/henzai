@@ -4,7 +4,8 @@ using Veldrid;
 
 namespace Henzai
 {
-    struct VertexPositionColour
+
+    public struct VertexPositionColour
     {
         public Vector2 Position; // Position in NDC
         public RgbaFloat Colour;
@@ -15,5 +16,6 @@ namespace Henzai
         }
         // 8 Bytes for Position + 16 Bytes for Colour
         public const uint SizeInBytes = 24;
+        
     }
 }
