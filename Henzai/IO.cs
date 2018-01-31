@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using Veldrid;
 
-namespace Engine
+namespace Henzai
 {
     class IO
     {
