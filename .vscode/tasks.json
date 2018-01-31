@@ -1,0 +1,34 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "command": "dotnet build",
+            "type": "shell",
+            "group": "build",
+            "presentation": {
+                "reveal": "silent"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "compile metal shaders (getting_started)",
+            "type": "shell",
+            "group": "build",
+            "command": "${cwd}/getting_started/compileMetal.sh",
+            "args": [
+                "${cwd}/getting_started/Shaders/"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "run getting started",
+            "type": "shell",
+            "group": "build",
+            "command": "dotnet run --project getting_started/",
+            "problemMatcher":"$msCompile"
+        }
+    ]
+}

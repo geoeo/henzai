@@ -256,8 +256,8 @@ Session.vim
 
 #VS Code stuff
 
-.vscode
-launchSettings.json
+#.vscode
+#launchSettings.json
 
 # Generated shaders
 Shaders.Generated
