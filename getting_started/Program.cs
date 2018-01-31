@@ -19,7 +19,6 @@ namespace getting_started
 
         static void Main(string[] args)
         {
-            //Console.WriteLine("Hello World!");
             WindowCreateInfo windowCI = new WindowCreateInfo()
             {
                 X = 100,
@@ -48,11 +47,11 @@ namespace getting_started
         {
             ResourceFactory _factory = _graphicsDevice.ResourceFactory;
 
-            VertexPositionColor[] quadVerticies = {
-                new VertexPositionColor(new Vector2(-0.75f,0.75f),RgbaFloat.Red),
-                new VertexPositionColor(new Vector2(0.75f,0.75f),RgbaFloat.Green),
-                new VertexPositionColor(new Vector2(-0.75f,-0.75f),RgbaFloat.Blue),
-                new VertexPositionColor(new Vector2(0.75f,-0.75f),RgbaFloat.Yellow)
+            VertexPositionColour[] quadVerticies = {
+                new VertexPositionColour(new Vector2(-0.75f,0.75f),RgbaFloat.Red),
+                new VertexPositionColour(new Vector2(0.75f,0.75f),RgbaFloat.Green),
+                new VertexPositionColour(new Vector2(-0.75f,-0.75f),RgbaFloat.Blue),
+                new VertexPositionColour(new Vector2(0.75f,-0.75f),RgbaFloat.Yellow)
             };
 
             ushort[] quadIndicies = { 0, 1, 2, 3 };
@@ -60,7 +59,7 @@ namespace getting_started
 
             // declare (VBO) buffers
             _vertexBuffer 
-                = _factory.CreateBuffer(new BufferDescription(4 * VertexPositionColor.SizeInBytes, BufferUsage.VertexBuffer));
+                = _factory.CreateBuffer(new BufferDescription(4 * VertexPositionColour.SizeInBytes, BufferUsage.VertexBuffer));
             _indexBuffer 
                 = _factory.CreateBuffer(new BufferDescription(4*sizeof(ushort),BufferUsage.IndexBuffer));
 
@@ -154,16 +153,16 @@ namespace getting_started
             _graphicsDevice.Dispose();
         }
     }
-    struct VertexPositionColor
+    struct VertexPositionColour
     {
         public Vector2 Position; // Position in NDC
         public RgbaFloat Colour;
-        public VertexPositionColor(Vector2 position, RgbaFloat colour)
+        public VertexPositionColour(Vector2 position, RgbaFloat colour)
         {
             Position = position;
             Colour = colour;
         }
-        // 2*8 Bytes for Position + 8 Bytes for Colour
+        // 2*4 Bytes for Position + 16 Bytes for Colour
         public const uint SizeInBytes = 24;
     }
 }
