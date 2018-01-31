@@ -4,7 +4,7 @@ using Veldrid;
 
 namespace Henzai
 {
-    class IO
+    public class IO
     {
 
         public static Shader LoadShader(ShaderStages stage, GraphicsDevice graphicsDevice){

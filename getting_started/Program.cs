@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Numerics;
+﻿using System.Numerics;
 using Veldrid;
 using Veldrid.StartupUtilities;
 using Veldrid.Sdl2;
@@ -74,8 +73,8 @@ namespace getting_started
                     new VertexElementDescription("Colour",VertexElementSemantic.Color,VertexElementFormat.Float4)
                 );
 
-            _vertexShader = LoadShader(ShaderStages.Vertex);
-            _fragmentShader = LoadShader(ShaderStages.Fragment);
+            _vertexShader = IO.LoadShader(ShaderStages.Vertex,_graphicsDevice);
+            _fragmentShader = IO.LoadShader(ShaderStages.Fragment,_graphicsDevice);
 
             GraphicsPipelineDescription pipelineDescription = new GraphicsPipelineDescription(){
                 BlendState = BlendStateDescription.SingleOverrideBlend,
@@ -103,25 +102,6 @@ namespace getting_started
 
             _commandList = _factory.CreateCommandList();
 
-        }
-
-        
-        private static Shader LoadShader(ShaderStages stage){
-            string extension = null;
-            switch(_graphicsDevice.BackendType){
-                case GraphicsBackend.OpenGL:
-                    extension = "glsl";
-                    break;
-                case GraphicsBackend.Metal:
-                    extension = "metallib";
-                    break;
-                default: throw new System.InvalidOperationException();
-            }
-
-            string entryPoint = stage == ShaderStages.Vertex ? "VS" : "FS";
-            string path = Path.Combine(System.AppContext.BaseDirectory,"Shaders",$"{stage.ToString()}.{extension}");
-            byte[] shaderBytes = File.ReadAllBytes(path);
-            return _graphicsDevice.ResourceFactory.CreateShader(new ShaderDescription(stage,shaderBytes,entryPoint));
         }
 
         private static void Draw(){
@@ -154,16 +134,4 @@ namespace getting_started
             _graphicsDevice.Dispose();
         }
     }
-    // struct VertexPositionColour
-    // {
-    //     public Vector2 Position; // Position in NDC
-    //     public RgbaFloat Colour;
-    //     public VertexPositionColour(Vector2 position, RgbaFloat colour)
-    //     {
-    //         Position = position;
-    //         Colour = colour;
-    //     }
-    //     // 2*4 Bytes for Position + 16 Bytes for Colour
-    //     public const uint SizeInBytes = 24;
-    // }
 }
