@@ -6,7 +6,6 @@ namespace Henzai
 {
     public class IO
     {
-
         public static Shader LoadShader(ShaderStages stage, GraphicsDevice graphicsDevice){
             string extension = null;
             switch(graphicsDevice.BackendType){
