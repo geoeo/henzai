@@ -19,7 +19,6 @@ namespace getting_started
         private static Pipeline _pipeline;
         private static Camera _camera;
         private static DeviceBuffer _cameraProjViewBuffer;
-        private static DeviceBuffer _cameraProjBuffer;
         private static ResourceSet _resourceSet;
         private static ResourceLayout _resourceLayout;
         static void Main(string[] args)
@@ -153,7 +152,10 @@ namespace getting_started
             _commandList.Dispose();
             _vertexBuffer.Dispose();
             _indexBuffer.Dispose();
+            _cameraProjViewBuffer.Dispose();
             _graphicsDevice.Dispose();
+            _resourceLayout.Dispose();
+            _resourceSet.Dispose();
         }
     }
 }
