@@ -2,6 +2,7 @@
 using Veldrid;
 using Veldrid.StartupUtilities;
 using Veldrid.Sdl2;
+using Veldrid.OpenGL;
 using Henzai;
 
 namespace getting_started
@@ -16,7 +17,11 @@ namespace getting_started
         private static Shader _vertexShader;
         private static Shader _fragmentShader;
         private static Pipeline _pipeline;
-
+        private static Camera _camera;
+        private static DeviceBuffer _cameraProjViewBuffer;
+        private static DeviceBuffer _cameraProjBuffer;
+        private static ResourceSet _resourceSet;
+        private static ResourceLayout _resourceLayout;
         static void Main(string[] args)
         {
             WindowCreateInfo windowCI = new WindowCreateInfo()
@@ -28,6 +33,8 @@ namespace getting_started
                 WindowTitle = "Veldrid Getting Started"
             };
             Sdl2Window window = VeldridStartup.CreateWindow(ref windowCI);
+
+            _camera = new Camera(960,540);
 
             _graphicsDevice = VeldridStartup.CreateGraphicsDevice(window,GraphicsBackend.OpenGL);
             //_graphicsDevice = VeldridStartup.CreateGraphicsDevice(window); // Defaults to metal on mac
@@ -47,11 +54,23 @@ namespace getting_started
         {
             ResourceFactory _factory = _graphicsDevice.ResourceFactory;
 
+            _cameraProjViewBuffer = _factory.CreateBuffer(new BufferDescription(128,BufferUsage.UniformBuffer));
+
+            ResourceLayoutElementDescription resourceLayoutElementDescription = new ResourceLayoutElementDescription("projView",ResourceKind.UniformBuffer,ShaderStages.Vertex);
+            ResourceLayoutElementDescription[] resourceLayoutElementDescriptions = {resourceLayoutElementDescription};
+            ResourceLayoutDescription resourceLayoutDescription = new ResourceLayoutDescription(resourceLayoutElementDescriptions);
+
+            _resourceLayout = _factory.CreateResourceLayout(resourceLayoutDescription);
+            BindableResource[] bindableResources = new BindableResource[]{_cameraProjViewBuffer};
+            ResourceSetDescription resourceSetDescription = new ResourceSetDescription(_resourceLayout,bindableResources);
+            
+            _resourceSet = _factory.CreateResourceSet(resourceSetDescription);
+
             VertexPositionColour[] quadVerticies = {
-                new VertexPositionColour(new Vector2(-0.75f,0.75f),RgbaFloat.Red),
-                new VertexPositionColour(new Vector2(0.75f,0.75f),RgbaFloat.Green),
-                new VertexPositionColour(new Vector2(-0.75f,-0.75f),RgbaFloat.Blue),
-                new VertexPositionColour(new Vector2(0.75f,-0.75f),RgbaFloat.Yellow)
+                new VertexPositionColour(new Vector2(-1.0f,1.0f),RgbaFloat.Red),
+                new VertexPositionColour(new Vector2(1.0f,1.0f),RgbaFloat.Green),
+                new VertexPositionColour(new Vector2(-1.0f,-1.0f),RgbaFloat.Blue),
+                new VertexPositionColour(new Vector2(1.0f,-1.0f),RgbaFloat.Yellow)
             };
 
             ushort[] quadIndicies = { 0, 1, 2, 3 };
@@ -66,6 +85,8 @@ namespace getting_started
             // fill buffers with data
             _graphicsDevice.UpdateBuffer(_vertexBuffer,0,quadVerticies);
             _graphicsDevice.UpdateBuffer(_indexBuffer,0,quadIndicies);
+            _graphicsDevice.UpdateBuffer(_cameraProjViewBuffer,0,_camera.ViewMatrix);
+            _graphicsDevice.UpdateBuffer(_cameraProjViewBuffer,64,_camera.ProjectionMatrix);
 
             VertexLayoutDescription vertexLayout 
                 = new VertexLayoutDescription(
@@ -90,7 +111,7 @@ namespace getting_started
                     scissorTestEnabled: false
                 ),
                 PrimitiveTopology = PrimitiveTopology.TriangleStrip,
-                ResourceLayouts = System.Array.Empty<ResourceLayout>(),
+                ResourceLayouts = new ResourceLayout[] {_resourceLayout},
                 ShaderSet = new ShaderSetDescription(
                     vertexLayouts: new VertexLayoutDescription[] {vertexLayout},
                     shaders: new Shader[] {_vertexShader,_fragmentShader}
@@ -112,6 +133,7 @@ namespace getting_started
             _commandList.SetVertexBuffer(0,_vertexBuffer);
             _commandList.SetIndexBuffer(_indexBuffer,IndexFormat.UInt16);
             _commandList.SetPipeline(_pipeline);
+            _commandList.SetGraphicsResourceSet(0,_resourceSet); // Always after SetPipeline
             _commandList.DrawIndexed(
                 indexCount: 4,
                 instanceCount: 1,

@@ -47,8 +47,8 @@ namespace Henzai
 
         public Camera(float width, float height)
         {
-            _fov = 1f;
-            _near = 1f;
+            _fov = (float)Math.PI/4;
+            _near = 0.1f;
             _far = 1000f;
             _position = new Vector3(0,0,10f);
             _lookDirection = new Vector3(0,0,-1);
