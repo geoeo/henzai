@@ -8,6 +8,9 @@ namespace Henzai
 {
     public class Camera
     {
+        private readonly Vector3 DEFAULT_POSITION = new Vector3(0,0,10f);
+        private readonly Vector3 DEFAULT_LOOK_DIRECTION = new Vector3(0,0,-1f);
+
         private float _fov;
         private float _near;
         private float _far;
@@ -23,20 +26,14 @@ namespace Henzai
         private float _windowWidth;
         private float _windowHeight;
 
-        public event Action<Matrix4x4> ProjectionChanged;
-        public event Action<Matrix4x4> ViewChanged;
-
         private Matrix4x4 _viewMatrix;
         private Matrix4x4 _projectionMatrix;
 
         public Matrix4x4 ViewMatrix => _viewMatrix;
         public Matrix4x4 ProjectionMatrix => _projectionMatrix;
-
         public Vector3 Position { get => _position; set { _position = value; UpdateViewMatrix(); } }
         public Vector3 LookDirection => _lookDirection;
-
         public float FarDistance => _far;
-
         public float FieldOfView => _fov;
         public float NearDistance => _near;
 
@@ -50,8 +47,8 @@ namespace Henzai
             _fov = (float)Math.PI/4;
             _near = 0.1f;
             _far = 1000f;
-            _position = new Vector3(0,0,10f);
-            _lookDirection = new Vector3(0,0,-1);
+            _position = DEFAULT_POSITION;
+            _lookDirection = DEFAULT_LOOK_DIRECTION;
             _moveSpeed = 10f;
 
             _windowWidth = width;
@@ -63,7 +60,6 @@ namespace Henzai
         private void UpdatePerspectiveMatrix(float width, float height)
         {
             _projectionMatrix = Matrix4x4.CreatePerspectiveFieldOfView(_fov, width / height, _near, _far);
-            ProjectionChanged?.Invoke(_projectionMatrix);
         }
 
         private void UpdateViewMatrix()
@@ -72,7 +68,6 @@ namespace Henzai
             Vector3 lookDir = Vector3.Transform(-Vector3.UnitZ, lookRotation);
             _lookDirection = lookDir;
             _viewMatrix = Matrix4x4.CreateLookAt(_position, _position + _lookDirection, Vector3.UnitY);
-            ViewChanged?.Invoke(_viewMatrix);
         }
 
         public void Update(float deltaSeconds)
@@ -106,6 +101,15 @@ namespace Henzai
             if (InputTracker.GetKey(Key.E))
             {
                 motionDir += Vector3.UnitY;
+            }
+
+            if(InputTracker.GetKey(Key.R))
+            {
+                _position = DEFAULT_POSITION;
+                _lookDirection = DEFAULT_LOOK_DIRECTION;
+                _yaw = 0; _pitch = 0;
+
+                UpdateViewMatrix();
             }
 
             if (motionDir != Vector3.Zero)

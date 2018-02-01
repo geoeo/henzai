@@ -8,7 +8,7 @@ using Henzai;
 namespace getting_started
 {
     // https://mellinoe.github.io/veldrid-docs/articles/getting-started/getting-started-part1.html
-    class Program
+    class Scene
     {
         private static GraphicsDevice _graphicsDevice;
         private static CommandList _commandList;
@@ -42,7 +42,12 @@ namespace getting_started
 
             while (window.Exists)
             {
-                window.PumpEvents();
+                InputSnapshot inputSnapshot = window.PumpEvents();
+                InputTracker.UpdateFrameInput(inputSnapshot);
+
+                float deltaSeconds = 1/60f;
+                _camera.Update(deltaSeconds);
+
                 Draw();
             }
 
@@ -133,6 +138,8 @@ namespace getting_started
             _commandList.SetIndexBuffer(_indexBuffer,IndexFormat.UInt16);
             _commandList.SetPipeline(_pipeline);
             _commandList.SetGraphicsResourceSet(0,_resourceSet); // Always after SetPipeline
+            _commandList.UpdateBuffer(_cameraProjViewBuffer,0,_camera.ViewMatrix);
+            _commandList.UpdateBuffer(_cameraProjViewBuffer,64,_camera.ProjectionMatrix);
             _commandList.DrawIndexed(
                 indexCount: 4,
                 instanceCount: 1,
