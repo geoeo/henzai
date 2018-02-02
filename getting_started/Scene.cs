@@ -14,13 +14,16 @@ namespace getting_started
         private static CommandList _commandList;
         private static DeviceBuffer _vertexBuffer;
         private static DeviceBuffer _indexBuffer;
+        private static DeviceBuffer _xOffsetBuffer;
         private static Shader _vertexShader;
         private static Shader _fragmentShader;
         private static Pipeline _pipeline;
         private static Camera _camera;
         private static DeviceBuffer _cameraProjViewBuffer;
         private static ResourceSet _resourceSet;
+        // private static ResourceSet _resourceSet_2;
         private static ResourceLayout _resourceLayout;
+        // private static ResourceLayout _resourceLayout_2;
         static void Main(string[] args)
         {
             WindowCreateInfo windowCI = new WindowCreateInfo()
@@ -63,12 +66,26 @@ namespace getting_started
             ResourceLayoutElementDescription resourceLayoutElementDescription = new ResourceLayoutElementDescription("projView",ResourceKind.UniformBuffer,ShaderStages.Vertex);
             ResourceLayoutElementDescription[] resourceLayoutElementDescriptions = {resourceLayoutElementDescription};
             ResourceLayoutDescription resourceLayoutDescription = new ResourceLayoutDescription(resourceLayoutElementDescriptions);
+            BindableResource[] bindableResources = new BindableResource[]{_cameraProjViewBuffer};
 
             _resourceLayout = _factory.CreateResourceLayout(resourceLayoutDescription);
-            BindableResource[] bindableResources = new BindableResource[]{_cameraProjViewBuffer};
             ResourceSetDescription resourceSetDescription = new ResourceSetDescription(_resourceLayout,bindableResources);
             
             _resourceSet = _factory.CreateResourceSet(resourceSetDescription);
+
+            // _indirectBuffer = _factory.CreateBuffer(new BufferDescription(16,BufferUsage.IndirectBuffer | BufferUsage.UniformBuffer));
+
+            // ResourceLayoutElementDescription resourceLayoutElementDescription_2 = new ResourceLayoutElementDescription("indirect",ResourceKind.UniformBuffer,ShaderStages.Vertex);
+            // ResourceLayoutElementDescription[] resourceLayoutElementDescriptions_2 = {resourceLayoutElementDescription_2};
+            // ResourceLayoutDescription resourceLayoutDescription_2 = new ResourceLayoutDescription(resourceLayoutElementDescriptions_2);
+            // BindableResource[] bindableResources_2 = new BindableResource[]{_indirectBuffer};
+
+            // _resourceLayout_2 = _factory.CreateResourceLayout(resourceLayoutDescription_2);
+            // ResourceSetDescription resourceSetDescription_2 = new ResourceSetDescription(_resourceLayout_2,bindableResources_2);
+            
+            // _resourceSet_2 = _factory.CreateResourceSet(resourceSetDescription_2);
+
+
 
             VertexPositionColour[] quadVerticies = {
                 new VertexPositionColour(new Vector2(-1.0f,1.0f),RgbaFloat.Red),
@@ -79,16 +96,20 @@ namespace getting_started
 
             ushort[] quadIndicies = { 0, 1, 2, 3 };
 
+            float[] _xOffset = {-2,2};
 
             // declare (VBO) buffers
             _vertexBuffer 
                 = _factory.CreateBuffer(new BufferDescription(4 * VertexPositionColour.SizeInBytes, BufferUsage.VertexBuffer));
             _indexBuffer 
                 = _factory.CreateBuffer(new BufferDescription(4*sizeof(ushort),BufferUsage.IndexBuffer));
+            _xOffsetBuffer
+                = _factory.CreateBuffer(new BufferDescription(2*sizeof(float),BufferUsage.VertexBuffer));
 
             // fill buffers with data
             _graphicsDevice.UpdateBuffer(_vertexBuffer,0,quadVerticies);
             _graphicsDevice.UpdateBuffer(_indexBuffer,0,quadIndicies);
+            _graphicsDevice.UpdateBuffer(_xOffsetBuffer,0,_xOffset);
             _graphicsDevice.UpdateBuffer(_cameraProjViewBuffer,0,_camera.ViewMatrix);
             _graphicsDevice.UpdateBuffer(_cameraProjViewBuffer,64,_camera.ProjectionMatrix);
 
@@ -96,6 +117,16 @@ namespace getting_started
                 = new VertexLayoutDescription(
                     new VertexElementDescription("Position",VertexElementSemantic.Position,VertexElementFormat.Float2),
                     new VertexElementDescription("Colour",VertexElementSemantic.Color,VertexElementFormat.Float4)
+                );
+            
+            VertexElementDescription vertexElementPerInstance
+                = new VertexElementDescription("xOff",VertexElementSemantic.Position,VertexElementFormat.Float1);
+
+            VertexLayoutDescription vertexLayoutPerInstance 
+                = new VertexLayoutDescription(
+                    stride: 4,
+                    instanceStepRate: 1,
+                    elements: new VertexElementDescription[] {vertexElementPerInstance}
                 );
 
             _vertexShader = IO.LoadShader(ShaderStages.Vertex,_graphicsDevice);
@@ -117,7 +148,7 @@ namespace getting_started
                 PrimitiveTopology = PrimitiveTopology.TriangleStrip,
                 ResourceLayouts = new ResourceLayout[] {_resourceLayout},
                 ShaderSet = new ShaderSetDescription(
-                    vertexLayouts: new VertexLayoutDescription[] {vertexLayout},
+                    vertexLayouts: new VertexLayoutDescription[] {vertexLayout,vertexLayoutPerInstance},
                     shaders: new Shader[] {_vertexShader,_fragmentShader}
                 ),
                 Outputs = _graphicsDevice.SwapchainFramebuffer.OutputDescription
@@ -136,13 +167,15 @@ namespace getting_started
             _commandList.ClearColorTarget(0,RgbaFloat.Black);
             _commandList.SetVertexBuffer(0,_vertexBuffer);
             _commandList.SetIndexBuffer(_indexBuffer,IndexFormat.UInt16);
+            _commandList.SetVertexBuffer(1,_xOffsetBuffer);
             _commandList.SetPipeline(_pipeline);
             _commandList.SetGraphicsResourceSet(0,_resourceSet); // Always after SetPipeline
             _commandList.UpdateBuffer(_cameraProjViewBuffer,0,_camera.ViewMatrix);
             _commandList.UpdateBuffer(_cameraProjViewBuffer,64,_camera.ProjectionMatrix);
+            //_commandList.UpdateBuffer(_indirectBuffer,64,_);
             _commandList.DrawIndexed(
                 indexCount: 4,
-                instanceCount: 1,
+                instanceCount: 2,
                 indexStart: 0,
                 vertexOffset: 0,
                 instanceStart: 0
