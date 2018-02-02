@@ -11,9 +11,9 @@ layout(std140) uniform projView
     Camera_ProjView field_projView;
 };
 
-in vec2 Position;
-in vec4 Color;
-in float xOff;
+layout(location = 0)in vec2 Position;
+layout(location = 1)in vec4 Color;
+layout(location = 2)in float xOff;
 
 // flat out vec4 fsin_Color; // takes colour from "dominant" vertex
 smooth out vec4 fsin_Color;

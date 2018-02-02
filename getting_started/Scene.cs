@@ -21,9 +21,7 @@ namespace getting_started
         private static Camera _camera;
         private static DeviceBuffer _cameraProjViewBuffer;
         private static ResourceSet _resourceSet;
-        // private static ResourceSet _resourceSet_2;
         private static ResourceLayout _resourceLayout;
-        // private static ResourceLayout _resourceLayout_2;
         static void Main(string[] args)
         {
             WindowCreateInfo windowCI = new WindowCreateInfo()
@@ -61,7 +59,7 @@ namespace getting_started
         {
             ResourceFactory _factory = _graphicsDevice.ResourceFactory;
 
-            _cameraProjViewBuffer = _factory.CreateBuffer(new BufferDescription(128,BufferUsage.UniformBuffer));
+            _cameraProjViewBuffer = _factory.CreateBuffer(new BufferDescription(128,BufferUsage.UniformBuffer | BufferUsage.Dynamic));
 
             ResourceLayoutElementDescription resourceLayoutElementDescription = new ResourceLayoutElementDescription("projView",ResourceKind.UniformBuffer,ShaderStages.Vertex);
             ResourceLayoutElementDescription[] resourceLayoutElementDescriptions = {resourceLayoutElementDescription};
@@ -73,20 +71,6 @@ namespace getting_started
             
             _resourceSet = _factory.CreateResourceSet(resourceSetDescription);
 
-            // _indirectBuffer = _factory.CreateBuffer(new BufferDescription(16,BufferUsage.IndirectBuffer | BufferUsage.UniformBuffer));
-
-            // ResourceLayoutElementDescription resourceLayoutElementDescription_2 = new ResourceLayoutElementDescription("indirect",ResourceKind.UniformBuffer,ShaderStages.Vertex);
-            // ResourceLayoutElementDescription[] resourceLayoutElementDescriptions_2 = {resourceLayoutElementDescription_2};
-            // ResourceLayoutDescription resourceLayoutDescription_2 = new ResourceLayoutDescription(resourceLayoutElementDescriptions_2);
-            // BindableResource[] bindableResources_2 = new BindableResource[]{_indirectBuffer};
-
-            // _resourceLayout_2 = _factory.CreateResourceLayout(resourceLayoutDescription_2);
-            // ResourceSetDescription resourceSetDescription_2 = new ResourceSetDescription(_resourceLayout_2,bindableResources_2);
-            
-            // _resourceSet_2 = _factory.CreateResourceSet(resourceSetDescription_2);
-
-
-
             VertexPositionColour[] quadVerticies = {
                 new VertexPositionColour(new Vector2(-1.0f,1.0f),RgbaFloat.Red),
                 new VertexPositionColour(new Vector2(1.0f,1.0f),RgbaFloat.Green),
@@ -96,7 +80,7 @@ namespace getting_started
 
             ushort[] quadIndicies = { 0, 1, 2, 3 };
 
-            float[] _xOffset = {-2,2};
+            float[] _xOffset = {-2f,2f};
 
             // declare (VBO) buffers
             _vertexBuffer 
@@ -164,15 +148,16 @@ namespace getting_started
             _commandList.Begin();
             _commandList.SetFramebuffer(_graphicsDevice.SwapchainFramebuffer);
             _commandList.SetFullViewports();
-            _commandList.ClearColorTarget(0,RgbaFloat.Black);
+            _commandList.ClearColorTarget(0,RgbaFloat.White);
+            // METAL-IMPORTANT: UpdateBuffer call locaiton will change behavour with
+            // METAL-IMPORTANT: Instancing Variable will increacse buffer locaiton by 1
+            _commandList.UpdateBuffer(_cameraProjViewBuffer,0,_camera.ViewMatrix);
+            _commandList.UpdateBuffer(_cameraProjViewBuffer,64,_camera.ProjectionMatrix);
             _commandList.SetVertexBuffer(0,_vertexBuffer);
             _commandList.SetIndexBuffer(_indexBuffer,IndexFormat.UInt16);
             _commandList.SetVertexBuffer(1,_xOffsetBuffer);
             _commandList.SetPipeline(_pipeline);
             _commandList.SetGraphicsResourceSet(0,_resourceSet); // Always after SetPipeline
-            _commandList.UpdateBuffer(_cameraProjViewBuffer,0,_camera.ViewMatrix);
-            _commandList.UpdateBuffer(_cameraProjViewBuffer,64,_camera.ProjectionMatrix);
-            //_commandList.UpdateBuffer(_indirectBuffer,64,_);
             _commandList.DrawIndexed(
                 indexCount: 4,
                 instanceCount: 2,
@@ -192,6 +177,7 @@ namespace getting_started
             _commandList.Dispose();
             _vertexBuffer.Dispose();
             _indexBuffer.Dispose();
+            _xOffsetBuffer.Dispose();
             _cameraProjViewBuffer.Dispose();
             _graphicsDevice.Dispose();
             _resourceLayout.Dispose();
