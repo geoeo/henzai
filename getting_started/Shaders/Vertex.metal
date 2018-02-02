@@ -26,10 +26,7 @@ vertex PixelInput VS(VertexInput input[[stage_in]],constant projView &pj [[ buff
     position.x += input.xOff;
     float4 positionCS = pj.Proj*pj.View*float4(position, 5, 1);
     output.Position = positionCS;
-    //output.Position = float4(position, 1, 1);
-    //float4 Color = float4(1,0,0,1);
     float4 Color = input.Color;
-    //Color = pj.Proj;
     output.Color = Color;
     return output;
 }
