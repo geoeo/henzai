@@ -9,11 +9,11 @@ Henzai (遍在) meaning ubiquitous, is a cross platform 3D rendering engine usin
 * https://mellinoe.github.io/veldrid-docs/
 * https://www.scratchapixel.com
 
-#### OpenGL
+### OpenGL
 * https://learnopengl.com
 * https://open.gl
 
-#### Metal 2
+### Metal
 * https://developer.apple.com/metal/
 * https://developer.apple.com/metal/Metal-Shading-Language-Specification.pdf
 * https://crimild.wordpress.com/
