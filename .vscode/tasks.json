@@ -29,6 +29,13 @@
             "group": "build",
             "command": "dotnet run --project getting_started/",
             "problemMatcher":"$msCompile"
+        },
+        {
+            "label": "run textured cube",
+            "type": "shell",
+            "group": "build",
+            "command": "dotnet run --project textured_cube/",
+            "problemMatcher":"$msCompile"
         }
     ]
 }
