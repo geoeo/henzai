@@ -12,11 +12,25 @@ Henzai (遍在) meaning ubiquitous, is a cross platform 3D rendering engine usin
 ### OpenGL
 * https://learnopengl.com
 * https://open.gl
+* https://www.khronos.org/assets/uploads/developers/library/2014-siggraph-bof/KITE-BOF_Aug14.pdf
+* http://prideout.net/blog/
+* http://ogldev.atspace.co.uk/index.html
+* http://www.codinglabs.net/tutorial_simple_def_rendering.aspx
+* http://www.lighthouse3d.com/tutorials/
+* http://www.opengl-tutorial.org/
+* http://anki3d.org/features/
 
 ### Metal
 * https://developer.apple.com/metal/
 * https://developer.apple.com/metal/Metal-Shading-Language-Specification.pdf
+* https://www.raywenderlich.com/146414/metal-tutorial-swift-3-part-1-getting-started
 * https://crimild.wordpress.com/
+* http://tech.metail.com/metal-swift-introduction/
+* http://metalbyexample.com/introduction-to-compute/
+* https://github.com/FlexMonkey/ParticleLab
+
+### Vulkan
+* https://www.saschawillems.de/?p=1669
 
 ### System Programming
 * https://www.developerfusion.com/article/84519/mastering-structs-in-c/
