@@ -17,6 +17,7 @@ Henzai (遍在) meaning ubiquitous, is a cross platform 3D rendering engine usin
 ### Metal
 * https://developer.apple.com/metal/
 * https://developer.apple.com/metal/Metal-Shading-Language-Specification.pdf
+* https://www.raywenderlich.com/146414/metal-tutorial-swift-3-part-1-getting-started
 * https://crimild.wordpress.com/
 * http://tech.metail.com/metal-swift-introduction/
 * http://metalbyexample.com/introduction-to-compute/
