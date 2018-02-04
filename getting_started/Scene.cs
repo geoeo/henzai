@@ -149,13 +149,11 @@ namespace getting_started
             _commandList.SetFramebuffer(_graphicsDevice.SwapchainFramebuffer);
             _commandList.SetFullViewports();
             _commandList.ClearColorTarget(0,RgbaFloat.White);
-            // METAL-IMPORTANT: UpdateBuffer call locaiton will change behavour with
-            // METAL-IMPORTANT: Instancing Variable will increacse buffer locaiton by 1
-            _commandList.UpdateBuffer(_cameraProjViewBuffer,0,_camera.ViewMatrix);
-            _commandList.UpdateBuffer(_cameraProjViewBuffer,64,_camera.ProjectionMatrix);
             _commandList.SetVertexBuffer(0,_vertexBuffer);
             _commandList.SetIndexBuffer(_indexBuffer,IndexFormat.UInt16);
             _commandList.SetVertexBuffer(1,_xOffsetBuffer);
+            _commandList.UpdateBuffer(_cameraProjViewBuffer,0,_camera.ViewMatrix);
+            _commandList.UpdateBuffer(_cameraProjViewBuffer,64,_camera.ProjectionMatrix);
             _commandList.SetPipeline(_pipeline);
             _commandList.SetGraphicsResourceSet(0,_resourceSet); // Always after SetPipeline
             _commandList.DrawIndexed(
