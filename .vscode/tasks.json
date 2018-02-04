@@ -17,9 +17,19 @@
             "label": "compile metal shaders (getting_started)",
             "type": "shell",
             "group": "build",
-            "command": "${cwd}/getting_started/compileMetal.sh",
+            "command": "${cwd}/compileMetal.sh",
             "args": [
                 "${cwd}/getting_started/Shaders/"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "compile metal shaders (textured cube)",
+            "type": "shell",
+            "group": "build",
+            "command": "${cwd}/compileMetal.sh",
+            "args": [
+                "${cwd}/textured_cube/Shaders/"
             ],
             "problemMatcher": "$msCompile"
         },

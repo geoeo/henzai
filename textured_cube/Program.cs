@@ -6,7 +6,7 @@ namespace textured_cube
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Scene.Run();
         }
     }
 }
