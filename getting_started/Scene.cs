@@ -147,6 +147,7 @@ namespace getting_started
         private static void Draw(){
             _commandList.Begin();
             _commandList.SetFramebuffer(_graphicsDevice.SwapchainFramebuffer);
+            _commandList.SetPipeline(_pipeline);
             _commandList.SetFullViewports();
             _commandList.ClearColorTarget(0,RgbaFloat.White);
             _commandList.SetVertexBuffer(0,_vertexBuffer);
@@ -154,7 +155,6 @@ namespace getting_started
             _commandList.SetVertexBuffer(1,_xOffsetBuffer);
             _commandList.UpdateBuffer(_cameraProjViewBuffer,0,_camera.ViewMatrix);
             _commandList.UpdateBuffer(_cameraProjViewBuffer,64,_camera.ProjectionMatrix);
-            _commandList.SetPipeline(_pipeline);
             _commandList.SetGraphicsResourceSet(0,_resourceSet); // Always after SetPipeline
             _commandList.DrawIndexed(
                 indexCount: 4,
