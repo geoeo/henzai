@@ -4,8 +4,18 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "build",
-            "command": "dotnet build",
+            "label": "build getting started",
+            "command": "dotnet build getting_started/getting_started.csproj",
+            "type": "shell",
+            "group": "build",
+            "presentation": {
+                "reveal": "silent"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "build textured cube",
+            "command": "dotnet build textured_cube/textured_cube.csproj",
             "type": "shell",
             "group": "build",
             "presentation": {

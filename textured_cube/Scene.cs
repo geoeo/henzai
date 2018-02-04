@@ -35,8 +35,8 @@ namespace textured_cube
 
             _camera = new Camera(960,540);
 
-            //_graphicsDevice = VeldridStartup.CreateGraphicsDevice(window,GraphicsBackend.OpenGL);
-            _graphicsDevice = VeldridStartup.CreateGraphicsDevice(window); // Defaults to metal on mac
+            _graphicsDevice = VeldridStartup.CreateGraphicsDevice(window,GraphicsBackend.OpenGL);
+            //_graphicsDevice = VeldridStartup.CreateGraphicsDevice(window); // Defaults to metal on mac
 
             CreateResources();
 
