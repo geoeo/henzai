@@ -49,7 +49,8 @@ namespace getting_started
                 float deltaSeconds = 1/60f;
                 _camera.Update(deltaSeconds);
 
-                Draw();
+                if(window.Exists)
+                    Draw();
             }
 
             DisposeResources();
