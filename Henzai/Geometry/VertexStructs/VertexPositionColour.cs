@@ -2,7 +2,7 @@
 using System.Numerics;
 using Veldrid;
 
-namespace Henzai
+namespace Henzai.Geometry
 {
 
     public struct VertexPositionColour

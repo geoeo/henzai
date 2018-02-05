@@ -4,59 +4,25 @@ using Veldrid.StartupUtilities;
 using Veldrid.Sdl2;
 using Veldrid.OpenGL;
 using Henzai;
+using Henzai.Geometry;
 
 namespace getting_started
 {
     // https://mellinoe.github.io/veldrid-docs/articles/getting-started/getting-started-part1.html
-    class Scene
+    public class Scene : Renderable
     {
-        private static GraphicsDevice _graphicsDevice;
-        private static CommandList _commandList;
-        private static DeviceBuffer _vertexBuffer;
-        private static DeviceBuffer _indexBuffer;
-        private static DeviceBuffer _xOffsetBuffer;
-        private static Shader _vertexShader;
-        private static Shader _fragmentShader;
-        private static Pipeline _pipeline;
-        private static Camera _camera;
-        private static DeviceBuffer _cameraProjViewBuffer;
-        private static ResourceSet _resourceSet;
-        private static ResourceLayout _resourceLayout;
-        static void Main(string[] args)
-        {
-            WindowCreateInfo windowCI = new WindowCreateInfo()
-            {
-                X = 100,
-                Y = 100,
-                WindowWidth = 960,
-                WindowHeight = 540,
-                WindowTitle = "Veldrid Getting Started"
-            };
-            Sdl2Window window = VeldridStartup.CreateWindow(ref windowCI);
+        private CommandList _commandList;
+        private DeviceBuffer _vertexBuffer;
+        private DeviceBuffer _indexBuffer;
+        private DeviceBuffer _xOffsetBuffer;
+        private Shader _vertexShader;
+        private Shader _fragmentShader;
+        private Pipeline _pipeline;
+        private DeviceBuffer _cameraProjViewBuffer;
+        private ResourceSet _resourceSet;
+        private ResourceLayout _resourceLayout;
 
-            _camera = new Camera(960,540);
-
-            _graphicsDevice = VeldridStartup.CreateGraphicsDevice(window,GraphicsBackend.OpenGL);
-            //_graphicsDevice = VeldridStartup.CreateGraphicsDevice(window); // Defaults to metal on mac
-
-            CreateResources();
-
-            while (window.Exists)
-            {
-                InputSnapshot inputSnapshot = window.PumpEvents();
-                InputTracker.UpdateFrameInput(inputSnapshot);
-
-                float deltaSeconds = 1/60f;
-                _camera.Update(deltaSeconds);
-
-                if(window.Exists)
-                    Draw();
-            }
-
-            DisposeResources();
-        }
-
-        private static void CreateResources()
+        override protected void CreateResources()
         {
             ResourceFactory _factory = _graphicsDevice.ResourceFactory;
 
@@ -145,7 +111,7 @@ namespace getting_started
 
         }
 
-        private static void Draw(){
+        override protected void Draw(){
             _commandList.Begin();
             _commandList.SetFramebuffer(_graphicsDevice.SwapchainFramebuffer);
             _commandList.SetPipeline(_pipeline);
@@ -169,7 +135,7 @@ namespace getting_started
             _graphicsDevice.SwapBuffers();
         }
 
-        private static void DisposeResources(){
+        override protected void DisposeResources(){
             _pipeline.Dispose();
             _vertexShader.Dispose();
             _fragmentShader.Dispose();
