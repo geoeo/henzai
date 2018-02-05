@@ -1,9 +1,11 @@
+using System;
 using System.Numerics;
 using System.Collections.Generic;
+using System.IO;
 using Veldrid;
 using Veldrid.StartupUtilities;
 using Veldrid.Sdl2;
-using Veldrid.OpenGL;
+using Veldrid.ImageSharp;
 using Henzai;
 using Henzai.Extensions;
 using Henzai.Geometry;
@@ -20,6 +22,7 @@ namespace textured_cube
         private Pipeline _pipeline;
         private DeviceBuffer _cameraProjViewBuffer;
         private ResourceSet _resourceSet;
+        private ResourceSet _textureResourceSet;
         private ResourceLayout _resourceLayout;
 
         override protected void CreateResources()
@@ -37,6 +40,20 @@ namespace textured_cube
             ResourceSetDescription resourceSetDescription = new ResourceSetDescription(_resourceLayout,bindableResources);
             
             _resourceSet = _factory.CreateResourceSet(resourceSetDescription);
+
+            ImageSharpTexture NameImage = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "Textures", "Name.png"));
+            Texture cubeTexture = NameImage.CreateDeviceTexture(_graphicsDevice, _factory);
+            TextureView cubeTextureView = _factory.CreateTextureView(cubeTexture);
+
+            ResourceLayout textureLayout = _factory.CreateResourceLayout(
+                new ResourceLayoutDescription(
+                    new ResourceLayoutElementDescription("CubeTexture", ResourceKind.TextureReadOnly, ShaderStages.Fragment),
+                    new ResourceLayoutElementDescription("CubeSampler", ResourceKind.Sampler, ShaderStages.Fragment)));
+
+            _textureResourceSet = _factory.CreateResourceSet(new ResourceSetDescription(
+                textureLayout,
+                cubeTextureView,
+                _graphicsDevice.LinearSampler));
 
             TexturedCube texturedCube 
                 = GeometryFactory.generateTexturedCube();
@@ -75,7 +92,7 @@ namespace textured_cube
                     scissorTestEnabled: false
                 ),
                 PrimitiveTopology = PrimitiveTopology.TriangleList,
-                ResourceLayouts = new ResourceLayout[] {_resourceLayout},
+                ResourceLayouts = new ResourceLayout[] {_resourceLayout,textureLayout},
                 ShaderSet = new ShaderSetDescription(
                     vertexLayouts: new VertexLayoutDescription[] {vertexLayout},
                     shaders: new Shader[] {_vertexShader,_fragmentShader}
@@ -101,6 +118,7 @@ namespace textured_cube
             _commandList.UpdateBuffer(_cameraProjViewBuffer,0,_camera.ViewMatrix);
             _commandList.UpdateBuffer(_cameraProjViewBuffer,64,_camera.ProjectionMatrix);
             _commandList.SetGraphicsResourceSet(0,_resourceSet); // Always after SetPipeline
+            _commandList.SetGraphicsResourceSet(1,_textureResourceSet); // Always after SetPipeline
             _commandList.DrawIndexed(
                 indexCount: 36,
                 instanceCount: 1,

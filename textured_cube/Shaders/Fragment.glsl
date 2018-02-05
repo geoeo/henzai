@@ -1,9 +1,12 @@
 #version 330 core
 
-in vec4 fsin_Color;
+uniform sampler2D CubeTexture;
+
+in vec2 fsin_UV;
 out vec4 fsout_Color;
 
 void main()
 {
-    fsout_Color = fsin_Color;
+    vec4 textureColour = texture(CubeTexture, fsin_UV);
+    fsout_Color = textureColour;
 }
