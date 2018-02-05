@@ -45,7 +45,7 @@ namespace textured_cube
 
             // declare (VBO) buffers
             _vertexBuffer 
-                = _factory.CreateBuffer(new BufferDescription(texturedCube.vertices.LengthUnsigned() * VertexPositionColour.SizeInBytes, BufferUsage.VertexBuffer));
+                = _factory.CreateBuffer(new BufferDescription(texturedCube.vertices.LengthUnsigned() * VertexPositionTexture.SizeInBytes, BufferUsage.VertexBuffer));
             _indexBuffer 
                 = _factory.CreateBuffer(new BufferDescription(quadIndicies.LengthUnsigned()*sizeof(ushort),BufferUsage.IndexBuffer));
 
@@ -57,8 +57,8 @@ namespace textured_cube
 
             VertexLayoutDescription vertexLayout 
                 = new VertexLayoutDescription(
-                    new VertexElementDescription("Position",VertexElementSemantic.Position,VertexElementFormat.Float2),
-                    new VertexElementDescription("Colour",VertexElementSemantic.Color,VertexElementFormat.Float4)
+                    new VertexElementDescription("Position",VertexElementSemantic.Position,VertexElementFormat.Float3),
+                    new VertexElementDescription("UV",VertexElementSemantic.TextureCoordinate,VertexElementFormat.Float2)
                 );
 
             _vertexShader = IO.LoadShader(ShaderStages.Vertex,_graphicsDevice);
@@ -66,10 +66,7 @@ namespace textured_cube
 
             GraphicsPipelineDescription pipelineDescription = new GraphicsPipelineDescription(){
                 BlendState = BlendStateDescription.SingleOverrideBlend,
-                DepthStencilState = new DepthStencilStateDescription(
-                    depthTestEnabled: true,
-                    depthWriteEnabled: true,
-                    comparisonKind: ComparisonKind.LessEqual),
+                DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
                 RasterizerState = new RasterizerStateDescription(
                     cullMode: FaceCullMode.Back,
                     fillMode: PolygonFillMode.Solid,
@@ -98,13 +95,14 @@ namespace textured_cube
             _commandList.SetPipeline(_pipeline);
             _commandList.SetFullViewports();
             _commandList.ClearColorTarget(0,RgbaFloat.White);
+            _commandList.ClearDepthStencil(1f);
             _commandList.SetVertexBuffer(0,_vertexBuffer);
             _commandList.SetIndexBuffer(_indexBuffer,IndexFormat.UInt16);
             _commandList.UpdateBuffer(_cameraProjViewBuffer,0,_camera.ViewMatrix);
             _commandList.UpdateBuffer(_cameraProjViewBuffer,64,_camera.ProjectionMatrix);
             _commandList.SetGraphicsResourceSet(0,_resourceSet); // Always after SetPipeline
             _commandList.DrawIndexed(
-                indexCount: 4,
+                indexCount: 36,
                 instanceCount: 1,
                 indexStart: 0,
                 vertexOffset: 0,

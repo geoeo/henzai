@@ -20,7 +20,7 @@ namespace Henzai
         /// Calls Draw() method in rendering loop
         /// Calls Dispose() when done
         /// </summary>
-        public void Run(string title,Resolution renderResolution,Resolution windowSize, GraphicsBackend preferredBackend, bool useDefaultGraphicsBackend)
+        public void Run(string title,Resolution renderResolution,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, GraphicsBackend preferredBackend, bool useDefaultGraphicsBackend)
         {
 
             _renderResolution = renderResolution;
@@ -38,9 +38,9 @@ namespace Henzai
             _camera = new Camera(renderResolution.Horizontal,renderResolution.Vertical);
 
             if(useDefaultGraphicsBackend)
-                _graphicsDevice = VeldridStartup.CreateGraphicsDevice(window);
+                _graphicsDevice = VeldridStartup.CreateGraphicsDevice(window,graphicsDeviceOptions);
             else
-                _graphicsDevice = VeldridStartup.CreateGraphicsDevice(window,preferredBackend);
+                _graphicsDevice = VeldridStartup.CreateGraphicsDevice(window,graphicsDeviceOptions,preferredBackend);
 
             CreateResources();
 

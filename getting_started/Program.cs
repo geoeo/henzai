@@ -11,7 +11,14 @@ namespace getting_started
             Scene scene = new Scene();
             Resolution renderResolution = new Resolution(960,540);
             Resolution windowSize = new Resolution(960,540);
-            scene.Run("Getting Started",renderResolution,windowSize,GraphicsBackend.OpenGL,false);
+            GraphicsDeviceOptions gdOptions = new GraphicsDeviceOptions()
+            {
+                Debug = false,
+                SwapchainDepthFormat = null,
+                SyncToVerticalBlank = false
+
+            };
+            scene.Run("Getting Started",renderResolution,windowSize,gdOptions,GraphicsBackend.OpenGL,false);
         }
     }
 }
