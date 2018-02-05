@@ -1,4 +1,5 @@
 using System.Numerics;
+using System.Collections.Generic;
 using Veldrid;
 using Veldrid.StartupUtilities;
 using Veldrid.Sdl2;
@@ -36,14 +37,12 @@ namespace textured_cube
             
             _resourceSet = _factory.CreateResourceSet(resourceSetDescription);
 
-            VertexPositionColour[] quadVerticies = {
-                new VertexPositionColour(new Vector2(-1.0f,1.0f),RgbaFloat.Red),
-                new VertexPositionColour(new Vector2(1.0f,1.0f),RgbaFloat.Green),
-                new VertexPositionColour(new Vector2(-1.0f,-1.0f),RgbaFloat.Blue),
-                new VertexPositionColour(new Vector2(1.0f,-1.0f),RgbaFloat.Yellow)
-            };
+            ColouredQuad colouredQuad 
+                = GeometryFactory.generateColouredQuad(
+                    new List<RgbaFloat>(){RgbaFloat.Red,RgbaFloat.Green,RgbaFloat.Blue,RgbaFloat.Yellow}
+                    );
 
-            ushort[] quadIndicies = { 0, 1, 2, 3 };
+            ushort[] quadIndicies = GeometryFactory.generateQuadIndicies_TriangleStrip_CW();
 
             // declare (VBO) buffers
             _vertexBuffer 
@@ -52,7 +51,7 @@ namespace textured_cube
                 = _factory.CreateBuffer(new BufferDescription(4*sizeof(ushort),BufferUsage.IndexBuffer));
 
             // fill buffers with data
-            _graphicsDevice.UpdateBuffer(_vertexBuffer,0,quadVerticies);
+            _graphicsDevice.UpdateBuffer(_vertexBuffer,0,colouredQuad.vertecies);
             _graphicsDevice.UpdateBuffer(_indexBuffer,0,quadIndicies);
             _graphicsDevice.UpdateBuffer(_cameraProjViewBuffer,0,_camera.ViewMatrix);
             _graphicsDevice.UpdateBuffer(_cameraProjViewBuffer,64,_camera.ProjectionMatrix);

@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Numerics;
+using Veldrid;
 
 namespace Henzai.Geometry
 {
@@ -7,7 +9,7 @@ namespace Henzai.Geometry
     {
         public static TexturedCube generateTexturedCube()
         {
-            VertexPositionTexture[] data =
+            VertexPositionTexture[] cubeVerticies =
                 new VertexPositionTexture[]
                 {
                     // Top
@@ -42,10 +44,9 @@ namespace Henzai.Geometry
                     new VertexPositionTexture(new Vector3(-0.5f, -0.5f, +0.5f), new Vector2(0, 1)),
                 };
 
-            return new TexturedCube(data);
+            return new TexturedCube(cubeVerticies);
         }
-
-        public static ushort[] CubeIndicies_TriangleList_CW()
+        public static ushort[] generateCubeIndicies_TriangleList_CW()
         {
             return new ushort[]
             {
@@ -56,6 +57,26 @@ namespace Henzai.Geometry
                 16,17,18, 16,18,19,
                 20,21,22, 20,22,23,
             };
+        }
+
+        public static ColouredQuad generateColouredQuad(List<RgbaFloat> colours)
+        {
+            if(colours.Count < 4)
+                throw new ArgumentException("At least 4 colour values are needed for a Quad");
+
+            VertexPositionColour[] quadVerticies = {
+                new VertexPositionColour(new Vector2(-1.0f,1.0f),colours[0]),
+                new VertexPositionColour(new Vector2(1.0f,1.0f),colours[1]),
+                new VertexPositionColour(new Vector2(-1.0f,-1.0f),colours[2]),
+                new VertexPositionColour(new Vector2(1.0f,-1.0f),colours[3])
+            };
+
+            return new ColouredQuad(quadVerticies);
+        }
+
+        public static ushort[] generateQuadIndicies_TriangleStrip_CW()
+        {
+            return new ushort[]{ 0, 1, 2, 3 };
         }
     }
 }

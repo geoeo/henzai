@@ -6,7 +6,7 @@ namespace Henzai.Geometry
 {
     public struct TexturedCube
     {
-        VertexPositionTexture[] vertices;
+        public VertexPositionTexture[] vertices;
 
         public TexturedCube(VertexPositionTexture[] texturedCubeDefinition)
         {
