@@ -29,8 +29,8 @@ namespace Henzai
         private Matrix4x4 _viewMatrix;
         private Matrix4x4 _projectionMatrix;
 
-        public Matrix4x4 ViewMatrix => _viewMatrix;
-        public Matrix4x4 ProjectionMatrix => _projectionMatrix;
+        public ref Matrix4x4 ViewMatrix => ref _viewMatrix;
+        public ref Matrix4x4 ProjectionMatrix => ref _projectionMatrix;
         public Vector3 Position { get => _position; set { _position = value; UpdateViewMatrix(); } }
         public Vector3 LookDirection => _lookDirection;
         public float FarDistance => _far;
