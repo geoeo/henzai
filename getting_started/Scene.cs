@@ -5,6 +5,7 @@ using Veldrid.StartupUtilities;
 using Veldrid.Sdl2;
 using Veldrid.OpenGL;
 using Henzai;
+using Henzai.Extensions;
 using Henzai.Geometry;
 
 namespace getting_started
@@ -50,11 +51,11 @@ namespace getting_started
 
             // declare (VBO) buffers
             _vertexBuffer 
-                = _factory.CreateBuffer(new BufferDescription(4 * VertexPositionColour.SizeInBytes, BufferUsage.VertexBuffer));
+                = _factory.CreateBuffer(new BufferDescription(colouredQuad.vertecies.LengthUnsigned() * VertexPositionColour.SizeInBytes, BufferUsage.VertexBuffer));
             _indexBuffer 
-                = _factory.CreateBuffer(new BufferDescription(4*sizeof(ushort),BufferUsage.IndexBuffer));
+                = _factory.CreateBuffer(new BufferDescription(quadIndicies.LengthUnsigned()*sizeof(ushort),BufferUsage.IndexBuffer));
             _xOffsetBuffer
-                = _factory.CreateBuffer(new BufferDescription(2*sizeof(float),BufferUsage.VertexBuffer));
+                = _factory.CreateBuffer(new BufferDescription(_xOffset.LengthUnsigned()*sizeof(float),BufferUsage.VertexBuffer));
 
             // fill buffers with data
             _graphicsDevice.UpdateBuffer(_vertexBuffer,0,colouredQuad.vertecies);

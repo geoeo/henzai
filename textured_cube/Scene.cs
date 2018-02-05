@@ -5,6 +5,7 @@ using Veldrid.StartupUtilities;
 using Veldrid.Sdl2;
 using Veldrid.OpenGL;
 using Henzai;
+using Henzai.Extensions;
 using Henzai.Geometry;
 
 namespace textured_cube
@@ -37,21 +38,19 @@ namespace textured_cube
             
             _resourceSet = _factory.CreateResourceSet(resourceSetDescription);
 
-            ColouredQuad colouredQuad 
-                = GeometryFactory.generateColouredQuad(
-                    new List<RgbaFloat>(){RgbaFloat.Red,RgbaFloat.Green,RgbaFloat.Blue,RgbaFloat.Yellow}
-                    );
+            TexturedCube texturedCube 
+                = GeometryFactory.generateTexturedCube();
 
-            ushort[] quadIndicies = GeometryFactory.generateQuadIndicies_TriangleStrip_CW();
+            ushort[] quadIndicies = GeometryFactory.generateCubeIndicies_TriangleList_CW();
 
             // declare (VBO) buffers
             _vertexBuffer 
-                = _factory.CreateBuffer(new BufferDescription(4 * VertexPositionColour.SizeInBytes, BufferUsage.VertexBuffer));
+                = _factory.CreateBuffer(new BufferDescription(texturedCube.vertices.LengthUnsigned() * VertexPositionColour.SizeInBytes, BufferUsage.VertexBuffer));
             _indexBuffer 
-                = _factory.CreateBuffer(new BufferDescription(4*sizeof(ushort),BufferUsage.IndexBuffer));
+                = _factory.CreateBuffer(new BufferDescription(quadIndicies.LengthUnsigned()*sizeof(ushort),BufferUsage.IndexBuffer));
 
             // fill buffers with data
-            _graphicsDevice.UpdateBuffer(_vertexBuffer,0,colouredQuad.vertecies);
+            _graphicsDevice.UpdateBuffer(_vertexBuffer,0,texturedCube.vertices);
             _graphicsDevice.UpdateBuffer(_indexBuffer,0,quadIndicies);
             _graphicsDevice.UpdateBuffer(_cameraProjViewBuffer,0,_camera.ViewMatrix);
             _graphicsDevice.UpdateBuffer(_cameraProjViewBuffer,64,_camera.ProjectionMatrix);
@@ -78,7 +77,7 @@ namespace textured_cube
                     depthClipEnabled: true,
                     scissorTestEnabled: false
                 ),
-                PrimitiveTopology = PrimitiveTopology.TriangleStrip,
+                PrimitiveTopology = PrimitiveTopology.TriangleList,
                 ResourceLayouts = new ResourceLayout[] {_resourceLayout},
                 ShaderSet = new ShaderSetDescription(
                     vertexLayouts: new VertexLayoutDescription[] {vertexLayout},
