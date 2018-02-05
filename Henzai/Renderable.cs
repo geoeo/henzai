@@ -42,6 +42,9 @@ namespace Henzai
             else
                 _graphicsDevice = VeldridStartup.CreateGraphicsDevice(window,graphicsDeviceOptions,preferredBackend);
 
+
+            window.Title = $"{title} / {_graphicsDevice.BackendType.ToString()}";
+
             CreateResources();
 
             while (window.Exists)

@@ -18,7 +18,12 @@ namespace textured_cube
                 SyncToVerticalBlank = false
 
             };
-            scene.Run("Textured Cube",renderResolution,windowSize,gdOptions,GraphicsBackend.OpenGL,false);
+            scene.Run(
+                "Textured Cube",
+                renderResolution,windowSize,
+                gdOptions,
+                GraphicsBackend.OpenGL,
+                useDefaultGraphicsBackend: true);
         }
     }
 }

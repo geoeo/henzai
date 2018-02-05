@@ -3,14 +3,14 @@ using namespace metal;
 
 struct VertexInput
 {
-    float2 Position[[attribute(0)]];
-    float4 Color[[attribute(1)]];
+    float3 Position[[attribute(0)]];
+    float2 UV[[attribute(1)]];
 };
 
 struct PixelInput
 {
     float4 Position[[position]];
-    float4 Color;
+    float2 UV;
 };
 
 struct projView {
@@ -21,10 +21,9 @@ struct projView {
 vertex PixelInput VS(VertexInput input[[stage_in]],constant projView &pj [[ buffer(1) ]])
 {
     PixelInput output;
-    float2 position = input.Position;
-    float4 positionCS = pj.Proj*pj.View*float4(position, 5, 1);
+    float3 position = input.Position;
+    float4 positionCS = pj.Proj*pj.View*float4(position, 1);
     output.Position = positionCS;
-    float4 Color = input.Color;
-    output.Color = Color;
+    output.UV = input.UV;
     return output;
 }
