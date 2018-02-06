@@ -11,4 +11,11 @@
     <PackageReference Include="Veldrid.StartupUtilities" Version="4.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)/../Dependencies/libassimp.dylib">
+      <Link>libassimp.dylib</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
