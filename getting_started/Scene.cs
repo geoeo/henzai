@@ -80,8 +80,8 @@ namespace getting_started
                     elements: new VertexElementDescription[] {vertexElementPerInstance}
                 );
 
-            _vertexShader = IO.LoadShader(ShaderStages.Vertex,_graphicsDevice);
-            _fragmentShader = IO.LoadShader(ShaderStages.Fragment,_graphicsDevice);
+            _vertexShader = IO.LoadShader(string.Empty,ShaderStages.Vertex,_graphicsDevice);
+            _fragmentShader = IO.LoadShader(string.Empty,ShaderStages.Fragment,_graphicsDevice);
 
             GraphicsPipelineDescription pipelineDescription = new GraphicsPipelineDescription(){
                 BlendState = BlendStateDescription.SingleOverrideBlend,

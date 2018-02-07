@@ -16,15 +16,23 @@ namespace textured_cube
     {
         private CommandList _commandList;
         private Framebuffer _offScreenFBO;
-        private DeviceBuffer _vertexBuffer;
-        private DeviceBuffer _indexBuffer;
-        private Shader _vertexShader;
-        private Shader _fragmentShader;
-        private Pipeline _pipeline;
-        private DeviceBuffer _cameraProjViewBuffer;
-        private ResourceSet _resourceSet;
+
+        private DeviceBuffer _vertexBufferCube;
+        private DeviceBuffer _indexBufferCube;
+        private Shader _vertexShaderCube;
+        private Shader _fragmentShaderCube;
+        private Pipeline _pipelineCube;
+
+        private DeviceBuffer _vertexBufferQuad;
+        private DeviceBuffer _indexBufferQuad;
+        private Shader _vertexShaderQuad;
+        private Shader _fragmentShaderQuad;
+        private Pipeline _pipelineQuad;
+
         private ResourceSet _textureResourceSet;
-        private ResourceLayout _resourceLayout;
+        private DeviceBuffer _cameraProjViewBuffer;
+        private ResourceSet _uniformCameraresourceSet;
+        private ResourceLayout _uniformCameraResourceLayout;
 
         override protected void CreateResources()
         {
@@ -37,10 +45,10 @@ namespace textured_cube
             ResourceLayoutDescription resourceLayoutDescription = new ResourceLayoutDescription(resourceLayoutElementDescriptions);
             BindableResource[] bindableResources = new BindableResource[]{_cameraProjViewBuffer};
 
-            _resourceLayout = _factory.CreateResourceLayout(resourceLayoutDescription);
-            ResourceSetDescription resourceSetDescription = new ResourceSetDescription(_resourceLayout,bindableResources);
+            _uniformCameraResourceLayout = _factory.CreateResourceLayout(resourceLayoutDescription);
+            ResourceSetDescription resourceSetDescription = new ResourceSetDescription(_uniformCameraResourceLayout,bindableResources);
             
-            _resourceSet = _factory.CreateResourceSet(resourceSetDescription);
+            _uniformCameraresourceSet = _factory.CreateResourceSet(resourceSetDescription);
 
             ImageSharpTexture NameImage = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "Textures", "Name.png"));
             Texture cubeTexture = NameImage.CreateDeviceTexture(_graphicsDevice, _factory);
@@ -62,14 +70,14 @@ namespace textured_cube
             ushort[] quadIndicies = GeometryFactory.generateCubeIndicies_TriangleList_CW();
 
             // declare (VBO) buffers
-            _vertexBuffer 
+            _vertexBufferCube 
                 = _factory.CreateBuffer(new BufferDescription(texturedCube.vertices.LengthUnsigned() * VertexPositionTexture.SizeInBytes, BufferUsage.VertexBuffer));
-            _indexBuffer 
+            _indexBufferCube 
                 = _factory.CreateBuffer(new BufferDescription(quadIndicies.LengthUnsigned()*sizeof(ushort),BufferUsage.IndexBuffer));
 
             // fill buffers with data
-            _graphicsDevice.UpdateBuffer(_vertexBuffer,0,texturedCube.vertices);
-            _graphicsDevice.UpdateBuffer(_indexBuffer,0,quadIndicies);
+            _graphicsDevice.UpdateBuffer(_vertexBufferCube,0,texturedCube.vertices);
+            _graphicsDevice.UpdateBuffer(_indexBufferCube,0,quadIndicies);
             _graphicsDevice.UpdateBuffer(_cameraProjViewBuffer,0,_camera.ViewMatrix);
             _graphicsDevice.UpdateBuffer(_cameraProjViewBuffer,64,_camera.ProjectionMatrix);
 
@@ -79,8 +87,8 @@ namespace textured_cube
                     new VertexElementDescription("UV",VertexElementSemantic.TextureCoordinate,VertexElementFormat.Float2)
                 );
 
-            _vertexShader = IO.LoadShader(ShaderStages.Vertex,_graphicsDevice);
-            _fragmentShader = IO.LoadShader(ShaderStages.Fragment,_graphicsDevice);
+            _vertexShaderCube = IO.LoadShader(string.Empty,ShaderStages.Vertex,_graphicsDevice);
+            _fragmentShaderCube = IO.LoadShader(string.Empty,ShaderStages.Fragment,_graphicsDevice);
 
             GraphicsPipelineDescription pipelineDescription = new GraphicsPipelineDescription(){
                 BlendState = BlendStateDescription.SingleOverrideBlend,
@@ -93,15 +101,15 @@ namespace textured_cube
                     scissorTestEnabled: false
                 ),
                 PrimitiveTopology = PrimitiveTopology.TriangleList,
-                ResourceLayouts = new ResourceLayout[] {_resourceLayout,textureLayout},
+                ResourceLayouts = new ResourceLayout[] {_uniformCameraResourceLayout,textureLayout},
                 ShaderSet = new ShaderSetDescription(
                     vertexLayouts: new VertexLayoutDescription[] {vertexLayout},
-                    shaders: new Shader[] {_vertexShader,_fragmentShader}
+                    shaders: new Shader[] {_vertexShaderCube,_fragmentShaderCube}
                 ),
                 Outputs = _graphicsDevice.SwapchainFramebuffer.OutputDescription
             };
 
-            _pipeline = _factory.CreateGraphicsPipeline(pipelineDescription);
+            _pipelineCube = _factory.CreateGraphicsPipeline(pipelineDescription);
 
             _commandList = _factory.CreateCommandList();
 
@@ -114,12 +122,12 @@ namespace textured_cube
             _commandList.ClearColorTarget(0,RgbaFloat.White);
             _commandList.ClearDepthStencil(1f);
 
-            _commandList.SetPipeline(_pipeline);
-            _commandList.SetVertexBuffer(0,_vertexBuffer);
-            _commandList.SetIndexBuffer(_indexBuffer,IndexFormat.UInt16);
+            _commandList.SetPipeline(_pipelineCube);
+            _commandList.SetVertexBuffer(0,_vertexBufferCube);
+            _commandList.SetIndexBuffer(_indexBufferCube,IndexFormat.UInt16);
             _commandList.UpdateBuffer(_cameraProjViewBuffer,0,_camera.ViewMatrix);
             _commandList.UpdateBuffer(_cameraProjViewBuffer,64,_camera.ProjectionMatrix);
-            _commandList.SetGraphicsResourceSet(0,_resourceSet); // Always after SetPipeline
+            _commandList.SetGraphicsResourceSet(0,_uniformCameraresourceSet); // Always after SetPipeline
             _commandList.SetGraphicsResourceSet(1,_textureResourceSet); // Always after SetPipeline
             _commandList.DrawIndexed(
                 indexCount: 36,
@@ -135,16 +143,16 @@ namespace textured_cube
         }
 
         override protected void DisposeResources(){
-            _pipeline.Dispose();
-            _vertexShader.Dispose();
-            _fragmentShader.Dispose();
+            _pipelineCube.Dispose();
+            _vertexShaderCube.Dispose();
+            _fragmentShaderCube.Dispose();
             _commandList.Dispose();
-            _vertexBuffer.Dispose();
-            _indexBuffer.Dispose();
+            _vertexBufferCube.Dispose();
+            _indexBufferCube.Dispose();
             _cameraProjViewBuffer.Dispose();
             _graphicsDevice.Dispose();
-            _resourceLayout.Dispose();
-            _resourceSet.Dispose();
+            _uniformCameraResourceLayout.Dispose();
+            _uniformCameraresourceSet.Dispose();
         }
     }
 }

@@ -6,7 +6,7 @@ namespace Henzai
 {
     public class IO
     {
-        public static Shader LoadShader(ShaderStages stage, GraphicsDevice graphicsDevice){
+        public static Shader LoadShader(string name, ShaderStages stage, GraphicsDevice graphicsDevice){
             string extension = null;
             switch(graphicsDevice.BackendType){
                 case GraphicsBackend.OpenGL:
@@ -19,7 +19,9 @@ namespace Henzai
             }
 
             string entryPoint = stage == ShaderStages.Vertex ? "VS" : "FS";
-            string path = Path.Combine(System.AppContext.BaseDirectory,"Shaders",$"{stage.ToString()}.{extension}");
+            string shaderName = String.IsNullOrEmpty(name) ? stage.ToString() : name;
+
+            string path = Path.Combine(System.AppContext.BaseDirectory,"Shaders",$"{shaderName}.{extension}");
             byte[] shaderBytes = File.ReadAllBytes(path);
             return graphicsDevice.ResourceFactory.CreateShader(new ShaderDescription(stage,shaderBytes,entryPoint));
         }
