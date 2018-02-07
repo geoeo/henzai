@@ -59,9 +59,9 @@ namespace Henzai.Geometry
             };
         }
 
-        public static ColouredQuad generateColouredQuad(List<RgbaFloat> colours)
+        public static ColouredQuad generateColouredQuad(params RgbaFloat[] colours)
         {
-            if(colours.Count < 4)
+            if(colours.Length < 4)
                 throw new ArgumentException("At least 4 colour values are needed for a Quad");
 
             VertexPositionColour[] quadVerticies = {

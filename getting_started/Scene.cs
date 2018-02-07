@@ -41,9 +41,7 @@ namespace getting_started
             _resourceSet = _factory.CreateResourceSet(resourceSetDescription);
 
            ColouredQuad colouredQuad 
-                = GeometryFactory.generateColouredQuad(
-                    new List<RgbaFloat>(){RgbaFloat.Red,RgbaFloat.Green,RgbaFloat.Blue,RgbaFloat.Yellow}
-                    );
+                = GeometryFactory.generateColouredQuad(RgbaFloat.Red,RgbaFloat.Green,RgbaFloat.Blue,RgbaFloat.Yellow);
 
             ushort[] quadIndicies = GeometryFactory.generateQuadIndicies_TriangleStrip_CW();
 

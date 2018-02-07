@@ -16,6 +16,7 @@ namespace textured_cube
     {
         private CommandList _commandList;
         private Framebuffer _offScreenFBO;
+        private ResourceFactory _factory;
 
         private DeviceBuffer _vertexBufferCube;
         private DeviceBuffer _indexBufferCube;
@@ -36,7 +37,19 @@ namespace textured_cube
 
         override protected void CreateResources()
         {
-            ResourceFactory _factory = _graphicsDevice.ResourceFactory;
+            _factory = _graphicsDevice.ResourceFactory;
+
+            createCameraUniform();
+
+            createCubeResources();
+
+            createQuadResources();
+
+            _commandList = _factory.CreateCommandList();
+
+        }
+
+        private void createCameraUniform(){
 
             _cameraProjViewBuffer = _factory.CreateBuffer(new BufferDescription(128,BufferUsage.UniformBuffer | BufferUsage.Dynamic));
 
@@ -49,6 +62,12 @@ namespace textured_cube
             ResourceSetDescription resourceSetDescription = new ResourceSetDescription(_uniformCameraResourceLayout,bindableResources);
             
             _uniformCameraresourceSet = _factory.CreateResourceSet(resourceSetDescription);
+
+            _graphicsDevice.UpdateBuffer(_cameraProjViewBuffer,0,_camera.ViewMatrix);
+            _graphicsDevice.UpdateBuffer(_cameraProjViewBuffer,64,_camera.ProjectionMatrix);
+        }
+
+        private void createCubeResources(){
 
             ImageSharpTexture NameImage = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "Textures", "Name.png"));
             Texture cubeTexture = NameImage.CreateDeviceTexture(_graphicsDevice, _factory);
@@ -78,8 +97,6 @@ namespace textured_cube
             // fill buffers with data
             _graphicsDevice.UpdateBuffer(_vertexBufferCube,0,texturedCube.vertices);
             _graphicsDevice.UpdateBuffer(_indexBufferCube,0,quadIndicies);
-            _graphicsDevice.UpdateBuffer(_cameraProjViewBuffer,0,_camera.ViewMatrix);
-            _graphicsDevice.UpdateBuffer(_cameraProjViewBuffer,64,_camera.ProjectionMatrix);
 
             VertexLayoutDescription vertexLayout 
                 = new VertexLayoutDescription(
@@ -110,8 +127,12 @@ namespace textured_cube
             };
 
             _pipelineCube = _factory.CreateGraphicsPipeline(pipelineDescription);
+        }
 
-            _commandList = _factory.CreateCommandList();
+        private void createQuadResources(){
+
+            ColouredQuad quad = GeometryFactory.generateColouredQuad(RgbaFloat.Red, RgbaFloat.Blue,RgbaFloat.Green,RgbaFloat.Orange);
+
 
         }
 
