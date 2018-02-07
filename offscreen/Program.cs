@@ -19,7 +19,7 @@ namespace textured_cube
 
             };
             scene.Run(
-                "Textured Cube",
+                "Offscreen",
                 renderResolution,windowSize,
                 gdOptions,
                 GraphicsBackend.OpenGL,

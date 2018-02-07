@@ -28,7 +28,6 @@ namespace Henzai
         /// </summary>
         public void Run(string title,Resolution renderResolution,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, GraphicsBackend preferredBackend, bool usePreferredGraphicsBackend)
         {
-
             _renderResolution = renderResolution;
             _sceneResources = new List<IDisposable>();
 

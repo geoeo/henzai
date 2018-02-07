@@ -1,14 +1,15 @@
 #version 330 core
 
-struct Camera_ProjView
+struct Transform_Pipeline
 {
     mat4 View;
     mat4 Proj;
+    mat4 World;
 };
 
-layout(std140) uniform projView
+layout(std140) uniform transformPipeline
 {
-    Camera_ProjView field_projView;
+    Transform_Pipeline field_pipeline;
 };
 
 layout(location = 0)in vec3 Position;
@@ -18,10 +19,7 @@ smooth out vec2 fsin_UV;
 
 void main()
 {
-    vec2 posOff = vec2(Position.x,Position.y);
-    vec4 worldPos = vec4(Position, 1);
-    mat4 viewMatrix = field_projView.View;
-    mat4 projMatrix = field_projView.Proj;
-    gl_Position = projMatrix*viewMatrix*worldPos;
+    vec4 position = vec4(Position, 1);
+    gl_Position = field_pipeline.Proj*field_pipeline.View*position;
     fsin_UV = UV;
 }

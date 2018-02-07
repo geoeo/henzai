@@ -1,19 +1,19 @@
 #version 330 core
 
-struct Camera_ProjView
+struct Transform_Pipeline
 {
     mat4 View;
     mat4 Proj;
+    mat4 World;
 };
 
-layout(std140) uniform projView
+layout(std140) uniform transformPipeline
 {
-    Camera_ProjView field_projView;
+    Transform_Pipeline field_pipeline;
 };
 
 layout(location = 0)in vec2 Position;
 layout(location = 1)in vec4 Color;
-layout(location = 2)in float xOff;
 
 // flat out vec4 fsin_Color; // takes colour from "dominant" vertex
 smooth out vec4 fsin_Color;
@@ -21,10 +21,7 @@ smooth out vec4 fsin_Color;
 
 void main()
 {
-    vec2 posOff = vec2(Position.x + xOff,Position.y);
-    vec4 worldPos = vec4(posOff, 5, 1);
-    mat4 viewMatrix = field_projView.View;
-    mat4 projMatrix = field_projView.Proj;
-    gl_Position = projMatrix*viewMatrix*worldPos;
+    vec4 position = vec4(Position, 1, 1);
+    gl_Position = field_pipeline.Proj*field_pipeline.View*field_pipeline.World*position;
     fsin_Color = Color;
 }

@@ -13,16 +13,17 @@ struct PixelInput
     float2 UV;
 };
 
-struct projView {
+struct transformPipeline {
     float4x4 View;
     float4x4 Proj;
+    float4x4 World;
 };
 
-vertex PixelInput VS(VertexInput input[[stage_in]],constant projView &pj [[ buffer(1) ]])
+vertex PixelInput VS(VertexInput input[[stage_in]],constant transformPipeline &pipeline [[ buffer(1) ]])
 {
     PixelInput output;
     float3 position = input.Position;
-    float4 positionCS = pj.Proj*pj.View*float4(position, 1);
+    float4 positionCS = pipeline.Proj*pipeline.View*float4(position, 1);
     output.Position = positionCS;
     output.UV = input.UV;
     return output;
