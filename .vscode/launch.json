@@ -29,6 +29,18 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
+            "name": ".NET Core Launch (offscreen)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build offscreen",
+            "program": "${workspaceFolder}/offscreen/bin/Debug/netcoreapp2.0/offscreen.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/offscreen",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
             "name": ".NET Core Attach",
             "type": "coreclr",
             "request": "attach",

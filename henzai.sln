@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Henzai", "Henzai\Henzai.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "textured_cube", "textured_cube\textured_cube.csproj", "{8EBC46D1-713A-4DBD-888C-C0486C525028}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "offscreen", "offscreen\offscreen.csproj", "{37554F31-5429-45C4-A87C-9E6EF96CD863}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,5 +60,17 @@ Global
 		{8EBC46D1-713A-4DBD-888C-C0486C525028}.Release|x64.Build.0 = Release|x64
 		{8EBC46D1-713A-4DBD-888C-C0486C525028}.Release|x86.ActiveCfg = Release|x86
 		{8EBC46D1-713A-4DBD-888C-C0486C525028}.Release|x86.Build.0 = Release|x86
+		{37554F31-5429-45C4-A87C-9E6EF96CD863}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37554F31-5429-45C4-A87C-9E6EF96CD863}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37554F31-5429-45C4-A87C-9E6EF96CD863}.Debug|x64.ActiveCfg = Debug|x64
+		{37554F31-5429-45C4-A87C-9E6EF96CD863}.Debug|x64.Build.0 = Debug|x64
+		{37554F31-5429-45C4-A87C-9E6EF96CD863}.Debug|x86.ActiveCfg = Debug|x86
+		{37554F31-5429-45C4-A87C-9E6EF96CD863}.Debug|x86.Build.0 = Debug|x86
+		{37554F31-5429-45C4-A87C-9E6EF96CD863}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37554F31-5429-45C4-A87C-9E6EF96CD863}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37554F31-5429-45C4-A87C-9E6EF96CD863}.Release|x64.ActiveCfg = Release|x64
+		{37554F31-5429-45C4-A87C-9E6EF96CD863}.Release|x64.Build.0 = Release|x64
+		{37554F31-5429-45C4-A87C-9E6EF96CD863}.Release|x86.ActiveCfg = Release|x86
+		{37554F31-5429-45C4-A87C-9E6EF96CD863}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 EndGlobal

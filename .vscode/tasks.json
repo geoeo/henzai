@@ -24,6 +24,16 @@
             "problemMatcher": "$msCompile"
         },
         {
+            "label": "build offscreen",
+            "command": "dotnet build offscreen/offscreen.csproj",
+            "type": "shell",
+            "group": "build",
+            "presentation": {
+                "reveal": "silent"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
             "label": "compile metal shaders (getting_started)",
             "type": "shell",
             "group": "build",
@@ -55,6 +65,13 @@
             "type": "shell",
             "group": "build",
             "command": "dotnet run --project textured_cube/",
+            "problemMatcher":"$msCompile"
+        },
+        {
+            "label": "run offscreen",
+            "type": "shell",
+            "group": "build",
+            "command": "dotnet run --project offscreen/",
             "problemMatcher":"$msCompile"
         }
     ]

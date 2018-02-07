@@ -18,7 +18,7 @@ namespace getting_started
                 SyncToVerticalBlank = false
 
             };
-            scene.Run("Getting Started",renderResolution,windowSize,gdOptions,GraphicsBackend.OpenGL,false);
+            scene.Run("Getting Started",renderResolution,windowSize,gdOptions,GraphicsBackend.OpenGL,true);
         }
     }
 }
