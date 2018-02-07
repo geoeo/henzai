@@ -19,7 +19,7 @@ namespace Henzai
             }
 
             string entryPoint = stage == ShaderStages.Vertex ? "VS" : "FS";
-            string shaderName = String.IsNullOrEmpty(name) ? stage.ToString() : name;
+            string shaderName =  String.Concat(name,stage.ToString());
 
             string path = Path.Combine(System.AppContext.BaseDirectory,"Shaders",$"{shaderName}.{extension}");
             byte[] shaderBytes = File.ReadAllBytes(path);

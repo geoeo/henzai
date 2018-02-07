@@ -87,8 +87,8 @@ namespace textured_cube
                     new VertexElementDescription("UV",VertexElementSemantic.TextureCoordinate,VertexElementFormat.Float2)
                 );
 
-            _vertexShaderCube = IO.LoadShader(string.Empty,ShaderStages.Vertex,_graphicsDevice);
-            _fragmentShaderCube = IO.LoadShader(string.Empty,ShaderStages.Fragment,_graphicsDevice);
+            _vertexShaderCube = IO.LoadShader("Cube",ShaderStages.Vertex,_graphicsDevice);
+            _fragmentShaderCube = IO.LoadShader("Cube",ShaderStages.Fragment,_graphicsDevice);
 
             GraphicsPipelineDescription pipelineDescription = new GraphicsPipelineDescription(){
                 BlendState = BlendStateDescription.SingleOverrideBlend,
