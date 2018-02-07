@@ -14,6 +14,8 @@ namespace textured_cube
 {
     public class Scene : Renderable
     {
+        private Camera _staticCamera;
+
         private CommandList _commandList;
         private Framebuffer _offScreenFBO;
         private ResourceFactory _factory;
@@ -24,6 +26,7 @@ namespace textured_cube
         private Shader _vertexShaderCube;
         private Shader _fragmentShaderCube;
         private Pipeline _pipelineCube;
+        private Pipeline _pipelineCubeOffscreen;
 
         private DeviceBuffer _indexBufferQuad;
 
@@ -32,6 +35,7 @@ namespace textured_cube
         private Shader _vertexShaderColouredQuad;
         private Shader _fragmentShaderColouredQuad;
         private Pipeline _pipelineColouredQuad;
+        private Pipeline _pipelineColouredQuadOffscreen;
 
         private Matrix4x4 _worldTransTexturedQuad;
         private DeviceBuffer _vertexBufferTexturedQuad;
@@ -40,23 +44,27 @@ namespace textured_cube
         private Pipeline _pipelineTexturedQuad;
 
         private ResourceSet _textureNameResourceSet;
+
+        private ResourceLayout _offscreenLayout;
         private ResourceSet _textureOffscreenResourceSet;
+        private TextureView _offscreenTextureView;
 
         private DeviceBuffer _transformationPipelineBuffer;
         private ResourceSet _transformationPipelineResourceSet;
         private ResourceLayout _transformationPipelineResourceLayout;
 
-        private DeviceBuffer _worldTransformBuffer;
-        private ResourceSet _worldTransformResourceSet;
-        private ResourceLayout _worldTransformResourceLayout;
 
-        override protected List<IDisposable> CreateResources()
-        {
+        override protected List<IDisposable> CreateResources(){
+
+            _staticCamera = new Camera(_renderResolution.Horizontal,_renderResolution.Vertical);
+
             _factory = _graphicsDevice.ResourceFactory;
 
             _commandList = _factory.CreateCommandList();
 
             List<IDisposable> resources = new List<IDisposable>(){_commandList};
+
+            resources.AddRange(createOffscreenFBO());
 
             resources.AddRange(createTransformationPipelineUniform());
 
@@ -67,6 +75,38 @@ namespace textured_cube
             resources.AddRange(createTexturedQuadResources());
 
             return resources;
+
+        }
+
+        private List<IDisposable> createOffscreenFBO(){
+            Texture offscreenTexture = _factory.CreateTexture(TextureDescription.Texture2D(
+                    _renderResolution.Horizontal.ToUnsigned(),
+                    _renderResolution.Vertical.ToUnsigned(),1,1,
+                    PixelFormat.B8_G8_R8_A8_UNorm,
+                    TextureUsage.RenderTarget | TextureUsage.Sampled));
+            Texture offscreenDepth = _factory.CreateTexture(TextureDescription.Texture2D(
+                _renderResolution.Horizontal.ToUnsigned(),
+                _renderResolution.Vertical.ToUnsigned(),
+                1,1,
+                PixelFormat.R16_UNorm,TextureUsage.DepthStencil));
+
+            _offscreenTextureView = _factory.CreateTextureView(offscreenTexture);
+            _offScreenFBO = _factory.CreateFramebuffer(new FramebufferDescription(offscreenDepth,offscreenTexture));
+
+            _offscreenLayout = _factory.CreateResourceLayout(new ResourceLayoutDescription(
+                new ResourceLayoutElementDescription("ColourTexture",ResourceKind.TextureReadOnly,ShaderStages.Fragment),
+                new ResourceLayoutElementDescription("ColourSampler",ResourceKind.Sampler,ShaderStages.Fragment)
+            ));
+
+            _textureOffscreenResourceSet = _factory.CreateResourceSet(new ResourceSetDescription(_offscreenLayout,_offscreenTextureView,_graphicsDevice.LinearSampler));
+
+            return new List<IDisposable>()
+            {
+                _offscreenTextureView,
+                _offScreenFBO,
+                _offscreenLayout,
+                _textureOffscreenResourceSet
+            };
 
         }
 
@@ -84,7 +124,7 @@ namespace textured_cube
             
             _transformationPipelineResourceSet = _factory.CreateResourceSet(resourceSetDescription);
 
-            _graphicsDevice.UpdateBuffer(_transformationPipelineBuffer,0,_camera.ViewMatrix);
+            //_graphicsDevice.UpdateBuffer(_transformationPipelineBuffer,0,_camera.ViewMatrix);
             _graphicsDevice.UpdateBuffer(_transformationPipelineBuffer,64,_camera.ProjectionMatrix);
 
             return new List<IDisposable>()
@@ -159,6 +199,27 @@ namespace textured_cube
 
             _pipelineCube = _factory.CreateGraphicsPipeline(pipelineDescription);
 
+            pipelineDescription = new GraphicsPipelineDescription(){
+                BlendState = BlendStateDescription.SingleOverrideBlend,
+                DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
+                RasterizerState = new RasterizerStateDescription(
+                    cullMode: FaceCullMode.Back,
+                    fillMode: PolygonFillMode.Solid,
+                    frontFace: FrontFace.Clockwise,
+                    depthClipEnabled: true,
+                    scissorTestEnabled: false
+                ),
+                PrimitiveTopology = PrimitiveTopology.TriangleList,
+                ResourceLayouts = new ResourceLayout[] {_transformationPipelineResourceLayout,textureLayout},
+                ShaderSet = new ShaderSetDescription(
+                    vertexLayouts: new VertexLayoutDescription[] {vertexLayout},
+                    shaders: new Shader[] {_vertexShaderCube,_fragmentShaderCube}
+                ),
+                Outputs = _offScreenFBO.OutputDescription
+            };
+
+            _pipelineCubeOffscreen = _factory.CreateGraphicsPipeline(pipelineDescription);
+
             return new List<IDisposable>()
             {
                 _vertexBufferCube,
@@ -213,6 +274,27 @@ namespace textured_cube
 
             _pipelineColouredQuad = _factory.CreateGraphicsPipeline(pipelineDescription);
 
+            pipelineDescription = new GraphicsPipelineDescription(){
+                BlendState = BlendStateDescription.SingleOverrideBlend,
+                DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
+                RasterizerState = new RasterizerStateDescription(
+                    cullMode: FaceCullMode.Back,
+                    fillMode: PolygonFillMode.Solid,
+                    frontFace: FrontFace.Clockwise,
+                    depthClipEnabled: true,
+                    scissorTestEnabled: false
+                ),
+                PrimitiveTopology = PrimitiveTopology.TriangleStrip,
+                ResourceLayouts = new ResourceLayout[] {_transformationPipelineResourceLayout},
+                ShaderSet = new ShaderSetDescription(
+                    vertexLayouts: new VertexLayoutDescription[] {vertexLayout},
+                    shaders: new Shader[] {_vertexShaderColouredQuad,_fragmentShaderColouredQuad}
+                ),
+                Outputs = _offScreenFBO.OutputDescription
+            };
+
+            _pipelineColouredQuadOffscreen = _factory.CreateGraphicsPipeline(pipelineDescription);
+
             return new List<IDisposable>()
             {
                 _vertexBufferColouredQuad,
@@ -225,21 +307,6 @@ namespace textured_cube
         }
 
         private IList<IDisposable> createTexturedQuadResources(){
-
-            ImageSharpTexture NameImage = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "Textures", "Name.png"));
-            Texture quadTexture = NameImage.CreateDeviceTexture(_graphicsDevice, _factory);
-            TextureView quadTextureView = _factory.CreateTextureView(quadTexture);
-
-            ResourceLayout textureLayout = _factory.CreateResourceLayout(
-                new ResourceLayoutDescription(
-                    new ResourceLayoutElementDescription("QuadTexture", ResourceKind.TextureReadOnly, ShaderStages.Fragment),
-                    new ResourceLayoutElementDescription("QuadSampler", ResourceKind.Sampler, ShaderStages.Fragment)));
-
-            _textureOffscreenResourceSet = _factory.CreateResourceSet(new ResourceSetDescription(
-                textureLayout,
-                quadTextureView,
-                _graphicsDevice.LinearSampler));
-
 
             TexturedQuad quad = GeometryFactory.generateTexturedQuad();
             if(_indexBufferQuad == null)
@@ -270,7 +337,7 @@ namespace textured_cube
                     scissorTestEnabled: false
                 ),
                 PrimitiveTopology = PrimitiveTopology.TriangleStrip,
-                ResourceLayouts = new ResourceLayout[] {_transformationPipelineResourceLayout,textureLayout},
+                ResourceLayouts = new ResourceLayout[] {_transformationPipelineResourceLayout,_offscreenLayout},
                 ShaderSet = new ShaderSetDescription(
                     vertexLayouts: new VertexLayoutDescription[] {vertexLayout},
                     shaders: new Shader[] {_vertexShaderTexturedQuad,_fragmentShaderTexturedQuad}
@@ -296,6 +363,40 @@ namespace textured_cube
         override protected void Draw(){
             _commandList.Begin();
             
+            _commandList.SetFramebuffer(_offScreenFBO);
+            _commandList.SetFullViewports();
+            _commandList.ClearColorTarget(0,RgbaFloat.White);
+            _commandList.ClearDepthStencil(1f);
+
+            _commandList.SetPipeline(_pipelineCubeOffscreen);
+            _commandList.SetVertexBuffer(0,_vertexBufferCube);
+            _commandList.SetIndexBuffer(_indexBufferCube,IndexFormat.UInt16);
+            _commandList.UpdateBuffer(_transformationPipelineBuffer,0,_staticCamera.ViewMatrix);
+            _commandList.UpdateBuffer(_transformationPipelineBuffer,128,_worldTransCube);
+            _commandList.SetGraphicsResourceSet(0,_transformationPipelineResourceSet); // Always after SetPipeline
+            _commandList.SetGraphicsResourceSet(1,_textureNameResourceSet); // Always after SetPipeline
+            _commandList.DrawIndexed(
+                indexCount: 36,
+                instanceCount: 1,
+                indexStart: 0,
+                vertexOffset: 0,
+                instanceStart: 0
+            );
+
+            _commandList.SetPipeline(_pipelineColouredQuadOffscreen);
+            _commandList.SetVertexBuffer(0,_vertexBufferColouredQuad);
+            _commandList.SetIndexBuffer(_indexBufferQuad,IndexFormat.UInt16);
+            _commandList.UpdateBuffer(_transformationPipelineBuffer,0,_staticCamera.ViewMatrix);
+            _commandList.UpdateBuffer(_transformationPipelineBuffer,128,_worldTransColouredQuad);
+            _commandList.SetGraphicsResourceSet(0,_transformationPipelineResourceSet);
+            _commandList.DrawIndexed(
+                indexCount: 4,
+                instanceCount: 1,
+                indexStart: 0,
+                vertexOffset: 0,
+                instanceStart: 0
+            );
+
             _commandList.SetFramebuffer(_graphicsDevice.SwapchainFramebuffer);
             _commandList.SetFullViewports();
             _commandList.ClearColorTarget(0,RgbaFloat.White);
@@ -336,7 +437,7 @@ namespace textured_cube
             _commandList.UpdateBuffer(_transformationPipelineBuffer,0,_camera.ViewMatrix);
             _commandList.UpdateBuffer(_transformationPipelineBuffer,128,_worldTransTexturedQuad);
             _commandList.SetGraphicsResourceSet(0,_transformationPipelineResourceSet);
-            _commandList.SetGraphicsResourceSet(1,_textureNameResourceSet); 
+            _commandList.SetGraphicsResourceSet(1,_textureOffscreenResourceSet); 
             _commandList.DrawIndexed(
                 indexCount: 4,
                 instanceCount: 1,
