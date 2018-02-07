@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 using System.Collections.Generic;
 using Veldrid;
 using Veldrid.StartupUtilities;
@@ -24,7 +25,7 @@ namespace getting_started
         private ResourceSet _resourceSet;
         private ResourceLayout _resourceLayout;
 
-        override protected void CreateResources()
+        override protected List<IDisposable> CreateResources()
         {
             ResourceFactory _factory = _graphicsDevice.ResourceFactory;
 
@@ -107,6 +108,20 @@ namespace getting_started
 
             _commandList = _factory.CreateCommandList();
 
+            return new List<IDisposable>()
+            {
+                _commandList, 
+                _pipeline,
+                _vertexBuffer,
+                _vertexShader,
+                _fragmentShader,
+                _indexBuffer,
+                _xOffsetBuffer,
+                _cameraProjViewBuffer,
+                _resourceLayout
+                ,_resourceSet 
+            };
+
         }
 
         override protected void Draw(){
@@ -132,19 +147,6 @@ namespace getting_started
             _graphicsDevice.SubmitCommands(_commandList);
             _graphicsDevice.SwapBuffers();
         }
-
-        override protected void DisposeResources(){
-            _pipeline.Dispose();
-            _vertexShader.Dispose();
-            _fragmentShader.Dispose();
-            _commandList.Dispose();
-            _vertexBuffer.Dispose();
-            _indexBuffer.Dispose();
-            _xOffsetBuffer.Dispose();
-            _cameraProjViewBuffer.Dispose();
-            _graphicsDevice.Dispose();
-            _resourceLayout.Dispose();
-            _resourceSet.Dispose();
-        }
+        
     }
 }

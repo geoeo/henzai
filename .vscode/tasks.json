@@ -54,6 +54,16 @@
             "problemMatcher": "$msCompile"
         },
         {
+            "label": "compile metal shaders (offscreen)",
+            "type": "shell",
+            "group": "build",
+            "command": "${cwd}/compileMetal.sh",
+            "args": [
+                "${cwd}/offscreen/Shaders/"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
             "label": "run getting started",
             "type": "shell",
             "group": "build",

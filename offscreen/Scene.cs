@@ -31,25 +31,34 @@ namespace textured_cube
         private Pipeline _pipelineQuad;
 
         private ResourceSet _textureResourceSet;
+
         private DeviceBuffer _cameraProjViewBuffer;
-        private ResourceSet _uniformCameraresourceSet;
+        private ResourceSet _uniformCameraResourceSet;
         private ResourceLayout _uniformCameraResourceLayout;
 
-        override protected void CreateResources()
+        private DeviceBuffer _worldTransformBuffer;
+        private ResourceSet _worldTransformResourceSet;
+        private ResourceLayout _worldTransformResourceLayout;
+
+        override protected List<IDisposable> CreateResources()
         {
             _factory = _graphicsDevice.ResourceFactory;
 
-            createCameraUniform();
-
-            createCubeResources();
-
-            createQuadResources();
-
             _commandList = _factory.CreateCommandList();
+
+            List<IDisposable> resources = new List<IDisposable>(){_commandList};
+
+            resources.AddRange(createCameraUniform());
+
+            resources.AddRange(createCubeResources());
+
+            resources.AddRange(createQuadResources());
+
+            return resources;
 
         }
 
-        private void createCameraUniform(){
+        private List<IDisposable> createCameraUniform(){
 
             _cameraProjViewBuffer = _factory.CreateBuffer(new BufferDescription(128,BufferUsage.UniformBuffer | BufferUsage.Dynamic));
 
@@ -61,13 +70,21 @@ namespace textured_cube
             _uniformCameraResourceLayout = _factory.CreateResourceLayout(resourceLayoutDescription);
             ResourceSetDescription resourceSetDescription = new ResourceSetDescription(_uniformCameraResourceLayout,bindableResources);
             
-            _uniformCameraresourceSet = _factory.CreateResourceSet(resourceSetDescription);
+            _uniformCameraResourceSet = _factory.CreateResourceSet(resourceSetDescription);
 
             _graphicsDevice.UpdateBuffer(_cameraProjViewBuffer,0,_camera.ViewMatrix);
             _graphicsDevice.UpdateBuffer(_cameraProjViewBuffer,64,_camera.ProjectionMatrix);
+
+            return new List<IDisposable>()
+            {
+                _cameraProjViewBuffer,
+                _uniformCameraResourceLayout,
+                _uniformCameraResourceSet
+
+            };
         }
 
-        private void createCubeResources(){
+        private List<IDisposable> createCubeResources(){
 
             ImageSharpTexture NameImage = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "Textures", "Name.png"));
             Texture cubeTexture = NameImage.CreateDeviceTexture(_graphicsDevice, _factory);
@@ -86,17 +103,17 @@ namespace textured_cube
             TexturedCube texturedCube 
                 = GeometryFactory.generateTexturedCube();
 
-            ushort[] quadIndicies = GeometryFactory.generateCubeIndicies_TriangleList_CW();
+            ushort[] cubeIndicies = GeometryFactory.generateCubeIndicies_TriangleList_CW();
 
             // declare (VBO) buffers
             _vertexBufferCube 
                 = _factory.CreateBuffer(new BufferDescription(texturedCube.vertices.LengthUnsigned() * VertexPositionTexture.SizeInBytes, BufferUsage.VertexBuffer));
             _indexBufferCube 
-                = _factory.CreateBuffer(new BufferDescription(quadIndicies.LengthUnsigned()*sizeof(ushort),BufferUsage.IndexBuffer));
+                = _factory.CreateBuffer(new BufferDescription(cubeIndicies.LengthUnsigned()*sizeof(ushort),BufferUsage.IndexBuffer));
 
             // fill buffers with data
             _graphicsDevice.UpdateBuffer(_vertexBufferCube,0,texturedCube.vertices);
-            _graphicsDevice.UpdateBuffer(_indexBufferCube,0,quadIndicies);
+            _graphicsDevice.UpdateBuffer(_indexBufferCube,0,cubeIndicies);
 
             VertexLayoutDescription vertexLayout 
                 = new VertexLayoutDescription(
@@ -127,11 +144,68 @@ namespace textured_cube
             };
 
             _pipelineCube = _factory.CreateGraphicsPipeline(pipelineDescription);
+
+            return new List<IDisposable>()
+            {
+                _vertexBufferCube,
+                _indexBufferCube,
+                _textureResourceSet,
+                _vertexShaderCube,
+                _fragmentShaderCube,
+                _pipelineCube
+            };
         }
 
-        private void createQuadResources(){
+        private List<IDisposable> createQuadResources(){
 
             ColouredQuad quad = GeometryFactory.generateColouredQuad(RgbaFloat.Red, RgbaFloat.Blue,RgbaFloat.Green,RgbaFloat.Orange);
+            ushort[] quadIndicies = GeometryFactory.generateQuadIndicies_TriangleStrip_CW();
+
+            _vertexBufferQuad = _factory.CreateBuffer(new BufferDescription(quad.vertecies.LengthUnsigned()* VertexPositionColour.SizeInBytes, BufferUsage.VertexBuffer));
+            _indexBufferQuad = _factory.CreateBuffer(new BufferDescription(quadIndicies.LengthUnsigned()* sizeof(ushort), BufferUsage.IndexBuffer));
+
+            _graphicsDevice.UpdateBuffer(_vertexBufferQuad,0,quad.vertecies);
+            _graphicsDevice.UpdateBuffer(_indexBufferQuad,0,quadIndicies);
+
+            VertexLayoutDescription vertexLayout 
+                = new VertexLayoutDescription(
+                    new VertexElementDescription("Position",VertexElementSemantic.Position,VertexElementFormat.Float2),
+                    new VertexElementDescription("Colour",VertexElementSemantic.Color,VertexElementFormat.Float4)
+                );
+
+            _vertexShaderQuad = IO.LoadShader("QuadColour",ShaderStages.Vertex,_graphicsDevice);
+            _fragmentShaderQuad = IO.LoadShader("QuadColour",ShaderStages.Fragment,_graphicsDevice);
+
+                        GraphicsPipelineDescription pipelineDescription = new GraphicsPipelineDescription(){
+                BlendState = BlendStateDescription.SingleOverrideBlend,
+                DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
+                RasterizerState = new RasterizerStateDescription(
+                    cullMode: FaceCullMode.Back,
+                    fillMode: PolygonFillMode.Solid,
+                    frontFace: FrontFace.Clockwise,
+                    depthClipEnabled: true,
+                    scissorTestEnabled: false
+                ),
+                PrimitiveTopology = PrimitiveTopology.TriangleStrip,
+                ResourceLayouts = new ResourceLayout[] {_uniformCameraResourceLayout},
+                ShaderSet = new ShaderSetDescription(
+                    vertexLayouts: new VertexLayoutDescription[] {vertexLayout},
+                    shaders: new Shader[] {_vertexShaderQuad,_fragmentShaderQuad}
+                ),
+                Outputs = _graphicsDevice.SwapchainFramebuffer.OutputDescription
+            };
+
+            _pipelineQuad = _factory.CreateGraphicsPipeline(pipelineDescription);
+
+            return new List<IDisposable>()
+            {
+                _vertexBufferQuad,
+                _indexBufferQuad,
+                _vertexShaderQuad,
+                _fragmentShaderQuad,
+                _pipelineQuad
+            };
+
 
 
         }
@@ -148,10 +222,24 @@ namespace textured_cube
             _commandList.SetIndexBuffer(_indexBufferCube,IndexFormat.UInt16);
             _commandList.UpdateBuffer(_cameraProjViewBuffer,0,_camera.ViewMatrix);
             _commandList.UpdateBuffer(_cameraProjViewBuffer,64,_camera.ProjectionMatrix);
-            _commandList.SetGraphicsResourceSet(0,_uniformCameraresourceSet); // Always after SetPipeline
+            _commandList.SetGraphicsResourceSet(0,_uniformCameraResourceSet); // Always after SetPipeline
             _commandList.SetGraphicsResourceSet(1,_textureResourceSet); // Always after SetPipeline
             _commandList.DrawIndexed(
                 indexCount: 36,
+                instanceCount: 1,
+                indexStart: 0,
+                vertexOffset: 0,
+                instanceStart: 0
+            );
+
+            _commandList.SetPipeline(_pipelineQuad);
+            _commandList.SetVertexBuffer(0,_vertexBufferQuad);
+            _commandList.SetIndexBuffer(_indexBufferQuad,IndexFormat.UInt16);
+            _commandList.UpdateBuffer(_cameraProjViewBuffer,0,_camera.ViewMatrix);
+            _commandList.UpdateBuffer(_cameraProjViewBuffer,64,_camera.ProjectionMatrix);
+            _commandList.SetGraphicsResourceSet(0,_uniformCameraResourceSet);
+            _commandList.DrawIndexed(
+                indexCount: 4,
                 instanceCount: 1,
                 indexStart: 0,
                 vertexOffset: 0,
@@ -161,19 +249,6 @@ namespace textured_cube
             _commandList.End();
             _graphicsDevice.SubmitCommands(_commandList);
             _graphicsDevice.SwapBuffers();
-        }
-
-        override protected void DisposeResources(){
-            _pipelineCube.Dispose();
-            _vertexShaderCube.Dispose();
-            _fragmentShaderCube.Dispose();
-            _commandList.Dispose();
-            _vertexBufferCube.Dispose();
-            _indexBufferCube.Dispose();
-            _cameraProjViewBuffer.Dispose();
-            _graphicsDevice.Dispose();
-            _uniformCameraResourceLayout.Dispose();
-            _uniformCameraresourceSet.Dispose();
         }
     }
 }

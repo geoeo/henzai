@@ -21,11 +21,11 @@ namespace textured_cube
         private Shader _fragmentShader;
         private Pipeline _pipeline;
         private DeviceBuffer _cameraProjViewBuffer;
-        private ResourceSet _resourceSet;
+        private ResourceSet _cameraResourceSet;
         private ResourceSet _textureResourceSet;
         private ResourceLayout _resourceLayout;
 
-        override protected void CreateResources()
+        override protected List<IDisposable> CreateResources()
         {
             ResourceFactory _factory = _graphicsDevice.ResourceFactory;
 
@@ -39,7 +39,7 @@ namespace textured_cube
             _resourceLayout = _factory.CreateResourceLayout(resourceLayoutDescription);
             ResourceSetDescription resourceSetDescription = new ResourceSetDescription(_resourceLayout,bindableResources);
             
-            _resourceSet = _factory.CreateResourceSet(resourceSetDescription);
+            _cameraResourceSet = _factory.CreateResourceSet(resourceSetDescription);
 
             ImageSharpTexture NameImage = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "Textures", "Name.png"));
             Texture cubeTexture = NameImage.CreateDeviceTexture(_graphicsDevice, _factory);
@@ -58,17 +58,17 @@ namespace textured_cube
             TexturedCube texturedCube 
                 = GeometryFactory.generateTexturedCube();
 
-            ushort[] quadIndicies = GeometryFactory.generateCubeIndicies_TriangleList_CW();
+            ushort[] cubeIndicies = GeometryFactory.generateCubeIndicies_TriangleList_CW();
 
             // declare (VBO) buffers
             _vertexBuffer 
                 = _factory.CreateBuffer(new BufferDescription(texturedCube.vertices.LengthUnsigned() * VertexPositionTexture.SizeInBytes, BufferUsage.VertexBuffer));
             _indexBuffer 
-                = _factory.CreateBuffer(new BufferDescription(quadIndicies.LengthUnsigned()*sizeof(ushort),BufferUsage.IndexBuffer));
+                = _factory.CreateBuffer(new BufferDescription(cubeIndicies.LengthUnsigned()*sizeof(ushort),BufferUsage.IndexBuffer));
 
             // fill buffers with data
             _graphicsDevice.UpdateBuffer(_vertexBuffer,0,texturedCube.vertices);
-            _graphicsDevice.UpdateBuffer(_indexBuffer,0,quadIndicies);
+            _graphicsDevice.UpdateBuffer(_indexBuffer,0,cubeIndicies);
             _graphicsDevice.UpdateBuffer(_cameraProjViewBuffer,0,_camera.ViewMatrix);
             _graphicsDevice.UpdateBuffer(_cameraProjViewBuffer,64,_camera.ProjectionMatrix);
 
@@ -104,6 +104,20 @@ namespace textured_cube
 
             _commandList = _factory.CreateCommandList();
 
+            return new List<IDisposable>()
+            {
+                _commandList,
+                _pipeline,
+                _vertexBuffer,
+                _vertexShader,
+                _fragmentShader,
+                _indexBuffer,
+                _cameraProjViewBuffer,
+                _cameraResourceSet,
+                _textureResourceSet,
+                _resourceLayout
+            };
+
         }
 
         override protected void Draw(){
@@ -117,7 +131,7 @@ namespace textured_cube
             _commandList.SetIndexBuffer(_indexBuffer,IndexFormat.UInt16);
             _commandList.UpdateBuffer(_cameraProjViewBuffer,0,_camera.ViewMatrix);
             _commandList.UpdateBuffer(_cameraProjViewBuffer,64,_camera.ProjectionMatrix);
-            _commandList.SetGraphicsResourceSet(0,_resourceSet); // Always after SetPipeline
+            _commandList.SetGraphicsResourceSet(0,_cameraResourceSet); // Always after SetPipeline
             _commandList.SetGraphicsResourceSet(1,_textureResourceSet); // Always after SetPipeline
             _commandList.DrawIndexed(
                 indexCount: 36,
@@ -130,18 +144,6 @@ namespace textured_cube
             _graphicsDevice.SubmitCommands(_commandList);
             _graphicsDevice.SwapBuffers();
         }
-
-        override protected void DisposeResources(){
-            _pipeline.Dispose();
-            _vertexShader.Dispose();
-            _fragmentShader.Dispose();
-            _commandList.Dispose();
-            _vertexBuffer.Dispose();
-            _indexBuffer.Dispose();
-            _cameraProjViewBuffer.Dispose();
-            _graphicsDevice.Dispose();
-            _resourceLayout.Dispose();
-            _resourceSet.Dispose();
-        }
+        
     }
 }

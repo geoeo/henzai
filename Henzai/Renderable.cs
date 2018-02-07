@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Veldrid;
 using Veldrid.StartupUtilities;
 using Veldrid.Sdl2;
@@ -7,6 +8,7 @@ namespace Henzai
 {
     /// <summary>
     /// A boilerplate for renderable scenes.
+    /// Every disposable resource should be returned by its respective method
     /// </summary>
     public abstract class Renderable
     {
@@ -14,6 +16,10 @@ namespace Henzai
         public Camera _camera {get; private set;} 
         protected GraphicsDevice _graphicsDevice {get; private set;}
         protected Resolution _renderResolution;
+        /// <summary>
+        /// Holds all created resources which implement IDisposable
+        /// </summary>
+        private List<IDisposable> _sceneResources;
 
         /// <summary>
         /// Sets up windowing and keyboard input
@@ -24,6 +30,7 @@ namespace Henzai
         {
 
             _renderResolution = renderResolution;
+            _sceneResources = new List<IDisposable>();
 
             WindowCreateInfo windowCI = new WindowCreateInfo()
             {
@@ -42,10 +49,11 @@ namespace Henzai
             else
                 _graphicsDevice = VeldridStartup.CreateGraphicsDevice(window,graphicsDeviceOptions);
 
+            _sceneResources.Add(_graphicsDevice);
 
             window.Title = $"{title} / {_graphicsDevice.BackendType.ToString()}";
 
-            CreateResources();
+            _sceneResources.AddRange(CreateResources());
 
             while (window.Exists)
             {
@@ -71,11 +79,14 @@ namespace Henzai
         /// <summary>
         /// Creates resources used to render e.g. Buffers, Textures etc.
         /// </summary>
-        abstract protected void CreateResources();
+        abstract protected List<IDisposable> CreateResources();
 
         /// <summary>
-        /// Disposes any created resources
+        /// Disposes of all elements in _sceneResources
         /// </summary>
-        abstract protected void DisposeResources();
+        virtual protected void DisposeResources(){
+            foreach(IDisposable resource in _sceneResources)
+                resource.Dispose();              
+        }
     }
 }
