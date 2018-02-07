@@ -74,6 +74,19 @@ namespace Henzai.Geometry
             return new ColouredQuad(quadVerticies);
         }
 
+        public static TexturedQuad generateTexturedQuad()
+        {
+
+            VertexPositionTexture[] quadVerticies = {
+                new VertexPositionTexture(new Vector3(-1.0f,1.0f,1.0f),new Vector2(0,0)),
+                new VertexPositionTexture(new Vector3(1.0f,1.0f,1.0f),new Vector2(1,0)),
+                new VertexPositionTexture(new Vector3(-1.0f,-1.0f,1.0f),new Vector2(0,1)),
+                new VertexPositionTexture(new Vector3(1.0f,-1.0f,1.0f),new Vector2(1,1))
+            };
+
+            return new TexturedQuad(quadVerticies);
+        }
+
         public static ushort[] generateQuadIndicies_TriangleStrip_CW()
         {
             return new ushort[]{ 0, 1, 2, 3 };
