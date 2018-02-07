@@ -23,5 +23,7 @@ void main()
     mat4 viewMatrix = field_projView.View;
     mat4 projMatrix = field_projView.Proj;
     gl_Position = projMatrix*viewMatrix*worldPos;
+    // composensate for D3D projection
+    gl_Position.z = 2.0*gl_Position.z -gl_Position.w;
     fsin_UV = UV;
 }
