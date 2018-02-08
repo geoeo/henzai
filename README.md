@@ -9,6 +9,7 @@ Henzai (遍在) meaning ubiquitous, is a cross platform 3D rendering engine usin
 * https://mellinoe.github.io/veldrid-docs/
 * https://www.scratchapixel.com
 * http://dev.theomader.com/
+* https://fgiesen.wordpress.com/2011/07/09/a-trip-through-the-graphics-pipeline-2011-index/
 
 ### OpenGL
 * https://learnopengl.com
