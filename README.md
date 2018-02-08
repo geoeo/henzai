@@ -20,6 +20,7 @@ Henzai (遍在) meaning ubiquitous, is a cross platform 3D rendering engine usin
 * http://www.lighthouse3d.com/tutorials/
 * http://www.opengl-tutorial.org/
 * http://anki3d.org/features/
+* https://www.khronos.org/opengl/wiki/Vertex_Transformation
 
 ### Metal
 * https://developer.apple.com/metal/
@@ -29,9 +30,14 @@ Henzai (遍在) meaning ubiquitous, is a cross platform 3D rendering engine usin
 * http://tech.metail.com/metal-swift-introduction/
 * http://metalbyexample.com/introduction-to-compute/
 * https://github.com/FlexMonkey/ParticleLab
+* http://metalbyexample.com/linear-algebra/ // TLDR: Left-Handed Coordinate System
 
 ### Vulkan
 * https://www.saschawillems.de/?p=1669
+* https://matthewwellings.com/blog/the-new-vulkan-coordinate-system/
+
+### DirectX
+* https://msdn.microsoft.com/en-us/library/windows/desktop/bb324490(v=vs.85).aspx
 
 ### System Programming
 * https://www.developerfusion.com/article/84519/mastering-structs-in-c/
