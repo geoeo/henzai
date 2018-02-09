@@ -26,5 +26,9 @@ namespace Henzai.Extensions
             return (uint)val;
 
         }
+
+        public static float ToFloat(this int val){
+            return (float)val;
+        }
     }
 }

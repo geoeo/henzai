@@ -20,6 +20,18 @@ namespace Henzai
         /// Holds all created resources which implement IDisposable
         /// </summary>
         private List<IDisposable> _sceneResources;
+        /// <summary>
+        /// Bind Actions that have to be executed prior to entering the render loop
+        /// </summary>
+        protected event Action PreRenderLoop;
+        /// <summary>
+        /// Bind Actions that have to be executed prior to every draw call
+        /// </summary>
+        protected event Action PreDraw;
+        /// <summary>
+        /// Bind Actions that have to be executed after every draw call
+        /// </summary>
+        protected event Action PostDraw;
 
         /// <summary>
         /// Sets up windowing and keyboard input
@@ -54,6 +66,7 @@ namespace Henzai
 
             _sceneResources.AddRange(CreateResources());
 
+            PreRenderLoop?.Invoke();
             while (window.Exists)
             {
                 InputSnapshot inputSnapshot = window.PumpEvents();
@@ -62,8 +75,11 @@ namespace Henzai
                 float deltaSeconds = 1/60f;
                 _camera.Update(deltaSeconds);
 
-                if(window.Exists)
+                if(window.Exists){
+                    PreDraw?.Invoke();
                     Draw();
+                    PostDraw?.Invoke();
+                }
             }
 
             DisposeResources();

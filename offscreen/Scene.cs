@@ -53,6 +53,10 @@ namespace textured_cube
         private ResourceSet _transformationPipelineResourceSet;
         private ResourceLayout _transformationPipelineResourceLayout;
 
+        public Scene(){
+            PreRenderLoop += ScaleTextureQuadToMatchResolution;
+            PreDraw += this.RotateCube;
+        }
 
         override protected List<IDisposable> CreateResources(){
 
@@ -173,7 +177,7 @@ namespace textured_cube
                     new VertexElementDescription("UV",VertexElementSemantic.TextureCoordinate,VertexElementFormat.Float2)
                 );
 
-            _worldTransCube = Matrix4x4.CreateWorld(new Vector3(5,0,0),-Vector3.UnitZ,Vector3.UnitY);
+            _worldTransCube = Matrix4x4.CreateWorld(new Vector3(0,0,0),-Vector3.UnitZ,Vector3.UnitY);
 
             _vertexShaderCube = IO.LoadShader("Cube",ShaderStages.Vertex,_graphicsDevice);
             _fragmentShaderCube = IO.LoadShader("Cube",ShaderStages.Fragment,_graphicsDevice);
@@ -399,7 +403,7 @@ namespace textured_cube
 
             _commandList.SetFramebuffer(_graphicsDevice.SwapchainFramebuffer);
             _commandList.SetFullViewports();
-            _commandList.ClearColorTarget(0,RgbaFloat.White);
+            _commandList.ClearColorTarget(0,RgbaFloat.Black);
             _commandList.ClearDepthStencil(1f);
 
             _commandList.SetPipeline(_pipelineCube);
@@ -449,6 +453,21 @@ namespace textured_cube
             _commandList.End();
             _graphicsDevice.SubmitCommands(_commandList);
             _graphicsDevice.SwapBuffers();
+        }
+
+        private void ScaleTextureQuadToMatchResolution(){
+            float horizontal = _renderResolution.Horizontal.ToFloat()/_renderResolution.Vertical.ToFloat();
+            float vertical = 1;
+            Matrix4x4 scale = Matrix4x4.CreateScale(horizontal,vertical,1f,new Vector3(-1,0,0));
+            _worldTransTexturedQuad= scale*_worldTransTexturedQuad;
+            
+        }
+
+        private void RotateCube(){
+            float radian = (float)Math.PI/180.0f;
+            Matrix4x4 rotationAroundY = Matrix4x4.CreateRotationY(radian);
+            _worldTransCube = rotationAroundY*_worldTransCube;
+
         }
     }
 }

@@ -20,7 +20,7 @@ smooth out vec2 fsin_UV;
 void main()
 {
     vec4 position = vec4(Position, 1);
-    gl_Position = field_pipeline.Proj*field_pipeline.View*position;
+    gl_Position = field_pipeline.Proj*field_pipeline.View*field_pipeline.World*position;
     // composensate for D3D projection
     gl_Position.z = 2.0*gl_Position.z - gl_Position.w;
     fsin_UV = UV;

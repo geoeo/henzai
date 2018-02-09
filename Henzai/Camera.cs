@@ -32,10 +32,10 @@ namespace Henzai
         public ref Matrix4x4 ViewMatrix => ref _viewMatrix;
         public ref Matrix4x4 ProjectionMatrix => ref _projectionMatrix;
         public Vector3 Position { get => _position; set { _position = value; UpdateViewMatrix(); } }
-        public Vector3 LookDirection => _lookDirection;
-        public float FarDistance => _far;
-        public float FieldOfView => _fov;
-        public float NearDistance => _near;
+        public Vector3 LookDirection { get => _lookDirection; set { _lookDirection = value; UpdateViewMatrix();} }
+        public float FarDistance { get => _far; set { _far = value; UpdateViewMatrix();} }
+        public float FieldOfView { get => _fov; set { _fov = value; UpdateViewMatrix();} }
+        public float NearDistance { get => _near; set { _near = value; UpdateViewMatrix();} }
 
         public float AspectRatio => _windowWidth / _windowHeight;
 
