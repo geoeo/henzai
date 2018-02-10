@@ -41,6 +41,18 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
+            "name": ".NET Core Launch (sdl2-gui)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build sdl2-gui",
+            "program": "${workspaceFolder}/sdl2-gui/bin/Debug/netcoreapp2.0/sdl2-gui.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/sdl2-gui",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
             "name": ".NET Core Attach",
             "type": "coreclr",
             "request": "attach",

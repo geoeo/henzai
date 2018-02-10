@@ -44,6 +44,16 @@
             "problemMatcher": "$msCompile"
         },
         {
+            "label": "build sdl2-gui",
+            "command": "dotnet build sdl2-gui/sdl2-gui.csproj",
+            "type": "shell",
+            "group": "build",
+            "presentation": {
+                "reveal": "silent"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
             "label": "compile metal shaders (getting_started)",
             "type": "shell",
             "group": "build",
@@ -74,6 +84,16 @@
             "problemMatcher": "$msCompile"
         },
         {
+            "label": "compile metal shaders (sdl2-gui)",
+            "type": "shell",
+            "group": "build",
+            "command": "${cwd}/compileMetal.sh",
+            "args": [
+                "${cwd}/sdl2-gui/Shaders/"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
             "label": "run getting started",
             "type": "shell",
             "group": "build",
@@ -92,6 +112,13 @@
             "type": "shell",
             "group": "build",
             "command": "dotnet run --project offscreen/",
+            "problemMatcher":"$msCompile"
+        },
+        {
+            "label": "run sdl2-gui",
+            "type": "shell",
+            "group": "build",
+            "command": "dotnet run --project sdl2-gui/",
             "problemMatcher":"$msCompile"
         }
     ]
