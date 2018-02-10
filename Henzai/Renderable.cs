@@ -15,6 +15,7 @@ namespace Henzai
         public Camera _camera {get; private set;} 
         private FrameTimer _frameTimer;
         protected Sdl2Window _contextWindow {get; private set;}
+        public Sdl2Window contextWindow => _contextWindow;
         protected GraphicsDevice _graphicsDevice {get; private set;}
         public GraphicsDevice graphicsDevice => _graphicsDevice;
         protected Resolution _renderResolution;
@@ -55,8 +56,10 @@ namespace Henzai
 
         }
 
-        public Renderable(GraphicsDevice gd, Resolution screenResolution){
+        public Renderable(GraphicsDevice gd, Sdl2Window contextWindow){
             _graphicsDevice = gd;
+            _contextWindow = contextWindow;
+
         }
 
         /// <summary>
@@ -83,8 +86,6 @@ namespace Henzai
                 _frameTimer.Start();
                 InputSnapshot inputSnapshot = _contextWindow.PumpEvents();
                 InputTracker.UpdateFrameInput(inputSnapshot);
-
-                //float deltaSeconds = 1/60f;
 
                 if(_contextWindow.Exists){
 

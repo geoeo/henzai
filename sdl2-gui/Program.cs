@@ -1,6 +1,7 @@
 ﻿using System;
 using Henzai;
 using Veldrid;
+using Henzai.GUI;
 
 namespace Henzai.Examples
 {
@@ -23,10 +24,13 @@ namespace Henzai.Examples
                 windowSize,
                 gdOptions,
                 GraphicsBackend.OpenGL,
-                usePreferredGraphicsBackend: false
+                usePreferredGraphicsBackend: true
             );
 
-            scene.Run(renderResolution);
+            GUIOverlay gui = new GUIOverlay(scene.graphicsDevice,scene.contextWindow);
+
+            //scene.Run(renderResolution);
+            gui.Run(renderResolution);
         }
     }
 }
