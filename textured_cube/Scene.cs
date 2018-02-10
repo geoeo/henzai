@@ -10,7 +10,7 @@ using Henzai;
 using Henzai.Extensions;
 using Henzai.Geometry;
 
-namespace textured_cube
+namespace Henzai.Examples
 {
     public class Scene : Renderable
     {
@@ -24,6 +24,9 @@ namespace textured_cube
         private ResourceSet _cameraResourceSet;
         private ResourceSet _textureResourceSet;
         private ResourceLayout _resourceLayout;
+
+        public Scene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, GraphicsBackend preferredBackend, bool usePreferredGraphicsBackend)
+            : base(title,windowSize,graphicsDeviceOptions,preferredBackend,usePreferredGraphicsBackend){}
 
         override protected List<IDisposable> CreateResources()
         {

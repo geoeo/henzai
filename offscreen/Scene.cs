@@ -10,7 +10,7 @@ using Henzai;
 using Henzai.Extensions;
 using Henzai.Geometry;
 
-namespace textured_cube
+namespace Henzai.Examples
 {
     public class Scene : Renderable
     {
@@ -53,7 +53,8 @@ namespace textured_cube
         private ResourceSet _transformationPipelineResourceSet;
         private ResourceLayout _transformationPipelineResourceLayout;
 
-        public Scene(){
+        public Scene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, GraphicsBackend preferredBackend, bool usePreferredGraphicsBackend)
+            : base(title,windowSize,graphicsDeviceOptions,preferredBackend,usePreferredGraphicsBackend){
             PreRenderLoop += ScaleTextureQuadToMatchResolution;
             PreDraw += this.RotateCube;
         }

@@ -9,7 +9,7 @@ using Henzai;
 using Henzai.Extensions;
 using Henzai.Geometry;
 
-namespace getting_started
+namespace Henzai.Examples
 {
     // https://mellinoe.github.io/veldrid-docs/articles/getting-started/getting-started-part1.html
     public class Scene : Renderable
@@ -24,6 +24,10 @@ namespace getting_started
         private DeviceBuffer _cameraProjViewBuffer;
         private ResourceSet _resourceSet;
         private ResourceLayout _resourceLayout;
+
+        public Scene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, GraphicsBackend preferredBackend, bool usePreferredGraphicsBackend)
+            : base(title,windowSize,graphicsDeviceOptions,preferredBackend,usePreferredGraphicsBackend){
+        }
 
         override protected List<IDisposable> CreateResources()
         {

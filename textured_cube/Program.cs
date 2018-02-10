@@ -2,13 +2,12 @@
 using Henzai;
 using Veldrid;
 
-namespace textured_cube
+namespace Henzai.Examples
 {
     class Program
     {
         static void Main(string[] args)
         {
-            Scene scene = new Scene();
             Resolution renderResolution = new Resolution(960,540);
             Resolution windowSize = new Resolution(960,540);
             GraphicsDeviceOptions gdOptions = new GraphicsDeviceOptions()
@@ -18,12 +17,16 @@ namespace textured_cube
                 SyncToVerticalBlank = false
 
             };
-            scene.Run(
+
+            Scene scene = new Scene(
                 "Textured Cube",
-                renderResolution,windowSize,
+                windowSize,
                 gdOptions,
                 GraphicsBackend.OpenGL,
-                usePreferredGraphicsBackend: true);
+                usePreferredGraphicsBackend: false
+            );
+
+            scene.Run(renderResolution);
         }
     }
 }
