@@ -23,7 +23,7 @@ namespace textured_cube
                 renderResolution,windowSize,
                 gdOptions,
                 GraphicsBackend.OpenGL,
-                usePreferredGraphicsBackend: true);
+                usePreferredGraphicsBackend: false);
         }
     }
 }

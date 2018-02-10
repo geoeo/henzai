@@ -14,6 +14,7 @@ namespace Henzai
     {
 
         public Camera _camera {get; private set;} 
+        private FrameTimer _frameTimer;
         protected GraphicsDevice _graphicsDevice {get; private set;}
         protected Resolution _renderResolution;
         /// <summary>
@@ -27,7 +28,7 @@ namespace Henzai
         /// <summary>
         /// Bind Actions that have to be executed prior to every draw call
         /// </summary>
-        protected event Action PreDraw;
+        protected event Action<float> PreDraw;
         /// <summary>
         /// Bind Actions that have to be executed after every draw call
         /// </summary>
@@ -54,6 +55,8 @@ namespace Henzai
             Sdl2Window window = VeldridStartup.CreateWindow(ref windowCI);
 
             _camera = new Camera(renderResolution.Horizontal,renderResolution.Vertical);
+            // Tick every millisecond
+            _frameTimer = new FrameTimer(1.0);
 
             if(usePreferredGraphicsBackend)
                 _graphicsDevice = VeldridStartup.CreateGraphicsDevice(window,graphicsDeviceOptions,preferredBackend);
@@ -69,17 +72,21 @@ namespace Henzai
             PreRenderLoop?.Invoke();
             while (window.Exists)
             {
+                _frameTimer.Start();
                 InputSnapshot inputSnapshot = window.PumpEvents();
                 InputTracker.UpdateFrameInput(inputSnapshot);
 
-                float deltaSeconds = 1/60f;
-                _camera.Update(deltaSeconds);
+                //float deltaSeconds = 1/60f;
 
                 if(window.Exists){
-                    PreDraw?.Invoke();
+
+                    PreDraw?.Invoke(_frameTimer.prevFrameTicksInSeconds);
                     Draw();
                     PostDraw?.Invoke();
                 }
+
+                _camera.Update(_frameTimer.prevFrameTicksInSeconds);
+                _frameTimer.Stop();
             }
 
             DisposeResources();

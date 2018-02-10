@@ -5,14 +5,13 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
 
-    <ItemGroup>
-    <!-- <PackageReference Include="Veldrid" Version="4.0.0" /> -->
+  <ItemGroup>
+       <!-- <PackageReference Include="Veldrid" Version="4.0.0" /> -->
     <PackageReference Include="Veldrid.ImageSharp" Version="4.0.0" />
     <PackageReference Include="Veldrid.StartupUtilities" Version="4.0.0" />
     <PackageReference Include="NativeLibraryLoader" Version="1.0.5" />
-    <!-- <ProjectReference Include="../Henzai/Henzai.csproj" /> -->
-    <Reference Include="../Henzai/bin/Debug/netstandard2.0/Henzai.dll" />
     <Reference Include="../../veldrid/bin/Debug/Veldrid/netstandard2.0/*.dll"/>
+    <Reference Include="../Henzai/bin/Debug/netstandard2.0/Henzai.dll" />
   </ItemGroup>
 
   <ItemGroup>

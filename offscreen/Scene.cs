@@ -463,8 +463,9 @@ namespace textured_cube
             
         }
 
-        private void RotateCube(){
+        private void RotateCube(float deltaSeconds){
             float radian = (float)Math.PI/180.0f;
+            radian *= 10.0f*deltaSeconds;
             Matrix4x4 rotationAroundY = Matrix4x4.CreateRotationY(radian);
             _worldTransCube = rotationAroundY*_worldTransCube;
 
