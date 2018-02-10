@@ -3,6 +3,7 @@ using System.Timers;
 
 namespace Henzai
 {
+    // TODO investigate: https://www.dotnetperls.com/stopwatch
     public class FrameTimer
     {
         private Timer _frameTimer;
