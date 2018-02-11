@@ -30,7 +30,7 @@ namespace Henzai.Examples
 
         override protected List<IDisposable> CreateResources()
         {
-            ResourceFactory _factory = _graphicsDevice.ResourceFactory;
+            ResourceFactory _factory = graphicsDevice.ResourceFactory;
 
             _cameraProjViewBuffer = _factory.CreateBuffer(new BufferDescription(128,BufferUsage.UniformBuffer | BufferUsage.Dynamic));
 
@@ -45,7 +45,7 @@ namespace Henzai.Examples
             _cameraResourceSet = _factory.CreateResourceSet(resourceSetDescription);
 
             ImageSharpTexture NameImage = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "Textures", "Name.png"));
-            Texture cubeTexture = NameImage.CreateDeviceTexture(_graphicsDevice, _factory);
+            Texture cubeTexture = NameImage.CreateDeviceTexture(graphicsDevice, _factory);
             TextureView cubeTextureView = _factory.CreateTextureView(cubeTexture);
 
             ResourceLayout textureLayout = _factory.CreateResourceLayout(
@@ -56,7 +56,7 @@ namespace Henzai.Examples
             _textureResourceSet = _factory.CreateResourceSet(new ResourceSetDescription(
                 textureLayout,
                 cubeTextureView,
-                _graphicsDevice.LinearSampler));
+                graphicsDevice.LinearSampler));
 
             TexturedCube texturedCube 
                 = GeometryFactory.generateTexturedCube();
@@ -70,10 +70,10 @@ namespace Henzai.Examples
                 = _factory.CreateBuffer(new BufferDescription(cubeIndicies.LengthUnsigned()*sizeof(ushort),BufferUsage.IndexBuffer));
 
             // fill buffers with data
-            _graphicsDevice.UpdateBuffer(_vertexBuffer,0,texturedCube.vertices);
-            _graphicsDevice.UpdateBuffer(_indexBuffer,0,cubeIndicies);
-            _graphicsDevice.UpdateBuffer(_cameraProjViewBuffer,0,_camera.ViewMatrix);
-            _graphicsDevice.UpdateBuffer(_cameraProjViewBuffer,64,_camera.ProjectionMatrix);
+            graphicsDevice.UpdateBuffer(_vertexBuffer,0,texturedCube.vertices);
+            graphicsDevice.UpdateBuffer(_indexBuffer,0,cubeIndicies);
+            graphicsDevice.UpdateBuffer(_cameraProjViewBuffer,0,_camera.ViewMatrix);
+            graphicsDevice.UpdateBuffer(_cameraProjViewBuffer,64,_camera.ProjectionMatrix);
 
             VertexLayoutDescription vertexLayout 
                 = new VertexLayoutDescription(
@@ -81,8 +81,8 @@ namespace Henzai.Examples
                     new VertexElementDescription("UV",VertexElementSemantic.TextureCoordinate,VertexElementFormat.Float2)
                 );
 
-            _vertexShader = IO.LoadShader(string.Empty,ShaderStages.Vertex,_graphicsDevice);
-            _fragmentShader = IO.LoadShader(string.Empty,ShaderStages.Fragment,_graphicsDevice);
+            _vertexShader = IO.LoadShader(string.Empty,ShaderStages.Vertex,graphicsDevice);
+            _fragmentShader = IO.LoadShader(string.Empty,ShaderStages.Fragment,graphicsDevice);
 
             GraphicsPipelineDescription pipelineDescription = new GraphicsPipelineDescription(){
                 BlendState = BlendStateDescription.SingleOverrideBlend,
@@ -100,7 +100,7 @@ namespace Henzai.Examples
                     vertexLayouts: new VertexLayoutDescription[] {vertexLayout},
                     shaders: new Shader[] {_vertexShader,_fragmentShader}
                 ),
-                Outputs = _graphicsDevice.SwapchainFramebuffer.OutputDescription
+                Outputs = graphicsDevice.SwapchainFramebuffer.OutputDescription
             };
 
             _pipeline = _factory.CreateGraphicsPipeline(pipelineDescription);
@@ -125,7 +125,7 @@ namespace Henzai.Examples
 
         override protected void Draw(){
             _commandList.Begin();
-            _commandList.SetFramebuffer(_graphicsDevice.SwapchainFramebuffer);
+            _commandList.SetFramebuffer(graphicsDevice.SwapchainFramebuffer);
             _commandList.SetPipeline(_pipeline);
             _commandList.SetFullViewports();
             _commandList.ClearColorTarget(0,RgbaFloat.White);
@@ -144,8 +144,8 @@ namespace Henzai.Examples
                 instanceStart: 0
             );
             _commandList.End();
-            _graphicsDevice.SubmitCommands(_commandList);
-            _graphicsDevice.SwapBuffers();
+            graphicsDevice.SubmitCommands(_commandList);
+            graphicsDevice.SwapBuffers();
         }
         
     }

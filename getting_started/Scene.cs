@@ -31,7 +31,7 @@ namespace Henzai.Examples
 
         override protected List<IDisposable> CreateResources()
         {
-            ResourceFactory _factory = _graphicsDevice.ResourceFactory;
+            ResourceFactory _factory = graphicsDevice.ResourceFactory;
 
             _cameraProjViewBuffer = _factory.CreateBuffer(new BufferDescription(128,BufferUsage.UniformBuffer | BufferUsage.Dynamic));
 
@@ -61,11 +61,11 @@ namespace Henzai.Examples
                 = _factory.CreateBuffer(new BufferDescription(_xOffset.LengthUnsigned()*sizeof(float),BufferUsage.VertexBuffer));
 
             // fill buffers with data
-            _graphicsDevice.UpdateBuffer(_vertexBuffer,0,colouredQuad.vertecies);
-            _graphicsDevice.UpdateBuffer(_indexBuffer,0,quadIndicies);
-            _graphicsDevice.UpdateBuffer(_xOffsetBuffer,0,_xOffset);
-            _graphicsDevice.UpdateBuffer(_cameraProjViewBuffer,0,_camera.ViewMatrix);
-            _graphicsDevice.UpdateBuffer(_cameraProjViewBuffer,64,_camera.ProjectionMatrix);
+            graphicsDevice.UpdateBuffer(_vertexBuffer,0,colouredQuad.vertecies);
+            graphicsDevice.UpdateBuffer(_indexBuffer,0,quadIndicies);
+            graphicsDevice.UpdateBuffer(_xOffsetBuffer,0,_xOffset);
+            graphicsDevice.UpdateBuffer(_cameraProjViewBuffer,0,_camera.ViewMatrix);
+            graphicsDevice.UpdateBuffer(_cameraProjViewBuffer,64,_camera.ProjectionMatrix);
 
             VertexLayoutDescription vertexLayout 
                 = new VertexLayoutDescription(
@@ -83,8 +83,8 @@ namespace Henzai.Examples
                     elements: new VertexElementDescription[] {vertexElementPerInstance}
                 );
 
-            _vertexShader = IO.LoadShader(string.Empty,ShaderStages.Vertex,_graphicsDevice);
-            _fragmentShader = IO.LoadShader(string.Empty,ShaderStages.Fragment,_graphicsDevice);
+            _vertexShader = IO.LoadShader(string.Empty,ShaderStages.Vertex,graphicsDevice);
+            _fragmentShader = IO.LoadShader(string.Empty,ShaderStages.Fragment,graphicsDevice);
 
             GraphicsPipelineDescription pipelineDescription = new GraphicsPipelineDescription(){
                 BlendState = BlendStateDescription.SingleOverrideBlend,
@@ -105,7 +105,7 @@ namespace Henzai.Examples
                     vertexLayouts: new VertexLayoutDescription[] {vertexLayout,vertexLayoutPerInstance},
                     shaders: new Shader[] {_vertexShader,_fragmentShader}
                 ),
-                Outputs = _graphicsDevice.SwapchainFramebuffer.OutputDescription
+                Outputs = graphicsDevice.SwapchainFramebuffer.OutputDescription
             };
 
             _pipeline = _factory.CreateGraphicsPipeline(pipelineDescription);
@@ -130,7 +130,7 @@ namespace Henzai.Examples
 
         override protected void Draw(){
             _commandList.Begin();
-            _commandList.SetFramebuffer(_graphicsDevice.SwapchainFramebuffer);
+            _commandList.SetFramebuffer(graphicsDevice.SwapchainFramebuffer);
             _commandList.SetPipeline(_pipeline);
             _commandList.SetFullViewports();
             _commandList.ClearColorTarget(0,RgbaFloat.White);
@@ -148,8 +148,8 @@ namespace Henzai.Examples
                 instanceStart: 0
             );
             _commandList.End();
-            _graphicsDevice.SubmitCommands(_commandList);
-            _graphicsDevice.SwapBuffers();
+            graphicsDevice.SubmitCommands(_commandList);
+            graphicsDevice.SwapBuffers();
         }
         
     }
