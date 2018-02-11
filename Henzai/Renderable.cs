@@ -13,7 +13,8 @@ namespace Henzai
     /// </summary>
     public abstract class Renderable : IDisposable
     {
-        public Camera _camera {get; private set;} 
+        private Camera _camera {get; set;} 
+        public Camera camera => _camera;
         private FrameTimer _frameTimer;
         /// <summary>
         /// Indicates that this scene performs rendering tasks

@@ -72,8 +72,8 @@ namespace Henzai.Examples
             // fill buffers with data
             graphicsDevice.UpdateBuffer(_vertexBuffer,0,texturedCube.vertices);
             graphicsDevice.UpdateBuffer(_indexBuffer,0,cubeIndicies);
-            graphicsDevice.UpdateBuffer(_cameraProjViewBuffer,0,_camera.ViewMatrix);
-            graphicsDevice.UpdateBuffer(_cameraProjViewBuffer,64,_camera.ProjectionMatrix);
+            graphicsDevice.UpdateBuffer(_cameraProjViewBuffer,0,camera.ViewMatrix);
+            graphicsDevice.UpdateBuffer(_cameraProjViewBuffer,64,camera.ProjectionMatrix);
 
             VertexLayoutDescription vertexLayout 
                 = new VertexLayoutDescription(
@@ -132,8 +132,8 @@ namespace Henzai.Examples
             _commandList.ClearDepthStencil(1f);
             _commandList.SetVertexBuffer(0,_vertexBuffer);
             _commandList.SetIndexBuffer(_indexBuffer,IndexFormat.UInt16);
-            _commandList.UpdateBuffer(_cameraProjViewBuffer,0,_camera.ViewMatrix);
-            _commandList.UpdateBuffer(_cameraProjViewBuffer,64,_camera.ProjectionMatrix);
+            _commandList.UpdateBuffer(_cameraProjViewBuffer,0,camera.ViewMatrix);
+            _commandList.UpdateBuffer(_cameraProjViewBuffer,64,camera.ProjectionMatrix);
             _commandList.SetGraphicsResourceSet(0,_cameraResourceSet); // Always after SetPipeline
             _commandList.SetGraphicsResourceSet(1,_textureResourceSet); // Always after SetPipeline
             _commandList.DrawIndexed(

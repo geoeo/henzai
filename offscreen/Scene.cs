@@ -130,7 +130,7 @@ namespace Henzai.Examples
             _transformationPipelineResourceSet = _factory.CreateResourceSet(resourceSetDescription);
 
             //_graphicsDevice.UpdateBuffer(_transformationPipelineBuffer,0,_camera.ViewMatrix);
-            graphicsDevice.UpdateBuffer(_transformationPipelineBuffer,64,_camera.ProjectionMatrix);
+            graphicsDevice.UpdateBuffer(_transformationPipelineBuffer,64,camera.ProjectionMatrix);
 
             return new List<IDisposable>()
             {
@@ -410,7 +410,7 @@ namespace Henzai.Examples
             _commandList.SetPipeline(_pipelineCube);
             _commandList.SetVertexBuffer(0,_vertexBufferCube);
             _commandList.SetIndexBuffer(_indexBufferCube,IndexFormat.UInt16);
-            _commandList.UpdateBuffer(_transformationPipelineBuffer,0,_camera.ViewMatrix);
+            _commandList.UpdateBuffer(_transformationPipelineBuffer,0,camera.ViewMatrix);
             _commandList.UpdateBuffer(_transformationPipelineBuffer,128,_worldTransCube);
             _commandList.SetGraphicsResourceSet(0,_transformationPipelineResourceSet); // Always after SetPipeline
             _commandList.SetGraphicsResourceSet(1,_textureNameResourceSet); // Always after SetPipeline
@@ -425,7 +425,7 @@ namespace Henzai.Examples
             _commandList.SetPipeline(_pipelineColouredQuad);
             _commandList.SetVertexBuffer(0,_vertexBufferColouredQuad);
             _commandList.SetIndexBuffer(_indexBufferQuad,IndexFormat.UInt16);
-            _commandList.UpdateBuffer(_transformationPipelineBuffer,0,_camera.ViewMatrix);
+            _commandList.UpdateBuffer(_transformationPipelineBuffer,0,camera.ViewMatrix);
             _commandList.UpdateBuffer(_transformationPipelineBuffer,128,_worldTransColouredQuad);
             _commandList.SetGraphicsResourceSet(0,_transformationPipelineResourceSet);
             _commandList.DrawIndexed(
@@ -439,7 +439,7 @@ namespace Henzai.Examples
             _commandList.SetPipeline(_pipelineTexturedQuad);
             _commandList.SetVertexBuffer(0,_vertexBufferTexturedQuad);
             _commandList.SetIndexBuffer(_indexBufferQuad,IndexFormat.UInt16);
-            _commandList.UpdateBuffer(_transformationPipelineBuffer,0,_camera.ViewMatrix);
+            _commandList.UpdateBuffer(_transformationPipelineBuffer,0,camera.ViewMatrix);
             _commandList.UpdateBuffer(_transformationPipelineBuffer,128,_worldTransTexturedQuad);
             _commandList.SetGraphicsResourceSet(0,_transformationPipelineResourceSet);
             _commandList.SetGraphicsResourceSet(1,_textureOffscreenResourceSet); 

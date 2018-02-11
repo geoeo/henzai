@@ -64,8 +64,8 @@ namespace Henzai.Examples
             graphicsDevice.UpdateBuffer(_vertexBuffer,0,colouredQuad.vertecies);
             graphicsDevice.UpdateBuffer(_indexBuffer,0,quadIndicies);
             graphicsDevice.UpdateBuffer(_xOffsetBuffer,0,_xOffset);
-            graphicsDevice.UpdateBuffer(_cameraProjViewBuffer,0,_camera.ViewMatrix);
-            graphicsDevice.UpdateBuffer(_cameraProjViewBuffer,64,_camera.ProjectionMatrix);
+            graphicsDevice.UpdateBuffer(_cameraProjViewBuffer,0,camera.ViewMatrix);
+            graphicsDevice.UpdateBuffer(_cameraProjViewBuffer,64,camera.ProjectionMatrix);
 
             VertexLayoutDescription vertexLayout 
                 = new VertexLayoutDescription(
@@ -137,8 +137,8 @@ namespace Henzai.Examples
             _commandList.SetVertexBuffer(0,_vertexBuffer);
             _commandList.SetIndexBuffer(_indexBuffer,IndexFormat.UInt16);
             _commandList.SetVertexBuffer(1,_xOffsetBuffer);
-            _commandList.UpdateBuffer(_cameraProjViewBuffer,0,_camera.ViewMatrix);
-            _commandList.UpdateBuffer(_cameraProjViewBuffer,64,_camera.ProjectionMatrix);
+            _commandList.UpdateBuffer(_cameraProjViewBuffer,0,camera.ViewMatrix);
+            _commandList.UpdateBuffer(_cameraProjViewBuffer,64,camera.ProjectionMatrix);
             _commandList.SetGraphicsResourceSet(0,_resourceSet); // Always after SetPipeline
             _commandList.DrawIndexed(
                 indexCount: 4,
