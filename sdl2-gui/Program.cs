@@ -24,13 +24,13 @@ namespace Henzai.Examples
                 windowSize,
                 gdOptions,
                 GraphicsBackend.OpenGL,
-                usePreferredGraphicsBackend: true
+                usePreferredGraphicsBackend: false
             );
 
             GUIOverlay gui = new GUIOverlay(scene.graphicsDevice,scene.contextWindow);
+            gui.SetOverlayFor(scene);
 
-            //scene.Run(renderResolution);
-            gui.Run(renderResolution);
+            scene.Run(renderResolution);
         }
     }
 }

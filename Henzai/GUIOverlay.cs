@@ -17,7 +17,6 @@ namespace Henzai.GUI
         private readonly Assembly _assembly;
         private ResourceFactory _factory;
         private CommandList _commandList;
-
         private DeviceBuffer _vertexBuffer;
         private DeviceBuffer _indexBuffer;
         private DeviceBuffer _projMatrixBuffer;
@@ -32,23 +31,28 @@ namespace Henzai.GUI
         private ResourceSet _fontTextureResourceSet;
         private IntPtr _fontAtlasID = (IntPtr)1;
 
-        public GUIOverlay(GraphicsDevice gd, Sdl2Window contextWindow) : base(gd,contextWindow){
 
+        public GUIOverlay(GraphicsDevice graphicsDevice, Sdl2Window contextWindow) : base(graphicsDevice,contextWindow){
             _assembly = typeof(GUIOverlay).GetTypeInfo().Assembly;
             ImGui.GetIO().FontAtlas.AddDefaultFont();
-            PreDraw += UpdateImGui;
-
         }
 
-        private void UpdateImGui(float deltaSeconds){
+
+        public void SetOverlayFor(Renderable scene){
+            scene.PreDraw += UpdateImGui;
+            scene.children.Add(this);
+        }
+
+        public void UpdateImGui(float deltaSeconds){
 
             ImGuiNET.IO io = ImGui.GetIO();
             io.DeltaTime = deltaSeconds;
-            io.DisplaySize = new System.Numerics.Vector2(_contextWindow.Width, _contextWindow.Height);
-            io.DisplayFramebufferScale = new System.Numerics.Vector2(_contextWindow.Width / _contextWindow.Height);
+            io.DisplaySize = new System.Numerics.Vector2(contextWindow.Width, contextWindow.Height);
+            io.DisplayFramebufferScale = new System.Numerics.Vector2(contextWindow.Width / contextWindow.Height);
+            
 
             ImGui.NewFrame();
-            SubmitImGUICommands();
+            SubmitImGUICommands(deltaSeconds);
             ImGui.Render();
 
         }
@@ -57,7 +61,7 @@ namespace Henzai.GUI
 
             List<IDisposable> resources = new List<IDisposable>();
 
-            _factory = _graphicsDevice.ResourceFactory;
+            _factory = graphicsDevice.ResourceFactory;
 
             _commandList = _factory.CreateCommandList();
 
@@ -66,13 +70,13 @@ namespace Henzai.GUI
             _indexBuffer = _factory.CreateBuffer(new BufferDescription(2000, BufferUsage.IndexBuffer | BufferUsage.Dynamic));
             _indexBuffer.Name = "ImGui.NET Index Buffer";
     
-            RecreateFontDeviceTexture(_graphicsDevice);
+            RecreateFontDeviceTexture(graphicsDevice);
 
             _projMatrixBuffer = _factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
             _projMatrixBuffer.Name = "ImGui.NET Projection Buffer";
 
-            byte[] vertexShaderBytes = LoadEmbeddedShaderCode(_graphicsDevice.ResourceFactory, "imgui-vertex");
-            byte[] fragmentShaderBytes = LoadEmbeddedShaderCode(_graphicsDevice.ResourceFactory, "imgui-frag");
+            byte[] vertexShaderBytes = LoadEmbeddedShaderCode(graphicsDevice.ResourceFactory, "imgui-vertex");
+            byte[] fragmentShaderBytes = LoadEmbeddedShaderCode(graphicsDevice.ResourceFactory, "imgui-frag");
             _vertexShader = _factory.CreateShader(new ShaderDescription(ShaderStages.Vertex, vertexShaderBytes, "VS"));
             _fragmentShader = _factory.CreateShader(new ShaderDescription(ShaderStages.Fragment, fragmentShaderBytes, "FS"));
 
@@ -97,12 +101,12 @@ namespace Henzai.GUI
                 PrimitiveTopology.TriangleList,
                 new ShaderSetDescription(vertexLayouts, new[] { _vertexShader, _fragmentShader }),
                 new ResourceLayout[] { _layout, _textureLayout },
-                _graphicsDevice.SwapchainFramebuffer.OutputDescription);
+                graphicsDevice.SwapchainFramebuffer.OutputDescription);
             _pipeline = _factory.CreateGraphicsPipeline(ref pd);
 
             _mainResourceSet = _factory.CreateResourceSet(new ResourceSetDescription(_layout,
                 _projMatrixBuffer,
-                _graphicsDevice.PointSampler));
+                graphicsDevice.PointSampler));
 
             _fontTextureResourceSet = _factory.CreateResourceSet(new ResourceSetDescription(_textureLayout, _fontTextureView));
 
@@ -125,14 +129,17 @@ namespace Henzai.GUI
         override protected void Draw(){
 
             _commandList.Begin();
-            _commandList.SetFramebuffer(_graphicsDevice.SwapchainFramebuffer);
+            _commandList.SetFramebuffer(graphicsDevice.SwapchainFramebuffer);
+           // _commandList.SetFullViewports();
+            // _commandList.ClearColorTarget(0,RgbaFloat.Red);
+            //_commandList.ClearDepthStencil(1f);
+
             unsafe {
-                RenderImGuiDrawData(ImGui.GetDrawData(), _graphicsDevice, _commandList);
+                RenderImGuiDrawData(ImGui.GetDrawData(), graphicsDevice, _commandList);
             }
             _commandList.End();
-            _graphicsDevice.SubmitCommands(_commandList);
-            _graphicsDevice.SwapBuffers();
 
+            graphicsDevice.SubmitCommands(_commandList);
 
         }
 
@@ -284,17 +291,27 @@ namespace Henzai.GUI
             io.FontAtlas.ClearTexData();
         }
 
-        private unsafe void SubmitImGUICommands(){
+        private unsafe void SubmitImGUICommands(float secondsPerFrame){
 
-            ImGui.GetStyle().WindowRounding = 0;
+            // ImGui.GetStyle().WindowRounding = 0;
 
-            ImGui.SetNextWindowSize(new System.Numerics.Vector2(_contextWindow.Width - 10, _contextWindow.Height - 20), Condition.Always);
-            ImGui.SetNextWindowPos(ImGui.GetIO().DisplaySize, Condition.Always, new System.Numerics.Vector2(1f));
-            ImGui.BeginWindow("ImGUI.NET Sample Program", WindowFlags.NoResize | WindowFlags.NoTitleBar | WindowFlags.NoMove);
+            // ImGui.SetNextWindowSize(new Vector2(contextWindow.Width/4, contextWindow.Height/4), Condition.Always);
+            // ImGui.SetNextWindowPos(new Vector2(50,50), Condition.Always, Vector2.Zero);
+            // if(ImGui.BeginWindow("ImGUI.NET Sample Program", WindowFlags.NoResize | WindowFlags.NoTitleBar | WindowFlags.NoMove))
+            // {
+            //     ImGui.Text("Hello World");
+            // }
+            // ImGui.EndWindow();
+            float fps = 1.0f/secondsPerFrame;
+            string performance = $"Seconds per Frame: {secondsPerFrame.ToString()}";
+            //string performance_2 = $"Frames per Second: {fps.ToString()}";
 
-            ImGui.Text("Hello World");
-
-            ImGui.EndWindow();
+            if (ImGui.BeginMainMenuBar())
+            {
+                ImGui.Text(performance);
+                //ImGui.Text(performance_2);
+                ImGui.EndMainMenuBar(); 
+            }
 
         }
 

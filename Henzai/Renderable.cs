@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Veldrid;
 using Veldrid.StartupUtilities;
 using Veldrid.Sdl2;
+using Henzai.GUI;
 
 namespace Henzai
 {
@@ -14,9 +15,14 @@ namespace Henzai
     {
         public Camera _camera {get; private set;} 
         private FrameTimer _frameTimer;
-        protected Sdl2Window _contextWindow {get; private set;}
+        /// <summary>
+        /// Indicates that this scene performs rendering tasks
+        /// to support the Renderable owner
+        /// </summary>
+        public List<Renderable> children;
+        private Sdl2Window _contextWindow;
         public Sdl2Window contextWindow => _contextWindow;
-        protected GraphicsDevice _graphicsDevice {get; private set;}
+        private GraphicsDevice _graphicsDevice;
         public GraphicsDevice graphicsDevice => _graphicsDevice;
         protected Resolution _renderResolution;
         /// <summary>
@@ -26,15 +32,15 @@ namespace Henzai
         /// <summary>
         /// Bind Actions that have to be executed prior to entering the render loop
         /// </summary>
-        protected event Action PreRenderLoop;
+        public event Action PreRenderLoop;
         /// <summary>
         /// Bind Actions that have to be executed prior to every draw call
         /// </summary>
-        protected event Action<float> PreDraw;
+        public event Action<float> PreDraw;
         /// <summary>
         /// Bind Actions that have to be executed after every draw call
         /// </summary>
-        protected event Action PostDraw;
+        public event Action PostDraw;
 
         public Renderable(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, GraphicsBackend preferredBackend, bool usePreferredGraphicsBackend){
             WindowCreateInfo windowCI = new WindowCreateInfo()
@@ -54,12 +60,13 @@ namespace Henzai
 
             _contextWindow.Title = $"{title} / {_graphicsDevice.BackendType.ToString()}";
 
+            children = new List<Renderable>();
+
         }
 
-        public Renderable(GraphicsDevice gd, Sdl2Window contextWindow){
-            _graphicsDevice = gd;
+        public Renderable(GraphicsDevice graphicsDevice, Sdl2Window contextWindow){
+            _graphicsDevice = graphicsDevice;
             _contextWindow = contextWindow;
-
         }
 
         /// <summary>
@@ -79,6 +86,8 @@ namespace Henzai
             _sceneResources.Add(_graphicsDevice);
 
             _sceneResources.AddRange(CreateResources());
+            foreach(var child in children)
+                _sceneResources.AddRange(child.CreateResources());
 
             PreRenderLoop?.Invoke();
             while (_contextWindow.Exists)
@@ -90,7 +99,12 @@ namespace Henzai
                 if(_contextWindow.Exists){
 
                     PreDraw?.Invoke(_frameTimer.prevFrameTicksInSeconds);
+
                     Draw();
+                    foreach(var child in children)
+                        child.Draw();
+
+                    graphicsDevice.SwapBuffers();
                     PostDraw?.Invoke();
                 }
 

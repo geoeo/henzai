@@ -54,6 +54,16 @@
             "problemMatcher": "$msCompile"
         },
         {
+            "label": "compile metal shaders (Henzai)",
+            "type": "shell",
+            "group": "build",
+            "command": "${cwd}/compileMetal.sh",
+            "args": [
+                "${cwd}/Henzai/Shaders/"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
             "label": "compile metal shaders (getting_started)",
             "type": "shell",
             "group": "build",

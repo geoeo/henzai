@@ -63,7 +63,7 @@ namespace Henzai.Examples
 
             _staticCamera = new Camera(_renderResolution.Horizontal,_renderResolution.Vertical);
 
-            _factory = _graphicsDevice.ResourceFactory;
+            _factory = graphicsDevice.ResourceFactory;
 
             _commandList = _factory.CreateCommandList();
 
@@ -103,7 +103,7 @@ namespace Henzai.Examples
                 new ResourceLayoutElementDescription("ColourSampler",ResourceKind.Sampler,ShaderStages.Fragment)
             ));
 
-            _textureOffscreenResourceSet = _factory.CreateResourceSet(new ResourceSetDescription(_offscreenLayout,_offscreenTextureView,_graphicsDevice.LinearSampler));
+            _textureOffscreenResourceSet = _factory.CreateResourceSet(new ResourceSetDescription(_offscreenLayout,_offscreenTextureView,graphicsDevice.LinearSampler));
 
             return new List<IDisposable>()
             {
@@ -130,7 +130,7 @@ namespace Henzai.Examples
             _transformationPipelineResourceSet = _factory.CreateResourceSet(resourceSetDescription);
 
             //_graphicsDevice.UpdateBuffer(_transformationPipelineBuffer,0,_camera.ViewMatrix);
-            _graphicsDevice.UpdateBuffer(_transformationPipelineBuffer,64,_camera.ProjectionMatrix);
+            graphicsDevice.UpdateBuffer(_transformationPipelineBuffer,64,_camera.ProjectionMatrix);
 
             return new List<IDisposable>()
             {
@@ -144,7 +144,7 @@ namespace Henzai.Examples
         private List<IDisposable> createCubeResources(){
 
             ImageSharpTexture NameImage = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "Textures", "Name.png"));
-            Texture cubeTexture = NameImage.CreateDeviceTexture(_graphicsDevice, _factory);
+            Texture cubeTexture = NameImage.CreateDeviceTexture(graphicsDevice, _factory);
             TextureView cubeTextureView = _factory.CreateTextureView(cubeTexture);
 
             ResourceLayout textureLayout = _factory.CreateResourceLayout(
@@ -155,7 +155,7 @@ namespace Henzai.Examples
             _textureNameResourceSet = _factory.CreateResourceSet(new ResourceSetDescription(
                 textureLayout,
                 cubeTextureView,
-                _graphicsDevice.LinearSampler));
+                graphicsDevice.LinearSampler));
 
             TexturedCube texturedCube 
                 = GeometryFactory.generateTexturedCube();
@@ -169,8 +169,8 @@ namespace Henzai.Examples
                 = _factory.CreateBuffer(new BufferDescription(cubeIndicies.LengthUnsigned()*sizeof(ushort),BufferUsage.IndexBuffer));
 
             // fill buffers with data
-            _graphicsDevice.UpdateBuffer(_vertexBufferCube,0,texturedCube.vertices);
-            _graphicsDevice.UpdateBuffer(_indexBufferCube,0,cubeIndicies);
+            graphicsDevice.UpdateBuffer(_vertexBufferCube,0,texturedCube.vertices);
+            graphicsDevice.UpdateBuffer(_indexBufferCube,0,cubeIndicies);
 
             VertexLayoutDescription vertexLayout 
                 = new VertexLayoutDescription(
@@ -180,8 +180,8 @@ namespace Henzai.Examples
 
             _worldTransCube = Matrix4x4.CreateWorld(new Vector3(0,0,0),-Vector3.UnitZ,Vector3.UnitY);
 
-            _vertexShaderCube = IO.LoadShader("Cube",ShaderStages.Vertex,_graphicsDevice);
-            _fragmentShaderCube = IO.LoadShader("Cube",ShaderStages.Fragment,_graphicsDevice);
+            _vertexShaderCube = IO.LoadShader("Cube",ShaderStages.Vertex,graphicsDevice);
+            _fragmentShaderCube = IO.LoadShader("Cube",ShaderStages.Fragment,graphicsDevice);
 
             GraphicsPipelineDescription pipelineDescription = new GraphicsPipelineDescription(){
                 BlendState = BlendStateDescription.SingleOverrideBlend,
@@ -199,7 +199,7 @@ namespace Henzai.Examples
                     vertexLayouts: new VertexLayoutDescription[] {vertexLayout},
                     shaders: new Shader[] {_vertexShaderCube,_fragmentShaderCube}
                 ),
-                Outputs = _graphicsDevice.SwapchainFramebuffer.OutputDescription
+                Outputs = graphicsDevice.SwapchainFramebuffer.OutputDescription
             };
 
             _pipelineCube = _factory.CreateGraphicsPipeline(pipelineDescription);
@@ -244,8 +244,8 @@ namespace Henzai.Examples
             _vertexBufferColouredQuad = _factory.CreateBuffer(new BufferDescription(quad.vertecies.LengthUnsigned()* VertexPositionColour.SizeInBytes, BufferUsage.VertexBuffer));
             _indexBufferQuad = _factory.CreateBuffer(new BufferDescription(quadIndicies.LengthUnsigned()* sizeof(ushort), BufferUsage.IndexBuffer));
 
-            _graphicsDevice.UpdateBuffer(_vertexBufferColouredQuad,0,quad.vertecies);
-            _graphicsDevice.UpdateBuffer(_indexBufferQuad,0,quadIndicies);
+            graphicsDevice.UpdateBuffer(_vertexBufferColouredQuad,0,quad.vertecies);
+            graphicsDevice.UpdateBuffer(_indexBufferQuad,0,quadIndicies);
 
             VertexLayoutDescription vertexLayout 
                 = new VertexLayoutDescription(
@@ -255,8 +255,8 @@ namespace Henzai.Examples
 
             _worldTransColouredQuad = Matrix4x4.CreateWorld(new Vector3(-5,0,0),-Vector3.UnitZ,Vector3.UnitY);
 
-            _vertexShaderColouredQuad = IO.LoadShader("QuadColour",ShaderStages.Vertex,_graphicsDevice);
-            _fragmentShaderColouredQuad = IO.LoadShader("QuadColour",ShaderStages.Fragment,_graphicsDevice);
+            _vertexShaderColouredQuad = IO.LoadShader("QuadColour",ShaderStages.Vertex,graphicsDevice);
+            _fragmentShaderColouredQuad = IO.LoadShader("QuadColour",ShaderStages.Fragment,graphicsDevice);
 
             GraphicsPipelineDescription pipelineDescription = new GraphicsPipelineDescription(){
                 BlendState = BlendStateDescription.SingleOverrideBlend,
@@ -274,7 +274,7 @@ namespace Henzai.Examples
                     vertexLayouts: new VertexLayoutDescription[] {vertexLayout},
                     shaders: new Shader[] {_vertexShaderColouredQuad,_fragmentShaderColouredQuad}
                 ),
-                Outputs = _graphicsDevice.SwapchainFramebuffer.OutputDescription
+                Outputs = graphicsDevice.SwapchainFramebuffer.OutputDescription
             };
 
             _pipelineColouredQuad = _factory.CreateGraphicsPipeline(pipelineDescription);
@@ -318,7 +318,7 @@ namespace Henzai.Examples
                 throw new ApplicationException("_indexBufferQuad should have been created");
 
             _vertexBufferTexturedQuad = _factory.CreateBuffer(new BufferDescription(quad.vertecies.LengthUnsigned() * VertexPositionTexture.SizeInBytes,BufferUsage.VertexBuffer));
-            _graphicsDevice.UpdateBuffer(_vertexBufferTexturedQuad,0,quad.vertecies);
+            graphicsDevice.UpdateBuffer(_vertexBufferTexturedQuad,0,quad.vertecies);
 
             VertexLayoutDescription vertexLayout 
                 = new VertexLayoutDescription(
@@ -328,8 +328,8 @@ namespace Henzai.Examples
 
             _worldTransTexturedQuad = Matrix4x4.CreateWorld(new Vector3(5,0,0),-Vector3.UnitZ,Vector3.UnitY);
 
-            _vertexShaderTexturedQuad = IO.LoadShader("QuadTexture",ShaderStages.Vertex,_graphicsDevice);
-            _fragmentShaderTexturedQuad = IO.LoadShader("QuadTexture",ShaderStages.Fragment,_graphicsDevice);
+            _vertexShaderTexturedQuad = IO.LoadShader("QuadTexture",ShaderStages.Vertex,graphicsDevice);
+            _fragmentShaderTexturedQuad = IO.LoadShader("QuadTexture",ShaderStages.Fragment,graphicsDevice);
 
             GraphicsPipelineDescription pipelineDescription = new GraphicsPipelineDescription(){
                 BlendState = BlendStateDescription.SingleOverrideBlend,
@@ -347,7 +347,7 @@ namespace Henzai.Examples
                     vertexLayouts: new VertexLayoutDescription[] {vertexLayout},
                     shaders: new Shader[] {_vertexShaderTexturedQuad,_fragmentShaderTexturedQuad}
                 ),
-                Outputs = _graphicsDevice.SwapchainFramebuffer.OutputDescription
+                Outputs = graphicsDevice.SwapchainFramebuffer.OutputDescription
             };
 
             _pipelineTexturedQuad = _factory.CreateGraphicsPipeline(pipelineDescription);
@@ -402,7 +402,7 @@ namespace Henzai.Examples
                 instanceStart: 0
             );
 
-            _commandList.SetFramebuffer(_graphicsDevice.SwapchainFramebuffer);
+            _commandList.SetFramebuffer(graphicsDevice.SwapchainFramebuffer);
             _commandList.SetFullViewports();
             _commandList.ClearColorTarget(0,RgbaFloat.Black);
             _commandList.ClearDepthStencil(1f);
@@ -452,8 +452,8 @@ namespace Henzai.Examples
             );
             
             _commandList.End();
-            _graphicsDevice.SubmitCommands(_commandList);
-            _graphicsDevice.SwapBuffers();
+
+            graphicsDevice.SubmitCommands(_commandList);
         }
 
         private void ScaleTextureQuadToMatchResolution(){
