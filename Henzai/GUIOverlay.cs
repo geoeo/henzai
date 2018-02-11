@@ -40,7 +40,7 @@ namespace Henzai.GUI
 
         public void SetOverlayFor(Renderable scene){
             scene.PreDraw += UpdateImGui;
-            scene.children.Add(this);
+            scene.childrenPost.Add(this);
         }
 
         public void UpdateImGui(float deltaSeconds){
@@ -126,9 +126,8 @@ namespace Henzai.GUI
 
         }
 
-        override protected void Draw(){
-
-            _commandList.Begin();
+        override protected void BuildCommandList(){
+             _commandList.Begin();
             _commandList.SetFramebuffer(graphicsDevice.SwapchainFramebuffer);
            // _commandList.SetFullViewports();
             // _commandList.ClearColorTarget(0,RgbaFloat.Red);
@@ -138,6 +137,17 @@ namespace Henzai.GUI
                 RenderImGuiDrawData(ImGui.GetDrawData(), graphicsDevice, _commandList);
             }
             _commandList.End();
+        }
+
+        override protected void Draw(){
+
+            // _commandList.Begin();
+            // _commandList.SetFramebuffer(graphicsDevice.SwapchainFramebuffer);
+
+            // unsafe {
+            //     RenderImGuiDrawData(ImGui.GetDrawData(), graphicsDevice, _commandList);
+            // }
+            // _commandList.End();
 
             graphicsDevice.SubmitCommands(_commandList);
 

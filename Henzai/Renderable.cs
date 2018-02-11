@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Veldrid;
 using Veldrid.StartupUtilities;
 using Veldrid.Sdl2;
@@ -17,10 +18,13 @@ namespace Henzai
         public Camera camera => _camera;
         private FrameTimer _frameTimer;
         /// <summary>
-        /// Indicates that this scene performs rendering tasks
-        /// to support the Renderable owner
+        /// Renderable objects which should be drawn before this.Draw()
         /// </summary>
-        public List<Renderable> children;
+        public List<Renderable> childrenPre;
+        /// <summary>
+        /// Renderable objects which should be drawn after this.Draw()
+        /// </summary>
+        public List<Renderable> childrenPost;
         private Sdl2Window _contextWindow;
         public Sdl2Window contextWindow => _contextWindow;
         private GraphicsDevice _graphicsDevice;
@@ -42,6 +46,12 @@ namespace Henzai
         /// Bind Actions that have to be executed after every draw call
         /// </summary>
         public event Action PostDraw;
+        /// <summary>
+        /// Includes this.BuildCommandList()
+        /// </summary>
+        private Task[] buildCommandListTasks;
+        private Task[] drawTasksPre;
+        private Task[] drawTasksPost;
 
         public Renderable(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, GraphicsBackend preferredBackend, bool usePreferredGraphicsBackend){
             WindowCreateInfo windowCI = new WindowCreateInfo()
@@ -61,7 +71,8 @@ namespace Henzai
 
             _contextWindow.Title = $"{title} / {_graphicsDevice.BackendType.ToString()}";
 
-            children = new List<Renderable>();
+            childrenPre = new List<Renderable>();
+            childrenPost = new List<Renderable>();
 
         }
 
@@ -87,8 +98,18 @@ namespace Henzai
             _sceneResources.Add(_graphicsDevice);
 
             _sceneResources.AddRange(CreateResources());
-            foreach(var child in children)
+            foreach(var child in childrenPre)
                 _sceneResources.AddRange(child.CreateResources());
+            foreach(var child in childrenPost)
+                _sceneResources.AddRange(child.CreateResources());
+
+            List<Renderable> allChildren = new List<Renderable>();
+            allChildren.AddRange(childrenPre);
+            allChildren.AddRange(childrenPost);
+
+            buildCommandListTasks = new Task[allChildren.Count+1];
+            drawTasksPre = new Task[childrenPre.Count];
+            drawTasksPost = new Task[childrenPost.Count];
 
             PreRenderLoop?.Invoke();
             while (_contextWindow.Exists)
@@ -101,9 +122,30 @@ namespace Henzai
 
                     PreDraw?.Invoke(_frameTimer.prevFrameTicksInSeconds);
 
+                    buildCommandListTasks[0] = Task.Run(() => this.BuildCommandList());
+                    for(int i = 0; i < allChildren.Count; i++){
+                        var child = allChildren[i];
+                        buildCommandListTasks[i+1] = Task.Run(() => child.BuildCommandList());
+                    } 
+
+                    // Wait untill every command list has been built
+                    Task.WaitAll(buildCommandListTasks);
+
+                    for(int i = 0; i < childrenPre.Count; i++){
+                        var child = childrenPre[i];
+                        drawTasksPre[i] = Task.Run(() => child.Draw());
+                    } 
+
+                    Task.WaitAll(drawTasksPre);
+
                     Draw();
-                    foreach(var child in children)
-                        child.Draw();
+
+                    for(int i = 0; i < childrenPost.Count; i++){
+                        var child = childrenPost[i];
+                        drawTasksPost[i] = Task.Run(() => child.Draw());
+                    } 
+
+                    Task.WaitAll(drawTasksPost);
 
                     graphicsDevice.SwapBuffers();
                     PostDraw?.Invoke();
@@ -126,6 +168,8 @@ namespace Henzai
         /// Creates resources used to render e.g. Buffers, Textures etc.
         /// </summary>
         abstract protected List<IDisposable> CreateResources();
+
+        abstract protected void BuildCommandList();
 
         /// <summary>
         /// Disposes of all elements in _sceneResources
