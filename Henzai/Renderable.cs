@@ -131,6 +131,7 @@ namespace Henzai
                     // Wait untill every command list has been built
                     Task.WaitAll(buildCommandListTasks);
 
+                    // Perform draw tasks which 
                     for(int i = 0; i < childrenPre.Count; i++){
                         var child = childrenPre[i];
                         drawTasksPre[i] = Task.Run(() => child.Draw());

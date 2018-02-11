@@ -123,7 +123,8 @@ namespace Henzai.Examples
 
         }
 
-        override protected void Draw(){
+        override protected void BuildCommandList(){
+
             _commandList.Begin();
             _commandList.SetFramebuffer(graphicsDevice.SwapchainFramebuffer);
             _commandList.SetPipeline(_pipeline);
@@ -144,8 +145,11 @@ namespace Henzai.Examples
                 instanceStart: 0
             );
             _commandList.End();
+
+        }
+
+        override protected void Draw(){
             graphicsDevice.SubmitCommands(_commandList);
-            graphicsDevice.SwapBuffers();
         }
         
     }

@@ -365,7 +365,8 @@ namespace Henzai.Examples
 
         }
 
-        override protected void Draw(){
+        override protected void BuildCommandList(){
+
             _commandList.Begin();
             
             _commandList.SetFramebuffer(_offScreenFBO);
@@ -452,8 +453,11 @@ namespace Henzai.Examples
             );
             
             _commandList.End();
+
+        }
+
+        override protected void Draw(){     
             graphicsDevice.SubmitCommands(_commandList);
-            graphicsDevice.SwapBuffers();
         }
 
         private void ScaleTextureQuadToMatchResolution(){
