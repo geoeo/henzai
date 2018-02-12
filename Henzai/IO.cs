@@ -1,10 +1,11 @@
 using System;
 using System.IO;
+using System.Reflection;
 using Veldrid;
 
 namespace Henzai
 {
-    public class IO
+    public static class IO
     {
         public static Shader LoadShader(string name, ShaderStages stage, GraphicsDevice graphicsDevice){
             string extension = null;
@@ -24,6 +25,16 @@ namespace Henzai
             string path = Path.Combine(System.AppContext.BaseDirectory,"Shaders",$"{shaderName}.{extension}");
             byte[] shaderBytes = File.ReadAllBytes(path);
             return graphicsDevice.ResourceFactory.CreateShader(new ShaderDescription(stage,shaderBytes,entryPoint));
+        }
+
+        public static byte[] GetEmbeddedResourceBytes(Assembly assembly, string resourceName)
+        {
+            using (Stream s = assembly.GetManifestResourceStream(resourceName))
+            {
+                byte[] ret = new byte[s.Length];
+                s.Read(ret, 0, (int)s.Length);
+                return ret;
+            }
         }
 
     }

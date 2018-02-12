@@ -6,6 +6,7 @@ using System.Numerics;
 using ImGuiNET;
 using Veldrid;
 using Veldrid.Sdl2;
+using Henzai;
 
 
 namespace Henzai.UserInterface
@@ -299,36 +300,27 @@ namespace Henzai.UserInterface
                 case GraphicsBackend.Direct3D11:
                     {
                         string resourceName = name + ".hlsl.bytes";
-                        return GetEmbeddedResourceBytes(resourceName);
+                        return IO.GetEmbeddedResourceBytes(_assembly, resourceName);
                     }
                 case GraphicsBackend.OpenGL:
                     {
                         string resourceName = name + ".glsl";
-                        return GetEmbeddedResourceBytes(resourceName);
+                        return IO.GetEmbeddedResourceBytes(_assembly,resourceName);
                     }
                 case GraphicsBackend.Vulkan:
                     {
                         string resourceName = name + ".spv";
-                        return GetEmbeddedResourceBytes(resourceName);
+                        return IO.GetEmbeddedResourceBytes(_assembly,resourceName);
                     }
                 case GraphicsBackend.Metal:
                     {
                         string resourceName = name + ".metallib";
-                        return GetEmbeddedResourceBytes(resourceName);
+                        return IO.GetEmbeddedResourceBytes(_assembly,resourceName);
                     }
                 default:
                     throw new NotImplementedException();
             }
         }
 
-        private byte[] GetEmbeddedResourceBytes(string resourceName)
-        {
-            using (Stream s = _assembly.GetManifestResourceStream(resourceName))
-            {
-                byte[] ret = new byte[s.Length];
-                s.Read(ret, 0, (int)s.Length);
-                return ret;
-            }
-        }
     }
 }
