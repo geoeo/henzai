@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Veldrid;
 using Veldrid.StartupUtilities;
 using Veldrid.Sdl2;
-using Henzai.GUI;
+using Henzai.UserInterface;
 
 namespace Henzai
 {

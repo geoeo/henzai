@@ -1,7 +1,7 @@
 ﻿using System;
 using Henzai;
 using Veldrid;
-using Henzai.GUI;
+using Henzai.UserInterface;
 
 namespace Henzai.Examples
 {
@@ -27,7 +27,7 @@ namespace Henzai.Examples
                 usePreferredGraphicsBackend: false
             );
 
-            GUIOverlay gui = new GUIOverlay(scene.graphicsDevice,scene.contextWindow);
+            SimpleGUIOverlay gui = new SimpleGUIOverlay(scene.graphicsDevice,scene.contextWindow);
             gui.SetOverlayFor(scene);
 
             scene.Run(renderResolution);

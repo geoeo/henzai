@@ -8,10 +8,10 @@ using Veldrid;
 using Veldrid.Sdl2;
 
 
-namespace Henzai.GUI
+namespace Henzai.UserInterface
 {
     /// See Veldrid.ImGuiRenderer
-    public class GUIOverlay : Renderable
+    public abstract class UserInterface : Renderable
     {
 
         private readonly Assembly _assembly;
@@ -32,8 +32,8 @@ namespace Henzai.GUI
         private IntPtr _fontAtlasID = (IntPtr)1;
 
 
-        public GUIOverlay(GraphicsDevice graphicsDevice, Sdl2Window contextWindow) : base(graphicsDevice,contextWindow){
-            _assembly = typeof(GUIOverlay).GetTypeInfo().Assembly;
+        public UserInterface(GraphicsDevice graphicsDevice, Sdl2Window contextWindow) : base(graphicsDevice,contextWindow){
+            _assembly = typeof(UserInterface).GetTypeInfo().Assembly;
             ImGui.GetIO().FontAtlas.AddDefaultFont();
         }
 
@@ -52,10 +52,12 @@ namespace Henzai.GUI
             
 
             ImGui.NewFrame();
-            SubmitImGUICommands(deltaSeconds);
+            SubmitImGUILayout(deltaSeconds);
             ImGui.Render();
 
         }
+
+        abstract protected unsafe void SubmitImGUILayout(float secondsPerFrame);
 
         override protected List<IDisposable> CreateResources(){
 
@@ -127,11 +129,8 @@ namespace Henzai.GUI
         }
 
         override protected void BuildCommandList(){
-             _commandList.Begin();
+            _commandList.Begin();
             _commandList.SetFramebuffer(graphicsDevice.SwapchainFramebuffer);
-           // _commandList.SetFullViewports();
-            // _commandList.ClearColorTarget(0,RgbaFloat.Red);
-            //_commandList.ClearDepthStencil(1f);
 
             unsafe {
                 RenderImGuiDrawData(ImGui.GetDrawData(), graphicsDevice, _commandList);
@@ -140,14 +139,6 @@ namespace Henzai.GUI
         }
 
         override protected void Draw(){
-
-            // _commandList.Begin();
-            // _commandList.SetFramebuffer(graphicsDevice.SwapchainFramebuffer);
-
-            // unsafe {
-            //     RenderImGuiDrawData(ImGui.GetDrawData(), graphicsDevice, _commandList);
-            // }
-            // _commandList.End();
 
             graphicsDevice.SubmitCommands(_commandList);
 
@@ -300,31 +291,6 @@ namespace Henzai.GUI
 
             io.FontAtlas.ClearTexData();
         }
-
-        private unsafe void SubmitImGUICommands(float secondsPerFrame){
-
-            // ImGui.GetStyle().WindowRounding = 0;
-
-            // ImGui.SetNextWindowSize(new Vector2(contextWindow.Width/4, contextWindow.Height/4), Condition.Always);
-            // ImGui.SetNextWindowPos(new Vector2(50,50), Condition.Always, Vector2.Zero);
-            // if(ImGui.BeginWindow("ImGUI.NET Sample Program", WindowFlags.NoResize | WindowFlags.NoTitleBar | WindowFlags.NoMove))
-            // {
-            //     ImGui.Text("Hello World");
-            // }
-            // ImGui.EndWindow();
-            float fps = 1.0f/secondsPerFrame;
-            string performance = $"Seconds per Frame: {secondsPerFrame.ToString()}";
-            //string performance_2 = $"Frames per Second: {fps.ToString()}";
-
-            if (ImGui.BeginMainMenuBar())
-            {
-                ImGui.Text(performance);
-                //ImGui.Text(performance_2);
-                ImGui.EndMainMenuBar(); 
-            }
-
-        }
-
 
         private byte[] LoadEmbeddedShaderCode(ResourceFactory factory, string name)
         {
