@@ -12,7 +12,7 @@ using Henzai.Geometry;
 
 namespace Henzai.Examples
 {
-    public class Scene : Renderable
+    internal class Scene : Renderable
     {
         private CommandList _commandList;
         private DeviceBuffer _vertexBuffer;

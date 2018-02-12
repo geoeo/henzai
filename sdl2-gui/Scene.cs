@@ -12,7 +12,7 @@ using Henzai.Geometry;
 
 namespace Henzai.Examples
 {
-    public class Scene : Renderable
+    internal class Scene : Renderable
     {
         private Camera _staticCamera;
 
@@ -457,93 +457,6 @@ namespace Henzai.Examples
         }
 
         override protected void Draw(){
-            // _commandList.Begin();
-            
-            // _commandList.SetFramebuffer(_offScreenFBO);
-            // _commandList.SetFullViewports();
-            // _commandList.ClearColorTarget(0,RgbaFloat.White);
-            // _commandList.ClearDepthStencil(1f);
-
-            // _commandList.SetPipeline(_pipelineCubeOffscreen);
-            // _commandList.SetVertexBuffer(0,_vertexBufferCube);
-            // _commandList.SetIndexBuffer(_indexBufferCube,IndexFormat.UInt16);
-            // _commandList.UpdateBuffer(_transformationPipelineBuffer,0,_staticCamera.ViewMatrix);
-            // _commandList.UpdateBuffer(_transformationPipelineBuffer,128,_worldTransCube);
-            // _commandList.SetGraphicsResourceSet(0,_transformationPipelineResourceSet); // Always after SetPipeline
-            // _commandList.SetGraphicsResourceSet(1,_textureNameResourceSet); // Always after SetPipeline
-            // _commandList.DrawIndexed(
-            //     indexCount: 36,
-            //     instanceCount: 1,
-            //     indexStart: 0,
-            //     vertexOffset: 0,
-            //     instanceStart: 0
-            // );
-
-            // _commandList.SetPipeline(_pipelineColouredQuadOffscreen);
-            // _commandList.SetVertexBuffer(0,_vertexBufferColouredQuad);
-            // _commandList.SetIndexBuffer(_indexBufferQuad,IndexFormat.UInt16);
-            // _commandList.UpdateBuffer(_transformationPipelineBuffer,0,_staticCamera.ViewMatrix);
-            // _commandList.UpdateBuffer(_transformationPipelineBuffer,128,_worldTransColouredQuad);
-            // _commandList.SetGraphicsResourceSet(0,_transformationPipelineResourceSet);
-            // _commandList.DrawIndexed(
-            //     indexCount: 4,
-            //     instanceCount: 1,
-            //     indexStart: 0,
-            //     vertexOffset: 0,
-            //     instanceStart: 0
-            // );
-
-            // _commandList.SetFramebuffer(graphicsDevice.SwapchainFramebuffer);
-            // _commandList.SetFullViewports();
-            // _commandList.ClearColorTarget(0,RgbaFloat.Black);
-            // _commandList.ClearDepthStencil(1f);
-
-            // _commandList.SetPipeline(_pipelineCube);
-            // _commandList.SetVertexBuffer(0,_vertexBufferCube);
-            // _commandList.SetIndexBuffer(_indexBufferCube,IndexFormat.UInt16);
-            // _commandList.UpdateBuffer(_transformationPipelineBuffer,0,camera.ViewMatrix);
-            // _commandList.UpdateBuffer(_transformationPipelineBuffer,128,_worldTransCube);
-            // _commandList.SetGraphicsResourceSet(0,_transformationPipelineResourceSet); // Always after SetPipeline
-            // _commandList.SetGraphicsResourceSet(1,_textureNameResourceSet); // Always after SetPipeline
-            // _commandList.DrawIndexed(
-            //     indexCount: 36,
-            //     instanceCount: 1,
-            //     indexStart: 0,
-            //     vertexOffset: 0,
-            //     instanceStart: 0
-            // );
-
-            // _commandList.SetPipeline(_pipelineColouredQuad);
-            // _commandList.SetVertexBuffer(0,_vertexBufferColouredQuad);
-            // _commandList.SetIndexBuffer(_indexBufferQuad,IndexFormat.UInt16);
-            // _commandList.UpdateBuffer(_transformationPipelineBuffer,0,camera.ViewMatrix);
-            // _commandList.UpdateBuffer(_transformationPipelineBuffer,128,_worldTransColouredQuad);
-            // _commandList.SetGraphicsResourceSet(0,_transformationPipelineResourceSet);
-            // _commandList.DrawIndexed(
-            //     indexCount: 4,
-            //     instanceCount: 1,
-            //     indexStart: 0,
-            //     vertexOffset: 0,
-            //     instanceStart: 0
-            // );
-
-            // _commandList.SetPipeline(_pipelineTexturedQuad);
-            // _commandList.SetVertexBuffer(0,_vertexBufferTexturedQuad);
-            // _commandList.SetIndexBuffer(_indexBufferQuad,IndexFormat.UInt16);
-            // _commandList.UpdateBuffer(_transformationPipelineBuffer,0,camera.ViewMatrix);
-            // _commandList.UpdateBuffer(_transformationPipelineBuffer,128,_worldTransTexturedQuad);
-            // _commandList.SetGraphicsResourceSet(0,_transformationPipelineResourceSet);
-            // _commandList.SetGraphicsResourceSet(1,_textureOffscreenResourceSet); 
-            // _commandList.DrawIndexed(
-            //     indexCount: 4,
-            //     instanceCount: 1,
-            //     indexStart: 0,
-            //     vertexOffset: 0,
-            //     instanceStart: 0
-            // );
-            
-            // _commandList.End();
-
             graphicsDevice.SubmitCommands(_commandList);
         }
 

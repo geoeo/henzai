@@ -12,7 +12,7 @@ using Henzai.Geometry;
 namespace Henzai.Examples
 {
     // https://mellinoe.github.io/veldrid-docs/articles/getting-started/getting-started-part1.html
-    public class Scene : Renderable
+    internal class Scene : Renderable
     {
         private CommandList _commandList;
         private DeviceBuffer _vertexBuffer;

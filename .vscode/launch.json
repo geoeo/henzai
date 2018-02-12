@@ -53,6 +53,18 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
+            "name": ".NET Core Launch (asset-loading)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build asset-loading",
+            "program": "${workspaceFolder}/asset-loading/bin/Debug/netcoreapp2.0/asset-loading.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/asset-loading",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
             "name": ".NET Core Attach",
             "type": "coreclr",
             "request": "attach",

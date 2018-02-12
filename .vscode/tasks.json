@@ -54,6 +54,16 @@
             "problemMatcher": "$msCompile"
         },
         {
+            "label": "build asset-loading",
+            "command": "dotnet build asset-loading/asset-loading.csproj",
+            "type": "shell",
+            "group": "build",
+            "presentation": {
+                "reveal": "silent"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
             "label": "compile metal shaders (Henzai)",
             "type": "shell",
             "group": "build",
@@ -129,6 +139,13 @@
             "type": "shell",
             "group": "build",
             "command": "dotnet run --project sdl2-gui/",
+            "problemMatcher":"$msCompile"
+        },
+        {
+            "label": "run asset-loading",
+            "type": "shell",
+            "group": "build",
+            "command": "dotnet run --project asset-loading/",
             "problemMatcher":"$msCompile"
         }
     ]

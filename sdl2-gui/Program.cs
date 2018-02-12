@@ -5,7 +5,7 @@ using Henzai.UserInterface;
 
 namespace Henzai.Examples
 {
-    class Program
+    internal class Program
     {
         static void Main(string[] args)
         {

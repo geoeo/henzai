@@ -19,12 +19,15 @@ namespace Henzai.Examples
             };
 
             Scene scene = new Scene(
-                "Offscreen",
+                "Asset Loading",
                 windowSize,
                 gdOptions,
                 GraphicsBackend.OpenGL,
                 usePreferredGraphicsBackend: false
             );
+
+            //SimpleGUIOverlay gui = new SimpleGUIOverlay(scene.graphicsDevice,scene.contextWindow);
+            //gui.SetOverlayFor(scene);
 
             scene.Run(renderResolution);
         }
