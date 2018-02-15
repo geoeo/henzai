@@ -379,6 +379,10 @@ namespace Henzai.Examples
             _commandList.SetIndexBuffer(_indexBufferCube,IndexFormat.UInt16);
             _commandList.UpdateBuffer(_transformationPipelineBuffer,0,_staticCamera.ViewMatrix);
             _commandList.UpdateBuffer(_transformationPipelineBuffer,128,_worldTransCube);
+            // _commandList.UpdateBuffer(_transformationPipelineBuffer,128,new Vector4(1f,0f,0f,0f));
+            // _commandList.UpdateBuffer(_transformationPipelineBuffer,144,new Vector4(0f,1f,0f,0f));
+            // _commandList.UpdateBuffer(_transformationPipelineBuffer,160,new Vector4(0f,0f,1f,0f));
+            // _commandList.UpdateBuffer(_transformationPipelineBuffer,176,new Vector4(-1f,0f,0f,1f));
             _commandList.SetGraphicsResourceSet(0,_transformationPipelineResourceSet); // Always after SetPipeline
             _commandList.SetGraphicsResourceSet(1,_textureNameResourceSet); // Always after SetPipeline
             _commandList.DrawIndexed(
