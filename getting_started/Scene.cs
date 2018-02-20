@@ -45,7 +45,7 @@ namespace Henzai.Examples
             
             _resourceSet = _factory.CreateResourceSet(resourceSetDescription);
 
-           ColouredQuad colouredQuad 
+           ColouredMesh colouredQuad 
                 = GeometryFactory.generateColouredQuad(RgbaFloat.Red,RgbaFloat.Green,RgbaFloat.Blue,RgbaFloat.Yellow);
 
             ushort[] quadIndicies = GeometryFactory.generateQuadIndicies_TriangleStrip_CW();

@@ -4,13 +4,13 @@ using Veldrid;
 
 namespace Henzai.Geometry
 {
-    public struct TexturedCube
+    public struct TexturedMesh
     {
         public VertexPositionTexture[] vertices;
 
-        public TexturedCube(VertexPositionTexture[] texturedCubeDefinition)
+        public TexturedMesh(VertexPositionTexture[] texturedMeshDefinition)
         {
-            vertices = texturedCubeDefinition;
+            vertices = texturedMeshDefinition;
         }
 
     }

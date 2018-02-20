@@ -4,11 +4,11 @@ using Veldrid;
 
 namespace Henzai.Geometry
 {
-    public struct ColouredQuad
+    public struct ColouredMesh
     {
         public VertexPositionColour[] vertecies;
 
-        public ColouredQuad(VertexPositionColour[] colouredQuadDefinition){
+        public ColouredMesh(VertexPositionColour[] colouredQuadDefinition){
             vertecies = colouredQuadDefinition;
         }
     }

@@ -157,7 +157,7 @@ namespace Henzai.Examples
                 cubeTextureView,
                 graphicsDevice.LinearSampler));
 
-            TexturedCube texturedCube 
+            TexturedMesh texturedCube 
                 = GeometryFactory.generateTexturedCube();
 
             ushort[] cubeIndicies = GeometryFactory.generateCubeIndicies_TriangleList_CW();
@@ -238,7 +238,7 @@ namespace Henzai.Examples
 
         private List<IDisposable> createColouredQuadResources(){
 
-            ColouredQuad quad = GeometryFactory.generateColouredQuad(RgbaFloat.Red, RgbaFloat.Blue,RgbaFloat.Green,RgbaFloat.Orange);
+            ColouredMesh quad = GeometryFactory.generateColouredQuad(RgbaFloat.Red, RgbaFloat.Blue,RgbaFloat.Green,RgbaFloat.Orange);
             ushort[] quadIndicies = GeometryFactory.generateQuadIndicies_TriangleStrip_CW();
 
             _vertexBufferColouredQuad = _factory.CreateBuffer(new BufferDescription(quad.vertecies.LengthUnsigned()* VertexPositionColour.SizeInBytes, BufferUsage.VertexBuffer));
@@ -313,12 +313,12 @@ namespace Henzai.Examples
 
         private IList<IDisposable> createTexturedQuadResources(){
 
-            TexturedQuad quad = GeometryFactory.generateTexturedQuad();
+            TexturedMesh quad = GeometryFactory.generateTexturedQuad();
             if(_indexBufferQuad == null)
                 throw new ApplicationException("_indexBufferQuad should have been created");
 
-            _vertexBufferTexturedQuad = _factory.CreateBuffer(new BufferDescription(quad.vertecies.LengthUnsigned() * VertexPositionTexture.SizeInBytes,BufferUsage.VertexBuffer));
-            graphicsDevice.UpdateBuffer(_vertexBufferTexturedQuad,0,quad.vertecies);
+            _vertexBufferTexturedQuad = _factory.CreateBuffer(new BufferDescription(quad.vertices.LengthUnsigned() * VertexPositionTexture.SizeInBytes,BufferUsage.VertexBuffer));
+            graphicsDevice.UpdateBuffer(_vertexBufferTexturedQuad,0,quad.vertices);
 
             VertexLayoutDescription vertexLayout 
                 = new VertexLayoutDescription(
