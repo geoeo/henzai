@@ -80,8 +80,8 @@ namespace Henzai.Examples
             VertexLayoutDescription vertexLayout 
                 = new VertexLayoutDescription(
                     new VertexElementDescription("Position",VertexElementSemantic.Position,VertexElementFormat.Float3),
-                    new VertexElementDescription("Normals",VertexElementSemantic.Normal,VertexElementFormat.Float3),
-                    new VertexElementDescription("UVs",VertexElementSemantic.TextureCoordinate,VertexElementFormat.Float2)
+                    new VertexElementDescription("Normal",VertexElementSemantic.Normal,VertexElementFormat.Float3),
+                    new VertexElementDescription("UV",VertexElementSemantic.TextureCoordinate,VertexElementFormat.Float2)
                 );
 
             _vertexShader = IO.LoadShader(string.Empty,ShaderStages.Vertex,graphicsDevice);

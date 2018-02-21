@@ -12,10 +12,10 @@ layout(std140) uniform projView
 };
 
 layout(location = 0)in vec3 Position;
-layout(location = 1)in vec3 Normals;
-layout(location = 2)in vec2 UVs;
+layout(location = 1)in vec3 Normal;
+layout(location = 2)in vec2 UV;
 
-smooth out vec3 fsin_Normals;
+smooth out vec3 fsin_Normal;
 
 void main()
 {
@@ -25,5 +25,5 @@ void main()
     gl_Position = projMatrix*viewMatrix*worldPos;
     // composensate for D3D projection
     gl_Position.z = 2.0*gl_Position.z -gl_Position.w;
-    fsin_Normals = Normals;
+    fsin_Normal = Normal;
 }
