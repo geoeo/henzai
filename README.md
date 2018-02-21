@@ -38,6 +38,7 @@ Henzai (遍在) meaning ubiquitous, is a cross platform 3D rendering engine usin
 ### Vulkan
 * https://www.saschawillems.de/?p=1669
 * https://matthewwellings.com/blog/the-new-vulkan-coordinate-system/
+* https://github.com/Microsoft/DirectXShaderCompiler/blob/master/docs/SPIR-V.rst
 
 ### DirectX
 * https://msdn.microsoft.com/en-us/library/windows/desktop/bb324490(v=vs.85).aspx
