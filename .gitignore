@@ -48,7 +48,6 @@ dlldata.c
 *_i.h
 *.ilk
 *.meta
-*.obj
 *.pch
 *.pdb
 *.pgc
@@ -262,3 +261,8 @@ Session.vim
 # Generated shaders
 Shaders.Generated
 getting_started/Shaders/*.metallib
+
+# Model Files
+*.obj
+*.dae
+

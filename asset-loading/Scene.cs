@@ -31,7 +31,8 @@ namespace Henzai.Examples
             : base(title,windowSize,graphicsDeviceOptions,preferredBackend,usePreferredGraphicsBackend){
 
                 //string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere.obj");
-                string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere_centered.obj");
+                //string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere_centered.obj");
+                string filePath = Path.Combine(AppContext.BaseDirectory, "Models/chinesedragon.dae");
                 _sphereModel = AssimpLoader.LoadFromFile(filePath);
                 _vertexBuffers = new List<DeviceBuffer>();
                 _indexBuffers = new List<DeviceBuffer>();
