@@ -72,8 +72,8 @@ namespace Henzai.Examples
                 _vertexBuffers.Add(vertexBuffer);
                 _indexBuffers.Add(indexBuffer);
 
-                graphicsDevice.UpdateBuffer(vertexBuffer,i.ToUnsigned(),_sphereModel.meshes[i].vertices);
-                graphicsDevice.UpdateBuffer(indexBuffer,i.ToUnsigned(),_sphereModel.meshIndicies[i]);
+                graphicsDevice.UpdateBuffer(vertexBuffer,0,_sphereModel.meshes[i].vertices);
+                graphicsDevice.UpdateBuffer(indexBuffer,0,_sphereModel.meshIndicies[i]);
             }
 
             // graphicsDevice.UpdateBuffer(_cameraProjViewBuffer,0,camera.ViewMatrix);

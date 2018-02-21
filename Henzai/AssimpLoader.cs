@@ -11,9 +11,10 @@ namespace Henzai
     {
         private static Vector3D Zero3D = new Vector3D(0.0f, 0.0f, 0.0f);
 
+        // http://assimp.sourceforge.net/lib_html/postprocess_8h.html#a64795260b95f5a4b3f3dc1be4f52e410a9c3de834f0307f31fa2b1b6d05dd592b
         private const PostProcessSteps DefaultPostProcessSteps 
             = PostProcessSteps.FlipWindingOrder | PostProcessSteps.Triangulate | PostProcessSteps.PreTransformVertices
-            | PostProcessSteps.CalculateTangentSpace | PostProcessSteps.GenerateSmoothNormals;
+            | PostProcessSteps.CalculateTangentSpace | PostProcessSteps.GenerateSmoothNormals | PostProcessSteps.JoinIdenticalVertices;
 
         private static Vector3 toVector3(this Vector3D vector){
             return new Vector3(vector.X,vector.Y,vector.Z);
