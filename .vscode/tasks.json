@@ -114,6 +114,16 @@
             "problemMatcher": "$msCompile"
         },
         {
+            "label": "compile metal shaders (asset loading)",
+            "type": "shell",
+            "group": "build",
+            "command": "${cwd}/compileMetal.sh",
+            "args": [
+                "${cwd}/asset-loading/Shaders/"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
             "label": "run getting started",
             "type": "shell",
             "group": "build",

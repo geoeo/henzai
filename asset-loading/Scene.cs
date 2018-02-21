@@ -76,9 +76,6 @@ namespace Henzai.Examples
                 graphicsDevice.UpdateBuffer(indexBuffer,0,_sphereModel.meshIndicies[i]);
             }
 
-            // graphicsDevice.UpdateBuffer(_cameraProjViewBuffer,0,camera.ViewMatrix);
-            // graphicsDevice.UpdateBuffer(_cameraProjViewBuffer,64,camera.ProjectionMatrix);
-
             VertexLayoutDescription vertexLayout 
                 = new VertexLayoutDescription(
                     new VertexElementDescription("Position",VertexElementSemantic.Position,VertexElementFormat.Float3),
