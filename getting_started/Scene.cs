@@ -45,7 +45,7 @@ namespace Henzai.Examples
             
             _resourceSet = _factory.CreateResourceSet(resourceSetDescription);
 
-           ColouredMesh colouredQuad 
+           Mesh<VertexPositionColour> colouredQuad 
                 = GeometryFactory.generateColouredQuad(RgbaFloat.Red,RgbaFloat.Green,RgbaFloat.Blue,RgbaFloat.Yellow);
 
             ushort[] quadIndicies = GeometryFactory.generateQuadIndicies_TriangleStrip_CW();
@@ -54,14 +54,14 @@ namespace Henzai.Examples
 
             // declare (VBO) buffers
             _vertexBuffer 
-                = _factory.CreateBuffer(new BufferDescription(colouredQuad.vertecies.LengthUnsigned() * VertexPositionColour.SizeInBytes, BufferUsage.VertexBuffer));
+                = _factory.CreateBuffer(new BufferDescription(colouredQuad.vertices.LengthUnsigned() * VertexPositionColour.SizeInBytes, BufferUsage.VertexBuffer));
             _indexBuffer 
                 = _factory.CreateBuffer(new BufferDescription(quadIndicies.LengthUnsigned()*sizeof(ushort),BufferUsage.IndexBuffer));
             _xOffsetBuffer
                 = _factory.CreateBuffer(new BufferDescription(_xOffset.LengthUnsigned()*sizeof(float),BufferUsage.VertexBuffer));
 
             // fill buffers with data
-            graphicsDevice.UpdateBuffer(_vertexBuffer,0,colouredQuad.vertecies);
+            graphicsDevice.UpdateBuffer(_vertexBuffer,0,colouredQuad.vertices);
             graphicsDevice.UpdateBuffer(_indexBuffer,0,quadIndicies);
             graphicsDevice.UpdateBuffer(_xOffsetBuffer,0,_xOffset);
             graphicsDevice.UpdateBuffer(_cameraProjViewBuffer,0,camera.ViewMatrix);

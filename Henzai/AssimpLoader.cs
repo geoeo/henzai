@@ -1,36 +1,45 @@
 using System;
+using System.Runtime.InteropServices;
 using System.Numerics;
 using Assimp;
 using Henzai.Geometry;
 using Henzai.Extensions;
+using Henzai.Runtime;
 
 namespace Henzai
 {   
+
+    public static class AssimpExtensions
+    {
+        public static Vector3 toVector3(this Vector3D vector){
+            return new Vector3(vector.X,vector.Y,vector.Z);
+        }
+
+        public static Vector2 toVector2(this Vector3D vector){
+            return new Vector2(vector.X,vector.Y);
+        }
+    }
+
+
     //TODO investigate non-static for multithreading
     public static class AssimpLoader
     {
         private static Vector3D Zero3D = new Vector3D(0.0f, 0.0f, 0.0f);
+        private static Color4D NoColour = new Color4D(0.0f, 0.0f, 0.0f,0.0f);
 
         // http://assimp.sourceforge.net/lib_html/postprocess_8h.html#a64795260b95f5a4b3f3dc1be4f52e410a9c3de834f0307f31fa2b1b6d05dd592b
         private const PostProcessSteps DefaultPostProcessSteps 
             = PostProcessSteps.FlipWindingOrder | PostProcessSteps.Triangulate | PostProcessSteps.PreTransformVertices
             | PostProcessSteps.CalculateTangentSpace | PostProcessSteps.GenerateSmoothNormals | PostProcessSteps.JoinIdenticalVertices;
 
-        private static Vector3 toVector3(this Vector3D vector){
-            return new Vector3(vector.X,vector.Y,vector.Z);
-        }
 
-        private static Vector2 toVector2(this Vector3D vector){
-            return new Vector2(vector.X,vector.Y);
-        }
-
-         public static Model LoadFromFile(string filename,PostProcessSteps flags = AssimpLoader.DefaultPostProcessSteps)
+         public static Model<T> LoadFromFile<T>(string filename, HenzaiTypes vertexType, PostProcessSteps flags = DefaultPostProcessSteps) where T : struct
         {
             AssimpContext assimpContext = new AssimpContext();
             Scene pScene = assimpContext.ImportFile(filename, flags);
 
             int meshCount = pScene.MeshCount;
-            Geometry.Mesh[] meshes = new Geometry.Mesh[meshCount];
+            Geometry.Mesh<T>[] meshes = new Geometry.Mesh<T>[meshCount];
             uint[][] meshIndicies = new uint[meshCount][];
 
             for(int i = 0; i < meshCount; i++){
@@ -40,22 +49,40 @@ namespace Henzai
                 if(vertexCount == 0)
                     continue;
 
-                VertexPositionNormalTexture[] meshDefinition = new VertexPositionNormalTexture[vertexCount];
+                T[] meshDefinition = new T[vertexCount];
 
                 for(int j = 0; j < vertexCount; j++){
 
                     Vector3D pPos = aiMesh.Vertices[j];
                     Vector3D pNormal = aiMesh.Normals[j];
                     Vector3D pTexCoord = aiMesh.HasTextureCoords(0) ? aiMesh.TextureCoordinateChannels[0][j] : Zero3D;
+                    Color4D pColour = aiMesh.HasVertexColors(0) ? aiMesh.VertexColorChannels[0][j] : NoColour;
                     Vector3D pTangent = aiMesh.HasTangentBasis ? aiMesh.Tangents[j] : Zero3D;
                     Vector3D pBiTangent = aiMesh.HasTangentBasis ? aiMesh.BiTangents[j] : Zero3D;
+                    
+                    byte[] bytes;
 
-                    meshDefinition[j] 
-                        = new VertexPositionNormalTexture(pPos.toVector3(),pNormal.toVector3(),pTexCoord.toVector2());
+                    switch(vertexType){
+                        case HenzaiTypes.VertexPositionNormalTexture:
+                            bytes = new byte[VertexPositionNormalTexture.SizeInBytes];
+                            byte[] posAsBytes = ByteMarshal.ToBytes(pPos);
+                            byte[] normalAsBytes = ByteMarshal.ToBytes(pNormal);
+                            byte[] texCoordAsBytes = ByteMarshal.ToBytes(pTexCoord.toVector2());
+
+                            Array.Copy(posAsBytes,0,bytes,VertexPositionNormalTexture.PositionOffset,posAsBytes.Length);
+                            Array.Copy(normalAsBytes,0,bytes,VertexPositionNormalTexture.NormalOffset,normalAsBytes.Length);
+                            Array.Copy(texCoordAsBytes,0,bytes,VertexPositionNormalTexture.TextureCoordinatesOffset,texCoordAsBytes.Length);
+
+                            meshDefinition[j] = ByteMarshal.ByteArrayToStructure<T>(bytes);
+                            break;
+                        default:
+                            throw new NotImplementedException($"{vertexType.ToString("g")} not implemented");
+
+                    }
 
                 }
 
-                meshes[i] = new Geometry.Mesh(meshDefinition);
+                meshes[i] = new Geometry.Mesh<T>(meshDefinition);
 
                 var faceCount = aiMesh.FaceCount;
                 meshIndicies[i] = new uint[3*faceCount];
@@ -76,7 +103,7 @@ namespace Henzai
                 }
             }
 
-            return new Model(meshes, meshIndicies);
+            return new Model<T>(meshes, meshIndicies);
 
         }
         

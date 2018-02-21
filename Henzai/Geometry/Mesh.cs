@@ -7,11 +7,11 @@ namespace Henzai.Geometry
     /// <summary>
     /// Mesh hold Position, Texture and Normal Information
     /// </summary>
-    public class Mesh
+    public class Mesh<T> where T : struct
     {
-        public readonly VertexPositionNormalTexture[] vertices;
+        public readonly T[] vertices;
 
-        public Mesh(VertexPositionNormalTexture[] meshDefinition)
+        public Mesh(T[] meshDefinition)
         {
             vertices = meshDefinition;
         }

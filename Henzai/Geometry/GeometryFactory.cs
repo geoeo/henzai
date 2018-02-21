@@ -7,7 +7,7 @@ namespace Henzai.Geometry
 {
     public static class GeometryFactory
     {
-        public static TexturedMesh generateTexturedCube()
+        public static Mesh<VertexPositionTexture> generateTexturedCube()
         {
             VertexPositionTexture[] cubeVerticies =
                 new VertexPositionTexture[]
@@ -44,7 +44,7 @@ namespace Henzai.Geometry
                     new VertexPositionTexture(new Vector3(-1.0f, -1.0f, +1.0f), new Vector2(0, 1)),
                 };
 
-            return new TexturedMesh(cubeVerticies);
+            return new Mesh<VertexPositionTexture>(cubeVerticies);
         }
         public static ushort[] generateCubeIndicies_TriangleList_CW()
         {
@@ -59,7 +59,7 @@ namespace Henzai.Geometry
             };
         }
 
-        public static ColouredMesh generateColouredQuad(params RgbaFloat[] colours)
+        public static Mesh<VertexPositionColour> generateColouredQuad(params RgbaFloat[] colours)
         {
             if(colours.Length < 4)
                 throw new ArgumentException("At least 4 colour values are needed for a Quad");
@@ -71,10 +71,10 @@ namespace Henzai.Geometry
                 new VertexPositionColour(new Vector2(1.0f,-1.0f),colours[3])
             };
 
-            return new ColouredMesh(quadVerticies);
+            return new Mesh<VertexPositionColour>(quadVerticies);
         }
 
-        public static TexturedMesh generateTexturedQuad()
+        public static Mesh<VertexPositionTexture> generateTexturedQuad()
         {
 
             VertexPositionTexture[] quadVerticies = {
@@ -84,7 +84,7 @@ namespace Henzai.Geometry
                 new VertexPositionTexture(new Vector3(1.0f,-1.0f,1.0f),new Vector2(1,1))
             };
 
-            return new TexturedMesh(quadVerticies);
+            return new Mesh<VertexPositionTexture>(quadVerticies);
         }
 
         public static ushort[] generateQuadIndicies_TriangleStrip_CW()

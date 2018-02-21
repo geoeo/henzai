@@ -8,19 +8,19 @@ namespace Henzai.Geometry
     /// Usually used with loaded Meshes/Models
     /// Such as with Assimp
     /// </summary>
-    public class Model
+    public class Model<T> where T : struct
     {
-        public Mesh[] meshes;
+        public Mesh<T>[] meshes;
         public uint[][] meshIndicies;
 
         public int meshCount => meshes.Length;
 
-        public Model(Mesh[] meshesIn, uint[][] indiciesIn){
+        public Model(Mesh<T>[] meshesIn, uint[][] indiciesIn){
             meshes = meshesIn;
             meshIndicies = indiciesIn;
         }
 
-        public Model(Mesh[] meshesIn){
+        public Model(Mesh<T>[] meshesIn){
             meshes = meshesIn;
             meshIndicies = new uint[meshes.Length][];
         }

@@ -9,6 +9,7 @@ using Veldrid.OpenGL;
 using Henzai;
 using Henzai.Extensions;
 using Henzai.Geometry;
+using Henzai.Runtime;
 
 namespace Henzai.Examples
 {
@@ -25,7 +26,7 @@ namespace Henzai.Examples
         private ResourceSet _cameraResourceSet;
         private ResourceLayout _resourceLayout;
 
-        Model _sphereModel;
+        Model<VertexPositionNormalTexture> _sphereModel;
 
         public Scene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, GraphicsBackend preferredBackend, bool usePreferredGraphicsBackend)
             : base(title,windowSize,graphicsDeviceOptions,preferredBackend,usePreferredGraphicsBackend){
@@ -33,7 +34,7 @@ namespace Henzai.Examples
                 //string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere.obj");
                 //string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere_centered.obj");
                 string filePath = Path.Combine(AppContext.BaseDirectory, "Models/chinesedragon.dae");
-                _sphereModel = AssimpLoader.LoadFromFile(filePath);
+                _sphereModel = AssimpLoader.LoadFromFile<VertexPositionNormalTexture>(filePath,HenzaiTypes.VertexPositionNormalTexture);
                 _vertexBuffers = new List<DeviceBuffer>();
                 _indexBuffers = new List<DeviceBuffer>();
                 PreRenderLoop+= SetupCamera;

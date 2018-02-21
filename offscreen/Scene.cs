@@ -157,7 +157,7 @@ namespace Henzai.Examples
                 cubeTextureView,
                 graphicsDevice.LinearSampler));
 
-            TexturedMesh texturedCube 
+            Mesh<VertexPositionTexture> texturedCube 
                 = GeometryFactory.generateTexturedCube();
 
             ushort[] cubeIndicies = GeometryFactory.generateCubeIndicies_TriangleList_CW();
@@ -238,13 +238,13 @@ namespace Henzai.Examples
 
         private List<IDisposable> createColouredQuadResources(){
 
-            ColouredMesh quad = GeometryFactory.generateColouredQuad(RgbaFloat.Red, RgbaFloat.Blue,RgbaFloat.Green,RgbaFloat.Orange);
+            Mesh<VertexPositionColour> quad = GeometryFactory.generateColouredQuad(RgbaFloat.Red, RgbaFloat.Blue,RgbaFloat.Green,RgbaFloat.Orange);
             ushort[] quadIndicies = GeometryFactory.generateQuadIndicies_TriangleStrip_CW();
 
-            _vertexBufferColouredQuad = _factory.CreateBuffer(new BufferDescription(quad.vertecies.LengthUnsigned()* VertexPositionColour.SizeInBytes, BufferUsage.VertexBuffer));
+            _vertexBufferColouredQuad = _factory.CreateBuffer(new BufferDescription(quad.vertices.LengthUnsigned()* VertexPositionColour.SizeInBytes, BufferUsage.VertexBuffer));
             _indexBufferQuad = _factory.CreateBuffer(new BufferDescription(quadIndicies.LengthUnsigned()* sizeof(ushort), BufferUsage.IndexBuffer));
 
-            graphicsDevice.UpdateBuffer(_vertexBufferColouredQuad,0,quad.vertecies);
+            graphicsDevice.UpdateBuffer(_vertexBufferColouredQuad,0,quad.vertices);
             graphicsDevice.UpdateBuffer(_indexBufferQuad,0,quadIndicies);
 
             VertexLayoutDescription vertexLayout 
@@ -313,7 +313,7 @@ namespace Henzai.Examples
 
         private IList<IDisposable> createTexturedQuadResources(){
 
-            TexturedMesh quad = GeometryFactory.generateTexturedQuad();
+            Mesh<VertexPositionTexture> quad = GeometryFactory.generateTexturedQuad();
             if(_indexBufferQuad == null)
                 throw new ApplicationException("_indexBufferQuad should have been created");
 
