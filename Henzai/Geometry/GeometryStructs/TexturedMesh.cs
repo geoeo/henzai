@@ -4,9 +4,12 @@ using Veldrid;
 
 namespace Henzai.Geometry
 {
-    public struct TexturedMesh
+    /// <summary>
+    /// Mesh hold Position, Texture Information. No Normal Information
+    /// </summary>
+    public class TexturedMesh
     {
-        public VertexPositionTexture[] vertices;
+        public readonly VertexPositionTexture[] vertices;
 
         public TexturedMesh(VertexPositionTexture[] texturedMeshDefinition)
         {

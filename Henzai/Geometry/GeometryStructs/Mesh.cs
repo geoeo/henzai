@@ -4,9 +4,12 @@ using Veldrid;
 
 namespace Henzai.Geometry
 {
-    public struct Mesh
+    /// <summary>
+    /// Mesh hold Position, Texture and Normal Information
+    /// </summary>
+    public class Mesh
     {
-        public VertexPositionNormalTexture[] vertices;
+        public readonly VertexPositionNormalTexture[] vertices;
 
         public Mesh(VertexPositionNormalTexture[] meshDefinition)
         {

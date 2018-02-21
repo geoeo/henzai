@@ -72,8 +72,8 @@ namespace Henzai.Examples
             // fill buffers with data
             graphicsDevice.UpdateBuffer(_vertexBuffer,0,texturedCube.vertices);
             graphicsDevice.UpdateBuffer(_indexBuffer,0,cubeIndicies);
-            graphicsDevice.UpdateBuffer(_cameraProjViewBuffer,0,camera.ViewMatrix);
-            graphicsDevice.UpdateBuffer(_cameraProjViewBuffer,64,camera.ProjectionMatrix);
+            //graphicsDevice.UpdateBuffer(_cameraProjViewBuffer,0,camera.ViewMatrix);
+            //graphicsDevice.UpdateBuffer(_cameraProjViewBuffer,64,camera.ProjectionMatrix);
 
             VertexLayoutDescription vertexLayout 
                 = new VertexLayoutDescription(

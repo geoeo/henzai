@@ -4,9 +4,12 @@ using Veldrid;
 
 namespace Henzai.Geometry
 {
-    public struct ColouredMesh
+    public class ColouredMesh
     {
-        public VertexPositionColour[] vertecies;
+        /// <summary>
+        /// Mesh hold Position, Colour Information. Normal or Texture Information
+        /// </summary>
+        public readonly VertexPositionColour[] vertecies;
 
         public ColouredMesh(VertexPositionColour[] colouredQuadDefinition){
             vertecies = colouredQuadDefinition;
