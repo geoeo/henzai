@@ -34,17 +34,13 @@ namespace Henzai.Examples
                 //string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere.obj");
                 //string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere_centered.obj");
                 string filePath = Path.Combine(AppContext.BaseDirectory, "Models/chinesedragon.dae");
-                _sphereModel = AssimpLoader.LoadFromFile<VertexPositionNormalTexture>(filePath,HenzaiTypes.VertexPositionNormalTexture);
+                _sphereModel = AssimpLoader.LoadFromFile<VertexPositionNormalTexture>(filePath,VertexPositionNormalTexture.HenzaiType);
                 _vertexBuffers = new List<DeviceBuffer>();
                 _indexBuffers = new List<DeviceBuffer>();
-                PreRenderLoop+= SetupCamera;
 
 
         }
 
-        public void SetupCamera(){
-            //camera.ViewMatrix.M42 = 19;
-        }
 
         override protected List<IDisposable> CreateResources(){
 

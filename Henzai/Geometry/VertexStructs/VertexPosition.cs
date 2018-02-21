@@ -1,4 +1,5 @@
 using System.Numerics;
+using Henzai.Runtime;
 
 namespace Henzai.Geometry
 {
@@ -6,6 +7,7 @@ namespace Henzai.Geometry
     {
         public const byte SizeInBytes = 12;
         public const byte ElementCount = 1;
+        public const HenzaiTypes HenzaiType = HenzaiTypes.VertexPosition;
 
         public readonly Vector3 Position;
 

@@ -238,10 +238,10 @@ namespace Henzai.Examples
 
         private List<IDisposable> createColouredQuadResources(){
 
-            Mesh<VertexPositionColour> quad = GeometryFactory.generateColouredQuad(RgbaFloat.Red, RgbaFloat.Blue,RgbaFloat.Green,RgbaFloat.Orange);
+            Mesh<VertexPositionNDCColour> quad = GeometryFactory.generateColouredQuad(RgbaFloat.Red, RgbaFloat.Blue,RgbaFloat.Green,RgbaFloat.Orange);
             ushort[] quadIndicies = GeometryFactory.generateQuadIndicies_TriangleStrip_CW();
 
-            _vertexBufferColouredQuad = _factory.CreateBuffer(new BufferDescription(quad.vertices.LengthUnsigned()* VertexPositionColour.SizeInBytes, BufferUsage.VertexBuffer));
+            _vertexBufferColouredQuad = _factory.CreateBuffer(new BufferDescription(quad.vertices.LengthUnsigned()* VertexPositionNDCColour.SizeInBytes, BufferUsage.VertexBuffer));
             _indexBufferQuad = _factory.CreateBuffer(new BufferDescription(quadIndicies.LengthUnsigned()* sizeof(ushort), BufferUsage.IndexBuffer));
 
             graphicsDevice.UpdateBuffer(_vertexBufferColouredQuad,0,quad.vertices);

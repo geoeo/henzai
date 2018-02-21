@@ -45,7 +45,7 @@ namespace Henzai.Examples
             
             _resourceSet = _factory.CreateResourceSet(resourceSetDescription);
 
-           Mesh<VertexPositionColour> colouredQuad 
+           Mesh<VertexPositionNDCColour> colouredQuad 
                 = GeometryFactory.generateColouredQuad(RgbaFloat.Red,RgbaFloat.Green,RgbaFloat.Blue,RgbaFloat.Yellow);
 
             ushort[] quadIndicies = GeometryFactory.generateQuadIndicies_TriangleStrip_CW();
@@ -54,7 +54,7 @@ namespace Henzai.Examples
 
             // declare (VBO) buffers
             _vertexBuffer 
-                = _factory.CreateBuffer(new BufferDescription(colouredQuad.vertices.LengthUnsigned() * VertexPositionColour.SizeInBytes, BufferUsage.VertexBuffer));
+                = _factory.CreateBuffer(new BufferDescription(colouredQuad.vertices.LengthUnsigned() * VertexPositionNDCColour.SizeInBytes, BufferUsage.VertexBuffer));
             _indexBuffer 
                 = _factory.CreateBuffer(new BufferDescription(quadIndicies.LengthUnsigned()*sizeof(ushort),BufferUsage.IndexBuffer));
             _xOffsetBuffer

@@ -6,7 +6,13 @@ using Henzai.Geometry;
 namespace Henzai.Runtime
 {
 
-    public enum HenzaiTypes { VertexPositionNormalTexture, VertexPositionNormal};
+    public enum HenzaiTypes { 
+        VertexPosition, 
+        VertexPositionNDCColour, 
+        VertexPositionNormal,
+        VertexPositionTexture, 
+        VertexPositionNormalTexture
+    };
 
     public static class ByteMarshal
     {
