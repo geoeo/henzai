@@ -30,11 +30,6 @@ namespace Henzai.Examples
 
         public Scene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, GraphicsBackend preferredBackend, bool usePreferredGraphicsBackend)
             : base(title,windowSize,graphicsDeviceOptions,preferredBackend,usePreferredGraphicsBackend){
-
-                //string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere.obj");
-                //string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere_centered.obj");
-                string filePath = Path.Combine(AppContext.BaseDirectory, "Models/chinesedragon.dae");
-                _sphereModel = AssimpLoader.LoadFromFile<VertexPositionNormalTexture>(filePath,VertexPositionNormalTexture.HenzaiType);
                 _vertexBuffers = new List<DeviceBuffer>();
                 _indexBuffers = new List<DeviceBuffer>();
 
@@ -43,6 +38,11 @@ namespace Henzai.Examples
 
 
         override protected List<IDisposable> CreateResources(){
+
+            //string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere.obj");
+            //string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere_centered.obj");
+            string filePath = Path.Combine(AppContext.BaseDirectory, "Models/chinesedragon.dae");
+            _sphereModel = AssimpLoader.LoadFromFile<VertexPositionNormalTexture>(filePath,VertexPositionNormalTexture.HenzaiType);
 
             ResourceFactory _factory = graphicsDevice.ResourceFactory;
 
