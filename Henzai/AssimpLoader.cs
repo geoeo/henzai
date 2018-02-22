@@ -11,11 +11,11 @@ namespace Henzai
 
     public static class AssimpExtensions
     {
-        public static Vector3 toVector3(this Vector3D vector){
+        public static Vector3 ToVector3(this Vector3D vector){
             return new Vector3(vector.X,vector.Y,vector.Z);
         }
 
-        public static Vector2 toVector2(this Vector3D vector){
+        public static Vector2 ToVector2(this Vector3D vector){
             return new Vector2(vector.X,vector.Y);
         }
     }
@@ -45,6 +45,11 @@ namespace Henzai
             for(int i = 0; i < meshCount; i++){
 
                 var aiMesh = pScene.Meshes[i];
+                Material aiMaterial = null;
+                
+                int materialIndex = aiMesh.MaterialIndex;
+                if(materialIndex < pScene.MaterialCount)
+                    aiMaterial = pScene.Materials[i];
                 var vertexCount = aiMesh.VertexCount;
                 if(vertexCount == 0)
                     continue;
@@ -67,7 +72,7 @@ namespace Henzai
                             bytes = new byte[VertexPositionNormalTexture.SizeInBytes];
                             byte[] posAsBytes = ByteMarshal.ToBytes(pPos);
                             byte[] normalAsBytes = ByteMarshal.ToBytes(pNormal);
-                            byte[] texCoordAsBytes = ByteMarshal.ToBytes(pTexCoord.toVector2());
+                            byte[] texCoordAsBytes = ByteMarshal.ToBytes(pTexCoord.ToVector2());
 
                             Array.Copy(posAsBytes,0,bytes,VertexPositionNormalTexture.PositionOffset,posAsBytes.Length);
                             Array.Copy(normalAsBytes,0,bytes,VertexPositionNormalTexture.NormalOffset,normalAsBytes.Length);

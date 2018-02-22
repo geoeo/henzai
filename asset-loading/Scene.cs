@@ -39,8 +39,8 @@ namespace Henzai.Examples
 
         override protected List<IDisposable> CreateResources(){
 
-            //string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere.obj");
-            //string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere_centered.obj");
+            // string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere.obj");
+            // string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere_centered.obj");
             string filePath = Path.Combine(AppContext.BaseDirectory, "Models/chinesedragon.dae");
             _sphereModel = AssimpLoader.LoadFromFile<VertexPositionNormalTexture>(filePath,VertexPositionNormalTexture.HenzaiType);
 
