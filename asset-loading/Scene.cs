@@ -31,7 +31,8 @@ namespace Henzai.Examples
         private ResourceLayout _cameraResourceLayout;
         private ResourceLayout _materialResourceLayout;
         private ResourceLayout _lightResourceLayout;
-        private Vector4 LIGHT_POS = new Vector4(0,10,10,0);
+        // TODO: Refactor this into a class with colour
+        private Vector4 LIGHT_POS = new Vector4(0,10,15,0);
 
         Model<VertexPositionNormal> _sphereModel;
 
@@ -45,7 +46,7 @@ namespace Henzai.Examples
         override protected List<IDisposable> CreateResources(){
 
             // string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere.obj");
-            // string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere_centered.obj");
+            //string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere_centered.obj");
             string filePath = Path.Combine(AppContext.BaseDirectory, "Models/chinesedragon.dae");
             _sphereModel = AssimpLoader.LoadFromFile<VertexPositionNormal>(filePath,VertexPositionNormal.HenzaiType);
 

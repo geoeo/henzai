@@ -6,7 +6,6 @@ struct Camera_ProjView
     mat4 Proj;
 };
 
-// TODO: Make Light.cs With position an colour
 struct Light
 {
     vec3 position;

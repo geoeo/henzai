@@ -2,6 +2,7 @@ using System;
 using System.Numerics;
 using Veldrid;
 
+// TODO: Add Material coefficients, more textures
 namespace Henzai.Geometry
 {
     ///<summary>
