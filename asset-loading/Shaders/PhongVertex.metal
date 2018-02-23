@@ -25,7 +25,7 @@ struct Light {
     float3 Position;
 };
 
-vertex PixelInput VS(VertexInput input[[stage_in]],constant ProjView &pj [[ buffer(1) ]],constant Light &l [[ buffer(3) ]])
+vertex PixelInput VS(VertexInput input[[stage_in]],constant ProjView &pj [[ buffer(1) ]],constant Light &l [[ buffer(2) ]])
 {
     PixelInput output;
     float4x4 View = pj.View;

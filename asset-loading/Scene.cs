@@ -122,14 +122,14 @@ namespace Henzai.Examples
                 DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
                 RasterizerState = new RasterizerStateDescription(
                     cullMode: FaceCullMode.Back,
-                    fillMode: PolygonFillMode.Solid,
+                    fillMode: PolygonFillMode.Solid, // Wireframe doesnt seem to work with metal
                     frontFace: FrontFace.Clockwise,
                     depthClipEnabled: true,
                     scissorTestEnabled: false
                 ),
                 PrimitiveTopology = PrimitiveTopology.TriangleList,
-                ResourceLayouts = new ResourceLayout[] {_cameraResourceLayout,_materialResourceLayout,_lightResourceLayout},
-                //ResourceLayouts = new ResourceLayout[] {_cameraResourceLayout,_lightResourceLayout,_materialResourceLayout},
+                //ResourceLayouts = new ResourceLayout[] {_cameraResourceLayout,_materialResourceLayout,_lightResourceLayout},
+                ResourceLayouts = new ResourceLayout[] {_cameraResourceLayout,_lightResourceLayout,_materialResourceLayout},
                 ShaderSet = new ShaderSetDescription(
                     vertexLayouts: new VertexLayoutDescription[] {vertexLayout},
                     shaders: new Shader[] {_vertexShader,_fragmentShader}
@@ -180,12 +180,12 @@ namespace Henzai.Examples
                 _commandList.UpdateBuffer(_cameraProjViewBuffer,0,camera.ViewMatrix);
                 _commandList.UpdateBuffer(_cameraProjViewBuffer,64,camera.ProjectionMatrix);
                 _commandList.SetGraphicsResourceSet(0,_cameraResourceSet); // Always after SetPipeline
+                _commandList.UpdateBuffer(_lightBuffer,0,LIGHT_POS);
+                _commandList.SetGraphicsResourceSet(1,_lightResourceSet);
                 _commandList.UpdateBuffer(_materialBuffer,0,material.diffuse);
                 _commandList.UpdateBuffer(_materialBuffer,16,material.specular);
                 _commandList.UpdateBuffer(_materialBuffer,32,material.ambient);
-                _commandList.SetGraphicsResourceSet(1,_materialResourceSet);
-                _commandList.UpdateBuffer(_lightBuffer,0,LIGHT_POS);
-                _commandList.SetGraphicsResourceSet(2,_lightResourceSet);
+                _commandList.SetGraphicsResourceSet(2,_materialResourceSet);
                 _commandList.DrawIndexed(
                     indexCount: _sphereModel.meshIndicies[i].Length.ToUnsigned(),
                     instanceCount: 1,
