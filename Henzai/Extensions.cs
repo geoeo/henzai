@@ -1,4 +1,5 @@
 using System;
+using System.Numerics;
 using System.Collections.Generic;
 
 namespace Henzai.Extensions
@@ -31,4 +32,5 @@ namespace Henzai.Extensions
             return (float)val;
         }
     }
+
 }

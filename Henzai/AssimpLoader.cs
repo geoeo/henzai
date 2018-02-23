@@ -18,8 +18,21 @@ namespace Henzai
         public static Vector2 ToVector2(this Vector3D vector){
             return new Vector2(vector.X,vector.Y);
         }
-    }
 
+        public static Vector4 ToVector4(this Color4D color){
+            return new Vector4(color.R,color.G,color.B,color.A);
+        }
+
+        public static Geometry.Material ToHenzaiMaterial(this Assimp.Material material){
+            return new Geometry.Material(
+                material.ColorDiffuse.ToVector4(),
+                material.ColorSpecular.ToVector4(),
+                material.ColorAmbient.ToVector4(),
+                material.ColorEmissive.ToVector4(),
+                material.ColorTransparent.ToVector4(),
+                material.TextureDiffuse.FilePath);
+        }
+    }
 
     //TODO investigate non-static for multithreading
     public static class AssimpLoader
@@ -39,20 +52,19 @@ namespace Henzai
             Scene pScene = assimpContext.ImportFile(filename, flags);
 
             int meshCount = pScene.MeshCount;
+
             Geometry.Mesh<T>[] meshes = new Geometry.Mesh<T>[meshCount];
             uint[][] meshIndicies = new uint[meshCount][];
 
             for(int i = 0; i < meshCount; i++){
 
-                var aiMesh = pScene.Meshes[i];
-                Material aiMaterial = null;
-                
-                int materialIndex = aiMesh.MaterialIndex;
-                if(materialIndex < pScene.MaterialCount)
-                    aiMaterial = pScene.Materials[i];
+                var aiMesh = pScene.Meshes[i];    
                 var vertexCount = aiMesh.VertexCount;
                 if(vertexCount == 0)
                     continue;
+
+                Assimp.Material aiMaterial = pScene.Materials[aiMesh.MaterialIndex];
+                Geometry.Material material = aiMaterial.ToHenzaiMaterial();
 
                 T[] meshDefinition = new T[vertexCount];
 
@@ -66,28 +78,31 @@ namespace Henzai
                     Vector3D pBiTangent = aiMesh.HasTangentBasis ? aiMesh.BiTangents[j] : Zero3D;
                     
                     byte[] bytes;
+                    byte[] posAsBytes = ByteMarshal.ToBytes(pPos);
+                    byte[] normalAsBytes = ByteMarshal.ToBytes(pNormal);
+                    byte[] texCoordAsBytes = ByteMarshal.ToBytes(pTexCoord.ToVector2());
 
                     switch(vertexType){
                         case HenzaiTypes.VertexPositionNormalTexture:
                             bytes = new byte[VertexPositionNormalTexture.SizeInBytes];
-                            byte[] posAsBytes = ByteMarshal.ToBytes(pPos);
-                            byte[] normalAsBytes = ByteMarshal.ToBytes(pNormal);
-                            byte[] texCoordAsBytes = ByteMarshal.ToBytes(pTexCoord.ToVector2());
-
                             Array.Copy(posAsBytes,0,bytes,VertexPositionNormalTexture.PositionOffset,posAsBytes.Length);
                             Array.Copy(normalAsBytes,0,bytes,VertexPositionNormalTexture.NormalOffset,normalAsBytes.Length);
                             Array.Copy(texCoordAsBytes,0,bytes,VertexPositionNormalTexture.TextureCoordinatesOffset,texCoordAsBytes.Length);
-
-                            meshDefinition[j] = ByteMarshal.ByteArrayToStructure<T>(bytes);
+                            break;
+                        case HenzaiTypes.VertexPositionNormal:
+                            bytes = new byte[VertexPositionNormal.SizeInBytes];
+                            Array.Copy(posAsBytes,0,bytes,VertexPositionNormal.PositionOffset,posAsBytes.Length);
+                            Array.Copy(normalAsBytes,0,bytes,VertexPositionNormal.NormalOffset,normalAsBytes.Length);
                             break;
                         default:
                             throw new NotImplementedException($"{vertexType.ToString("g")} not implemented");
-
                     }
+
+                    meshDefinition[j] = ByteMarshal.ByteArrayToStructure<T>(bytes);
 
                 }
 
-                meshes[i] = new Geometry.Mesh<T>(meshDefinition);
+                meshes[i] = new Geometry.Mesh<T>(meshDefinition,material);
 
                 var faceCount = aiMesh.FaceCount;
                 meshIndicies[i] = new uint[3*faceCount];
@@ -108,7 +123,7 @@ namespace Henzai
                 }
             }
 
-            return new Model<T>(meshes, meshIndicies);
+            return new Model<T>(meshes,meshIndicies);
 
         }
         
