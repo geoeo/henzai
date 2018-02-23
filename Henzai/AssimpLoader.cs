@@ -34,7 +34,7 @@ namespace Henzai
         }
     }
 
-    //TODO investigate non-static for multithreading
+    //TODO: investigate non-static for multithreading
     public static class AssimpLoader
     {
         private static Vector3D Zero3D = new Vector3D(0.0f, 0.0f, 0.0f);

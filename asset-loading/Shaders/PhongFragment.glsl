@@ -28,6 +28,6 @@ out vec4 fsout_Color;
 
 void main()
 {
-    //fsout_Color = vec4(fsin_Normal,1.0);
-    fsout_Color = field_material.diffuse;
+    fsout_Color = vec4(fsin_Normal,1.0);
+    //fsout_Color = field_material.diffuse;
 }

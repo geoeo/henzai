@@ -24,10 +24,14 @@ namespace Henzai.Examples
         private Pipeline _pipeline;
         private DeviceBuffer _cameraProjViewBuffer;
         private DeviceBuffer _materialBuffer;
+        private DeviceBuffer _lightBuffer;
         private ResourceSet _cameraResourceSet;
         private ResourceSet _materialResourceSet;
+        private ResourceSet _lightResourceSet;
         private ResourceLayout _cameraResourceLayout;
         private ResourceLayout _materialResourceLayout;
+        private ResourceLayout _lightResourceLayout;
+        private Vector4 LIGHT_POS = new Vector4(0,10,10,0);
 
         Model<VertexPositionNormal> _sphereModel;
 
@@ -37,7 +41,7 @@ namespace Henzai.Examples
                 _indexBuffers = new List<DeviceBuffer>();
         }
 
-
+        // TODO: Abstract Resource Crreation for Uniforms, Vertex Layouts, Disposing
         override protected List<IDisposable> CreateResources(){
 
             // string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere.obj");
@@ -72,6 +76,19 @@ namespace Henzai.Examples
             var resourceSetDescriptionMaterial = new ResourceSetDescription(_materialResourceLayout,bindableResourcesMaterial);
             
             _materialResourceSet = _factory.CreateResourceSet(resourceSetDescriptionMaterial);
+
+            // Uniform 3 - Light
+            _lightBuffer = _factory.CreateBuffer(new BufferDescription(16,BufferUsage.UniformBuffer));
+
+            var resourceLayoutElementDescriptionLight = new ResourceLayoutElementDescription("light",ResourceKind.UniformBuffer,ShaderStages.Fragment);
+            ResourceLayoutElementDescription[] resourceLayoutElementDescriptionsLight = {resourceLayoutElementDescriptionLight};
+            var resourceLayoutDescriptionLight = new ResourceLayoutDescription(resourceLayoutElementDescriptionsLight);
+            BindableResource[] bindableResourcesLight = new BindableResource[]{_lightBuffer};
+
+            _lightResourceLayout = _factory.CreateResourceLayout(resourceLayoutDescriptionLight);
+            var resourceSetDescriptionLight = new ResourceSetDescription(_lightResourceLayout,bindableResourcesLight);
+            
+            _lightResourceSet = _factory.CreateResourceSet(resourceSetDescriptionLight);
 
             for(int i = 0; i < _sphereModel.meshCount; i++){
 
@@ -110,7 +127,7 @@ namespace Henzai.Examples
                     scissorTestEnabled: false
                 ),
                 PrimitiveTopology = PrimitiveTopology.TriangleList,
-                ResourceLayouts = new ResourceLayout[] {_cameraResourceLayout,_materialResourceLayout},
+                ResourceLayouts = new ResourceLayout[] {_cameraResourceLayout,_materialResourceLayout,_lightResourceLayout},
                 ShaderSet = new ShaderSetDescription(
                     vertexLayouts: new VertexLayoutDescription[] {vertexLayout},
                     shaders: new Shader[] {_vertexShader,_fragmentShader}
@@ -129,8 +146,14 @@ namespace Henzai.Examples
                 _vertexShader,
                 _fragmentShader,
                 _cameraProjViewBuffer,
+                _materialBuffer,
+                _lightBuffer,
                 _cameraResourceSet,
-                _cameraResourceLayout
+                _materialResourceSet,
+                _lightResourceSet,
+                _cameraResourceLayout,
+                _materialResourceLayout,
+                _lightResourceLayout
             };
 
             disposeList.AddRange(_vertexBuffers);
@@ -159,6 +182,8 @@ namespace Henzai.Examples
                 _commandList.UpdateBuffer(_materialBuffer,16,material.specular);
                 _commandList.UpdateBuffer(_materialBuffer,32,material.ambient);
                 _commandList.SetGraphicsResourceSet(1,_materialResourceSet);
+                _commandList.UpdateBuffer(_lightBuffer,0,LIGHT_POS);
+                _commandList.SetGraphicsResourceSet(2,_lightResourceSet);
                 _commandList.DrawIndexed(
                     indexCount: _sphereModel.meshIndicies[i].Length.ToUnsigned(),
                     instanceCount: 1,

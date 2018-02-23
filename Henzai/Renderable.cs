@@ -53,6 +53,7 @@ namespace Henzai
         private Task[] drawTasksPre;
         private Task[] drawTasksPost;
 
+        //TODO: Investigate 60 fps cap, investigate
         public Renderable(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, GraphicsBackend preferredBackend, bool usePreferredGraphicsBackend){
             WindowCreateInfo windowCI = new WindowCreateInfo()
             {

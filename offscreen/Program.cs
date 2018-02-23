@@ -23,7 +23,7 @@ namespace Henzai.Examples
                 windowSize,
                 gdOptions,
                 GraphicsBackend.OpenGL,
-                usePreferredGraphicsBackend: false
+                usePreferredGraphicsBackend: true
             );
 
             scene.Run(renderResolution);
