@@ -35,6 +35,7 @@ Henzai (遍在) meaning ubiquitous, is a cross platform 3D rendering engine usin
 * http://metalbyexample.com/introduction-to-compute/
 * https://github.com/FlexMonkey/ParticleLab
 * http://metalbyexample.com/linear-algebra/ // TLDR: Left-Handed Coordinate System
+* https://www.haroldserrano.com/metal-api-projects/
 
 ### Vulkan
 * https://www.saschawillems.de/?p=1669
