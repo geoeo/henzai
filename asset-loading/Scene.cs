@@ -23,8 +23,11 @@ namespace Henzai.Examples
         private Shader _fragmentShader;
         private Pipeline _pipeline;
         private DeviceBuffer _cameraProjViewBuffer;
+        private DeviceBuffer _materialBuffer;
         private ResourceSet _cameraResourceSet;
-        private ResourceLayout _resourceLayout;
+        private ResourceSet _materialResourceSet;
+        private ResourceLayout _cameraResourceLayout;
+        private ResourceLayout _materialResourceLayout;
 
         Model<VertexPositionNormal> _sphereModel;
 
@@ -44,17 +47,31 @@ namespace Henzai.Examples
 
             ResourceFactory _factory = graphicsDevice.ResourceFactory;
 
+            /// Uniform 1 - Camera
             _cameraProjViewBuffer = _factory.CreateBuffer(new BufferDescription(128,BufferUsage.UniformBuffer | BufferUsage.Dynamic));
 
-            ResourceLayoutElementDescription resourceLayoutElementDescription = new ResourceLayoutElementDescription("projView",ResourceKind.UniformBuffer,ShaderStages.Vertex);
+            var resourceLayoutElementDescription = new ResourceLayoutElementDescription("projView",ResourceKind.UniformBuffer,ShaderStages.Vertex);
             ResourceLayoutElementDescription[] resourceLayoutElementDescriptions = {resourceLayoutElementDescription};
-            ResourceLayoutDescription resourceLayoutDescription = new ResourceLayoutDescription(resourceLayoutElementDescriptions);
+            var resourceLayoutDescription = new ResourceLayoutDescription(resourceLayoutElementDescriptions);
             BindableResource[] bindableResources = new BindableResource[]{_cameraProjViewBuffer};
 
-            _resourceLayout = _factory.CreateResourceLayout(resourceLayoutDescription);
-            ResourceSetDescription resourceSetDescription = new ResourceSetDescription(_resourceLayout,bindableResources);
+            _cameraResourceLayout = _factory.CreateResourceLayout(resourceLayoutDescription);
+            var resourceSetDescription = new ResourceSetDescription(_cameraResourceLayout,bindableResources);
             
             _cameraResourceSet = _factory.CreateResourceSet(resourceSetDescription);
+
+            // Uniform 2 - Material
+            _materialBuffer = _factory.CreateBuffer(new BufferDescription(48,BufferUsage.UniformBuffer));
+
+            var resourceLayoutElementDescriptionMaterial = new ResourceLayoutElementDescription("material",ResourceKind.UniformBuffer,ShaderStages.Fragment);
+            ResourceLayoutElementDescription[] resourceLayoutElementDescriptionsMaterial = {resourceLayoutElementDescriptionMaterial};
+            var resourceLayoutDescriptionMaterial = new ResourceLayoutDescription(resourceLayoutElementDescriptionsMaterial);
+            BindableResource[] bindableResourcesMaterial = new BindableResource[]{_materialBuffer};
+
+            _materialResourceLayout = _factory.CreateResourceLayout(resourceLayoutDescriptionMaterial);
+            var resourceSetDescriptionMaterial = new ResourceSetDescription(_materialResourceLayout,bindableResourcesMaterial);
+            
+            _materialResourceSet = _factory.CreateResourceSet(resourceSetDescriptionMaterial);
 
             for(int i = 0; i < _sphereModel.meshCount; i++){
 
@@ -93,7 +110,7 @@ namespace Henzai.Examples
                     scissorTestEnabled: false
                 ),
                 PrimitiveTopology = PrimitiveTopology.TriangleList,
-                ResourceLayouts = new ResourceLayout[] {_resourceLayout},
+                ResourceLayouts = new ResourceLayout[] {_cameraResourceLayout,_materialResourceLayout},
                 ShaderSet = new ShaderSetDescription(
                     vertexLayouts: new VertexLayoutDescription[] {vertexLayout},
                     shaders: new Shader[] {_vertexShader,_fragmentShader}
@@ -113,7 +130,7 @@ namespace Henzai.Examples
                 _fragmentShader,
                 _cameraProjViewBuffer,
                 _cameraResourceSet,
-                _resourceLayout
+                _cameraResourceLayout
             };
 
             disposeList.AddRange(_vertexBuffers);
@@ -131,12 +148,17 @@ namespace Henzai.Examples
             _commandList.ClearColorTarget(0,RgbaFloat.White);
             _commandList.ClearDepthStencil(1f);
             for(int i = 0; i < _sphereModel.meshCount; i++){
+                Material material = _sphereModel.meshes[i].TryGetMaterial();
 
                 _commandList.SetVertexBuffer(0,_vertexBuffers[i]);
                 _commandList.SetIndexBuffer(_indexBuffers[i],IndexFormat.UInt32);
                 _commandList.UpdateBuffer(_cameraProjViewBuffer,0,camera.ViewMatrix);
                 _commandList.UpdateBuffer(_cameraProjViewBuffer,64,camera.ProjectionMatrix);
                 _commandList.SetGraphicsResourceSet(0,_cameraResourceSet); // Always after SetPipeline
+                _commandList.UpdateBuffer(_materialBuffer,0,material.diffuse);
+                _commandList.UpdateBuffer(_materialBuffer,16,material.specular);
+                _commandList.UpdateBuffer(_materialBuffer,32,material.ambient);
+                _commandList.SetGraphicsResourceSet(1,_materialResourceSet);
                 _commandList.DrawIndexed(
                     indexCount: _sphereModel.meshIndicies[i].Length.ToUnsigned(),
                     instanceCount: 1,
