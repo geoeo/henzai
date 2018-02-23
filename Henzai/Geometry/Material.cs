@@ -2,9 +2,30 @@ using System;
 using System.Numerics;
 using Veldrid;
 
-// TODO: Add Material coefficients, more textures
+// TODO: Add Material coefficients, more textures, Make Color own struct (or use Veldrid.RGBA)
 namespace Henzai.Geometry
 {
+
+    // Not used atm
+    public static class MaterialExtensions
+    {
+
+        public static Vector4 GetRepresentationFor(this Vector4 color, GraphicsBackend backend){
+            Vector4 value = color;
+            switch(backend){
+                case GraphicsBackend.OpenGL:
+                    break;
+                case GraphicsBackend.Metal:
+                    break;
+                case GraphicsBackend.Direct3D11:
+                    throw new NotImplementedException();
+                case GraphicsBackend.Vulkan:
+                    throw new NotImplementedException();
+            }
+            return value;
+        }
+    }
+
     ///<summary>
     // Based on http://assimp.sourceforge.net/lib_html/materials.html
     // Colours Vector4 are RGBA
@@ -17,6 +38,7 @@ namespace Henzai.Geometry
         public Vector4 emissive = Vector4.Zero;
         public Vector4 transparent = Vector4.Zero;
         public string textureDiffuse = string.Empty;
+
 
         ///<summary>
         /// If null reference is passed as an argument assignment will be skipped
@@ -44,8 +66,8 @@ namespace Henzai.Geometry
              
             }
 
-        public static RgbaFloat ToRgbaFloat(Vector3 value, float opacity){
-            return new RgbaFloat(value.X,value.Y,value.Z,opacity);
+        public static RgbaFloat ToRgbaFloat(Vector4 value){
+            return new RgbaFloat(value.X,value.Y,value.Z,value.W);
         }
 
     }

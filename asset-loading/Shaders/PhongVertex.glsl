@@ -8,7 +8,7 @@ struct Camera_ProjView
 
 struct Light
 {
-    vec3 position;
+    vec3 Position;
 };
 
 
@@ -46,6 +46,6 @@ void main()
 
     fsin_NormalView = normalViewMatrix*Normal;
     fsin_FragView = viewPos.xyz;
-    vec4 lightView = viewMatrix*vec4(field_light.position,1.0);
+    vec4 lightView = viewMatrix*vec4(field_light.Position,1.0);
     fsin_LightView = lightView.xyz;
 }
