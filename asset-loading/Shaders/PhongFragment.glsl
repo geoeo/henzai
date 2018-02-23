@@ -7,27 +7,33 @@ struct Material
     vec4 ambient;
 };
 
-struct Light
-{
-    vec3 position;
-};
-
 layout(std140) uniform material
 {
     Material field_material;
 };
 
-layout(std140) uniform light
-{
-    Light field_light;
-};
-
-in vec3 fsin_Normal;
+in vec3 fsin_NormalView;
+in vec3 fsin_FragView;
+in vec3 fsin_LightView;
 
 out vec4 fsout_Color;
 
 void main()
 {
-    fsout_Color = vec4(fsin_Normal,1.0);
-    //fsout_Color = field_material.diffuse;
+    vec4 color_out = field_material.ambient;
+
+    vec3 L = normalize(fsin_LightView-fsin_FragView);
+    float l_dot_n = dot(L,fsin_NormalView);
+    vec4 diffuse = l_dot_n*field_material.diffuse;
+
+    vec3 R = reflect(-L,fsin_NormalView);
+    vec3 V = normalize(fsin_LightView);
+    float spec = pow(max(dot(V,R),0.0),32.0);
+    vec4 specular = field_material.specular*spec;
+
+
+    color_out += diffuse;
+    color_out += specular;
+    fsout_Color = color_out;
+    //fsout_Color = vec4(fsin_NormalView,1.0);
 }
