@@ -26,7 +26,8 @@ void main()
 
     vec3 R = reflect(-L,fsin_NormalView);
     vec3 V = normalize(fsin_LightView);
-    float spec = pow(max(dot(V,R),0.0),32.0);
+    float isDotFront = max(sign(dot(fsin_NormalView,L)),0.0);
+    float spec = pow(isDotFront*dot(V,R),32.0);
     vec4 specular = field_material.Specular*spec;
 
     vec4 color_out = field_material.Ambient;
@@ -34,5 +35,5 @@ void main()
     color_out += specular;
     fsout_Color = color_out;
     //fsout_Color = vec4(fsin_NormalView,1.0);
-    fsout_Color = vec4(fsin_LightView,1.0);
+    //fsout_Color = vec4(fsin_LightView,1.0);
 }
