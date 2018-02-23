@@ -24,7 +24,8 @@ fragment float4 FS(PixelInput input[[stage_in]],constant Material &material [[bu
 
     float3 R = reflect(-L,input.NormalView);
     float3 V = normalize(input.LightView);
-    float spec = powr(fmax(dot(V,R),0.0),32.0);
+    float isDotFront = fmax(sign(dot(input.NormalView,L)),0.0);
+    float spec = powr(isDotFront*dot(V,R),32.0);
     float4 specular = material.Specular*spec;
 
     float4 color_out = material.Ambient;
