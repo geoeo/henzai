@@ -24,4 +24,41 @@
     </Content>
   </ItemGroup>
 
+    <ItemGroup>
+    <GLSL Include="../Shaders/*.glsl"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <METAL Include="../Shaders/*.metallib"/>
+  </ItemGroup>
+
+  <Target Name="CopyFiles" BeforeTargets="Build">
+  
+    <Copy SourceFiles="@(GLSL)" 
+
+          DestinationFolder="$(OutputPath)/Shaders/" 
+
+          SkipUnchangedFiles='true' 
+
+          OverwriteReadOnlyFiles='true' 
+    />
+
+      <Copy SourceFiles="@(METAL)" 
+
+          DestinationFolder="$(OutputPath)/Shaders/" 
+
+          SkipUnchangedFiles='true' 
+
+          OverwriteReadOnlyFiles='true' 
+    />
+
+  </Target>
+
+    <Target Name="DeleteFiles" AfterTargets="Clean">
+  
+    <RemoveDir Directories="$(OutputPath)/Shaders/" />
+
+    <RemoveDir Directories="$(OutputPath)/Models/" />
+  </Target>
+
 </Project>

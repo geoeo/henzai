@@ -14,14 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <GLSL Include="../Shaders/*.glsl"/>
-  </ItemGroup>
-
-  <ItemGroup>
-    <METAL Include="../Shaders/*.metallib"/>
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Include="$(MSBuildThisFileDirectory)/../Assets/Models/sphere.obj">
       <Link>Models/sphere.obj</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -41,6 +33,14 @@
       <Link>libassimp.dylib</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <GLSL Include="../Shaders/*.glsl"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <METAL Include="../Shaders/*.metallib"/>
   </ItemGroup>
 
   <Target Name="CopyFiles" BeforeTargets="Build">
