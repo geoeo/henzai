@@ -14,10 +14,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="$(MSBuildThisFileDirectory)/Shaders/**">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <GLSL Include="../Shaders/*.glsl"/>
+  </ItemGroup>
 
+  <ItemGroup>
+    <METAL Include="../Shaders/*.metallib"/>
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="$(MSBuildThisFileDirectory)/../Assets/Models/sphere.obj">
       <Link>Models/sphere.obj</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -38,5 +42,34 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+
+  <Target Name="CopyFiles" BeforeTargets="Build">
+  
+    <Copy SourceFiles="@(GLSL)" 
+
+          DestinationFolder="$(OutputPath)/Shaders/" 
+
+          SkipUnchangedFiles='true' 
+
+          OverwriteReadOnlyFiles='true' 
+    />
+
+      <Copy SourceFiles="@(METAL)" 
+
+          DestinationFolder="$(OutputPath)/Shaders/" 
+
+          SkipUnchangedFiles='true' 
+
+          OverwriteReadOnlyFiles='true' 
+    />
+
+  </Target>
+
+    <Target Name="DeleteFiles" AfterTargets="Clean">
+  
+    <RemoveDir Directories="$(OutputPath)/Shaders/" />
+
+    <RemoveDir Directories="$(OutputPath)/Models/" />
+  </Target>
 
 </Project>
