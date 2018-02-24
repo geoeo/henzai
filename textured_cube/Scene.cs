@@ -32,7 +32,7 @@ namespace Henzai.Examples
         {
             ResourceFactory _factory = graphicsDevice.ResourceFactory;
 
-            _cameraProjViewBuffer = _factory.CreateBuffer(new BufferDescription(128,BufferUsage.UniformBuffer | BufferUsage.Dynamic));
+            _cameraProjViewBuffer = _factory.CreateBuffer(new BufferDescription(192,BufferUsage.UniformBuffer | BufferUsage.Dynamic));
 
             ResourceLayoutElementDescription resourceLayoutElementDescription = new ResourceLayoutElementDescription("projView",ResourceKind.UniformBuffer,ShaderStages.Vertex);
             ResourceLayoutElementDescription[] resourceLayoutElementDescriptions = {resourceLayoutElementDescription};
@@ -81,8 +81,8 @@ namespace Henzai.Examples
                     new VertexElementDescription("UV",VertexElementSemantic.TextureCoordinate,VertexElementFormat.Float2)
                 );
 
-            _vertexShader = IO.LoadShader(string.Empty,ShaderStages.Vertex,graphicsDevice);
-            _fragmentShader = IO.LoadShader(string.Empty,ShaderStages.Fragment,graphicsDevice);
+            _vertexShader = IO.LoadShader("Texture",ShaderStages.Vertex,graphicsDevice);
+            _fragmentShader = IO.LoadShader("Texture",ShaderStages.Fragment,graphicsDevice);
 
             GraphicsPipelineDescription pipelineDescription = new GraphicsPipelineDescription(){
                 BlendState = BlendStateDescription.SingleOverrideBlend,
@@ -135,6 +135,7 @@ namespace Henzai.Examples
             _commandList.SetIndexBuffer(_indexBuffer,IndexFormat.UInt16);
             _commandList.UpdateBuffer(_cameraProjViewBuffer,0,camera.ViewMatrix);
             _commandList.UpdateBuffer(_cameraProjViewBuffer,64,camera.ProjectionMatrix);
+            _commandList.UpdateBuffer(_cameraProjViewBuffer,128,Matrix4x4.Identity);
             _commandList.SetGraphicsResourceSet(0,_cameraResourceSet); // Always after SetPipeline
             _commandList.SetGraphicsResourceSet(1,_textureResourceSet); // Always after SetPipeline
             _commandList.DrawIndexed(

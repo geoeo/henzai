@@ -74,52 +74,12 @@
             "problemMatcher": "$msCompile"
         },
         {
-            "label": "compile metal shaders (getting_started)",
+            "label": "compile metal shaders (Projects)",
             "type": "shell",
             "group": "build",
             "command": "${cwd}/compileMetal.sh",
             "args": [
-                "${cwd}/getting_started/Shaders/"
-            ],
-            "problemMatcher": "$msCompile"
-        },
-        {
-            "label": "compile metal shaders (textured cube)",
-            "type": "shell",
-            "group": "build",
-            "command": "${cwd}/compileMetal.sh",
-            "args": [
-                "${cwd}/textured_cube/Shaders/"
-            ],
-            "problemMatcher": "$msCompile"
-        },
-        {
-            "label": "compile metal shaders (offscreen)",
-            "type": "shell",
-            "group": "build",
-            "command": "${cwd}/compileMetal.sh",
-            "args": [
-                "${cwd}/offscreen/Shaders/"
-            ],
-            "problemMatcher": "$msCompile"
-        },
-        {
-            "label": "compile metal shaders (sdl2-gui)",
-            "type": "shell",
-            "group": "build",
-            "command": "${cwd}/compileMetal.sh",
-            "args": [
-                "${cwd}/sdl2-gui/Shaders/"
-            ],
-            "problemMatcher": "$msCompile"
-        },
-        {
-            "label": "compile metal shaders (asset loading)",
-            "type": "shell",
-            "group": "build",
-            "command": "${cwd}/compileMetal.sh",
-            "args": [
-                "${cwd}/asset-loading/Shaders/"
+                "${cwd}/Shaders/"
             ],
             "problemMatcher": "$msCompile"
         },

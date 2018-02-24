@@ -180,8 +180,8 @@ namespace Henzai.Examples
 
             _worldTransCube = Matrix4x4.CreateWorld(new Vector3(0,0,0),-Vector3.UnitZ,Vector3.UnitY);
 
-            _vertexShaderCube = IO.LoadShader("Cube",ShaderStages.Vertex,graphicsDevice);
-            _fragmentShaderCube = IO.LoadShader("Cube",ShaderStages.Fragment,graphicsDevice);
+            _vertexShaderCube = IO.LoadShader("Texture",ShaderStages.Vertex,graphicsDevice);
+            _fragmentShaderCube = IO.LoadShader("Texture",ShaderStages.Fragment,graphicsDevice);
 
             GraphicsPipelineDescription pipelineDescription = new GraphicsPipelineDescription(){
                 BlendState = BlendStateDescription.SingleOverrideBlend,
