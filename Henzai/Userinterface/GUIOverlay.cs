@@ -15,7 +15,6 @@ namespace Henzai.UserInterface
     {
 
         private readonly Assembly _assembly;
-        private ResourceFactory _factory;
         private CommandList _commandList;
         private DeviceBuffer _vertexBuffer;
         private DeviceBuffer _indexBuffer;
@@ -57,11 +56,7 @@ namespace Henzai.UserInterface
 
         }
 
-        override protected List<IDisposable> CreateResources(){
-
-            List<IDisposable> resources = new List<IDisposable>();
-
-            _factory = graphicsDevice.ResourceFactory;
+        override protected void CreateResources(){
 
             _commandList = _factory.CreateCommandList();
 
@@ -109,20 +104,6 @@ namespace Henzai.UserInterface
                 graphicsDevice.PointSampler));
 
             _fontTextureResourceSet = _factory.CreateResourceSet(new ResourceSetDescription(_textureLayout, _fontTextureView));
-
-            resources.AddRange(new List<IDisposable>{
-                _commandList,
-                _vertexBuffer,
-                _indexBuffer,
-                _projMatrixBuffer,
-                _layout,
-                _textureLayout,
-                _pipeline,
-                _mainResourceSet,
-                _fontTextureResourceSet
-                });
-
-            return resources;
 
         }
 

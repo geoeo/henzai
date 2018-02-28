@@ -43,14 +43,12 @@ namespace Henzai.Examples
         }
 
         // TODO: Abstract Resource Crreation for Uniforms, Vertex Layouts, Disposing
-        override protected List<IDisposable> CreateResources(){
+        override protected void CreateResources(){
 
             // string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere.obj");
             //string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere_centered.obj");
             string filePath = Path.Combine(AppContext.BaseDirectory, "Models/chinesedragon.dae");
             _sphereModel = AssimpLoader.LoadFromFile<VertexPositionNormal>(filePath,VertexPositionNormal.HenzaiType);
-
-            ResourceFactory _factory = graphicsDevice.ResourceFactory;
 
             /// Uniform 1 - Camera
             _cameraProjViewBuffer = _factory.CreateBuffer(new BufferDescription(128,BufferUsage.UniformBuffer | BufferUsage.Dynamic));
@@ -140,28 +138,6 @@ namespace Henzai.Examples
             _pipeline = _factory.CreateGraphicsPipeline(pipelineDescription);
 
             _commandList = _factory.CreateCommandList();
-
-            List<IDisposable> disposeList = new List<IDisposable>()
-            {
-                _commandList,
-                _pipeline,
-                _vertexShader,
-                _fragmentShader,
-                _cameraProjViewBuffer,
-                _materialBuffer,
-                _lightBuffer,
-                _cameraResourceSet,
-                _materialResourceSet,
-                _lightResourceSet,
-                _cameraResourceLayout,
-                _materialResourceLayout,
-                _lightResourceLayout
-            };
-
-            disposeList.AddRange(_vertexBuffers);
-            disposeList.AddRange(_indexBuffers);
-
-            return disposeList;
 
         }
 

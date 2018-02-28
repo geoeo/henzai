@@ -28,9 +28,8 @@ namespace Henzai.Examples
         public Scene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, GraphicsBackend preferredBackend, bool usePreferredGraphicsBackend)
             : base(title,windowSize,graphicsDeviceOptions,preferredBackend,usePreferredGraphicsBackend){}
 
-        override protected List<IDisposable> CreateResources()
+        override protected void CreateResources()
         {
-            ResourceFactory _factory = graphicsDevice.ResourceFactory;
 
             _cameraProjViewBuffer = _factory.CreateBuffer(new BufferDescription(192,BufferUsage.UniformBuffer | BufferUsage.Dynamic));
 
@@ -106,20 +105,6 @@ namespace Henzai.Examples
             _pipeline = _factory.CreateGraphicsPipeline(pipelineDescription);
 
             _commandList = _factory.CreateCommandList();
-
-            return new List<IDisposable>()
-            {
-                _commandList,
-                _pipeline,
-                _vertexBuffer,
-                _vertexShader,
-                _fragmentShader,
-                _indexBuffer,
-                _cameraProjViewBuffer,
-                _cameraResourceSet,
-                _textureResourceSet,
-                _resourceLayout
-            };
 
         }
 

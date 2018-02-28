@@ -15,11 +15,8 @@ namespace Henzai.Examples
     internal class Scene : Renderable
     {
         private Camera _staticCamera;
-
         private CommandList _commandList;
         private Framebuffer _offScreenFBO;
-        private ResourceFactory _factory;
-
         private Matrix4x4 _worldTransCube;
         private DeviceBuffer _vertexBufferCube;
         private DeviceBuffer _indexBufferCube;
@@ -59,27 +56,21 @@ namespace Henzai.Examples
             PreDraw += this.RotateCube;
         }
 
-        override protected List<IDisposable> CreateResources(){
+        override protected void CreateResources(){
 
             _staticCamera = new Camera(_renderResolution.Horizontal,_renderResolution.Vertical);
 
-            _factory = graphicsDevice.ResourceFactory;
-
             _commandList = _factory.CreateCommandList();
 
-            List<IDisposable> resources = new List<IDisposable>(){_commandList};
+            createOffscreenFBO();
 
-            resources.AddRange(createOffscreenFBO());
+            createTransformationPipelineUniform();
 
-            resources.AddRange(createTransformationPipelineUniform());
+            createCubeResources();
 
-            resources.AddRange(createCubeResources());
+            createColouredQuadResources();
 
-            resources.AddRange(createColouredQuadResources());
-
-            resources.AddRange(createTexturedQuadResources());
-
-            return resources;
+            createTexturedQuadResources();
 
         }
 

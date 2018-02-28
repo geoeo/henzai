@@ -29,9 +29,8 @@ namespace Henzai.Examples
             : base(title,windowSize,graphicsDeviceOptions,preferredBackend,usePreferredGraphicsBackend){
         }
 
-        override protected List<IDisposable> CreateResources()
+        override protected void CreateResources()
         {
-            ResourceFactory _factory = graphicsDevice.ResourceFactory;
 
             _cameraProjViewBuffer = _factory.CreateBuffer(new BufferDescription(128,BufferUsage.UniformBuffer | BufferUsage.Dynamic));
 
@@ -111,20 +110,6 @@ namespace Henzai.Examples
             _pipeline = _factory.CreateGraphicsPipeline(pipelineDescription);
 
             _commandList = _factory.CreateCommandList();
-
-            return new List<IDisposable>()
-            {
-                _commandList, 
-                _pipeline,
-                _vertexBuffer,
-                _vertexShader,
-                _fragmentShader,
-                _indexBuffer,
-                _xOffsetBuffer,
-                _cameraProjViewBuffer,
-                _resourceLayout
-                ,_resourceSet 
-            };
 
         }
 

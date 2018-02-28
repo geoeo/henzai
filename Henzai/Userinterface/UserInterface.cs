@@ -16,7 +16,6 @@ namespace Henzai.UserInterface
     {
 
         private readonly Assembly _assembly;
-        private ResourceFactory _factory;
         private CommandList _commandList;
         private DeviceBuffer _vertexBuffer;
         private DeviceBuffer _indexBuffer;
@@ -35,6 +34,7 @@ namespace Henzai.UserInterface
 
         public UserInterface(GraphicsDevice graphicsDevice, Sdl2Window contextWindow) : base(graphicsDevice,contextWindow){
             _assembly = typeof(UserInterface).GetTypeInfo().Assembly;
+
             ImGui.GetIO().FontAtlas.AddDefaultFont();
         }
 
@@ -60,11 +60,7 @@ namespace Henzai.UserInterface
 
         abstract protected unsafe void SubmitImGUILayout(float secondsPerFrame);
 
-        override protected List<IDisposable> CreateResources(){
-
-            List<IDisposable> resources = new List<IDisposable>();
-
-            _factory = graphicsDevice.ResourceFactory;
+        override protected void CreateResources(){
 
             _commandList = _factory.CreateCommandList();
 
@@ -112,20 +108,6 @@ namespace Henzai.UserInterface
                 graphicsDevice.PointSampler));
 
             _fontTextureResourceSet = _factory.CreateResourceSet(new ResourceSetDescription(_textureLayout, _fontTextureView));
-
-            resources.AddRange(new List<IDisposable>{
-                _commandList,
-                _vertexBuffer,
-                _indexBuffer,
-                _projMatrixBuffer,
-                _layout,
-                _textureLayout,
-                _pipeline,
-                _mainResourceSet,
-                _fontTextureResourceSet
-                });
-
-            return resources;
 
         }
 
@@ -320,6 +302,15 @@ namespace Henzai.UserInterface
                 default:
                     throw new NotImplementedException();
             }
+        }
+
+        override public void Dispose(){
+            _factory.DisposeCollector.DisposeAll();
+            foreach(var child in childrenPre)
+                child.Dispose();
+            foreach(var child in childrenPost)
+                child.Dispose();  
+
         }
 
     }

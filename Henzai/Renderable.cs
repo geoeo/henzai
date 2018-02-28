@@ -20,23 +20,25 @@ namespace Henzai
         /// <summary>
         /// Renderable objects which should be drawn before this.Draw()
         /// </summary>
-        public List<Renderable> childrenPre;
+        public List<Renderable> childrenPre = new List<Renderable>();
         /// <summary>
         /// Renderable objects which should be drawn after this.Draw()
         /// </summary>
-        public List<Renderable> childrenPost;
+        public List<Renderable> childrenPost = new List<Renderable>();
         private Sdl2Window _contextWindow;
         public Sdl2Window contextWindow => _contextWindow;
         private GraphicsDevice _graphicsDevice;
         public GraphicsDevice graphicsDevice => _graphicsDevice;
+
+        protected DisposeCollectorResourceFactory _factory;
         protected Resolution _renderResolution;
         /// <summary>
         /// Holds all created resources which implement IDisposable
         /// </summary>
-        private List<IDisposable> _sceneResources;
-        /// <summary>
-        /// Bind Actions that have to be executed prior to entering the render loop
-        /// </summary>
+        // private List<IDisposable> _sceneResources;
+        // /// <summary>
+        // /// Bind Actions that have to be executed prior to entering the render loop
+        // /// </summary>
         public event Action PreRenderLoop;
         /// <summary>
         /// Bind Actions that have to be executed prior to every draw call
@@ -71,15 +73,15 @@ namespace Henzai
                 _graphicsDevice = VeldridStartup.CreateGraphicsDevice(_contextWindow,graphicsDeviceOptions);
 
             _contextWindow.Title = $"{title} / {_graphicsDevice.BackendType.ToString()}";
-
-            childrenPre = new List<Renderable>();
-            childrenPost = new List<Renderable>();
+            _factory = new DisposeCollectorResourceFactory(_graphicsDevice.ResourceFactory);
 
         }
 
         public Renderable(GraphicsDevice graphicsDevice, Sdl2Window contextWindow){
             _graphicsDevice = graphicsDevice;
             _contextWindow = contextWindow;
+
+            _factory = new DisposeCollectorResourceFactory(_graphicsDevice.ResourceFactory);
         }
 
         /// <summary>
@@ -90,19 +92,16 @@ namespace Henzai
         public void Run(Resolution renderResolution)
         {
             _renderResolution = renderResolution;
-            _sceneResources = new List<IDisposable>();
 
             _camera = new Camera(renderResolution.Horizontal,renderResolution.Vertical);
             // Tick every millisecond
             _frameTimer = new FrameTimer(1.0);
 
-            _sceneResources.Add(_graphicsDevice);
-
-            _sceneResources.AddRange(CreateResources());
+            CreateResources();
             foreach(var child in childrenPre)
-                _sceneResources.AddRange(child.CreateResources());
+                child.CreateResources();
             foreach(var child in childrenPost)
-                _sceneResources.AddRange(child.CreateResources());
+                child.CreateResources();           
 
             List<Renderable> allChildren = new List<Renderable>();
             allChildren.AddRange(childrenPre);
@@ -158,6 +157,7 @@ namespace Henzai
                 _frameTimer.Stop();
             }
 
+            _graphicsDevice.WaitForIdle();
             Dispose();
 
         }
@@ -170,7 +170,7 @@ namespace Henzai
         /// <summary>
         /// Creates resources used to render e.g. Buffers, Textures etc.
         /// </summary>
-        abstract protected List<IDisposable> CreateResources();
+        abstract protected void CreateResources();
 
         abstract protected void BuildCommandList();
 
@@ -178,8 +178,14 @@ namespace Henzai
         /// Disposes of all elements in _sceneResources
         /// </summary>
         virtual public void Dispose(){
-            foreach(IDisposable resource in _sceneResources)
-                resource.Dispose();              
+
+            _factory.DisposeCollector.DisposeAll();
+            foreach(var child in childrenPre)
+                child.Dispose();
+            foreach(var child in childrenPost)
+                child.Dispose();  
+
+            _graphicsDevice.Dispose();
         }
     }
 }
