@@ -1,14 +1,9 @@
 #version 330 core
 
-struct Camera_ProjView
+layout(std140) uniform projView
 {
     mat4 View;
     mat4 Proj;
-};
-
-layout(std140) uniform projView
-{
-    Camera_ProjView field_projView;
 };
 
 layout(location = 0)in vec3 Position;
@@ -20,9 +15,7 @@ smooth out vec3 fsin_Normal;
 void main()
 {
     vec4 worldPos = vec4(Position, 1);
-    mat4 viewMatrix = field_projView.View;
-    mat4 projMatrix = field_projView.Proj;
-    gl_Position = projMatrix*viewMatrix*worldPos;
+    gl_Position = Proj*View*worldPos;
     // composensate for D3D projection
     gl_Position.z = 2.0*gl_Position.z -gl_Position.w;
     fsin_Normal = Normal;
