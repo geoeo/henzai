@@ -22,10 +22,10 @@ namespace Henzai.Geometry
             double r 
                 = Math.Sqrt(Math.Pow(position.X,2.0) + Math.Pow(position.Y,2.0) + Math.Pow(position.Z,2.0));
 
-            double theta = Math.Atan2(position.Y,position.X); // [-Pi,Pi]
-            double phi = Math.Acos(position.Z.ToDouble()/r); // [0,Pi]
+            double theta = Math.Atan2(position.X,position.Z); // [-Pi,Pi]
+            double phi = Math.Acos(position.Y.ToDouble()/r); // [0,Pi]
 
-            double u = (theta/Math.PI + 1.0)/2.0;
+            double u = 0.5 + theta / (2*Math.PI);
             double v = phi / Math.PI;
 
             #if DEBUG

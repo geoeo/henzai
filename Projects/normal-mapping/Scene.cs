@@ -34,7 +34,7 @@ namespace Henzai.Examples
         // TODO: Refactor this into a class with colour
         private Vector4 LIGHT_POS = new Vector4(0,10,15,0);
 
-        Model<VertexPositionNormal> _model;
+        Model<VertexPositionNormalTexture> _model;
 
         public Scene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, GraphicsBackend preferredBackend, bool usePreferredGraphicsBackend)
             : base(title,windowSize,graphicsDeviceOptions,preferredBackend,usePreferredGraphicsBackend){
@@ -45,10 +45,10 @@ namespace Henzai.Examples
         // TODO: Abstract Resource Crreation for Uniforms, Vertex Layouts, Disposing
         override protected void CreateResources(){
 
-            string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere.obj");
-            // string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere_centered.obj"); // no texture coordiantes
-            _model = AssimpLoader.LoadFromFile<VertexPositionNormal>(filePath,VertexPositionNormal.HenzaiType);
-            //TextureMapper.GenerateSphericalTextureCoordinatesFor(_model.meshes[0]);
+            // string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere.obj"); // huge 
+            string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere_centered.obj"); // no texture coordiantes
+            _model = AssimpLoader.LoadFromFile<VertexPositionNormalTexture>(filePath,VertexPositionNormalTexture.HenzaiType);
+            TextureMapper.GenerateSphericalTextureCoordinatesFor(_model.meshes[0]);
 
             /// Uniform 1 - Camera
             _cameraProjViewBuffer = _factory.CreateBuffer(new BufferDescription(192,BufferUsage.UniformBuffer | BufferUsage.Dynamic));
@@ -108,12 +108,12 @@ namespace Henzai.Examples
             VertexLayoutDescription vertexLayout 
                 = new VertexLayoutDescription(
                     new VertexElementDescription("Position",VertexElementSemantic.Position,VertexElementFormat.Float3),
-                    new VertexElementDescription("Normal",VertexElementSemantic.Normal,VertexElementFormat.Float3)
-                    //new VertexElementDescription("UV",VertexElementSemantic.TextureCoordinate,VertexElementFormat.Float2)
+                    new VertexElementDescription("Normal",VertexElementSemantic.Normal,VertexElementFormat.Float3),
+                    new VertexElementDescription("UV",VertexElementSemantic.TextureCoordinate,VertexElementFormat.Float2)
                 );
 
-            _vertexShader = IO.LoadShader("Phong",ShaderStages.Vertex,graphicsDevice);
-            _fragmentShader = IO.LoadShader("Phong",ShaderStages.Fragment,graphicsDevice);
+            _vertexShader = IO.LoadShader("PhongTexture",ShaderStages.Vertex,graphicsDevice);
+            _fragmentShader = IO.LoadShader("PhongTexture",ShaderStages.Fragment,graphicsDevice);
 
             GraphicsPipelineDescription pipelineDescription = new GraphicsPipelineDescription(){
                 BlendState = BlendStateDescription.SingleOverrideBlend,
