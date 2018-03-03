@@ -64,6 +64,16 @@
             "problemMatcher": "$msCompile"
         },
         {
+            "label": "build normal-mapping",
+            "command": "dotnet build Projects/normal-mapping/normal-mapping.csproj",
+            "type": "shell",
+            "group": "build",
+            "presentation": {
+                "reveal": "silent"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
             "label": "compile metal shaders (Henzai)",
             "type": "shell",
             "group": "build",
@@ -116,6 +126,13 @@
             "type": "shell",
             "group": "build",
             "command": "dotnet run --project Projects/asset-loading/",
+            "problemMatcher":"$msCompile"
+        },
+        {
+            "label": "run normal-mapping",
+            "type": "shell",
+            "group": "build",
+            "command": "dotnet run --project Projects/normal-mapping/",
             "problemMatcher":"$msCompile"
         }
     ]

@@ -65,6 +65,18 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
+            "name": ".NET Core Launch (normal-mapping)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build asset-loading",
+            "program": "${workspaceFolder}/Projects/normal-mapping/bin/Debug/netcoreapp2.0/normal-mapping.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Projects/normal-mapping",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
             "name": ".NET Core Attach",
             "type": "coreclr",
             "request": "attach",

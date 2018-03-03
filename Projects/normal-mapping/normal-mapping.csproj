@@ -1,0 +1,72 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Veldrid" Version="4.1.0" />
+    <PackageReference Include="Veldrid.ImageSharp" Version="4.0.0" />
+    <PackageReference Include="Veldrid.StartupUtilities" Version="4.0.0" />
+    <PackageReference Include="NativeLibraryLoader" Version="1.0.5" />
+    <ProjectReference Include="../../Henzai/Henzai.csproj" />
+    <!-- <Reference Include="../../veldrid/bin/Debug/Veldrid/netstandard2.0/*.dll"/> -->
+  </ItemGroup>
+
+  <ItemGroup>
+
+    <Content Include="$(MSBuildThisFileDirectory)/../../Assets/Models/sphere.obj">
+      <Link>Models/sphere.obj</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+
+    <Content Include="$(MSBuildThisFileDirectory)/../../Assets/Models/sphere_centered.obj">
+      <Link>Models/sphere_centered.obj</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+
+    <Content Include="../../Dependencies/libassimp.dylib">
+      <Link>libassimp.dylib</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <GLSL Include="../../Shaders/*.glsl"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <METAL Include="../../Shaders/*.metallib"/>
+  </ItemGroup>
+
+  <Target Name="CopyFiles" BeforeTargets="Build">
+  
+    <Copy SourceFiles="@(GLSL)" 
+
+          DestinationFolder="$(OutputPath)/Shaders/" 
+
+          SkipUnchangedFiles='true' 
+
+          OverwriteReadOnlyFiles='true' 
+    />
+
+      <Copy SourceFiles="@(METAL)" 
+
+          DestinationFolder="$(OutputPath)/Shaders/" 
+
+          SkipUnchangedFiles='true' 
+
+          OverwriteReadOnlyFiles='true' 
+    />
+
+  </Target>
+
+    <Target Name="DeleteFiles" AfterTargets="Clean">
+  
+    <RemoveDir Directories="$(OutputPath)/Shaders/" />
+
+    <RemoveDir Directories="$(OutputPath)/Models/" />
+  </Target>
+
+</Project>
