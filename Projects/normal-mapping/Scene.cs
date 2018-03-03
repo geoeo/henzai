@@ -47,6 +47,7 @@ namespace Henzai.Examples
 
             // string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere.obj");
             string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere_centered.obj");
+            // string filePath = Path.Combine(AppContext.BaseDirectory, "Models/1250_polygon_sphere_100mm.STL"); // huge 
             _model = AssimpLoader.LoadFromFile<VertexPositionNormal>(filePath,VertexPositionNormal.HenzaiType);
             //TextureMapper.GenerateSphericalTextureCoordinatesFor(_model.meshes[0]);
 

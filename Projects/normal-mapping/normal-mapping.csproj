@@ -16,6 +16,11 @@
 
   <ItemGroup>
 
+    <Content Include="$(MSBuildThisFileDirectory)/../../Assets/Models/1250_polygon_sphere_100mm.STL">
+      <Link>Models/1250_polygon_sphere_100mm.stl</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+
     <Content Include="$(MSBuildThisFileDirectory)/../../Assets/Models/sphere.obj">
       <Link>Models/sphere.obj</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
