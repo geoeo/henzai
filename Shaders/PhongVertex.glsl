@@ -1,25 +1,14 @@
 #version 330 core
 
-struct Camera_ProjView
+layout(std140) uniform projView
 {
     mat4 View;
     mat4 Proj;
 };
 
-struct Light
-{
-    vec3 Position;
-};
-
-
-layout(std140) uniform projView
-{
-    Camera_ProjView field_projView;
-};
-
 layout(std140) uniform light
 {
-    Light field_light;
+    vec3 LightPosition;
 };
 
 
@@ -34,11 +23,11 @@ void main()
 {
     vec4 worldPos = vec4(Position, 1);
 
-    mat4 viewMatrix = field_projView.View;
+    mat4 viewMatrix = View;
     mat3 normalViewMatrix = mat3(viewMatrix);
     vec4 viewPos = viewMatrix*worldPos;
 
-    mat4 projMatrix = field_projView.Proj;
+    mat4 projMatrix = Proj;
 
     gl_Position = projMatrix*viewPos;
     // composensate for D3D projection
@@ -46,6 +35,6 @@ void main()
 
     fsin_NormalView = normalViewMatrix*Normal;
     fsin_FragView = viewPos.xyz;
-    vec4 lightView = viewMatrix*vec4(field_light.Position,1.0);
+    vec4 lightView = viewMatrix*vec4(LightPosition,1.0);
     fsin_LightView = lightView.xyz;
 }
