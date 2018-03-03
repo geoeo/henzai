@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+
     <Content Include="$(MSBuildThisFileDirectory)/../../Assets/Models/sphere.obj">
       <Link>Models/sphere.obj</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
