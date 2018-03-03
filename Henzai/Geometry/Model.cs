@@ -12,7 +12,10 @@ namespace Henzai.Geometry
     {
         public Mesh<T>[] meshes;
         public uint[][] meshIndicies;
+        private Matrix4x4 _world = Matrix4x4.Identity;
         public int meshCount => meshes.Length;
+
+        public ref Matrix4x4 World => ref _world;
 
         public Model(Mesh<T>[] meshes, uint[][] indicies){
             this.meshes = meshes;

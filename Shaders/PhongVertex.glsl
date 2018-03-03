@@ -1,9 +1,10 @@
 #version 330 core
 
-layout(std140) uniform projView
+layout(std140) uniform projViewWorld
 {
     mat4 View;
     mat4 Proj;
+    mat4 World;
 };
 
 layout(std140) uniform light
@@ -21,7 +22,7 @@ smooth out vec3 fsin_LightView;
 
 void main()
 {
-    vec4 worldPos = vec4(Position, 1);
+    vec4 worldPos = World*vec4(Position, 1);
 
     mat4 viewMatrix = View;
     mat3 normalViewMatrix = mat3(viewMatrix);

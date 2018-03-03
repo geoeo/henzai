@@ -53,9 +53,9 @@ namespace Henzai.Examples
             //TextureMapper.GenerateSphericalTextureCoordinatesFor(_model.meshes[0]);
 
             /// Uniform 1 - Camera
-            _cameraProjViewBuffer = _factory.CreateBuffer(new BufferDescription(128,BufferUsage.UniformBuffer | BufferUsage.Dynamic));
+            _cameraProjViewBuffer = _factory.CreateBuffer(new BufferDescription(192,BufferUsage.UniformBuffer | BufferUsage.Dynamic));
 
-            var resourceLayoutElementDescription = new ResourceLayoutElementDescription("projView",ResourceKind.UniformBuffer,ShaderStages.Vertex);
+            var resourceLayoutElementDescription = new ResourceLayoutElementDescription("projViewWorld",ResourceKind.UniformBuffer,ShaderStages.Vertex);
             ResourceLayoutElementDescription[] resourceLayoutElementDescriptions = {resourceLayoutElementDescription};
             var resourceLayoutDescription = new ResourceLayoutDescription(resourceLayoutElementDescriptions);
             BindableResource[] bindableResources = new BindableResource[]{_cameraProjViewBuffer};
@@ -157,6 +157,7 @@ namespace Henzai.Examples
                 _commandList.SetIndexBuffer(_indexBuffers[i],IndexFormat.UInt32);
                 _commandList.UpdateBuffer(_cameraProjViewBuffer,0,camera.ViewMatrix);
                 _commandList.UpdateBuffer(_cameraProjViewBuffer,64,camera.ProjectionMatrix);
+                _commandList.UpdateBuffer(_cameraProjViewBuffer,128,_model.World);
                 _commandList.SetGraphicsResourceSet(0,_cameraResourceSet); // Always after SetPipeline
                 _commandList.UpdateBuffer(_lightBuffer,0,LIGHT_POS);
                 _commandList.SetGraphicsResourceSet(1,_lightResourceSet);

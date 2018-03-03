@@ -15,28 +15,28 @@ struct PixelInput
     float3 LightView;
 };
 
-struct ProjView 
+struct ProjViewWorld 
 {
     float4x4 View;
     float4x4 Proj;
+    float4x4 World;
 };
 
 struct Light {
     float3 Position;
 };
 
-vertex PixelInput VS(VertexInput input[[stage_in]],constant ProjView &pj [[ buffer(1) ]],constant Light &l [[ buffer(2) ]])
+vertex PixelInput VS(VertexInput input[[stage_in]],constant ProjViewWorld &pjw [[ buffer(1) ]],constant Light &l [[ buffer(2) ]])
 {
     PixelInput output;
-    float4x4 View = pj.View;
-    float4 positionView = View*float4(input.Position, 1);
-    float4 positionCS = pj.Proj*positionView;
+    float4 positionView = pjw.View*pjw.World*float4(input.Position, 1);
+    float4 positionCS = pjw.Proj*positionView;
 
-    float4 lightView = View*float4(l.Position,1);
+    float4 lightView = pjw.View*float4(l.Position,1);
 
     output.Position = positionCS;
     output.FragView = positionView.xyz;
-    output.NormalView = float3x3(View[0].xyz,View[1].xyz,View[2].xyz)*input.Normal;
+    output.NormalView = float3x3(pjw.View[0].xyz,pjw.View[1].xyz,pjw.View[2].xyz)*input.Normal;
     output.LightView = lightView.xyz;
     return output;
 }
