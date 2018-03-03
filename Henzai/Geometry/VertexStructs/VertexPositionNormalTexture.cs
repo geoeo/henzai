@@ -14,7 +14,7 @@ namespace Henzai.Geometry
 
         public readonly Vector3 Position;
         public readonly Vector3 Normal;
-        public readonly Vector2 TextureCoordinates;
+        public Vector2 TextureCoordinates;
 
         public VertexPositionNormalTexture(Vector3 position, Vector3 normal, Vector2 texCoords)
         {

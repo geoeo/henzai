@@ -9,6 +9,14 @@ namespace Henzai.Extensions
         public static T Clamp<T>(this T val, T min, T max) where T : IComparable<T>{
             return (val.CompareTo(min) < 0) ? min : ((val.CompareTo(max) > 0) ? max : val);
         }
+
+        public static double ToDouble(this float val){
+            return (double)val;
+        }
+
+        public static float ToFloat(this double val){
+            return (float)val;
+        }
     }
 
     public static class GenericExtensions

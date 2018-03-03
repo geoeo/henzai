@@ -34,7 +34,7 @@ namespace Henzai.Examples
         // TODO: Refactor this into a class with colour
         private Vector4 LIGHT_POS = new Vector4(0,10,15,0);
 
-        Model<VertexPositionNormal> _sphereModel;
+        Model<VertexPositionNormal> _model;
 
         public Scene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, GraphicsBackend preferredBackend, bool usePreferredGraphicsBackend)
             : base(title,windowSize,graphicsDeviceOptions,preferredBackend,usePreferredGraphicsBackend){
@@ -46,9 +46,11 @@ namespace Henzai.Examples
         override protected void CreateResources(){
 
             // string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere.obj");
-            //string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere_centered.obj");
+            //string filePath = Path.Combine(AppContext.BaseDirectory, "Models/300_polygon_sphere_100mm.STL");
+            // string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere_centered.obj");
             string filePath = Path.Combine(AppContext.BaseDirectory, "Models/chinesedragon.dae");
-            _sphereModel = AssimpLoader.LoadFromFile<VertexPositionNormal>(filePath,VertexPositionNormal.HenzaiType);
+            _model = AssimpLoader.LoadFromFile<VertexPositionNormal>(filePath,VertexPositionNormal.HenzaiType);
+            //TextureMapper.GenerateSphericalTextureCoordinatesFor(_model.meshes[0]);
 
             /// Uniform 1 - Camera
             _cameraProjViewBuffer = _factory.CreateBuffer(new BufferDescription(128,BufferUsage.UniformBuffer | BufferUsage.Dynamic));
@@ -89,20 +91,20 @@ namespace Henzai.Examples
             
             _lightResourceSet = _factory.CreateResourceSet(resourceSetDescriptionLight);
 
-            for(int i = 0; i < _sphereModel.meshCount; i++){
+            for(int i = 0; i < _model.meshCount; i++){
 
                 DeviceBuffer vertexBuffer 
-                    =  _factory.CreateBuffer(new BufferDescription(_sphereModel.meshes[i].vertices.LengthUnsigned() * VertexPositionNormalTexture.SizeInBytes, BufferUsage.VertexBuffer)); 
+                    =  _factory.CreateBuffer(new BufferDescription(_model.meshes[i].vertices.LengthUnsigned() * VertexPositionNormalTexture.SizeInBytes, BufferUsage.VertexBuffer)); 
 
                 DeviceBuffer indexBuffer
-                    = _factory.CreateBuffer(new BufferDescription(_sphereModel.meshIndicies[i].LengthUnsigned()*sizeof(uint),BufferUsage.IndexBuffer));
+                    = _factory.CreateBuffer(new BufferDescription(_model.meshIndicies[i].LengthUnsigned()*sizeof(uint),BufferUsage.IndexBuffer));
                     
 
                 _vertexBuffers.Add(vertexBuffer);
                 _indexBuffers.Add(indexBuffer);
 
-                graphicsDevice.UpdateBuffer(vertexBuffer,0,_sphereModel.meshes[i].vertices);
-                graphicsDevice.UpdateBuffer(indexBuffer,0,_sphereModel.meshIndicies[i]);
+                graphicsDevice.UpdateBuffer(vertexBuffer,0,_model.meshes[i].vertices);
+                graphicsDevice.UpdateBuffer(indexBuffer,0,_model.meshIndicies[i]);
             }
 
             VertexLayoutDescription vertexLayout 
@@ -148,8 +150,8 @@ namespace Henzai.Examples
             _commandList.SetFullViewports();
             _commandList.ClearColorTarget(0,RgbaFloat.White);
             _commandList.ClearDepthStencil(1f);
-            for(int i = 0; i < _sphereModel.meshCount; i++){
-                Material material = _sphereModel.meshes[i].TryGetMaterial();
+            for(int i = 0; i < _model.meshCount; i++){
+                Material material = _model.meshes[i].TryGetMaterial();
 
                 _commandList.SetVertexBuffer(0,_vertexBuffers[i]);
                 _commandList.SetIndexBuffer(_indexBuffers[i],IndexFormat.UInt32);
@@ -163,7 +165,7 @@ namespace Henzai.Examples
                 _commandList.UpdateBuffer(_materialBuffer,32,material.ambient);
                 _commandList.SetGraphicsResourceSet(2,_materialResourceSet);
                 _commandList.DrawIndexed(
-                    indexCount: _sphereModel.meshIndicies[i].Length.ToUnsigned(),
+                    indexCount: _model.meshIndicies[i].Length.ToUnsigned(),
                     instanceCount: 1,
                     indexStart: 0,
                     vertexOffset: 0,
