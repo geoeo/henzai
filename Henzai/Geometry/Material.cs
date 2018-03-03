@@ -32,24 +32,28 @@ namespace Henzai.Geometry
     ///</summary>
     public sealed class Material
     {
+        public Vector4 ambient = Vector4.Zero;
         public Vector4 diffuse = Vector4.Zero;
         public Vector4 specular = Vector4.Zero;
-        public Vector4 ambient = Vector4.Zero;
         public Vector4 emissive = Vector4.Zero;
         public Vector4 transparent = Vector4.Zero;
         public string textureDiffuse = string.Empty;
+        public string textureNormal = string.Empty;
+        public string textureBump = string.Empty;
 
 
-        ///<summary>
-        /// If null reference is passed as an argument assignment will be skipped
-        ///</summary>
+        //<summary>
+        // If null reference is passed as an argument assignment will be skipped
+        //</summary>
         public Material(
+            Vector4 ambient, 
             Vector4 diffuse, 
             Vector4 specular, 
-            Vector4 ambient, 
             Vector4 emissive, 
             Vector4 transparent,  
-            string textureDiffuse){
+            string textureDiffuse,
+            string textureNormal,
+            string textureBump){
 
                 if(diffuse != null)
                     this.diffuse = diffuse;
@@ -63,6 +67,10 @@ namespace Henzai.Geometry
                     this.transparent = transparent;
                 if(!String.IsNullOrEmpty(textureDiffuse))
                     this.textureDiffuse = textureDiffuse;
+                if(!String.IsNullOrEmpty(textureNormal))
+                    this.textureNormal = textureNormal;
+                if(!String.IsNullOrEmpty(textureBump))
+                    this.textureBump = textureBump;
              
             }
 

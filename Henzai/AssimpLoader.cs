@@ -25,12 +25,15 @@ namespace Henzai
 
         public static Geometry.Material ToHenzaiMaterial(this Assimp.Material material){
             return new Geometry.Material(
+                material.ColorAmbient.ToVector4(),
                 material.ColorDiffuse.ToVector4(),
                 material.ColorSpecular.ToVector4(),
-                material.ColorAmbient.ToVector4(),
                 material.ColorEmissive.ToVector4(),
                 material.ColorTransparent.ToVector4(),
-                material.TextureDiffuse.FilePath);
+                material.TextureDiffuse.FilePath,
+                material.TextureNormal.FilePath,
+                material.TextureHeight.FilePath);
+
         }
     }
 
@@ -48,6 +51,13 @@ namespace Henzai
 
          public static Model<T> LoadFromFile<T>(string filename, HenzaiTypes vertexType, PostProcessSteps flags = DefaultPostProcessSteps) where T : struct
         {
+
+            string typeName = typeof(T).Name;
+            string enumName = vertexType.ToString();
+
+            if(!typeName.Equals(enumName))
+                throw new ArgumentException($"Type Mismatch AssimpLoader - generic:{typeName}, enum:{enumName}");
+
             AssimpContext assimpContext = new AssimpContext();
             Scene pScene = assimpContext.ImportFile(filename, flags);
 

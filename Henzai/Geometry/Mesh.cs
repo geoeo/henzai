@@ -5,7 +5,7 @@ using Veldrid;
 namespace Henzai.Geometry
 {
     /// <summary>
-    /// Mesh hold Position, Texture and Normal Information
+    /// Mesh holds Vertex and Texture/Color information
     /// </summary>
     public sealed class Mesh<T> where T : struct
     {
