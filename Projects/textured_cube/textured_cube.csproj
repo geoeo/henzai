@@ -16,7 +16,7 @@
 
   <ItemGroup>
 
-  <Content Include="../../Assets/Textures/Name.png">
+    <Content Include="../../Assets/Textures/Name.png">
       <Link>Textures/Name.png</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

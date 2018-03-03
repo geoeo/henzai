@@ -1,5 +1,7 @@
 #version 330 core
 
+uniform sampler2D SphereTexture;
+
 struct Material
 {
     vec4 Diffuse;
@@ -21,6 +23,8 @@ out vec4 fsout_Color;
 
 void main()
 {
+    vec4 textureColor = texture(SphereTexture,fsin_UV);
+
     vec3 L = normalize(fsin_LightView-fsin_FragView);
     float l_dot_n = dot(L,fsin_NormalView);
     vec4 diffuse = l_dot_n*field_material.Diffuse;
@@ -37,5 +41,6 @@ void main()
     fsout_Color = color_out;
     //fsout_Color = vec4(fsin_NormalView,1.0);
     //fsout_Color = vec4(fsin_LightView,1.0);
-    fsout_Color = vec4(fsin_UV,1.0,1.0);
+    //fsout_Color = vec4(fsin_UV,1.0,1.0);
+    fsout_Color = textureColor;
 }

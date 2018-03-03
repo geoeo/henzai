@@ -6,6 +6,7 @@ using Veldrid;
 using Veldrid.StartupUtilities;
 using Veldrid.Sdl2;
 using Veldrid.OpenGL;
+using Veldrid.ImageSharp;
 using Henzai;
 using Henzai.Extensions;
 using Henzai.Geometry;
@@ -28,11 +29,12 @@ namespace Henzai.Examples
         private ResourceSet _cameraResourceSet;
         private ResourceSet _materialResourceSet;
         private ResourceSet _lightResourceSet;
+        private ResourceSet _textureResourceSet;
         private ResourceLayout _cameraResourceLayout;
         private ResourceLayout _materialResourceLayout;
         private ResourceLayout _lightResourceLayout;
         // TODO: Refactor this into a class with colour
-        private Vector4 LIGHT_POS = new Vector4(0,10,15,0);
+        private Vector4 LIGHT_POS = new Vector4(0,30,30,0);
 
         Model<VertexPositionNormalTexture> _model;
 
@@ -45,8 +47,8 @@ namespace Henzai.Examples
         // TODO: Abstract Resource Crreation for Uniforms, Vertex Layouts, Disposing
         override protected void CreateResources(){
 
-            // string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere.obj"); // huge 
-            string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere_centered.obj"); // no texture coordiantes
+            string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere.obj"); // huge 
+            // string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere_centered.obj"); // no texture coordiantes
             _model = AssimpLoader.LoadFromFile<VertexPositionNormalTexture>(filePath,VertexPositionNormalTexture.HenzaiType);
             TextureMapper.GenerateSphericalTextureCoordinatesFor(_model.meshes[0]);
 
@@ -105,6 +107,21 @@ namespace Henzai.Examples
                 graphicsDevice.UpdateBuffer(indexBuffer,0,_model.meshIndicies[i]);
             }
 
+            //Texture Samper
+            ImageSharpTexture NameImage = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "Textures", "Water.jpg"));
+            Texture sphereTexture = NameImage.CreateDeviceTexture(graphicsDevice, _factory);
+            TextureView sphereTextureView = _factory.CreateTextureView(sphereTexture);
+
+            ResourceLayout textureLayout = _factory.CreateResourceLayout(
+                new ResourceLayoutDescription(
+                    new ResourceLayoutElementDescription("SphereTexture", ResourceKind.TextureReadOnly, ShaderStages.Fragment),
+                    new ResourceLayoutElementDescription("SphereSampler", ResourceKind.Sampler, ShaderStages.Fragment)));
+
+            _textureResourceSet = _factory.CreateResourceSet(new ResourceSetDescription(
+                textureLayout,
+                sphereTextureView,
+                graphicsDevice.LinearSampler));
+
             VertexLayoutDescription vertexLayout 
                 = new VertexLayoutDescription(
                     new VertexElementDescription("Position",VertexElementSemantic.Position,VertexElementFormat.Float3),
@@ -127,7 +144,7 @@ namespace Henzai.Examples
                 ),
                 PrimitiveTopology = PrimitiveTopology.TriangleList,
                 //ResourceLayouts = new ResourceLayout[] {_cameraResourceLayout,_materialResourceLayout,_lightResourceLayout},
-                ResourceLayouts = new ResourceLayout[] {_cameraResourceLayout,_lightResourceLayout,_materialResourceLayout},
+                ResourceLayouts = new ResourceLayout[] {_cameraResourceLayout,_lightResourceLayout,_materialResourceLayout,textureLayout},
                 ShaderSet = new ShaderSetDescription(
                     vertexLayouts: new VertexLayoutDescription[] {vertexLayout},
                     shaders: new Shader[] {_vertexShader,_fragmentShader}
@@ -163,6 +180,7 @@ namespace Henzai.Examples
                 _commandList.UpdateBuffer(_materialBuffer,16,material.specular);
                 _commandList.UpdateBuffer(_materialBuffer,32,material.ambient);
                 _commandList.SetGraphicsResourceSet(2,_materialResourceSet);
+                _commandList.SetGraphicsResourceSet(3,_textureResourceSet);
                 _commandList.DrawIndexed(
                     indexCount: _model.meshIndicies[i].Length.ToUnsigned(),
                     instanceCount: 1,
