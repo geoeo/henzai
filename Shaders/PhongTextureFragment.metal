@@ -17,9 +17,15 @@ struct Material
     float4 Ambient;
 };
 
-fragment float4 FS(PixelInput input[[stage_in]],constant Material &material [[buffer(2)]],texture2d<float> tex [[texture(0)]],sampler sam [[sampler(0)]])
+fragment float4 FS(PixelInput input[[stage_in]],
+                   constant Material &material [[buffer(2)]],
+                   texture2d<float> diffuseTexture [[texture(0)]],
+                   texture2d<float> normalTexture [[texture(1)]],
+                   sampler diffuseSampler [[sampler(0)]],
+                   sampler normalSampler [[sampler(1)]])
 {
-    float4 textureColor = tex.sample(sam,input.UV);
+    float4 diffuseTextureSample = diffuseTexture.sample(diffuseSampler,input.UV);
+    float4 normalTextureSample = normalTexture.sample(normalSampler,input.UV);
 
     float3 L = normalize(input.LightView-input.FragView);
     float l_dot_n = dot(L,input.NormalView);
@@ -36,7 +42,8 @@ fragment float4 FS(PixelInput input[[stage_in]],constant Material &material [[bu
     color_out += specular;
     //color_out = float4(input.NormalView,1.0);
     //color_out = float4(input.LightView,1.0);
-    color_out = textureColor;
+    //color_out = diffuseTextureSample;
+    color_out = normalTextureSample;
 
     return color_out;
 }
