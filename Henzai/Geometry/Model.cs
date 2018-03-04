@@ -27,6 +27,10 @@ namespace Henzai.Geometry
             meshIndicies = new uint[meshes.Length][];
         }
 
+        public void SetNewWorldTransformation(Matrix4x4 world){
+            _world = world;
+        }
+
         
     }
 }

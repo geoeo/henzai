@@ -41,6 +41,6 @@ void main()
     fsout_Color = color_out;
     //fsout_Color = vec4(fsin_NormalView,1.0);
     //fsout_Color = vec4(fsin_LightView,1.0);
-    //fsout_Color = vec4(fsin_UV,1.0,1.0);
+    // fsout_Color = vec4(fsin_UV,1.0,1.0);
     fsout_Color = textureColor;
 }

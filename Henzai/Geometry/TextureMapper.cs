@@ -16,17 +16,15 @@ namespace Henzai.Geometry
 
         }
 
-        // http://mathworld.wolfram.com/SphericalCoordinates.html
+        // https://de.wikipedia.org/wiki/UV-Koordinaten
+        // http://mathworld.wolfram.com/SphericalCoordinates.html (atan is not smooth! => artefacts)
         private static Vector2 GenerateSphericalCoordiantesfor(Vector3 position){
             Vector2 tex;
             double r 
                 = Math.Sqrt(Math.Pow(position.X,2.0) + Math.Pow(position.Y,2.0) + Math.Pow(position.Z,2.0));
 
-            double theta = Math.Atan2(position.X,position.Z); // [-Pi,Pi]
-            double phi = Math.Acos(position.Y.ToDouble()/r); // [0,Pi]
-
-            double u = 0.5 + theta / (2*Math.PI);
-            double v = phi / Math.PI;
+            double u = (position.X / r + 1.0)/2.0;
+            double v = (position.Y / r + 1.0)/2.0;
 
             #if DEBUG
                 if(u < 0.0 || u >1.0 || v < 0.0 || v > 1.0)

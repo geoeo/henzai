@@ -42,6 +42,12 @@ namespace Henzai.Examples
             : base(title,windowSize,graphicsDeviceOptions,preferredBackend,usePreferredGraphicsBackend){
                 _vertexBuffers = new List<DeviceBuffer>();
                 _indexBuffers = new List<DeviceBuffer>();
+                //PreRenderLoop += RotateSphereModel;
+        }
+
+        private void RotateSphereModel(){
+            var newWorld = _model.World*Matrix4x4.CreateRotationY(Math.PI.ToFloat());
+            _model.SetNewWorldTransformation(newWorld);
         }
 
         // TODO: Abstract Resource Crreation for Uniforms, Vertex Layouts, Disposing
@@ -59,7 +65,6 @@ namespace Henzai.Examples
             ResourceLayoutElementDescription[] resourceLayoutElementDescriptions = {resourceLayoutElementDescription};
             var resourceLayoutDescription = new ResourceLayoutDescription(resourceLayoutElementDescriptions);
             BindableResource[] bindableResources = new BindableResource[]{_cameraProjViewBuffer};
-
             _cameraResourceLayout = _factory.CreateResourceLayout(resourceLayoutDescription);
             var resourceSetDescription = new ResourceSetDescription(_cameraResourceLayout,bindableResources);
             
