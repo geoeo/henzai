@@ -113,19 +113,29 @@ namespace Henzai.Examples
             }
 
             //Texture Samper
-            ImageSharpTexture NameImage = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "Textures", "Water.jpg"));
-            Texture sphereTexture = NameImage.CreateDeviceTexture(graphicsDevice, _factory);
-            TextureView sphereTextureView = _factory.CreateTextureView(sphereTexture);
+            ImageSharpTexture diffuseTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "Textures", "Water.jpg"));
+            Texture sphereDiffuseTexture = diffuseTexture.CreateDeviceTexture(graphicsDevice, _factory);
+            TextureView sphereDiffuseTextureView = _factory.CreateTextureView(sphereDiffuseTexture);
+
+            ImageSharpTexture normalTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "Textures", "WaterNorm.jpg"));
+            Texture sphereNormalTexture = normalTexture.CreateDeviceTexture(graphicsDevice, _factory);
+            TextureView sphereNormalTextureView = _factory.CreateTextureView(sphereNormalTexture);
 
             ResourceLayout textureLayout = _factory.CreateResourceLayout(
                 new ResourceLayoutDescription(
-                    new ResourceLayoutElementDescription("SphereTexture", ResourceKind.TextureReadOnly, ShaderStages.Fragment),
-                    new ResourceLayoutElementDescription("SphereSampler", ResourceKind.Sampler, ShaderStages.Fragment)));
+                    new ResourceLayoutElementDescription("SphereDiffuseTexture", ResourceKind.TextureReadOnly, ShaderStages.Fragment),
+                    new ResourceLayoutElementDescription("SphereDiffuseSampler", ResourceKind.Sampler, ShaderStages.Fragment),
+                    new ResourceLayoutElementDescription("SphereNormTexture", ResourceKind.TextureReadOnly, ShaderStages.Fragment),
+                    new ResourceLayoutElementDescription("SphereNormSampler", ResourceKind.Sampler, ShaderStages.Fragment)
+                    ));
 
             _textureResourceSet = _factory.CreateResourceSet(new ResourceSetDescription(
                 textureLayout,
-                sphereTextureView,
-                graphicsDevice.LinearSampler));
+                sphereDiffuseTextureView,
+                graphicsDevice.LinearSampler,
+                sphereNormalTextureView,
+                graphicsDevice.LinearSampler
+                ));
 
             VertexLayoutDescription vertexLayout 
                 = new VertexLayoutDescription(
