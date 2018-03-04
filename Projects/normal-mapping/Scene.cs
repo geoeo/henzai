@@ -43,11 +43,17 @@ namespace Henzai.Examples
                 _vertexBuffers = new List<DeviceBuffer>();
                 _indexBuffers = new List<DeviceBuffer>();
                 //PreRenderLoop += RotateSphereModel;
+                PreDraw+=RotateSphereModel;
         }
 
         private void RotateSphereModel(){
             var newWorld = _model.World*Matrix4x4.CreateRotationY(Math.PI.ToFloat());
             _model.SetNewWorldTransformation(newWorld);
+        }
+
+        private void RotateSphereModel(float delta){
+            var newWorld = _model.World*Matrix4x4.CreateRotationY(Math.PI.ToFloat()*delta/10.0f);
+            _model.SetNewWorldTransformation(newWorld); 
         }
 
         // TODO: Abstract Resource Crreation for Uniforms, Vertex Layouts, Disposing
@@ -129,12 +135,24 @@ namespace Henzai.Examples
                     new ResourceLayoutElementDescription("SphereNormSampler", ResourceKind.Sampler, ShaderStages.Fragment)
                     ));
 
+            var sampler = _factory.CreateSampler(new SamplerDescription
+            {
+                AddressModeU = SamplerAddressMode.Wrap,
+                AddressModeV = SamplerAddressMode.Wrap,
+                AddressModeW = SamplerAddressMode.Wrap,
+                Filter = SamplerFilter.MinLinear_MagLinear_MipLinear,
+                LodBias = 0,
+                MinimumLod = 0,
+                MaximumLod = uint.MaxValue,
+                MaximumAnisotropy = 0,
+            });
+
             _textureResourceSet = _factory.CreateResourceSet(new ResourceSetDescription(
                 textureLayout,
                 sphereDiffuseTextureView,
                 graphicsDevice.LinearSampler,
                 sphereNormalTextureView,
-                graphicsDevice.LinearSampler
+                sampler
                 ));
 
             VertexLayoutDescription vertexLayout 

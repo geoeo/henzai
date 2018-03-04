@@ -16,8 +16,9 @@ namespace Henzai.Geometry
 
         }
 
+        // http://www.iquilezles.org/www/articles/patchedsphere/patchedsphere.htm
         // https://de.wikipedia.org/wiki/UV-Koordinaten
-        // http://mathworld.wolfram.com/SphericalCoordinates.html (atan is not smooth! => artefacts)
+        // http://mathworld.wolfram.com/SphericalCoordinates.html
         private static Vector2 GenerateSphericalCoordiantesfor(Vector3 position){
             Vector2 tex;
             double r 
@@ -25,6 +26,9 @@ namespace Henzai.Geometry
 
             double u = (position.X / r + 1.0)/2.0;
             double v = (position.Y / r + 1.0)/2.0;
+
+            // double u = position.X / r;
+            // double v = position.Y / r;
 
             #if DEBUG
                 if(u < 0.0 || u >1.0 || v < 0.0 || v > 1.0)
