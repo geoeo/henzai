@@ -68,7 +68,7 @@
             "name": ".NET Core Launch (normal-mapping)",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build asset-loading",
+            "preLaunchTask": "build normal-mapping",
             "program": "${workspaceFolder}/Projects/normal-mapping/bin/Debug/netcoreapp2.0/normal-mapping.dll",
             "args": [],
             "cwd": "${workspaceFolder}/Projects/normal-mapping",
