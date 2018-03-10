@@ -9,7 +9,12 @@ layout(std140) uniform projViewWorld
 
 layout(std140) uniform light
 {
-    vec3 LightPosition;
+    vec4 LightPosition;
+};
+
+layout(std140) uniform normalMatrix
+{
+    mat4 NormalMatirx;
 };
 
 
@@ -34,8 +39,9 @@ void main()
     // composensate for D3D projection
     gl_Position.z = 2.0*gl_Position.z -gl_Position.w;
 
-    fsin_NormalView = normalViewMatrix*Normal;
+    mat3 normalMatrix = mat3(NormalMatirx);
+    fsin_NormalView = normalViewMatrix*normalMatrix*Normal;
     fsin_FragView = viewPos.xyz;
-    vec4 lightView = viewMatrix*vec4(LightPosition,1.0);
+    vec4 lightView = viewMatrix*vec4(LightPosition.xyz,1.0);
     fsin_LightView = lightView.xyz;
 }

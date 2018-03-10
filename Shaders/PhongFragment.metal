@@ -16,7 +16,7 @@ struct Material
     float4 Ambient;
 };
 
-fragment float4 FS(PixelInput input[[stage_in]],constant Material &material [[buffer(2)]])
+fragment float4 FS(PixelInput input[[stage_in]],constant Material &material [[buffer(3)]])
 {
     float3 L = normalize(input.LightView-input.FragView);
     float l_dot_n = dot(L,input.NormalView);

@@ -17,6 +17,16 @@ namespace Henzai.Extensions
         public static float ToFloat(this double val){
             return (float)val;
         }
+
+        public static Matrix4x4 Invert(this Matrix4x4 val){
+            Matrix4x4 inverted;
+            bool success =  Matrix4x4.Invert(val,out inverted);
+            return success? inverted : Matrix4x4.Identity;
+        }
+
+        public static Matrix4x4 Transpose(this Matrix4x4 val){
+            return Matrix4x4.Transpose(val);
+        }
     }
 
     public static class GenericExtensions
@@ -38,6 +48,10 @@ namespace Henzai.Extensions
 
         public static float ToFloat(this int val){
             return (float)val;
+        }
+
+        public static Vector3 ToVec3(this Vector4 val){
+            return new Vector3(val.X,val.Y,val.Z);
         }
     }
 
