@@ -23,7 +23,7 @@ layout(location = 2)in vec2 UV;
 layout(location = 3)in vec3 Tangent;
 
 smooth out vec3 fsin_NormalWorld;
-//smooth out vec3 fsin_Tangent;
+smooth out vec3 fsin_TangentWorld;
 smooth out vec3 fsin_FragWorld;
 smooth out vec3 fsin_LightWorld;
 smooth out vec3 fsin_CamPosWorld;
@@ -48,5 +48,6 @@ void main()
     fsin_FragWorld = worldPos.xyz;
     fsin_LightWorld = LightPosition.xyz;
     fsin_CamPosWorld = viewMatrix[3].xyz;
+    fsin_TangentWorld = normalMatrix*Tangent;
     fsin_UV = UV;
 }

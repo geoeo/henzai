@@ -58,9 +58,10 @@ namespace Henzai.Geometry
 
             }
 
+            //TODO: Log to file
             #if DEBUG
-                if(u < 0.0 || u >1.0 || v < 0.0 || v > 1.0)
-                    Console.Error.WriteLine($"Texturecoordinates Out of Range - u:{u}, v:{v}");
+                //if(u < 0.0 || u >1.0 || v < 0.0 || v > 1.0)
+                    //Console.Error.WriteLine($"Texturecoordinates Out of Range - u:{u}, v:{v}");
             #endif
 
             tex.X = u.ToFloat();

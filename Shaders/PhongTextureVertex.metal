@@ -14,6 +14,7 @@ struct PixelInput
     float4 Position[[position]];
     float3 FragWorld;
     float3 NormalWorld;
+    float3 TangentWorld;
     float3 LightWorld;
     float2 UV;
     float3 CamPosWorld;
@@ -46,6 +47,7 @@ vertex PixelInput VS(VertexInput input[[stage_in]],constant ProjViewWorld &pjw [
     output.Position = positionCS;
     output.FragWorld = positionWorld.xyz;
     output.NormalWorld = normalMatrix*input.Normal;
+    output.TangentWorld = normalMatrix*input.Tangent;
     output.LightWorld = lightWorld.xyz;
     output.UV = input.UV;
     output.CamPosWorld = pjw.View[3].xyz;

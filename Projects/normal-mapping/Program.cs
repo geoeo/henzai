@@ -24,7 +24,7 @@ namespace Henzai.Examples
                 windowSize,
                 gdOptions,
                 GraphicsBackend.OpenGL,
-                usePreferredGraphicsBackend: true
+                usePreferredGraphicsBackend: false
             );
 
             SimpleGUIOverlay gui = new SimpleGUIOverlay(scene.graphicsDevice,scene.contextWindow);
