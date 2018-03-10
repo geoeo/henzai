@@ -8,6 +8,7 @@ struct PixelInput
     float3 NormalView;
     float3 LightView;
     float2 UV;
+    float3 CamPosWorld;
 };
 
 struct Material
@@ -18,7 +19,7 @@ struct Material
 };
 
 fragment float4 FS(PixelInput input[[stage_in]],
-                   constant Material &material [[buffer(2)]],
+                   constant Material &material [[buffer(3)]],
                    texture2d<float> diffuseTexture [[texture(0)]],
                    texture2d<float> normalTexture [[texture(1)]],
                    sampler diffuseSampler [[sampler(0)]],
@@ -32,7 +33,7 @@ fragment float4 FS(PixelInput input[[stage_in]],
     float4 diffuse = l_dot_n*material.Diffuse;
 
     float3 R = reflect(-L,input.NormalView);
-    float3 V = normalize(input.LightView);
+    float3 V = normalize(input.CamPosWorld - input.FragView);
     float isDotFront = fmax(sign(dot(input.NormalView,L)),0.0);
     float spec = powr(isDotFront*dot(V,R),32.0);
     float4 specular = material.Specular*spec;
@@ -43,7 +44,7 @@ fragment float4 FS(PixelInput input[[stage_in]],
     //color_out = float4(input.NormalView,1.0);
     //color_out = float4(input.LightView,1.0);
     //color_out = diffuseTextureSample;
-    color_out = normalTextureSample;
+    //color_out = normalTextureSample;
 
     return color_out;
 }
