@@ -266,3 +266,11 @@ getting_started/Shaders/*.metallib
 *.obj
 *.dae
 
+# Textures
+*.ktx
+*.png
+
+#licenses
+
+*.txt
+
