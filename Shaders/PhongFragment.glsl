@@ -25,7 +25,7 @@ void main()
     vec4 diffuse = l_dot_n*field_material.Diffuse;
 
     vec3 R = reflect(-L,fsin_NormalView);
-    vec3 V = normalize(fsin_LightView);
+    vec3 V = normalize(-fsin_FragView);
     float isDotFront = max(sign(dot(fsin_NormalView,L)),0.0);
     float spec = pow(isDotFront*dot(V,R),32.0);
     vec4 specular = field_material.Specular*spec;
