@@ -36,7 +36,7 @@ namespace Henzai.Examples
         // TODO: Refactor this into a class with colour
         private Vector4 LIGHT_POS = new Vector4(0,30,30,0);
 
-        Model<VertexPositionNormalTexture> _model;
+        Model<VertexPositionNormalTextureTangent> _model;
 
         public Scene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, GraphicsBackend preferredBackend, bool usePreferredGraphicsBackend)
             : base(title,windowSize,graphicsDeviceOptions,preferredBackend,usePreferredGraphicsBackend){
@@ -61,8 +61,9 @@ namespace Henzai.Examples
 
             string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere.obj"); // huge 
             //string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere_centered.obj"); // no texture coordiantes
-            _model = AssimpLoader.LoadFromFile<VertexPositionNormalTexture>(filePath,VertexPositionNormalTexture.HenzaiType);
+            _model = AssimpLoader.LoadFromFile<VertexPositionNormalTextureTangent>(filePath,VertexPositionNormalTextureTangent.HenzaiType);
             TextureMapper.GenerateSphericalTextureCoordinatesFor(_model.meshes[0], UVMappingTypes.Spherical_Coordinates);
+            TextureMapper.GenerateTangentSpaceFor(_model);
 
             /// Uniform 1 - Camera
             _cameraProjViewBuffer = _factory.CreateBuffer(new BufferDescription(192,BufferUsage.UniformBuffer | BufferUsage.Dynamic));
@@ -105,7 +106,7 @@ namespace Henzai.Examples
             for(int i = 0; i < _model.meshCount; i++){
 
                 DeviceBuffer vertexBuffer 
-                    =  _factory.CreateBuffer(new BufferDescription(_model.meshes[i].vertices.LengthUnsigned() * VertexPositionNormalTexture.SizeInBytes, BufferUsage.VertexBuffer)); 
+                    =  _factory.CreateBuffer(new BufferDescription(_model.meshes[i].vertices.LengthUnsigned() * VertexPositionNormalTextureTangent.SizeInBytes, BufferUsage.VertexBuffer)); 
 
                 DeviceBuffer indexBuffer
                     = _factory.CreateBuffer(new BufferDescription(_model.meshIndicies[i].LengthUnsigned()*sizeof(uint),BufferUsage.IndexBuffer));
@@ -159,7 +160,8 @@ namespace Henzai.Examples
                 = new VertexLayoutDescription(
                     new VertexElementDescription("Position",VertexElementSemantic.Position,VertexElementFormat.Float3),
                     new VertexElementDescription("Normal",VertexElementSemantic.Normal,VertexElementFormat.Float3),
-                    new VertexElementDescription("UV",VertexElementSemantic.TextureCoordinate,VertexElementFormat.Float2)
+                    new VertexElementDescription("UV",VertexElementSemantic.TextureCoordinate,VertexElementFormat.Float2),
+                    new VertexElementDescription("Tangent",VertexElementSemantic.Normal,VertexElementFormat.Float3)
                 );
 
             _vertexShader = IO.LoadShader("PhongTexture",ShaderStages.Vertex,graphicsDevice);

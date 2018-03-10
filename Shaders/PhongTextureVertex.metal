@@ -6,6 +6,7 @@ struct VertexInput
     float3 Position[[attribute(0)]];
     float3 Normal[[attribute(1)]];
     float2 UV[[attribute(2)]];
+    float3 Tangent[[attribute(3)]];
 };
 
 struct PixelInput

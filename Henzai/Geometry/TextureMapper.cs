@@ -18,6 +18,15 @@ namespace Henzai.Geometry
 
         }
 
+        public static void GenerateSphericalTextureCoordinatesFor(Mesh<VertexPositionNormalTextureTangent> mesh, UVMappingTypes mapping){
+            var vertices = mesh.vertices;
+
+            for(int i = 0; i < vertices.Length; i++){
+                vertices[i].TextureCoordinates = GenerateSphericalCoordiantesfor(vertices[i].Position, mapping);
+            }
+
+        }
+
         private static Vector2 GenerateSphericalCoordiantesfor(Vector3 position, UVMappingTypes mapping){
             Vector2 tex;
             double u = 0.0;
@@ -107,9 +116,9 @@ namespace Henzai.Geometry
                 // Average Tangent + Orthgonalize via Gram-Schmidt
                 for(int i = 0; i < numberOfIndicies; i++){
                     uint indicie = indicies[i];
-                    if (indicie == 0)
-                        continue;
                     uint tangentCount = tangentCountPerVertex[indicie];
+                    if (tangentCount == 0)
+                        continue;
                     Vector3 tangent = vertices[indicie].Tangent;
 
                     tangent /= tangentCount;
@@ -120,7 +129,7 @@ namespace Henzai.Geometry
 
                     vertices[indicie].Tangent = Vector3.Normalize(tangent - Vector3.Dot(normal,tangent) * normal);
 
-                    indicies[i] = 0;
+                    tangentCountPerVertex[indicie] = 0;
                 }
 
 

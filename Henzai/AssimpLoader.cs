@@ -91,6 +91,7 @@ namespace Henzai
                     byte[] posAsBytes = ByteMarshal.ToBytes(pPos);
                     byte[] normalAsBytes = ByteMarshal.ToBytes(pNormal);
                     byte[] texCoordAsBytes = ByteMarshal.ToBytes(pTexCoord.ToVector2());
+                    byte[] tangentAsBytes = ByteMarshal.ToBytes(pTangent);
 
                     switch(vertexType){
                         case VertexTypes.VertexPositionNormalTexture:
@@ -103,6 +104,13 @@ namespace Henzai
                             bytes = new byte[VertexPositionNormal.SizeInBytes];
                             Array.Copy(posAsBytes,0,bytes,VertexPositionNormal.PositionOffset,posAsBytes.Length);
                             Array.Copy(normalAsBytes,0,bytes,VertexPositionNormal.NormalOffset,normalAsBytes.Length);
+                            break;
+                        case VertexTypes.VertexPositionNormalTextureTangent:
+                            bytes = new byte[VertexPositionNormalTextureTangent.SizeInBytes];
+                            Array.Copy(posAsBytes,0,bytes,VertexPositionNormalTextureTangent.PositionOffset,posAsBytes.Length);
+                            Array.Copy(normalAsBytes,0,bytes,VertexPositionNormalTextureTangent.NormalOffset,normalAsBytes.Length);
+                            Array.Copy(texCoordAsBytes,0,bytes,VertexPositionNormalTextureTangent.TextureCoordinatesOffset,texCoordAsBytes.Length);
+                            Array.Copy(tangentAsBytes,0,bytes,VertexPositionNormalTextureTangent.TangentOffset,tangentAsBytes.Length);
                             break;
                         default:
                             throw new NotImplementedException($"{vertexType.ToString("g")} not implemented");

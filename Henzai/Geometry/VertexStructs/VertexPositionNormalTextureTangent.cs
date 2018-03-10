@@ -10,8 +10,8 @@ namespace Henzai.Geometry
         public const byte NormalOffset = 12;
         public const byte TextureCoordinatesOffset = 24;
         public const byte TangentOffset = 32;
-        public const byte ElementCount = 4;
-        public const VertexTypes HenzaiType = VertexTypes.VertexPositionNormalTexture;
+        public const byte ElementCount = 5;
+        public const VertexTypes HenzaiType = VertexTypes.VertexPositionNormalTextureTangent;
 
         public readonly Vector3 Position;
         public readonly Vector3 Normal;
