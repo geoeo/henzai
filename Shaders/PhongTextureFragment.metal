@@ -20,7 +20,7 @@ struct Material
 };
 
 fragment float4 FS(PixelInput input[[stage_in]],
-                   constant Material &material [[buffer(3)]],
+                   constant Material &material [[buffer(2)]],
                    texture2d<float> diffuseTexture [[texture(0)]],
                    texture2d<float> normalTexture [[texture(1)]],
                    sampler diffuseSampler [[sampler(0)]],
