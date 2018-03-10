@@ -17,6 +17,37 @@
 
   <ItemGroup>
 
+  
+    <Content Include="../../Assets/Duck/DuckCM.png">
+      <Link>duck/DuckCM.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+
+    <Content Include="../../Assets/Duck/Duck.dae">
+      <Link>duck/Duck.dae</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>  
+
+    <Content Include="../../Assets/armor/color_astc_8x8_unorm.png">
+      <Link>armor/diffuse.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+
+    <Content Include="../../Assets/armor/normal_astc_8x8_unorm.png">
+      <Link>armor/normal.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+
+    <Content Include="../../Assets/armor/armor.dae">
+      <Link>armor/armor.dae</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+
+    <Content Include="../../Assets/Duck/Duck.dae">
+      <Link>duck/Duck.dae</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>    
+
     <Content Include="../../Assets/Textures/Water_001_COLOR.jpg">
       <Link>Textures/Water.jpg</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
