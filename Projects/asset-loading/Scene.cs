@@ -25,15 +25,12 @@ namespace Henzai.Examples
         private DeviceBuffer _cameraProjViewBuffer;
         private DeviceBuffer _materialBuffer;
         private DeviceBuffer _lightBuffer;
-        private DeviceBuffer _normalMatrixBuffer;
         private ResourceSet _cameraResourceSet;
         private ResourceSet _materialResourceSet;
         private ResourceSet _lightResourceSet;
-        private ResourceSet _normalMatrixResourceSet;
         private ResourceLayout _cameraResourceLayout;
         private ResourceLayout _materialResourceLayout;
         private ResourceLayout _lightResourceLayout;
-        private ResourceLayout _normalMatrixResourceLayout;
         // TODO: Refactor this into a class with colour
         private Vector4 LIGHT_POS = new Vector4(0,10,15,0);
 
@@ -94,19 +91,6 @@ namespace Henzai.Examples
             
             _lightResourceSet = _factory.CreateResourceSet(resourceSetDescriptionLight);
 
-            // Uniform 4 - Normal Matrix
-            _normalMatrixBuffer = _factory.CreateBuffer(new BufferDescription(64,BufferUsage.UniformBuffer));
-
-            var resourceLayoutElementDescriptionNormal = new ResourceLayoutElementDescription("normalMatrix",ResourceKind.UniformBuffer,ShaderStages.Vertex);
-            ResourceLayoutElementDescription[] resourceLayoutElementDescriptionsNormal = {resourceLayoutElementDescriptionNormal};
-            var resourceLayoutDescriptionNormal = new ResourceLayoutDescription(resourceLayoutElementDescriptionsNormal);
-            BindableResource[] bindableResourcesNormal = new BindableResource[]{_normalMatrixBuffer};
-
-            _normalMatrixResourceLayout = _factory.CreateResourceLayout(resourceLayoutDescriptionNormal);
-            var resourceSetDescriptionNormal = new ResourceSetDescription(_normalMatrixResourceLayout,bindableResourcesNormal);
-            
-            _normalMatrixResourceSet = _factory.CreateResourceSet(resourceSetDescriptionNormal);
-
             for(int i = 0; i < _model.meshCount; i++){
 
                 DeviceBuffer vertexBuffer 
@@ -145,7 +129,7 @@ namespace Henzai.Examples
                 ),
                 PrimitiveTopology = PrimitiveTopology.TriangleList,
                 //ResourceLayouts = new ResourceLayout[] {_cameraResourceLayout,_materialResourceLayout,_lightResourceLayout},
-                ResourceLayouts = new ResourceLayout[] {_cameraResourceLayout,_lightResourceLayout,_normalMatrixResourceLayout,_materialResourceLayout},
+                ResourceLayouts = new ResourceLayout[] {_cameraResourceLayout,_lightResourceLayout,_materialResourceLayout},
                 ShaderSet = new ShaderSetDescription(
                     vertexLayouts: new VertexLayoutDescription[] {vertexLayout},
                     shaders: new Shader[] {_vertexShader,_fragmentShader}
@@ -177,12 +161,10 @@ namespace Henzai.Examples
                 _commandList.SetGraphicsResourceSet(0,_cameraResourceSet); // Always after SetPipeline
                 _commandList.UpdateBuffer(_lightBuffer,0,LIGHT_POS);
                 _commandList.SetGraphicsResourceSet(1,_lightResourceSet);
-                _commandList.UpdateBuffer(_normalMatrixBuffer,0,_model.World.Invert().Transpose());
-                _commandList.SetGraphicsResourceSet(2,_normalMatrixResourceSet);
                 _commandList.UpdateBuffer(_materialBuffer,0,material.diffuse);
                 _commandList.UpdateBuffer(_materialBuffer,16,material.specular);
                 _commandList.UpdateBuffer(_materialBuffer,32,material.ambient);
-                _commandList.SetGraphicsResourceSet(3,_materialResourceSet);
+                _commandList.SetGraphicsResourceSet(2,_materialResourceSet);
                 _commandList.DrawIndexed(
                     indexCount: _model.meshIndicies[i].Length.ToUnsigned(),
                     instanceCount: 1,

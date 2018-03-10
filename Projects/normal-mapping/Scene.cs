@@ -194,7 +194,6 @@ namespace Henzai.Examples
                     scissorTestEnabled: false
                 ),
                 PrimitiveTopology = PrimitiveTopology.TriangleList,
-                //ResourceLayouts = new ResourceLayout[] {_cameraResourceLayout,_materialResourceLayout,_lightResourceLayout},
                 ResourceLayouts = new ResourceLayout[] {_cameraResourceLayout,_lightResourceLayout,_normalMatrixResourceLayout,_materialResourceLayout,textureLayout},
                 ShaderSet = new ShaderSetDescription(
                     vertexLayouts: new VertexLayoutDescription[] {vertexLayout},

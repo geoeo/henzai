@@ -26,17 +26,13 @@ struct Light {
     float3 Position;
 };
 
-struct NormalMatrix {
-    float4x4 Matrix;
-};
-
-vertex PixelInput VS(VertexInput input[[stage_in]],constant ProjViewWorld &pjw [[ buffer(1) ]],constant Light &l [[ buffer(2) ]],constant NormalMatrix &m [[ buffer(3) ]])
+vertex PixelInput VS(VertexInput input[[stage_in]],constant ProjViewWorld &pjw [[ buffer(1) ]],constant Light &l [[ buffer(2) ]])
 {
     PixelInput output;
     float4 positionView = pjw.View*pjw.World*float4(input.Position, 1);
     float4 positionCS = pjw.Proj*positionView;
     
-    float3x3 normalMatrix =  float3x3(m.Matrix[0].xyz,m.Matrix[1].xyz,m.Matrix[2].xyz);
+    float3x3 normalMatrix =  float3x3(pjw.World[0].xyz,pjw.World[1].xyz,pjw.World[2].xyz);
     float4 lightView = pjw.View*float4(l.Position,1);
 
     output.Position = positionCS;
