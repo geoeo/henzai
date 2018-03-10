@@ -9,7 +9,7 @@ namespace Henzai.Geometry
         public const byte PositionOffset = 0;
         public const byte NormalOffset = 12;
         public const byte ElementCount = 2;
-        public const HenzaiTypes HenzaiType = HenzaiTypes.VertexPositionNormal;
+        public const VertexTypes HenzaiType = VertexTypes.VertexPositionNormal;
 
         public readonly Vector3 Position;
         public readonly Vector3 Normal;

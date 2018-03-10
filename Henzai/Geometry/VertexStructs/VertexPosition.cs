@@ -7,7 +7,7 @@ namespace Henzai.Geometry
     {
         public const byte SizeInBytes = 12;
         public const byte ElementCount = 1;
-        public const HenzaiTypes HenzaiType = HenzaiTypes.VertexPosition;
+        public const VertexTypes HenzaiType = VertexTypes.VertexPosition;
 
         public readonly Vector3 Position;
 

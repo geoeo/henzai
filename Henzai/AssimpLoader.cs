@@ -49,7 +49,7 @@ namespace Henzai
             | PostProcessSteps.CalculateTangentSpace | PostProcessSteps.GenerateSmoothNormals | PostProcessSteps.JoinIdenticalVertices;
 
 
-         public static Model<T> LoadFromFile<T>(string filename, HenzaiTypes vertexType, PostProcessSteps flags = DefaultPostProcessSteps) where T : struct
+         public static Model<T> LoadFromFile<T>(string filename, VertexTypes vertexType, PostProcessSteps flags = DefaultPostProcessSteps) where T : struct
         {
 
             string typeName = typeof(T).Name;
@@ -93,13 +93,13 @@ namespace Henzai
                     byte[] texCoordAsBytes = ByteMarshal.ToBytes(pTexCoord.ToVector2());
 
                     switch(vertexType){
-                        case HenzaiTypes.VertexPositionNormalTexture:
+                        case VertexTypes.VertexPositionNormalTexture:
                             bytes = new byte[VertexPositionNormalTexture.SizeInBytes];
                             Array.Copy(posAsBytes,0,bytes,VertexPositionNormalTexture.PositionOffset,posAsBytes.Length);
                             Array.Copy(normalAsBytes,0,bytes,VertexPositionNormalTexture.NormalOffset,normalAsBytes.Length);
                             Array.Copy(texCoordAsBytes,0,bytes,VertexPositionNormalTexture.TextureCoordinatesOffset,texCoordAsBytes.Length);
                             break;
-                        case HenzaiTypes.VertexPositionNormal:
+                        case VertexTypes.VertexPositionNormal:
                             bytes = new byte[VertexPositionNormal.SizeInBytes];
                             Array.Copy(posAsBytes,0,bytes,VertexPositionNormal.PositionOffset,posAsBytes.Length);
                             Array.Copy(normalAsBytes,0,bytes,VertexPositionNormal.NormalOffset,normalAsBytes.Length);

@@ -9,7 +9,7 @@ namespace Henzai.Geometry
     public struct VertexPositionNDCColour
     {
         public const uint SizeInBytes = 24;
-        public const HenzaiTypes HenzaiType = HenzaiTypes.VertexPositionNDCColour;
+        public const VertexTypes HenzaiType = VertexTypes.VertexPositionNDCColour;
 
         public readonly Vector2 Position; // Position in NDC
         public RgbaFloat Colour;

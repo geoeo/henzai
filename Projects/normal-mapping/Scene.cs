@@ -60,9 +60,9 @@ namespace Henzai.Examples
         override protected void CreateResources(){
 
             string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere.obj"); // huge 
-            // string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere_centered.obj"); // no texture coordiantes
+            //string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere_centered.obj"); // no texture coordiantes
             _model = AssimpLoader.LoadFromFile<VertexPositionNormalTexture>(filePath,VertexPositionNormalTexture.HenzaiType);
-            TextureMapper.GenerateSphericalTextureCoordinatesFor(_model.meshes[0]);
+            TextureMapper.GenerateSphericalTextureCoordinatesFor(_model.meshes[0], UVMappingTypes.Spherical_Coordinates);
 
             /// Uniform 1 - Camera
             _cameraProjViewBuffer = _factory.CreateBuffer(new BufferDescription(192,BufferUsage.UniformBuffer | BufferUsage.Dynamic));
