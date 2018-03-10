@@ -71,7 +71,6 @@ namespace Henzai.Geometry
 
         }
 
-        //TODO: Implement Tangent space calculation with Gram-Schmidt (for loaded models)
         public static void GenerateTangentSpaceFor(Model<VertexPositionNormalTextureTangent> model){
 
             int numberOfMeshes = model.meshes.Length;
@@ -85,9 +84,9 @@ namespace Henzai.Geometry
                     var indicie_0 = indicies[i];
                     var indicie_1 = indicies[i+1];
                     var indicie_2 = indicies[i+2];
-                    var v0 = vertices[indicie_0];
-                    var v1 = vertices[indicie_1];
-                    var v2 = vertices[indicie_2];
+                    ref VertexPositionNormalTextureTangent v0 = ref vertices[indicie_0];
+                    ref VertexPositionNormalTextureTangent v1 = ref vertices[indicie_1];
+                    ref VertexPositionNormalTextureTangent v2 = ref vertices[indicie_2];
 
                     Vector3 edge1 = v1.Position - v0.Position;
                     Vector3 edge2 = v2.Position - v0.Position;
@@ -115,29 +114,22 @@ namespace Henzai.Geometry
                 }
 
                 // Average Tangent + Orthgonalize via Gram-Schmidt
-                for(int i = 0; i < numberOfIndicies; i++){
-                    uint indicie = indicies[i];
-                    uint tangentCount = tangentCountPerVertex[indicie];
-                    if (tangentCount == 0)
-                        continue;
-                    Vector3 tangent = vertices[indicie].Tangent;
+                for(uint i = 0; i < tangentCountPerVertex.Length; i++){
+                    uint tangentCount = tangentCountPerVertex[i];
+    
+                    Vector3 tangent = vertices[i].Tangent;
 
                     tangent /= tangentCount;
-                    vertices[indicie].Tangent = Vector3.Normalize(tangent);
+                    vertices[i].Tangent = Vector3.Normalize(tangent);
 
-                    tangent = vertices[indicie].Tangent;
-                    Vector3 normal = vertices[indicie].Normal;
+                    tangent = vertices[i].Tangent;
+                    Vector3 normal = vertices[i].Normal;
 
-                    vertices[indicie].Tangent = Vector3.Normalize(tangent - Vector3.Dot(normal,tangent) * normal);
+                    vertices[i].Tangent = Vector3.Normalize(tangent - Vector3.Dot(normal,tangent) * normal);
 
-                    tangentCountPerVertex[indicie] = 0;
+                    tangentCountPerVertex[i] = 0;
                 }
-
-
-
             }
-
-
         }
 
         // http://www.iquilezles.org/www/articles/patchedsphere/patchedsphere.htm
