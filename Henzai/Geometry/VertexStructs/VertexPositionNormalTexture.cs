@@ -19,7 +19,7 @@ namespace Henzai.Geometry
         public VertexPositionNormalTexture(Vector3 position, Vector3 normal, Vector2 texCoords)
         {
             Position = position;
-            Normal = normal;
+            Normal = Vector3.Normalize(normal);
             TextureCoordinates = texCoords;
         }
     }

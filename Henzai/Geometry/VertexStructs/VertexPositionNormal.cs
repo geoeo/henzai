@@ -17,7 +17,7 @@ namespace Henzai.Geometry
         public VertexPositionNormal(Vector3 position, Vector3 normal)
         {
             Position = position;
-            Normal = normal;
+            Normal = Vector3.Normalize(normal);
         }
     }
 }
