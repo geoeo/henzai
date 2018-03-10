@@ -12,9 +12,9 @@ struct VertexInput
 struct PixelInput
 {
     float4 Position[[position]];
-    float3 FragView;
-    float3 NormalView;
-    float3 LightView;
+    float3 FragWorld;
+    float3 NormalWorld;
+    float3 LightWorld;
     float2 UV;
     float3 CamPosWorld;
 };
@@ -37,16 +37,16 @@ struct NormalMatrix {
 vertex PixelInput VS(VertexInput input[[stage_in]],constant ProjViewWorld &pjw [[ buffer(1) ]],constant Light &l [[ buffer(2) ]],constant NormalMatrix &m [[ buffer(3)]])
 {
     PixelInput output;
-    float4 positionView = pjw.View*pjw.World*float4(input.Position, 1);
-    float4 positionCS = pjw.Proj*positionView;
+    float4 positionWorld = pjw.World*float4(input.Position, 1);
+    float4 positionCS = pjw.Proj*pjw.View*positionWorld;
 
     float3x3 normalMatrix =  float3x3(m.Matrix[0].xyz,m.Matrix[1].xyz,m.Matrix[2].xyz);
-    float4 lightView = pjw.View*float4(l.Position,1);
+    float4 lightWorld = float4(l.Position,1);
 
     output.Position = positionCS;
-    output.FragView = positionView.xyz;
-    output.NormalView = normalMatrix*input.Normal;
-    output.LightView = lightView.xyz;
+    output.FragWorld = positionWorld.xyz;
+    output.NormalWorld = normalMatrix*input.Normal;
+    output.LightWorld = lightWorld.xyz;
     output.UV = input.UV;
     output.CamPosWorld = pjw.View[3].xyz;
     return output;

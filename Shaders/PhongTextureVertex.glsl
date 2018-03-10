@@ -9,7 +9,7 @@ layout(std140) uniform projViewWorld
 
 layout(std140) uniform light
 {
-    vec3 LightPosition;
+    vec4 LightPosition;
 };
 
 layout(std140) uniform normalMatrix
@@ -22,10 +22,10 @@ layout(location = 1)in vec3 Normal;
 layout(location = 2)in vec2 UV;
 layout(location = 3)in vec3 Tangent;
 
-smooth out vec3 fsin_NormalView;
+smooth out vec3 fsin_NormalWorld;
 //smooth out vec3 fsin_Tangent;
-smooth out vec3 fsin_FragView;
-smooth out vec3 fsin_LightView;
+smooth out vec3 fsin_FragWorld;
+smooth out vec3 fsin_LightWorld;
 smooth out vec3 fsin_CamPosWorld;
 smooth out vec2 fsin_UV;
 
@@ -44,10 +44,9 @@ void main()
     gl_Position.z = 2.0*gl_Position.z -gl_Position.w;
 
     mat3 normalMatrix = mat3(NormalMatirx);
-    fsin_NormalView = normalMatrix*Normal;
-    fsin_FragView = worldPos.xyz;
-    vec4 lightView = vec4(LightPosition,1.0);
-    fsin_LightView = lightView.xyz;
+    fsin_NormalWorld = normalMatrix*Normal;
+    fsin_FragWorld = worldPos.xyz;
+    fsin_LightWorld = LightPosition.xyz;
     fsin_CamPosWorld = viewMatrix[3].xyz;
     fsin_UV = UV;
 }

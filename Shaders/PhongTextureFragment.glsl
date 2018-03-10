@@ -15,10 +15,10 @@ layout(std140) uniform material
     Material field_material;
 };
 
-in vec3 fsin_NormalView;
+in vec3 fsin_NormalWorld;
 //in vec3 fsin_Tangent;
-in vec3 fsin_FragView;
-in vec3 fsin_LightView;
+in vec3 fsin_FragWorld;
+in vec3 fsin_LightWorld;
 in vec3 fsin_CamPosWorld;
 in vec2 fsin_UV;
 
@@ -35,13 +35,13 @@ void main()
     //mat3 TBN = mat3(Tangent, Bitangent, Normal);
 
 
-    vec3 L = normalize(fsin_LightView-fsin_FragView);
-    float l_dot_n = dot(L,fsin_NormalView);
+    vec3 L = normalize(fsin_LightWorld-fsin_FragWorld);
+    float l_dot_n = dot(L,fsin_NormalWorld);
     vec4 diffuse = l_dot_n*field_material.Diffuse;
 
-    vec3 R = reflect(-L,fsin_NormalView);
-    vec3 V = normalize(fsin_CamPosWorld-fsin_FragView);
-    float isDotFront = max(sign(dot(fsin_NormalView,L)),0.0);
+    vec3 R = reflect(-L,fsin_NormalWorld);
+    vec3 V = normalize(fsin_CamPosWorld-fsin_FragWorld);
+    float isDotFront = max(sign(dot(fsin_NormalWorld,L)),0.0);
     float spec = pow(isDotFront*dot(V,R),32.0);
     vec4 specular = field_material.Specular*spec;
 
@@ -49,8 +49,8 @@ void main()
     color_out += diffuse;
     color_out += specular;
     fsout_Color = color_out;
-    //fsout_Color = vec4(fsin_NormalView,1.0);
-    //fsout_Color = vec4(fsin_LightView,1.0);
+    //fsout_Color = vec4(fsin_NormalWorld,1.0);
+    //fsout_Color = vec4(fsin_LightWorld,1.0);
     // fsout_Color = vec4(fsin_UV,1.0,1.0);
     //fsout_Color = textureBumpColor;
 }
