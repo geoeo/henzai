@@ -37,6 +37,7 @@ namespace Henzai.Geometry
         public Vector4 specular = Vector4.Zero;
         public Vector4 emissive = Vector4.Zero;
         public Vector4 transparent = Vector4.Zero;
+        public Vector4 coefficients = Vector4.Zero; // shininess,shininess_str,opacity,reflectivity
         public string textureDiffuse = string.Empty;
         public string textureNormal = string.Empty;
         public string textureBump = string.Empty;
@@ -50,7 +51,8 @@ namespace Henzai.Geometry
             Vector4 diffuse, 
             Vector4 specular, 
             Vector4 emissive, 
-            Vector4 transparent,  
+            Vector4 transparent, 
+            Vector4 coefficients, 
             string textureDiffuse,
             string textureNormal,
             string textureBump){
@@ -65,6 +67,8 @@ namespace Henzai.Geometry
                     this.emissive = emissive;
                 if(transparent != null)
                     this.transparent = transparent;
+                if(coefficients != null)
+                    this.coefficients = coefficients;
                 if(!String.IsNullOrEmpty(textureDiffuse))
                     this.textureDiffuse = textureDiffuse;
                 if(!String.IsNullOrEmpty(textureNormal))

@@ -8,6 +8,7 @@ struct Material
     vec4 Diffuse;
     vec4 Specular;
     vec4 Ambient;
+    vec4 Coefficients;
 };
 
 layout(std140) uniform material
@@ -44,7 +45,7 @@ void main()
     vec3 R = reflect(-L,normal_sample);
     vec3 V = normalize(fsin_CamPosWorld-fsin_FragWorld);
     float isDotFront = max(sign(dot(normal_sample,L)),0.0);
-    float spec = pow(isDotFront*dot(V,R),32.0);
+    float spec = pow(isDotFront*dot(V,R),Coefficients.x);
     vec4 specular = field_material.Specular*spec;
 
     vec4 color_out = field_material.Ambient;

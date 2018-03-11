@@ -30,6 +30,7 @@ namespace Henzai
                 material.ColorSpecular.ToVector4(),
                 material.ColorEmissive.ToVector4(),
                 material.ColorTransparent.ToVector4(),
+                new Vector4(material.Shininess,material.ShininessStrength,material.Opacity,material.Reflectivity),
                 material.TextureDiffuse.FilePath,
                 material.TextureNormal.FilePath,
                 material.TextureHeight.FilePath);
