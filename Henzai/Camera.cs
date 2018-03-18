@@ -62,11 +62,16 @@ namespace Henzai
             _projectionMatrix = Matrix4x4.CreatePerspectiveFieldOfView(_fov, width / height, _near, _far);
         }
 
-        private void UpdateViewMatrix()
+        private void UpdateViewMatrix(bool defaultLookDir = false)
         {
             Quaternion lookRotation = Quaternion.CreateFromYawPitchRoll(Yaw, Pitch, 0f);
-            Vector3 lookDir = Vector3.Transform(-Vector3.UnitZ, lookRotation);
-            _lookDirection = lookDir;
+            Vector3 lookDir;
+            if(defaultLookDir)
+                lookDir = Vector3.Transform(DEFAULT_LOOK_DIRECTION, lookRotation);
+            else
+                lookDir = Vector3.Transform(Vector3.Normalize(_lookDirection), lookRotation);
+            
+            _lookDirection = Vector3.Normalize(lookDir);
             _viewMatrix = Matrix4x4.CreateLookAt(_position, _position + _lookDirection, Vector3.UnitY);
         }
 
@@ -114,10 +119,10 @@ namespace Henzai
 
             if (motionDir != Vector3.Zero)
             {
-                Quaternion lookRotation = Quaternion.CreateFromYawPitchRoll(Yaw, Pitch, 0f);
+                Quaternion lookRotation = Quaternion.CreateFromYawPitchRoll(_yaw, _pitch, 0f);
                 motionDir = Vector3.Transform(motionDir, lookRotation);
                 _position += motionDir * _moveSpeed * sprintFactor * deltaSeconds;
-                UpdateViewMatrix();
+                UpdateViewMatrix(true);
             }
 
             Vector2 mouseDelta = InputTracker.MousePosition - _previousMousePos;
@@ -125,11 +130,11 @@ namespace Henzai
 
             if (/*!ImGui.IsAnyWindowHovered() && */ (InputTracker.GetMouseButton(MouseButton.Left) || InputTracker.GetMouseButton(MouseButton.Right)))
             {
-                Yaw += -mouseDelta.X * 0.01f;
-                Pitch += -mouseDelta.Y * 0.01f;
-                Pitch = Pitch.Clamp(-1.55f, 1.55f);
+                _yaw += -mouseDelta.X * 0.01f;
+                _pitch += -mouseDelta.Y * 0.01f;
+                _pitch = Pitch.Clamp(-1.55f, 1.55f);
 
-                UpdateViewMatrix();
+                UpdateViewMatrix(true);
             }
         }
 

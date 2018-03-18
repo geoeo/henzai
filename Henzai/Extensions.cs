@@ -27,6 +27,14 @@ namespace Henzai.Extensions
         public static Matrix4x4 Transpose(this Matrix4x4 val){
             return Matrix4x4.Transpose(val);
         }
+
+        public static Vector4 ToHomogeneous(this Vector3 val){
+            return new Vector4(val, 1.0f);
+        }
+
+        public static Vector4 ToDirection(this Vector3 val){
+            return new Vector4(val, 0.0f);
+        }
     }
 
     public static class GenericExtensions
@@ -50,8 +58,12 @@ namespace Henzai.Extensions
             return (float)val;
         }
 
-        public static Vector3 ToVec3(this Vector4 val){
+        public static Vector3 ToVec3DiscardW(this Vector4 val){
             return new Vector3(val.X,val.Y,val.Z);
+        }
+
+        public static Vector3 ToVec3NormalizeW(this Vector4 val){
+            return new Vector3(val.X/val.W,val.Y/val.W,val.Z/val.W);
         }
     }
 

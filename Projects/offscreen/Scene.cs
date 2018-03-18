@@ -169,7 +169,7 @@ namespace Henzai.Examples
                     new VertexElementDescription("UV",VertexElementSemantic.TextureCoordinate,VertexElementFormat.Float2)
                 );
 
-            _worldTransCube = Matrix4x4.CreateWorld(new Vector3(0,0,0),-Vector3.UnitZ,Vector3.UnitY);
+            _worldTransCube = Matrix4x4.CreateWorld(new Vector3(0,0,2),-Vector3.UnitZ,Vector3.UnitY);
 
             _vertexShaderCube = IO.LoadShader("Texture",ShaderStages.Vertex,graphicsDevice);
             _fragmentShaderCube = IO.LoadShader("Texture",ShaderStages.Fragment,graphicsDevice);
@@ -467,7 +467,10 @@ namespace Henzai.Examples
             float radian = (float)Math.PI/180.0f;
             radian *= 10.0f*deltaSeconds;
             Matrix4x4 rotationAroundY = Matrix4x4.CreateRotationY(radian);
-            _worldTransCube = rotationAroundY*_worldTransCube;
+            // rotates cube around origin before translaiton i.e spinning in place
+            //_worldTransCube = _worldTransCube*rotationAroundY; 
+            // rotates cube around origin after translaiton i.e spinning around origin
+            _worldTransCube = _worldTransCube*rotationAroundY; 
 
         }
     }
