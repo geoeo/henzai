@@ -10,14 +10,6 @@ namespace Henzai.Extensions
             return (val.CompareTo(min) < 0) ? min : ((val.CompareTo(max) > 0) ? max : val);
         }
 
-        public static double ToDouble(this float val){
-            return (double)val;
-        }
-
-        public static float ToFloat(this double val){
-            return (float)val;
-        }
-
         public static Matrix4x4 Invert(this Matrix4x4 val){
             Matrix4x4 inverted;
             bool success =  Matrix4x4.Invert(val,out inverted);
@@ -54,7 +46,15 @@ namespace Henzai.Extensions
 
         }
 
+        public static double ToDouble(this float val){
+            return (double)val;
+        }
+
         public static float ToFloat(this int val){
+            return (float)val;
+        }
+
+        public static float ToFloat(this double val){
             return (float)val;
         }
 

@@ -42,6 +42,10 @@ namespace Henzai.Geometry
         public string textureNormal = string.Empty;
         public string textureBump = string.Empty;
 
+        public Material(){
+            diffuse = new Vector4(1.0f,1.0f,1.0f,1.0f);
+        }
+
 
         //<summary>
         // If null reference is passed as an argument assignment will be skipped

@@ -60,10 +60,11 @@ namespace Henzai.Examples
         override protected void CreateResources(){
 
             //string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere.obj"); // huge 
-            string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere_centered.obj"); // no texture coordiantes
+            //string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere_centered.obj"); // no texture coordiantes
             //string filePath = Path.Combine(AppContext.BaseDirectory, "armor/armor.dae"); 
-            _model = AssimpLoader.LoadFromFile<VertexPositionNormalTextureTangent>(filePath,VertexPositionNormalTextureTangent.HenzaiType);
-            TextureMapper.GenerateSphericalTextureCoordinatesFor(_model.meshes[0], UVMappingTypes.Spherical_Coordinates,true);
+            //_model = AssimpLoader.LoadFromFile<VertexPositionNormalTextureTangent>(filePath,VertexPositionNormalTextureTangent.HenzaiType);
+            //TextureMapper.GenerateSphericalTextureCoordinatesFor(_model.meshes[0], UVMappingTypes.Spherical_Coordinates,true);
+            _model = new Model<VertexPositionNormalTextureTangent>(GeometryFactory.generateSphere(100,100,1.0f));
             TextureMapper.GenerateTangentSpaceFor(_model);
 
             /// Uniform 1 - Camera
@@ -121,14 +122,14 @@ namespace Henzai.Examples
             }
 
             //Texture Samper
-            ImageSharpTexture diffuseTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "Textures", "earth.jpg"));
-            //ImageSharpTexture diffuseTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "Textures", "Water.jpg"));
+            // ImageSharpTexture diffuseTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "Textures", "earth.jpg"));
+            ImageSharpTexture diffuseTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "Textures", "Water.jpg"));
             // ImageSharpTexture diffuseTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "armor", "diffuse.png"));
             Texture sphereDiffuseTexture = diffuseTexture.CreateDeviceTexture(graphicsDevice, _factory);
             TextureView sphereDiffuseTextureView = _factory.CreateTextureView(sphereDiffuseTexture);
 
             ImageSharpTexture normalTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "Textures", "WaterNorm.jpg"));
-            // ImageSharpTexture normalTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "armor", "normal.png"));
+            //ImageSharpTexture normalTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "armor", "normal.png"));
             Texture sphereNormalTexture = normalTexture.CreateDeviceTexture(graphicsDevice, _factory);
             TextureView sphereNormalTextureView = _factory.CreateTextureView(sphereNormalTexture);
 
@@ -176,7 +177,7 @@ namespace Henzai.Examples
                 DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
                 RasterizerState = new RasterizerStateDescription(
                     cullMode: FaceCullMode.Back,
-                    fillMode: PolygonFillMode.Solid, // Wireframe doesnt seem to work with metal
+                    fillMode: PolygonFillMode.Solid,
                     frontFace: FrontFace.Clockwise,
                     depthClipEnabled: true,
                     scissorTestEnabled: false

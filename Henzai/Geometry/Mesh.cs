@@ -18,7 +18,14 @@ namespace Henzai.Geometry
         {
             vertices = meshDefinition;
             meshIndices = null;
-            this.material = null;
+            this.material = new Material();
+        }
+
+        public Mesh(T[] meshDefinition, uint[] indices)
+        {
+            vertices = meshDefinition;
+            meshIndices = indices;
+            this.material = new Material();
         }
 
         public Mesh(T[] meshDefinition, Material material)

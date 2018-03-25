@@ -13,8 +13,8 @@ namespace Henzai.Geometry
         public const byte ElementCount = 5;
         public const VertexTypes HenzaiType = VertexTypes.VertexPositionNormalTextureTangent;
 
-        public readonly Vector3 Position;
-        public readonly Vector3 Normal;
+        public Vector3 Position;
+        public Vector3 Normal;
         public Vector2 TextureCoordinates;
         public Vector3 Tangent;
 

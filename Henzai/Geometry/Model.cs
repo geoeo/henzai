@@ -27,6 +27,11 @@ namespace Henzai.Geometry
             meshes = meshesIn;
         }
 
+        public Model(Mesh<T> meshIn){
+            meshes = new Mesh<T>[1];
+            meshes[0] = meshIn;
+        }
+
         public void SetNewWorldTransformation(Matrix4x4 world){
             _world = world;
         }
