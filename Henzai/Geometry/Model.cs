@@ -11,7 +11,6 @@ namespace Henzai.Geometry
     public sealed class Model<T> where T : struct
     {
         public Mesh<T>[] meshes;
-        // public uint[][] meshIndicies;
         private Matrix4x4 _world = Matrix4x4.Identity;
         public int meshCount => meshes.Length;
 
@@ -22,12 +21,10 @@ namespace Henzai.Geometry
             for(int i = 0; i < meshCount; i++){
                 this.meshes[i].meshIndices = indicies[i];
             }
-            //meshIndicies = indicies;
         }
 
         public Model(Mesh<T>[] meshesIn){
             meshes = meshesIn;
-            //meshIndicies = new uint[meshes.Length][];
         }
 
         public void SetNewWorldTransformation(Matrix4x4 world){
