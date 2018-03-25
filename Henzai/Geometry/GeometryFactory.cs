@@ -94,6 +94,7 @@ namespace Henzai.Geometry
             return new ushort[]{ 0, 1, 2, 3 };
         }
 
+        // TODO: Refactor so that it works with generic types
         // https://gamedev.stackexchange.com/questions/150191/opengl-calculate-uv-sphere-vertices
         public static Mesh<VertexPositionNormalTextureTangent> generateSphere(int numLatitudeLines, int numLongitudeLines, float radius){
             // One vertex at every latitude-longitude intersection,
@@ -122,7 +123,7 @@ namespace Henzai.Geometry
                 for(int longitude = 0; longitude <= numLongitudeLines; longitude++) {
 
                 // Scale coordinates into the 0...1 texture coordinate range,
-                // with north at the top (y = 1).
+                // with north at the top (y = 0).
                 vertices[v].TextureCoordinates = new Vector2(
                                     longitude.ToFloat() * longitudeSpacing,
                                     (latitude.ToFloat() + 1.0f) * latitudeSpacing                            
