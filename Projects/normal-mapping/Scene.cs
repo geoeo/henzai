@@ -60,10 +60,10 @@ namespace Henzai.Examples
         override protected void CreateResources(){
 
             //string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere.obj"); // huge 
-            // string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere_centered.obj"); // no texture coordiantes
-            string filePath = Path.Combine(AppContext.BaseDirectory, "armor/armor.dae"); 
+            string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere_centered.obj"); // no texture coordiantes
+            //string filePath = Path.Combine(AppContext.BaseDirectory, "armor/armor.dae"); 
             _model = AssimpLoader.LoadFromFile<VertexPositionNormalTextureTangent>(filePath,VertexPositionNormalTextureTangent.HenzaiType);
-            // TextureMapper.GenerateSphericalTextureCoordinatesFor(_model.meshes[0], UVMappingTypes.Spherical_Coordinates);
+            TextureMapper.GenerateSphericalTextureCoordinatesFor(_model.meshes[0], UVMappingTypes.Spherical_Coordinates,true);
             TextureMapper.GenerateTangentSpaceFor(_model);
 
             /// Uniform 1 - Camera
@@ -110,24 +110,25 @@ namespace Henzai.Examples
                     =  _factory.CreateBuffer(new BufferDescription(_model.meshes[i].vertices.LengthUnsigned() * VertexPositionNormalTextureTangent.SizeInBytes, BufferUsage.VertexBuffer)); 
 
                 DeviceBuffer indexBuffer
-                    = _factory.CreateBuffer(new BufferDescription(_model.meshIndicies[i].LengthUnsigned()*sizeof(uint),BufferUsage.IndexBuffer));
+                    = _factory.CreateBuffer(new BufferDescription(_model.meshes[i].meshIndices.LengthUnsigned()*sizeof(uint),BufferUsage.IndexBuffer));
                     
 
                 _vertexBuffers.Add(vertexBuffer);
                 _indexBuffers.Add(indexBuffer);
 
                 graphicsDevice.UpdateBuffer(vertexBuffer,0,_model.meshes[i].vertices);
-                graphicsDevice.UpdateBuffer(indexBuffer,0,_model.meshIndicies[i]);
+                graphicsDevice.UpdateBuffer(indexBuffer,0,_model.meshes[i].meshIndices);
             }
 
             //Texture Samper
-            // ImageSharpTexture diffuseTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "Textures", "Water.jpg"));
-            ImageSharpTexture diffuseTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "armor", "diffuse.png"));
+            ImageSharpTexture diffuseTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "Textures", "earth.jpg"));
+            //ImageSharpTexture diffuseTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "Textures", "Water.jpg"));
+            // ImageSharpTexture diffuseTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "armor", "diffuse.png"));
             Texture sphereDiffuseTexture = diffuseTexture.CreateDeviceTexture(graphicsDevice, _factory);
             TextureView sphereDiffuseTextureView = _factory.CreateTextureView(sphereDiffuseTexture);
 
-            // ImageSharpTexture normalTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "Textures", "WaterNorm.jpg"));
-            ImageSharpTexture normalTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "armor", "normal.png"));
+            ImageSharpTexture normalTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "Textures", "WaterNorm.jpg"));
+            // ImageSharpTexture normalTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "armor", "normal.png"));
             Texture sphereNormalTexture = normalTexture.CreateDeviceTexture(graphicsDevice, _factory);
             TextureView sphereNormalTextureView = _factory.CreateTextureView(sphereNormalTexture);
 
@@ -220,7 +221,7 @@ namespace Henzai.Examples
                 _commandList.SetGraphicsResourceSet(2,_materialResourceSet);
                 _commandList.SetGraphicsResourceSet(3,_textureResourceSet);
                 _commandList.DrawIndexed(
-                    indexCount: _model.meshIndicies[i].Length.ToUnsigned(),
+                    indexCount: _model.meshes[i].meshIndices.Length.ToUnsigned(),
                     instanceCount: 1,
                     indexStart: 0,
                     vertexOffset: 0,

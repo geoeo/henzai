@@ -10,18 +10,21 @@ namespace Henzai.Geometry
     public sealed class Mesh<T> where T : struct
     {
         public readonly T[] vertices;
+        public uint[] meshIndices {get; set;}
 
         public Material material {private get; set;}
 
         public Mesh(T[] meshDefinition)
         {
             vertices = meshDefinition;
+            meshIndices = null;
             this.material = null;
         }
 
         public Mesh(T[] meshDefinition, Material material)
         {
             vertices = meshDefinition;
+            meshIndices = null;
             this.material = material;
         }
 

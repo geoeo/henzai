@@ -97,14 +97,14 @@ namespace Henzai.Examples
                     =  _factory.CreateBuffer(new BufferDescription(_model.meshes[i].vertices.LengthUnsigned() * VertexPositionNormalTexture.SizeInBytes, BufferUsage.VertexBuffer)); 
 
                 DeviceBuffer indexBuffer
-                    = _factory.CreateBuffer(new BufferDescription(_model.meshIndicies[i].LengthUnsigned()*sizeof(uint),BufferUsage.IndexBuffer));
+                    = _factory.CreateBuffer(new BufferDescription(_model.meshes[i].meshIndices.LengthUnsigned()*sizeof(uint),BufferUsage.IndexBuffer));
                     
 
                 _vertexBuffers.Add(vertexBuffer);
                 _indexBuffers.Add(indexBuffer);
 
                 graphicsDevice.UpdateBuffer(vertexBuffer,0,_model.meshes[i].vertices);
-                graphicsDevice.UpdateBuffer(indexBuffer,0,_model.meshIndicies[i]);
+                graphicsDevice.UpdateBuffer(indexBuffer,0,_model.meshes[i].meshIndices);
             }
 
             VertexLayoutDescription vertexLayout 
@@ -166,7 +166,7 @@ namespace Henzai.Examples
                 _commandList.UpdateBuffer(_materialBuffer,32,material.ambient);
                 _commandList.SetGraphicsResourceSet(2,_materialResourceSet);
                 _commandList.DrawIndexed(
-                    indexCount: _model.meshIndicies[i].Length.ToUnsigned(),
+                    indexCount: _model.meshes[i].meshIndices.Length.ToUnsigned(),
                     instanceCount: 1,
                     indexStart: 0,
                     vertexOffset: 0,
