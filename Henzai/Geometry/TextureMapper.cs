@@ -76,7 +76,7 @@ namespace Henzai.Geometry
             int numberOfMeshes = model.meshes.Length;
             for(int j = 0; j < numberOfMeshes; j++){
                 var vertices = model.meshes[j].vertices;
-                var indicies = model.meshIndicies[j];
+                var indicies = model.meshes[j].meshIndices;
                 var numberOfIndicies = indicies.Length;
                 var tangentCountPerVertex = new uint[vertices.Length];
                 // Calculate Tangent

@@ -45,7 +45,7 @@ void main()
     vec3 R = reflect(-L,normal_sample);
     vec3 V = normalize(fsin_CamPosWorld-fsin_FragWorld);
     float isDotFront = max(sign(dot(normal_sample,L)),0.0);
-    float spec = pow(isDotFront*dot(V,R),Coefficients.x);
+    float spec = pow(isDotFront*dot(V,R),field_material.Coefficients.x);
     vec4 specular = field_material.Specular*spec;
 
     vec4 color_out = field_material.Ambient;
@@ -55,5 +55,5 @@ void main()
     //fsout_Color = vec4(fsin_NormalWorld,1.0);
     //fsout_Color = vec4(fsin_LightWorld,1.0);
     // fsout_Color = vec4(fsin_UV,1.0,1.0);
-    //fsout_Color = textureBumpColor;
+    //fsout_Color = textureColor;
 }
