@@ -159,6 +159,17 @@ namespace Henzai.Geometry
                     indices.Add(v.ToUnsigned()+numLongitudeLines.ToUnsigned()+1.ToUnsigned());
                 }
 
+
+                var position = vertices[v].Position;
+                var normal = vertices[v].Normal;
+
+                // derivative wrt. phi
+                vertices[v].Tangent = Vector3.Normalize(new Vector3(
+                    Math.Cos(phi).ToFloat() * Math.Sin(theta).ToFloat(),
+                    -Math.Sin(phi).ToFloat(),
+                    Math.Cos(phi).ToFloat() * Math.Cos(theta).ToFloat()
+                ));
+
                 // Proceed to the next vertex.
                 v++;
                 }

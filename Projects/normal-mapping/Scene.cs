@@ -61,11 +61,11 @@ namespace Henzai.Examples
 
             //string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere.obj"); // huge 
             //string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere_centered.obj"); // no texture coordiantes
-            //string filePath = Path.Combine(AppContext.BaseDirectory, "armor/armor.dae"); 
-            //_model = AssimpLoader.LoadFromFile<VertexPositionNormalTextureTangent>(filePath,VertexPositionNormalTextureTangent.HenzaiType);
+            string filePath = Path.Combine(AppContext.BaseDirectory, "armor/armor.dae"); 
+            // _model = AssimpLoader.LoadFromFile<VertexPositionNormalTextureTangent>(filePath,VertexPositionNormalTextureTangent.HenzaiType);
             //TextureMapper.GenerateSphericalTextureCoordinatesFor(_model.meshes[0], UVMappingTypes.Spherical_Coordinates,true);
+            // TextureMapper.GenerateTangentSpaceFor(_model);
             _model = new Model<VertexPositionNormalTextureTangent>(GeometryFactory.generateSphere(100,100,1.0f));
-            TextureMapper.GenerateTangentSpaceFor(_model);
 
             /// Uniform 1 - Camera
             _cameraProjViewBuffer = _factory.CreateBuffer(new BufferDescription(192,BufferUsage.UniformBuffer | BufferUsage.Dynamic));
@@ -129,7 +129,7 @@ namespace Henzai.Examples
             TextureView sphereDiffuseTextureView = _factory.CreateTextureView(sphereDiffuseTexture);
 
             ImageSharpTexture normalTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "Textures", "WaterNorm.jpg"));
-            //ImageSharpTexture normalTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "armor", "normal.png"));
+            // ImageSharpTexture normalTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "armor", "normal.png"));
             Texture sphereNormalTexture = normalTexture.CreateDeviceTexture(graphicsDevice, _factory);
             TextureView sphereNormalTextureView = _factory.CreateTextureView(sphereNormalTexture);
 

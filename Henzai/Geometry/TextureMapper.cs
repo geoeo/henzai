@@ -6,7 +6,6 @@ using Henzai.Runtime;
 
 namespace Henzai.Geometry
 {
-    //TODO: Refactor to work with generic structs
     public static class TextureMapper
     {
         public static void GenerateSphericalTextureCoordinatesFor(Mesh<VertexPositionNormalTexture> mesh, UVMappingTypes mapping){
