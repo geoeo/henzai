@@ -96,6 +96,7 @@ namespace Henzai.Geometry
 
         // TODO: Refactor so that it works with generic types
         // https://gamedev.stackexchange.com/questions/150191/opengl-calculate-uv-sphere-vertices
+        // https://www.opengl.org/discussion_boards/showthread.php/170225-Sphere-tangents
         public static Mesh<VertexPositionNormalTextureTangent> generateSphere(int numLatitudeLines, int numLongitudeLines, float radius){
             // One vertex at every latitude-longitude intersection,
             // plus one for the north pole and one for the south.
