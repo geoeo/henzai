@@ -170,6 +170,10 @@ namespace Henzai.Geometry
                     Math.Cos(phi).ToFloat() * Math.Cos(theta).ToFloat()
                 ));
 
+                if(vertices[v].Tangent.Length() == 0){
+                    Console.WriteLine("Warning, Tagent is 0");
+                }
+
                 // Proceed to the next vertex.
                 v++;
                 }
