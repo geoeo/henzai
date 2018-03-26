@@ -63,8 +63,8 @@ namespace Henzai.Examples
             //string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere_centered.obj"); // no texture coordiantes
             string filePath = Path.Combine(AppContext.BaseDirectory, "armor/armor.dae"); 
             // _model = AssimpLoader.LoadFromFile<VertexPositionNormalTextureTangent>(filePath,VertexPositionNormalTextureTangent.HenzaiType);
-            //TextureMapper.GenerateSphericalTextureCoordinatesFor(_model.meshes[0], UVMappingTypes.Spherical_Coordinates,true);
-            // TextureMapper.GenerateTangentSpaceFor(_model);
+            //GeometryUtils.GenerateSphericalTextureCoordinatesFor(_model.meshes[0], UVMappingTypes.Spherical_Coordinates,true);
+            // GeometryUtils.GenerateTangentSpaceFor(_model);
             _model = new Model<VertexPositionNormalTextureTangent>(GeometryFactory.generateSphere(100,100,1.0f));
 
             /// Uniform 1 - Camera

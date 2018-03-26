@@ -50,7 +50,7 @@ namespace Henzai.Examples
             // string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere_centered.obj");
             string filePath = Path.Combine(AppContext.BaseDirectory, "Models/chinesedragon.dae");
             _model = AssimpLoader.LoadFromFile<VertexPositionNormal>(filePath,VertexPositionNormal.HenzaiType);
-            //TextureMapper.GenerateSphericalTextureCoordinatesFor(_model.meshes[0]);
+            //GeometryUtils.GenerateSphericalTextureCoordinatesFor(_model.meshes[0]);
 
             /// Uniform 1 - Camera
             _cameraProjViewBuffer = _factory.CreateBuffer(new BufferDescription(192,BufferUsage.UniformBuffer | BufferUsage.Dynamic));

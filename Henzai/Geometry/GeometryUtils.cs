@@ -6,7 +6,7 @@ using Henzai.Runtime;
 
 namespace Henzai.Geometry
 {
-    public static class TextureMapper
+    public static class GeometryUtils
     {
         public static void GenerateSphericalTextureCoordinatesFor(Mesh<VertexPositionNormalTexture> mesh, UVMappingTypes mapping){
             var vertices = mesh.vertices;
