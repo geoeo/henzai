@@ -12,6 +12,9 @@ namespace Henzai.Geometry
         public readonly T[] vertices;
         public uint[] meshIndices {get; set;}
 
+        private Matrix4x4 _world = Matrix4x4.Identity;
+        public ref Matrix4x4 World => ref _world;
+
         public Material material {private get; set;}
 
         public Mesh(T[] meshDefinition)
@@ -39,6 +42,10 @@ namespace Henzai.Geometry
             if(material == null)
                 throw new NullReferenceException("The material you are trying to access is null");
             return material;
+        }
+
+        public void SetNewWorldTransformation(Matrix4x4 world){
+            _world = world;
         }
 
     }
