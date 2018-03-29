@@ -90,8 +90,8 @@ namespace Henzai
                     Vector3D pTexCoord = aiMesh.HasTextureCoords(0) ? aiMesh.TextureCoordinateChannels[0][j] : Zero3D;
                     Color4D pColour = aiMesh.HasVertexColors(0) ? aiMesh.VertexColorChannels[0][j] : NoColour;
                     // Vector3D pTangent = aiMesh.HasTangentBasis ? aiMesh.Tangents[j] : Zero3D;
-                    Vector3D pTangent = Zero3D;
                     // Vector3D pBiTangent = aiMesh.HasTangentBasis ? aiMesh.BiTangents[j] : Zero3D;
+                    Vector3D pTangent = Zero3D;
                     Vector3D pBiTangent = Zero3D;
                     
                     byte[] bytes;

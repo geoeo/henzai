@@ -17,6 +17,7 @@ struct Material
     float4 Diffuse;
     float4 Specular;
     float4 Ambient;
+    float4 Coefficients;
 };
 
 fragment float4 FS(PixelInput input[[stage_in]],
@@ -37,7 +38,7 @@ fragment float4 FS(PixelInput input[[stage_in]],
     float3 Bitangent = cross(Tangent, Normal);
     float3x3 TBN = float3x3(Tangent, Bitangent, Normal);
 
-    normal_sample = TBN*normal_sample;
+    normal_sample = normalize(TBN*normal_sample);
 
 
     float3 L = normalize(input.LightWorld-input.FragWorld);
@@ -47,7 +48,7 @@ fragment float4 FS(PixelInput input[[stage_in]],
     float3 R = reflect(-L,normal_sample);
     float3 V = normalize(input.CamPosWorld - input.FragWorld);
     float isDotFront = fmax(sign(dot(normal_sample,L)),0.0);
-    float spec = powr(isDotFront*dot(V,R),32.0);
+    float spec = powr(isDotFront*dot(V,R),material.Coefficients.x);
     float4 specular = material.Specular*spec;
 
     float4 color_out = material.Ambient;

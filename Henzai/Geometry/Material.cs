@@ -82,7 +82,7 @@ namespace Henzai.Geometry
                 if(!String.IsNullOrEmpty(textureBump))
                     this.textureBump = textureBump;
                 if(!String.IsNullOrEmpty(textureSpecular))
-                    this.textureBump = textureSpecular;
+                    this.textureSpecular = textureSpecular;
              
             }
 

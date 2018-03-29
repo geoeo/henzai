@@ -157,7 +157,7 @@ namespace Henzai.Examples
                 diffuseTextureView,
                 graphicsDevice.LinearSampler,
                 normalTextureView,
-                sampler
+                graphicsDevice.LinearSampler
                 ));
 
                 _textureResourceSets.Add(textureResourceSet);

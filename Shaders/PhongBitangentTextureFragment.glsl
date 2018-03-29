@@ -29,7 +29,8 @@ out vec4 fsout_Color;
 void main()
 {
     vec4 textureColor = texture(DiffuseTexture,fsin_UV);
-    vec3 normal_sample = normalize(2.0*texture(NormTexture,fsin_UV).xyz-1.0);
+    vec3 normalColor = texture(NormTexture,fsin_UV).xyz;
+    vec3 normal_sample = normalize(2.0*normalColor-1.0);
 
     vec3 Normal = normalize(fsin_NormalWorld);
     vec3 Tangent = normalize(fsin_TangentWorld);
@@ -59,6 +60,7 @@ void main()
     // fsout_Color = vec4(fsin_TangentWorld,1.0);
     // fsout_Color = vec4(normalWS,1.0);
     // fsout_Color = vec4(normal_sample,1.0);
+    // fsout_Color = vec4(normalColor,1.0);
     // fsout_Color = vec4(fsin_LightWorld,1.0);
     // fsout_Color = vec4(fsin_UV,1.0,1.0);
     // fsout_Color = textureColor;
