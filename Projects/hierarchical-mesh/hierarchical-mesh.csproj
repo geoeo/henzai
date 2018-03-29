@@ -39,6 +39,16 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
 
+    <Content Include="../../Assets/Textures/Water_001_COLOR.jpg">
+      <Link>/water/Water.jpg</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+
+    <Content Include="../../Assets/Textures/Water_001_NORM.jpg">
+      <Link>/water/WaterNorm.jpg</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+
     <Content Include="../../Dependencies/libassimp.dylib">
       <Link>libassimp.dylib</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -79,9 +89,13 @@
   
     <RemoveDir Directories="$(OutputPath)/Shaders/" />
 
+    <!-- TODO: Enforce this -->
     <RemoveDir Directories="$(OutputPath)/Models/" />
 
     <RemoveDir Directories="$(OutputPath)/Textures/" />
+    <RemoveDir Directories="$(OutputPath)/armor/" />
+    <RemoveDir Directories="$(OutputPath)/nanosuit/" />
+    <RemoveDir Directories="$(OutputPath)/water/" />
   </Target>
 
 </Project>

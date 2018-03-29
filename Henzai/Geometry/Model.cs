@@ -26,10 +26,12 @@ namespace Henzai.Geometry
         }
 
         public Model(Mesh<T>[] meshesIn){
+            BaseDir = String.Empty;
             meshes = meshesIn;
         }
 
-        public Model(Mesh<T> meshIn){
+        public Model(string directoy,Mesh<T> meshIn){
+            BaseDir = directoy;
             meshes = new Mesh<T>[1];
             meshes[0] = meshIn;
         }

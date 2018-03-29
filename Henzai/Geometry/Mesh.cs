@@ -44,6 +44,10 @@ namespace Henzai.Geometry
             return material;
         }
 
+        public Material GetMaterialRuntime(){
+            return material;
+        }
+
         public void SetNewWorldTransformation(Matrix4x4 world){
             _world = world;
         }
