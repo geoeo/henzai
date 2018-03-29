@@ -60,7 +60,8 @@ namespace Henzai.Examples
         override protected void CreateResources(){
 
 
-            string filePath = Path.Combine(AppContext.BaseDirectory, "armor/armor.dae"); 
+            // string filePath = Path.Combine(AppContext.BaseDirectory, "armor/armor.dae"); 
+            string filePath = Path.Combine(AppContext.BaseDirectory, "nanosuit/nanosuit.obj"); 
             _model = AssimpLoader.LoadFromFile<VertexPositionNormalTextureTangent>(filePath,VertexPositionNormalTextureTangent.HenzaiType);
             GeometryUtils.GenerateTangentSpaceFor(_model);
 
