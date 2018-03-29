@@ -24,6 +24,17 @@ namespace Henzai.Runtime
         Stereographic
     }
 
+    public static class Verifier {
+        
+        public static bool verifyVertexStruct<T>(VertexTypes vertexType) where T : struct {
+
+            string typeName = typeof(T).Name;
+            string enumName = vertexType.ToString();
+
+            return typeName.Equals(enumName);
+        }
+    }
+
 
     public static class ByteMarshal
     {

@@ -53,11 +53,8 @@ namespace Henzai
          public static Model<T> LoadFromFile<T>(string filename, VertexTypes vertexType, PostProcessSteps flags = DefaultPostProcessSteps) where T : struct
         {
 
-            string typeName = typeof(T).Name;
-            string enumName = vertexType.ToString();
-
-            if(!typeName.Equals(enumName))
-                throw new ArgumentException($"Type Mismatch AssimpLoader - generic:{typeName}, enum:{enumName}");
+            if(!Verifier.verifyVertexStruct<T>(vertexType))
+                throw new ArgumentException($"Type Mismatch AssimpLoader");
 
             AssimpContext assimpContext = new AssimpContext();
             Scene pScene = assimpContext.ImportFile(filename, flags);
