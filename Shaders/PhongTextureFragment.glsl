@@ -1,7 +1,7 @@
 #version 330 core
 
-uniform sampler2D SphereDiffuseTexture;
-uniform sampler2D SphereNormTexture;
+uniform sampler2D DiffuseTexture;
+uniform sampler2D NormTexture;
 
 struct Material
 {
@@ -27,8 +27,8 @@ out vec4 fsout_Color;
 
 void main()
 {
-    vec4 textureColor = texture(SphereDiffuseTexture,fsin_UV);
-    vec3 normal_sample = normalize(2.0*texture(SphereNormTexture,fsin_UV).xyz-1.0);
+    vec4 textureColor = texture(DiffuseTexture,fsin_UV);
+    vec3 normal_sample = normalize(2.0*texture(NormTexture,fsin_UV).xyz-1.0);
 
     vec3 Normal = normalize(fsin_NormalWorld);
     vec3 Tangent = normalize(fsin_TangentWorld);
