@@ -80,7 +80,7 @@
             "name": ".NET Core Launch (hierarchical-mesh)",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build normal-mapping",
+            "preLaunchTask": "build hierarchical-mesh",
             "program": "${workspaceFolder}/Projects/hierarchical-mesh/bin/Debug/netcoreapp2.0/hierarchical-mesh.dll",
             "args": [],
             "cwd": "${workspaceFolder}/Projects/hierarchical-mesh",

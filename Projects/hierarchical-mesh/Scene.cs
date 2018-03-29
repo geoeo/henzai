@@ -20,6 +20,7 @@ namespace Henzai.Examples
         private CommandList _commandList;
         private List<DeviceBuffer> _vertexBuffers;
         private List<DeviceBuffer> _indexBuffers;
+        private List<ResourceSet> _textureResourceSets;
         private Shader _vertexShader;
         private Shader _fragmentShader;
         private Pipeline _pipeline;
@@ -29,7 +30,7 @@ namespace Henzai.Examples
         private ResourceSet _cameraResourceSet;
         private ResourceSet _materialResourceSet;
         private ResourceSet _lightResourceSet;
-        private ResourceSet _textureResourceSet;
+        // private ResourceSet _textureResourceSet;
         private ResourceLayout _cameraResourceLayout;
         private ResourceLayout _materialResourceLayout;
         private ResourceLayout _lightResourceLayout;
@@ -42,8 +43,9 @@ namespace Henzai.Examples
             : base(title,windowSize,graphicsDeviceOptions,preferredBackend,usePreferredGraphicsBackend){
                 _vertexBuffers = new List<DeviceBuffer>();
                 _indexBuffers = new List<DeviceBuffer>();
+                _textureResourceSets = new List<ResourceSet>();
 
-                PreDraw+=RotateSphereModel;
+                PreDraw+=RotateModel;
         }
 
         private void RotateSphereModel(){
@@ -51,7 +53,7 @@ namespace Henzai.Examples
             _model.SetNewWorldTransformation(newWorld);
         }
 
-        private void RotateSphereModel(float delta){
+        private void RotateModel(float delta){
             var newWorld = _model.World*Matrix4x4.CreateRotationY(Math.PI.ToFloat()*delta/10.0f);
             _model.SetNewWorldTransformation(newWorld); 
         }
@@ -61,8 +63,8 @@ namespace Henzai.Examples
 
 
             // string filePath = Path.Combine(AppContext.BaseDirectory, "armor/armor.dae"); 
-            string filePath = Path.Combine(AppContext.BaseDirectory, "nanosuit/nanosuit.obj"); 
-            _model = AssimpLoader.LoadFromFile<VertexPositionNormalTextureTangent>(filePath,VertexPositionNormalTextureTangent.HenzaiType);
+            // string filePath = Path.Combine(AppContext.BaseDirectory, "nanosuit/nanosuit.obj"); 
+            _model = AssimpLoader.LoadFromFile<VertexPositionNormalTextureTangent>(AppContext.BaseDirectory,"nanosuit/nanosuit.obj",VertexPositionNormalTextureTangent.HenzaiType);
             GeometryUtils.GenerateTangentSpaceFor(_model);
 
 
@@ -104,31 +106,6 @@ namespace Henzai.Examples
             
             _lightResourceSet = _factory.CreateResourceSet(resourceSetDescriptionLight);
 
-            for(int i = 0; i < _model.meshCount; i++){
-
-                DeviceBuffer vertexBuffer 
-                    =  _factory.CreateBuffer(new BufferDescription(_model.meshes[i].vertices.LengthUnsigned() * VertexPositionNormalTextureTangent.SizeInBytes, BufferUsage.VertexBuffer)); 
-
-                DeviceBuffer indexBuffer
-                    = _factory.CreateBuffer(new BufferDescription(_model.meshes[i].meshIndices.LengthUnsigned()*sizeof(uint),BufferUsage.IndexBuffer));
-                    
-
-                _vertexBuffers.Add(vertexBuffer);
-                _indexBuffers.Add(indexBuffer);
-
-                graphicsDevice.UpdateBuffer(vertexBuffer,0,_model.meshes[i].vertices);
-                graphicsDevice.UpdateBuffer(indexBuffer,0,_model.meshes[i].meshIndices);
-            }
-
-            //Texture Samper
-            ImageSharpTexture diffuseTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "armor", "diffuse.png"));
-            Texture sphereDiffuseTexture = diffuseTexture.CreateDeviceTexture(graphicsDevice, _factory);
-            TextureView sphereDiffuseTextureView = _factory.CreateTextureView(sphereDiffuseTexture);
-
-            ImageSharpTexture normalTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "armor", "normal.png"));
-            Texture sphereNormalTexture = normalTexture.CreateDeviceTexture(graphicsDevice, _factory);
-            TextureView sphereNormalTextureView = _factory.CreateTextureView(sphereNormalTexture);
-
             ResourceLayout textureLayout = _factory.CreateResourceLayout(
                 new ResourceLayoutDescription(
                     new ResourceLayoutElementDescription("DiffuseTexture", ResourceKind.TextureReadOnly, ShaderStages.Fragment),
@@ -149,13 +126,47 @@ namespace Henzai.Examples
                 MaximumAnisotropy = 0,
             });
 
-            _textureResourceSet = _factory.CreateResourceSet(new ResourceSetDescription(
+            for(int i = 0; i < _model.meshCount; i++){
+
+                DeviceBuffer vertexBuffer 
+                    =  _factory.CreateBuffer(new BufferDescription(_model.meshes[i].vertices.LengthUnsigned() * VertexPositionNormalTextureTangent.SizeInBytes, BufferUsage.VertexBuffer)); 
+
+                DeviceBuffer indexBuffer
+                    = _factory.CreateBuffer(new BufferDescription(_model.meshes[i].meshIndices.LengthUnsigned()*sizeof(uint),BufferUsage.IndexBuffer));
+                    
+
+                _vertexBuffers.Add(vertexBuffer);
+                _indexBuffers.Add(indexBuffer);
+
+                graphicsDevice.UpdateBuffer(vertexBuffer,0,_model.meshes[i].vertices);
+                graphicsDevice.UpdateBuffer(indexBuffer,0,_model.meshes[i].meshIndices);
+
+                Material material = _model.meshes[i].TryGetMaterial();
+
+                ImageSharpTexture diffuseTextureIS = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, _model.BaseDir, material.textureDiffuse));
+                Texture diffuseTexture = diffuseTextureIS.CreateDeviceTexture(graphicsDevice, _factory);
+                TextureView diffuseTextureView = _factory.CreateTextureView(diffuseTexture);
+
+                string normalTexPath = material.textureNormal.Length == 0 ? material.textureBump : material.textureNormal;
+                ImageSharpTexture normalTextureIS = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, _model.BaseDir, normalTexPath));
+                Texture normalTexture = normalTextureIS.CreateDeviceTexture(graphicsDevice, _factory);
+                TextureView normalTextureView = _factory.CreateTextureView(normalTexture);
+
+                ResourceSet textureResourceSet = _factory.CreateResourceSet(new ResourceSetDescription(
                 textureLayout,
-                sphereDiffuseTextureView,
+                diffuseTextureView,
                 graphicsDevice.LinearSampler,
-                sphereNormalTextureView,
+                normalTextureView,
                 sampler
                 ));
+
+                _textureResourceSets.Add(textureResourceSet);
+            }
+
+
+
+
+
 
             VertexLayoutDescription vertexLayout 
                 = new VertexLayoutDescription(
@@ -216,7 +227,7 @@ namespace Henzai.Examples
                 _commandList.UpdateBuffer(_materialBuffer,32,material.ambient);
                 _commandList.UpdateBuffer(_materialBuffer,48,material.coefficients);
                 _commandList.SetGraphicsResourceSet(2,_materialResourceSet);
-                _commandList.SetGraphicsResourceSet(3,_textureResourceSet);
+                _commandList.SetGraphicsResourceSet(3,_textureResourceSets[i]);
                 _commandList.DrawIndexed(
                     indexCount: _model.meshes[i].meshIndices.Length.ToUnsigned(),
                     instanceCount: 1,

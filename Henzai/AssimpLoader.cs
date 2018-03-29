@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Numerics;
 using Assimp;
@@ -51,14 +52,19 @@ namespace Henzai
             | PostProcessSteps.CalculateTangentSpace | PostProcessSteps.GenerateSmoothNormals | PostProcessSteps.JoinIdenticalVertices | PostProcessSteps.FlipUVs;
 
 
-         public static Model<T> LoadFromFile<T>(string filename, VertexTypes vertexType, PostProcessSteps flags = DefaultPostProcessSteps) where T : struct
+         public static Model<T> LoadFromFile<T>(string baseDirectory,string localPath, VertexTypes vertexType, PostProcessSteps flags = DefaultPostProcessSteps) where T : struct
         {
 
             if(!Verifier.verifyVertexStruct<T>(vertexType))
                 throw new ArgumentException($"Type Mismatch AssimpLoader");
 
+            string filePath = Path.Combine(AppContext.BaseDirectory, "nanosuit/nanosuit.obj"); 
+            
+            string[] directoryStructure = localPath.Split('/');
+            string modelDir = directoryStructure[0];
+
             AssimpContext assimpContext = new AssimpContext();
-            Scene pScene = assimpContext.ImportFile(filename, flags);
+            Scene pScene = assimpContext.ImportFile(filePath, flags);
 
             int meshCount = pScene.MeshCount;
 
@@ -140,7 +146,7 @@ namespace Henzai
                 }
             }
 
-            return new Model<T>(meshes,meshIndicies);
+            return new Model<T>(modelDir,meshes,meshIndicies);
 
         }
         

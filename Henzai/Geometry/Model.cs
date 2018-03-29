@@ -15,8 +15,10 @@ namespace Henzai.Geometry
         public int meshCount => meshes.Length;
 
         public ref Matrix4x4 World => ref _world;
+        public string BaseDir {get;private set;}
 
-        public Model(Mesh<T>[] meshes, uint[][] indicies){
+        public Model(string directory, Mesh<T>[] meshes, uint[][] indicies){
+            BaseDir = directory;
             this.meshes = meshes;
             for(int i = 0; i < meshCount; i++){
                 this.meshes[i].meshIndices = indicies[i];
