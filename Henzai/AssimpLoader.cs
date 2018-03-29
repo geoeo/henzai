@@ -33,7 +33,8 @@ namespace Henzai
                 new Vector4(material.Shininess,material.ShininessStrength,material.Opacity,material.Reflectivity),
                 material.TextureDiffuse.FilePath,
                 material.TextureNormal.FilePath,
-                material.TextureHeight.FilePath);
+                material.TextureHeight.FilePath,
+                material.TextureSpecular.FilePath);
 
         }
     }

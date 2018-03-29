@@ -41,6 +41,7 @@ namespace Henzai.Geometry
         public string textureDiffuse = string.Empty;
         public string textureNormal = string.Empty;
         public string textureBump = string.Empty;
+        public string textureSpecular = string.Empty;
 
         public Material(){
             diffuse = new Vector4(1.0f,1.0f,1.0f,1.0f);
@@ -59,7 +60,8 @@ namespace Henzai.Geometry
             Vector4 coefficients, 
             string textureDiffuse,
             string textureNormal,
-            string textureBump){
+            string textureBump,
+            string textureSpecular){
 
                 if(diffuse != null)
                     this.diffuse = diffuse;
@@ -79,6 +81,8 @@ namespace Henzai.Geometry
                     this.textureNormal = textureNormal;
                 if(!String.IsNullOrEmpty(textureBump))
                     this.textureBump = textureBump;
+                if(!String.IsNullOrEmpty(textureSpecular))
+                    this.textureBump = textureSpecular;
              
             }
 
