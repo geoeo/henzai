@@ -35,9 +35,9 @@ namespace Henzai.Examples
         private ResourceLayout _materialResourceLayout;
         private ResourceLayout _lightResourceLayout;
         // TODO: Refactor this into a class with colour
-        private Vector4 LIGHT_POS = new Vector4(0,30,30,0);
+        private Vector4 LIGHT_POS = new Vector4(0,30,30,1);
 
-        Model<VertexPositionNormalTextureTangent> _model;
+        Model<VertexPositionNormalTextureTangentBitangent> _model;
 
         public Scene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, GraphicsBackend preferredBackend, bool usePreferredGraphicsBackend)
             : base(title,windowSize,graphicsDeviceOptions,preferredBackend,usePreferredGraphicsBackend){
@@ -64,8 +64,8 @@ namespace Henzai.Examples
 
             // string filePath = Path.Combine(AppContext.BaseDirectory, "armor/armor.dae"); 
             // string filePath = Path.Combine(AppContext.BaseDirectory, "nanosuit/nanosuit.obj"); 
-            _model = AssimpLoader.LoadFromFile<VertexPositionNormalTextureTangent>(AppContext.BaseDirectory,"nanosuit/nanosuit.obj",VertexPositionNormalTextureTangent.HenzaiType);
-            GeometryUtils.GenerateTangentSpaceFor(_model);
+            _model = AssimpLoader.LoadFromFile<VertexPositionNormalTextureTangentBitangent>(AppContext.BaseDirectory,"nanosuit/nanosuit.obj",VertexPositionNormalTextureTangentBitangent.HenzaiType);
+            GeometryUtils.GenerateTangentAndBitagentSpaceFor(_model);
 
 
             /// Uniform 1 - Camera
@@ -129,7 +129,7 @@ namespace Henzai.Examples
             for(int i = 0; i < _model.meshCount; i++){
 
                 DeviceBuffer vertexBuffer 
-                    =  _factory.CreateBuffer(new BufferDescription(_model.meshes[i].vertices.LengthUnsigned() * VertexPositionNormalTextureTangent.SizeInBytes, BufferUsage.VertexBuffer)); 
+                    =  _factory.CreateBuffer(new BufferDescription(_model.meshes[i].vertices.LengthUnsigned() * VertexPositionNormalTextureTangentBitangent.SizeInBytes, BufferUsage.VertexBuffer)); 
 
                 DeviceBuffer indexBuffer
                     = _factory.CreateBuffer(new BufferDescription(_model.meshes[i].meshIndices.LengthUnsigned()*sizeof(uint),BufferUsage.IndexBuffer));
@@ -173,11 +173,12 @@ namespace Henzai.Examples
                     new VertexElementDescription("Position",VertexElementSemantic.Position,VertexElementFormat.Float3),
                     new VertexElementDescription("Normal",VertexElementSemantic.Normal,VertexElementFormat.Float3),
                     new VertexElementDescription("UV",VertexElementSemantic.TextureCoordinate,VertexElementFormat.Float2),
-                    new VertexElementDescription("Tangent",VertexElementSemantic.Normal,VertexElementFormat.Float3)
+                    new VertexElementDescription("Tangent",VertexElementSemantic.Normal,VertexElementFormat.Float3),
+                    new VertexElementDescription("Bitangent",VertexElementSemantic.Normal,VertexElementFormat.Float3)
                 );
 
-            _vertexShader = IO.LoadShader("PhongTexture",ShaderStages.Vertex,graphicsDevice);
-            _fragmentShader = IO.LoadShader("PhongTexture",ShaderStages.Fragment,graphicsDevice);
+            _vertexShader = IO.LoadShader("PhongBitangentTexture",ShaderStages.Vertex,graphicsDevice);
+            _fragmentShader = IO.LoadShader("PhongBitangentTexture",ShaderStages.Fragment,graphicsDevice);
 
             GraphicsPipelineDescription pipelineDescription = new GraphicsPipelineDescription(){
                 BlendState = BlendStateDescription.SingleOverrideBlend,

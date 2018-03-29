@@ -61,11 +61,11 @@ namespace Henzai.Examples
 
             //string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere.obj"); // huge 
             //string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere_centered.obj"); // no texture coordiantes
-            string filePath = Path.Combine(AppContext.BaseDirectory, "armor/armor.dae"); 
-            // _model = AssimpLoader.LoadFromFile<VertexPositionNormalTextureTangent>(filePath,VertexPositionNormalTextureTangent.HenzaiType);
+            string filePath = "armor/armor.dae"; 
+            _model = AssimpLoader.LoadFromFile<VertexPositionNormalTextureTangent>(AppContext.BaseDirectory,filePath,VertexPositionNormalTextureTangent.HenzaiType);
             //GeometryUtils.GenerateSphericalTextureCoordinatesFor(_model.meshes[0], UVMappingTypes.Spherical_Coordinates,true);
-            // GeometryUtils.GenerateTangentSpaceFor(_model);
-            _model = new Model<VertexPositionNormalTextureTangent>(GeometryFactory.generateSphere(100,100,1.0f));
+            GeometryUtils.GenerateTangentSpaceFor(_model);
+            // _model = new Model<VertexPositionNormalTextureTangent>(GeometryFactory.generateSphere(100,100,1.0f));
 
             /// Uniform 1 - Camera
             _cameraProjViewBuffer = _factory.CreateBuffer(new BufferDescription(192,BufferUsage.UniformBuffer | BufferUsage.Dynamic));
@@ -123,13 +123,13 @@ namespace Henzai.Examples
 
             //Texture Samper
             // ImageSharpTexture diffuseTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "Textures", "earth.jpg"));
-            ImageSharpTexture diffuseTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "Textures", "Water.jpg"));
-            // ImageSharpTexture diffuseTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "armor", "diffuse.png"));
+            // ImageSharpTexture diffuseTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "Textures", "Water.jpg"));
+            ImageSharpTexture diffuseTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "armor", "diffuse.png"));
             Texture sphereDiffuseTexture = diffuseTexture.CreateDeviceTexture(graphicsDevice, _factory);
             TextureView sphereDiffuseTextureView = _factory.CreateTextureView(sphereDiffuseTexture);
 
-            ImageSharpTexture normalTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "Textures", "WaterNorm.jpg"));
-            // ImageSharpTexture normalTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "armor", "normal.png"));
+            // ImageSharpTexture normalTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "Textures", "WaterNorm.jpg"));
+            ImageSharpTexture normalTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "armor", "normal.png"));
             Texture sphereNormalTexture = normalTexture.CreateDeviceTexture(graphicsDevice, _factory);
             TextureView sphereNormalTextureView = _factory.CreateTextureView(sphereNormalTexture);
 

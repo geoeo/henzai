@@ -78,7 +78,7 @@ namespace Henzai.Geometry
                 var indicies = model.meshes[j].meshIndices;
                 var numberOfIndicies = indicies.Length;
                 var tangentCountPerVertex = new uint[vertices.Length];
-                // Calculate Tangent
+                // Calculate Tangent & Bitangent
                 for(int i = 0; i < numberOfIndicies; i+=3){
                     var indicie_0 = indicies[i];
                     var indicie_1 = indicies[i+1];
@@ -102,6 +102,8 @@ namespace Henzai.Geometry
                     tangent.Y = inv_det * (deltaV2 * edge1.Y - deltaV1 * edge2.Y);
                     tangent.Z = inv_det * (deltaV2 * edge1.Z - deltaV1 * edge2.Z);
 
+                    tangent = Vector3.Normalize(tangent);
+
                     v0.Tangent += tangent;
                     v1.Tangent += tangent;
                     v2.Tangent += tangent;
@@ -119,15 +121,112 @@ namespace Henzai.Geometry
                     Vector3 tangent = vertices[i].Tangent;
 
                     tangent /= tangentCount;
-                    vertices[i].Tangent = Vector3.Normalize(tangent);
+                    tangent = Vector3.Normalize(tangent);
 
-                    tangent = vertices[i].Tangent;
                     Vector3 normal = vertices[i].Normal;
 
                     vertices[i].Tangent = Vector3.Normalize(tangent - Vector3.Dot(normal,tangent) * normal);
 
-                    tangentCountPerVertex[i] = 0;
                 }
+            }
+        }
+
+        public static void GenerateTangentAndBitagentSpaceFor(Model<VertexPositionNormalTextureTangentBitangent> model){
+
+            int numberOfMeshes = model.meshes.Length;
+            for(int j = 0; j < numberOfMeshes; j++){
+                var vertices = model.meshes[j].vertices;
+                var indicies = model.meshes[j].meshIndices;
+                var numberOfIndicies = indicies.Length;
+                var tangentCountPerVertex = new uint[vertices.Length];
+                var bitangentCountPerVertex = new uint[vertices.Length];
+                // Calculate Tangent & Bitangent
+                for(int i = 0; i < numberOfIndicies; i+=3){
+                    var indicie_0 = indicies[i];
+                    var indicie_1 = indicies[i+1];
+                    var indicie_2 = indicies[i+2];
+                    ref VertexPositionNormalTextureTangentBitangent v0 = ref vertices[indicie_0];
+                    ref VertexPositionNormalTextureTangentBitangent v1 = ref vertices[indicie_1];
+                    ref VertexPositionNormalTextureTangentBitangent v2 = ref vertices[indicie_2];
+
+                    Vector3 edge1 = v1.Position - v0.Position;
+                    Vector3 edge2 = v2.Position - v0.Position;
+
+                    Vector2 deltaU1 = v1.TextureCoordinates - v0.TextureCoordinates;
+                    Vector2 deltaV1 = v1.TextureCoordinates - v0.TextureCoordinates;
+                    Vector2 deltaU2 = v2.TextureCoordinates - v0.TextureCoordinates;
+                    Vector2 deltaV2 = v2.TextureCoordinates - v0.TextureCoordinates;
+
+                    float inv_det = 1.0f / (deltaU1.X * deltaV2.Y - deltaU2.X * deltaV1.Y);
+
+                    Vector3 tangent;
+                    tangent.X = inv_det * (deltaV2.Y * edge1.X - deltaV1.Y * edge2.X);
+                    tangent.Y = inv_det * (deltaV2.Y * edge1.Y - deltaV1.Y * edge2.Y);
+                    tangent.Z = inv_det * (deltaV2.Y * edge1.Z - deltaV1.Y * edge2.Z);
+
+                    tangent = Vector3.Normalize(tangent);
+
+                    v0.Tangent += tangent;
+                    v1.Tangent += tangent;
+                    v2.Tangent += tangent;
+
+                    tangentCountPerVertex[indicie_0]++;
+                    tangentCountPerVertex[indicie_1]++;
+                    tangentCountPerVertex[indicie_2]++;
+
+                    Vector3 bitangent;
+                    bitangent.X = inv_det * (-deltaV2.X * edge1.X + deltaV1.X * edge2.X);
+                    bitangent.Y = inv_det * (-deltaV2.X * edge1.Y + deltaV1.X * edge2.Y);
+                    bitangent.Z = inv_det * (-deltaV2.X * edge1.Z + deltaV1.X * edge2.Z);
+
+                    bitangent = Vector3.Normalize(bitangent);
+
+                    v0.Bitangent += bitangent;
+                    v1.Bitangent += bitangent;
+                    v2.Bitangent += bitangent;
+
+                    bitangentCountPerVertex[indicie_0]++;
+                    bitangentCountPerVertex[indicie_1]++;
+                    bitangentCountPerVertex[indicie_2]++;
+
+                }
+
+                // Average Tangent + Orthgonalize via Gram-Schmidt
+                for(uint i = 0; i < tangentCountPerVertex.Length; i++){
+                    uint tangentCount = tangentCountPerVertex[i];
+    
+                    Vector3 tangent = vertices[i].Tangent;
+
+                    tangent /= tangentCount;
+                    tangent = Vector3.Normalize(tangent);
+
+                    Vector3 normal = vertices[i].Normal;
+
+                    vertices[i].Tangent = Vector3.Normalize(tangent - Vector3.Dot(normal,tangent) * normal);
+                }
+
+                // Average Bitangent + Orthgonalize via Gram-Schmidt
+                for(uint i = 0; i < bitangentCountPerVertex.Length; i++){
+                    uint bitangentCount = bitangentCountPerVertex[i];
+    
+                    Vector3 bitangent = vertices[i].Bitangent;
+
+                    bitangent /= bitangentCount;
+                    bitangent = Vector3.Normalize(bitangent);
+
+                    Vector3 normal = vertices[i].Normal;
+                    Vector3 tangent = vertices[i].Tangent;
+
+                    bitangent = Vector3.Normalize(bitangent - Vector3.Dot(normal,bitangent) * normal);
+                    bitangent = Vector3.Normalize(bitangent - Vector3.Dot(tangent,bitangent) * tangent);
+
+                    // If UVs are mirrored we have to negate the tangent
+                    if (Vector3.Dot(Vector3.Cross(normal, tangent), bitangent) < 0.0f){
+                        vertices[i].Tangent = tangent * -1.0f;
+                    }
+                    
+                }
+
             }
         }
 

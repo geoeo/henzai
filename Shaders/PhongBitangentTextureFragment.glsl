@@ -18,6 +18,7 @@ layout(std140) uniform material
 
 in vec3 fsin_NormalWorld;
 in vec3 fsin_TangentWorld;
+in vec3 fsin_BitangentWorld;
 in vec3 fsin_FragWorld;
 in vec3 fsin_LightWorld;
 in vec3 fsin_CamPosWorld;
@@ -32,7 +33,7 @@ void main()
 
     vec3 Normal = normalize(fsin_NormalWorld);
     vec3 Tangent = normalize(fsin_TangentWorld);
-    vec3 Bitangent = cross(Tangent, Normal);
+    vec3 Bitangent = normalize(fsin_BitangentWorld);
     
     mat3 TBN = mat3(Tangent, Bitangent, Normal);
 

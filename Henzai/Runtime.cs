@@ -12,7 +12,8 @@ namespace Henzai.Runtime
         VertexPositionNormal,
         VertexPositionTexture, 
         VertexPositionNormalTexture,
-        VertexPositionNormalTextureTangent
+        VertexPositionNormalTextureTangent,
+        VertexPositionNormalTextureTangentBitangent
     };
 
     public enum UVMappingTypes {

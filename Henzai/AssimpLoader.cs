@@ -58,7 +58,7 @@ namespace Henzai
             if(!Verifier.verifyVertexStruct<T>(vertexType))
                 throw new ArgumentException($"Type Mismatch AssimpLoader");
 
-            string filePath = Path.Combine(AppContext.BaseDirectory, "nanosuit/nanosuit.obj"); 
+            string filePath = Path.Combine(AppContext.BaseDirectory, localPath); 
             
             string[] directoryStructure = localPath.Split('/');
             string modelDir = directoryStructure[0];
@@ -89,14 +89,17 @@ namespace Henzai
                     Vector3D pNormal = aiMesh.Normals[j];
                     Vector3D pTexCoord = aiMesh.HasTextureCoords(0) ? aiMesh.TextureCoordinateChannels[0][j] : Zero3D;
                     Color4D pColour = aiMesh.HasVertexColors(0) ? aiMesh.VertexColorChannels[0][j] : NoColour;
-                    Vector3D pTangent = aiMesh.HasTangentBasis ? aiMesh.Tangents[j] : Zero3D;
-                    Vector3D pBiTangent = aiMesh.HasTangentBasis ? aiMesh.BiTangents[j] : Zero3D;
+                    // Vector3D pTangent = aiMesh.HasTangentBasis ? aiMesh.Tangents[j] : Zero3D;
+                    Vector3D pTangent = Zero3D;
+                    // Vector3D pBiTangent = aiMesh.HasTangentBasis ? aiMesh.BiTangents[j] : Zero3D;
+                    Vector3D pBiTangent = Zero3D;
                     
                     byte[] bytes;
                     byte[] posAsBytes = ByteMarshal.ToBytes(pPos);
                     byte[] normalAsBytes = ByteMarshal.ToBytes(pNormal);
                     byte[] texCoordAsBytes = ByteMarshal.ToBytes(pTexCoord.ToVector2());
                     byte[] tangentAsBytes = ByteMarshal.ToBytes(pTangent);
+                    byte[] bitangentAsBytes = ByteMarshal.ToBytes(pBiTangent);
 
                     switch(vertexType){
                         case VertexTypes.VertexPositionNormalTexture:
@@ -116,6 +119,14 @@ namespace Henzai
                             Array.Copy(normalAsBytes,0,bytes,VertexPositionNormalTextureTangent.NormalOffset,normalAsBytes.Length);
                             Array.Copy(texCoordAsBytes,0,bytes,VertexPositionNormalTextureTangent.TextureCoordinatesOffset,texCoordAsBytes.Length);
                             Array.Copy(tangentAsBytes,0,bytes,VertexPositionNormalTextureTangent.TangentOffset,tangentAsBytes.Length);
+                            break;
+                        case VertexTypes.VertexPositionNormalTextureTangentBitangent:
+                            bytes = new byte[VertexPositionNormalTextureTangentBitangent.SizeInBytes];
+                            Array.Copy(posAsBytes,0,bytes,VertexPositionNormalTextureTangentBitangent.PositionOffset,posAsBytes.Length);
+                            Array.Copy(normalAsBytes,0,bytes,VertexPositionNormalTextureTangentBitangent.NormalOffset,normalAsBytes.Length);
+                            Array.Copy(texCoordAsBytes,0,bytes,VertexPositionNormalTextureTangentBitangent.TextureCoordinatesOffset,texCoordAsBytes.Length);
+                            Array.Copy(tangentAsBytes,0,bytes,VertexPositionNormalTextureTangentBitangent.TangentOffset,tangentAsBytes.Length);
+                            Array.Copy(bitangentAsBytes,0,bytes,VertexPositionNormalTextureTangentBitangent.BitangentOffset,bitangentAsBytes.Length);
                             break;
                         default:
                             throw new NotImplementedException($"{vertexType.ToString("g")} not implemented");
