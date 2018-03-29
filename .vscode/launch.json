@@ -77,6 +77,18 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
+            "name": ".NET Core Launch (hierarchical-mesh)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build normal-mapping",
+            "program": "${workspaceFolder}/Projects/hierarchical-mesh/bin/Debug/netcoreapp2.0/hierarchical-mesh.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Projects/hierarchical-mesh",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
             "name": ".NET Core Attach",
             "type": "coreclr",
             "request": "attach",

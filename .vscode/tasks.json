@@ -74,6 +74,16 @@
             "problemMatcher": "$msCompile"
         },
         {
+            "label": "build hierarchical-mesh",
+            "command": "dotnet build Projects/hierarchical-mesh/hierarchical-mesh.csproj",
+            "type": "shell",
+            "group": "build",
+            "presentation": {
+                "reveal": "silent"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
             "label": "compile metal shaders (Henzai)",
             "type": "shell",
             "group": "build",
@@ -133,6 +143,13 @@
             "type": "shell",
             "group": "build",
             "command": "dotnet run --project Projects/normal-mapping/",
+            "problemMatcher":"$msCompile"
+        },
+        {
+            "label": "run hierarchical-mesh",
+            "type": "shell",
+            "group": "build",
+            "command": "dotnet run --project Projects/hierarchical-mesh/",
             "problemMatcher":"$msCompile"
         }
     ]
