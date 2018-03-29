@@ -47,9 +47,9 @@ namespace Henzai.Examples
 
             // string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere.obj");
             //string filePath = Path.Combine(AppContext.BaseDirectory, "Models/300_polygon_sphere_100mm.STL");
-            // string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere_centered.obj");
-            string filePath = Path.Combine(AppContext.BaseDirectory, "Models/chinesedragon.dae");
-            _model = AssimpLoader.LoadFromFile<VertexPositionNormal>(filePath,VertexPositionNormal.HenzaiType);
+            // string filePath =  "Models/sphere_centered.obj";
+            string filePath = "Models/chinesedragon.dae";
+            _model = AssimpLoader.LoadFromFile<VertexPositionNormal>(AppContext.BaseDirectory,filePath,VertexPositionNormal.HenzaiType);
             //GeometryUtils.GenerateSphericalTextureCoordinatesFor(_model.meshes[0]);
 
             /// Uniform 1 - Camera
