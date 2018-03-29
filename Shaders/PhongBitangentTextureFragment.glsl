@@ -42,7 +42,7 @@ void main()
 
     vec3 L = normalize(fsin_LightWorld-fsin_FragWorld);
     float l_dot_n = dot(L,normalWS);
-    vec4 diffuse = field_material.Diffuse*textureColor;
+    vec4 diffuse = l_dot_n*field_material.Diffuse*textureColor;
 
     vec3 R = reflect(-L,normalWS);
     vec3 V = normalize(fsin_CamPosWorld-fsin_FragWorld);
