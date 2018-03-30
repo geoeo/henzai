@@ -119,7 +119,6 @@ namespace Henzai
             {
                 _frameTimer.Start();
 
-                // previousFrameTicks = limitFrameRateBlocking(previousFrameTicks,1.0/60.0);
                 InputSnapshot inputSnapshot = _contextWindow.PumpEvents();
                 InputTracker.UpdateFrameInput(inputSnapshot);
 
@@ -155,7 +154,6 @@ namespace Henzai
                     Task.WaitAll(drawTasksPost);
                     PostDraw?.Invoke();
 
-
                     if(_renderOptions.LimitFrames)
                         limitFrameRate_Blocking();
 
@@ -164,7 +162,6 @@ namespace Henzai
 
                 _camera.Update(_frameTimer.prevFrameTicksInSeconds);
                 _frameTimer.Stop();
-
 
             }
 
