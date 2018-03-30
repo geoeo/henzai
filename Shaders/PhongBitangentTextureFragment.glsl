@@ -60,7 +60,7 @@ void main()
     // fsout_Color = vec4(fsin_NormalWorld,1.0);
     // fsout_Color = vec4(fsin_TangentWorld,1.0);
     // fsout_Color = vec4(fsin_BitangentWorld,1.0);
-    fsout_Color = vec4(normalWS,1.0);
+    // fsout_Color = vec4(normalWS,1.0);
     // fsout_Color = vec4(normal_sample,1.0);
     // fsout_Color = vec4(normalColor,1.0);
     // fsout_Color = vec4(fsin_LightWorld,1.0);
