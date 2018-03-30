@@ -48,8 +48,8 @@ namespace Henzai
 
         // http://assimp.sourceforge.net/lib_html/postprocess_8h.html#a64795260b95f5a4b3f3dc1be4f52e410a9c3de834f0307f31fa2b1b6d05dd592b
         private const PostProcessSteps DefaultPostProcessSteps 
-            = PostProcessSteps.FlipWindingOrder | PostProcessSteps.Triangulate | PostProcessSteps.PreTransformVertices
-            | PostProcessSteps.CalculateTangentSpace | PostProcessSteps.GenerateSmoothNormals | PostProcessSteps.JoinIdenticalVertices | PostProcessSteps.FlipUVs;
+            = PostProcessSteps.FlipWindingOrder | PostProcessSteps.Triangulate | PostProcessSteps.PreTransformVertices | PostProcessSteps.FlipUVs
+            | PostProcessSteps.CalculateTangentSpace | PostProcessSteps.GenerateSmoothNormals | PostProcessSteps.JoinIdenticalVertices ;
 
 
          public static Model<T> LoadFromFile<T>(string baseDirectory,string localPath, VertexTypes vertexType, PostProcessSteps flags = DefaultPostProcessSteps) where T : struct

@@ -138,8 +138,8 @@ namespace Henzai.Geometry
                 var vertices = model.meshes[j].vertices;
                 var indicies = model.meshes[j].meshIndices;
                 var numberOfIndicies = indicies.Length;
-                var tangentCountPerVertex = new uint[vertices.Length];
-                var bitangentCountPerVertex = new uint[vertices.Length];
+                var tangentCountPerVertex = new uint[numberOfIndicies];
+                var bitangentCountPerVertex = new uint[numberOfIndicies];
                 // Calculate Tangent & Bitangent
                 for(int i = 0; i < numberOfIndicies; i+=3){
                     var indicie_0 = indicies[i];
@@ -152,17 +152,12 @@ namespace Henzai.Geometry
                     Vector3 edge1 = v1.Position - v0.Position;
                     Vector3 edge2 = v2.Position - v0.Position;
 
-                    Vector2 deltaU1 = v1.TextureCoordinates - v0.TextureCoordinates;
-                    Vector2 deltaV1 = v1.TextureCoordinates - v0.TextureCoordinates;
-                    Vector2 deltaU2 = v2.TextureCoordinates - v0.TextureCoordinates;
-                    Vector2 deltaV2 = v2.TextureCoordinates - v0.TextureCoordinates;
+                    Vector2 deltaUV1 = v1.TextureCoordinates - v0.TextureCoordinates;
+                    Vector2 deltaUV2 = v2.TextureCoordinates - v0.TextureCoordinates;
 
-                    float inv_det = 1.0f / (deltaU1.X * deltaV2.Y - deltaU2.X * deltaV1.Y);
+                    float inv_det = 1.0f / (deltaUV1.X * deltaUV2.Y - deltaUV2.X * deltaUV1.Y);
 
-                    Vector3 tangent;
-                    tangent.X = inv_det * (deltaV2.Y * edge1.X - deltaV1.Y * edge2.X);
-                    tangent.Y = inv_det * (deltaV2.Y * edge1.Y - deltaV1.Y * edge2.Y);
-                    tangent.Z = inv_det * (deltaV2.Y * edge1.Z - deltaV1.Y * edge2.Z);
+                    Vector3 tangent = inv_det*(edge1*deltaUV2.Y - edge2*deltaUV1.Y);
 
                     tangent = Vector3.Normalize(tangent);
 
@@ -174,10 +169,7 @@ namespace Henzai.Geometry
                     tangentCountPerVertex[indicie_1]++;
                     tangentCountPerVertex[indicie_2]++;
 
-                    Vector3 bitangent;
-                    bitangent.X = inv_det * (-deltaV2.X * edge1.X + deltaV1.X * edge2.X);
-                    bitangent.Y = inv_det * (-deltaV2.X * edge1.Y + deltaV1.X * edge2.Y);
-                    bitangent.Z = inv_det * (-deltaV2.X * edge1.Z + deltaV1.X * edge2.Z);
+                    Vector3 bitangent = inv_det*(-deltaUV2.X * edge1 + deltaUV1.X * edge2);
 
                     bitangent = Vector3.Normalize(bitangent);
 
@@ -192,8 +184,10 @@ namespace Henzai.Geometry
                 }
 
                 // Average Tangent + Orthgonalize via Gram-Schmidt
-                for(uint i = 0; i < tangentCountPerVertex.Length; i++){
+                for(uint i = 0; i < numberOfIndicies; i++){
                     uint tangentCount = tangentCountPerVertex[i];
+                    if(tangentCount ==0)
+                        continue;
     
                     Vector3 tangent = vertices[i].Tangent;
 
@@ -202,12 +196,16 @@ namespace Henzai.Geometry
 
                     Vector3 normal = vertices[i].Normal;
 
+                    // vertices[indicie].Tangent = tangent;
                     vertices[i].Tangent = Vector3.Normalize(tangent - Vector3.Dot(normal,tangent) * normal);
+                    tangentCountPerVertex[i] = 0;
                 }
 
                 // Average Bitangent + Orthgonalize via Gram-Schmidt
-                for(uint i = 0; i < bitangentCountPerVertex.Length; i++){
+                for(uint i = 0; i < numberOfIndicies; i++){
                     uint bitangentCount = bitangentCountPerVertex[i];
+                    if(bitangentCount ==0)
+                        continue;
     
                     Vector3 bitangent = vertices[i].Bitangent;
 
@@ -219,14 +217,11 @@ namespace Henzai.Geometry
 
                     bitangent = Vector3.Normalize(bitangent - Vector3.Dot(normal,bitangent) * normal);
                     bitangent = Vector3.Normalize(bitangent - Vector3.Dot(tangent,bitangent) * tangent);
+                    vertices[i].Bitangent = bitangent;
 
-                    // If UVs are mirrored we have to negate the tangent
-                    if (Vector3.Dot(Vector3.Cross(normal, tangent), bitangent) < 0.0f){
-                        vertices[i].Tangent = tangent * -1.0f;
-                    }
+                    bitangentCountPerVertex[i] = 0;
                     
                 }
-
             }
         }
 

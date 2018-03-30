@@ -176,9 +176,9 @@ namespace Henzai.Examples
                     ResourceSet textureResourceSet = _factory.CreateResourceSet(new ResourceSetDescription(
                     textureLayout,
                     diffuseTextureView,
-                    graphicsDevice.LinearSampler,
+                    sampler,
                     normalTextureView,
-                    graphicsDevice.LinearSampler
+                    sampler
                     ));
 
                     _textureResourceSetsList.Add(textureResourceSet);

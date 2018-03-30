@@ -32,7 +32,7 @@ void main()
 
     vec3 Normal = normalize(fsin_NormalWorld);
     vec3 Tangent = normalize(fsin_TangentWorld);
-    vec3 Bitangent = cross(Tangent, Normal);
+    vec3 Bitangent = normalize(cross(Tangent, Normal));
     
     mat3 TBN = mat3(Tangent, Bitangent, Normal);
 

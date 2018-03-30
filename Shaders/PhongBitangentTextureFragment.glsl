@@ -35,6 +35,7 @@ void main()
     vec3 Normal = normalize(fsin_NormalWorld);
     vec3 Tangent = normalize(fsin_TangentWorld);
     vec3 Bitangent = normalize(fsin_BitangentWorld);
+
     
     mat3 TBN = mat3(Tangent, Bitangent, Normal);
 
@@ -58,6 +59,7 @@ void main()
     fsout_Color = color_out;
     // fsout_Color = vec4(fsin_NormalWorld,1.0);
     // fsout_Color = vec4(fsin_TangentWorld,1.0);
+    // fsout_Color = vec4(fsin_BitangentWorld,1.0);
     // fsout_Color = vec4(normalWS,1.0);
     // fsout_Color = vec4(normal_sample,1.0);
     // fsout_Color = vec4(normalColor,1.0);
