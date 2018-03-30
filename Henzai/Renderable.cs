@@ -19,6 +19,7 @@ namespace Henzai
         private Camera _camera {get; set;} 
         public Camera camera => _camera;
         private FrameTimer _frameTimer;
+        //TODO: Investigate Switching to Array
         /// <summary>
         /// Renderable objects which should be drawn before this.Draw()
         /// </summary>

@@ -8,10 +8,6 @@ namespace Henzai
         private Timer _frameTimer;
         private float _ticksInMilliseconds;
         private float _prevFrameTicksInMilliseconds;
-
-
-        //public float ticksInMilliseconds => _ticksInMilliseconds;
-        //public float ticksInSeconds => _ticksInMilliseconds/1000.0f;
         public float prevFrameTicksInMilliseconds => _prevFrameTicksInMilliseconds;
         public float prevFrameTicksInSeconds => _prevFrameTicksInMilliseconds/1000.0f;
 
