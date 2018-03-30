@@ -77,7 +77,8 @@ namespace Henzai.Geometry
                 var vertices = model.meshes[j].vertices;
                 var indicies = model.meshes[j].meshIndices;
                 var numberOfIndicies = indicies.Length;
-                var tangentCountPerVertex = new uint[vertices.Length];
+                var numberOfVertices = vertices.Length;
+                var tangentCountPerVertex = new uint[numberOfVertices];
                 // Calculate Tangent & Bitangent
                 for(int i = 0; i < numberOfIndicies; i+=3){
                     var indicie_0 = indicies[i];
@@ -86,68 +87,6 @@ namespace Henzai.Geometry
                     ref VertexPositionNormalTextureTangent v0 = ref vertices[indicie_0];
                     ref VertexPositionNormalTextureTangent v1 = ref vertices[indicie_1];
                     ref VertexPositionNormalTextureTangent v2 = ref vertices[indicie_2];
-
-                    Vector3 edge1 = v1.Position - v0.Position;
-                    Vector3 edge2 = v2.Position - v0.Position;
-
-                    float deltaU1 = v1.TextureCoordinates.X- v0.TextureCoordinates.X;
-                    float deltaV1 = v1.TextureCoordinates.Y - v0.TextureCoordinates.Y;
-                    float deltaU2 = v2.TextureCoordinates.X - v0.TextureCoordinates.X;
-                    float deltaV2 = v2.TextureCoordinates.Y - v0.TextureCoordinates.Y;
-
-                    float inv_det = 1.0f / (deltaU1 * deltaV2 - deltaU2 * deltaV1);
-
-                    Vector3 tangent;
-                    tangent.X = inv_det * (deltaV2 * edge1.X - deltaV1 * edge2.X);
-                    tangent.Y = inv_det * (deltaV2 * edge1.Y - deltaV1 * edge2.Y);
-                    tangent.Z = inv_det * (deltaV2 * edge1.Z - deltaV1 * edge2.Z);
-
-                    tangent = Vector3.Normalize(tangent);
-
-                    v0.Tangent += tangent;
-                    v1.Tangent += tangent;
-                    v2.Tangent += tangent;
-
-                    tangentCountPerVertex[indicie_0]++;
-                    tangentCountPerVertex[indicie_1]++;
-                    tangentCountPerVertex[indicie_2]++;
-
-                }
-
-                // Average Tangent + Orthgonalize via Gram-Schmidt
-                for(uint i = 0; i < tangentCountPerVertex.Length; i++){
-                    uint tangentCount = tangentCountPerVertex[i];
-    
-                    Vector3 tangent = vertices[i].Tangent;
-
-                    tangent /= tangentCount;
-                    tangent = Vector3.Normalize(tangent);
-
-                    Vector3 normal = vertices[i].Normal;
-
-                    vertices[i].Tangent = Vector3.Normalize(tangent - Vector3.Dot(normal,tangent) * normal);
-
-                }
-            }
-        }
-
-        public static void GenerateTangentAndBitagentSpaceFor(Model<VertexPositionNormalTextureTangentBitangent> model){
-
-            int numberOfMeshes = model.meshes.Length;
-            for(int j = 0; j < numberOfMeshes; j++){
-                var vertices = model.meshes[j].vertices;
-                var indicies = model.meshes[j].meshIndices;
-                var numberOfIndicies = indicies.Length;
-                var tangentCountPerVertex = new uint[numberOfIndicies];
-                var bitangentCountPerVertex = new uint[numberOfIndicies];
-                // Calculate Tangent & Bitangent
-                for(int i = 0; i < numberOfIndicies; i+=3){
-                    var indicie_0 = indicies[i];
-                    var indicie_1 = indicies[i+1];
-                    var indicie_2 = indicies[i+2];
-                    ref VertexPositionNormalTextureTangentBitangent v0 = ref vertices[indicie_0];
-                    ref VertexPositionNormalTextureTangentBitangent v1 = ref vertices[indicie_1];
-                    ref VertexPositionNormalTextureTangentBitangent v2 = ref vertices[indicie_2];
 
                     Vector3 edge1 = v1.Position - v0.Position;
                     Vector3 edge2 = v2.Position - v0.Position;
@@ -169,7 +108,61 @@ namespace Henzai.Geometry
                     tangentCountPerVertex[indicie_1]++;
                     tangentCountPerVertex[indicie_2]++;
 
-                    Vector3 bitangent = inv_det*(-deltaUV2.X * edge1 + deltaUV1.X * edge2);
+                }
+
+                // Average Tangent + Orthgonalize via Gram-Schmidt
+                for(uint i = 0; i < numberOfVertices; i++){
+                    uint tangentCount = tangentCountPerVertex[i];
+                    if(tangentCount ==0)
+                        continue;
+    
+                    Vector3 tangent = vertices[i].Tangent;
+
+                    tangent /= tangentCount;
+                    tangent = Vector3.Normalize(tangent);
+
+                    Vector3 normal = vertices[i].Normal;
+
+                    // vertices[indicie].Tangent = tangent;
+                    vertices[i].Tangent = Vector3.Normalize(tangent - Vector3.Dot(normal,tangent) * normal);
+                    tangentCountPerVertex[i] = 0;
+                }
+            }
+        }
+
+        public static void GenerateTangentAndBitagentSpaceFor(Model<VertexPositionNormalTextureTangentBitangent> model){
+
+            int numberOfMeshes = model.meshes.Length;
+            for(int j = 0; j < numberOfMeshes; j++){
+                var vertices = model.meshes[j].vertices;
+                var indicies = model.meshes[j].meshIndices;
+                var numberOfIndicies = indicies.Length;
+                var numberOfVerticies = vertices.Length;
+                var tangentCountPerVertex = new uint[numberOfVerticies];
+                var bitangentCountPerVertex = new uint[numberOfVerticies];
+                // Calculate Tangent & Bitangent
+                for(int i = 0; i < numberOfIndicies; i+=3){
+                    var indicie_0 = indicies[i];
+                    var indicie_1 = indicies[i+1];
+                    var indicie_2 = indicies[i+2];
+                    ref VertexPositionNormalTextureTangentBitangent v0 = ref vertices[indicie_0];
+                    ref VertexPositionNormalTextureTangentBitangent v1 = ref vertices[indicie_1];
+                    ref VertexPositionNormalTextureTangentBitangent v2 = ref vertices[indicie_2];
+
+                    Vector3 edge1 = v1.Position - v0.Position;
+                    Vector3 edge2 = v2.Position - v0.Position;
+
+                    Vector2 deltaUV1 = v1.TextureCoordinates - v0.TextureCoordinates;
+                    Vector2 deltaUV2 = v2.TextureCoordinates - v0.TextureCoordinates;
+
+                    float inv_det = 1.0f / (deltaUV1.X * deltaUV2.Y - deltaUV2.X * deltaUV1.Y);
+                    // float inv_det_2 = 1.0f / (deltaUV1.X * -deltaUV2.Y - deltaUV2.X * -deltaUV1.Y);
+
+                    Vector3 tangent = inv_det*(edge1*deltaUV2.Y - edge2*deltaUV1.Y);
+
+                    tangent = Vector3.Normalize(tangent);
+
+                    Vector3 bitangent = inv_det*(-deltaUV2.X * edge1 +deltaUV1.X * edge2);
 
                     bitangent = Vector3.Normalize(bitangent);
 
@@ -181,10 +174,18 @@ namespace Henzai.Geometry
                     bitangentCountPerVertex[indicie_1]++;
                     bitangentCountPerVertex[indicie_2]++;
 
+                    v0.Tangent += tangent;
+                    v1.Tangent += tangent;
+                    v2.Tangent += tangent;
+
+                    tangentCountPerVertex[indicie_0]++;
+                    tangentCountPerVertex[indicie_1]++;
+                    tangentCountPerVertex[indicie_2]++;
+
                 }
 
                 // Average Tangent + Orthgonalize via Gram-Schmidt
-                for(uint i = 0; i < numberOfIndicies; i++){
+                for(uint i = 0; i < numberOfVerticies; i++){
                     uint tangentCount = tangentCountPerVertex[i];
                     if(tangentCount ==0)
                         continue;
@@ -202,7 +203,7 @@ namespace Henzai.Geometry
                 }
 
                 // Average Bitangent + Orthgonalize via Gram-Schmidt
-                for(uint i = 0; i < numberOfIndicies; i++){
+                for(uint i = 0; i < numberOfVerticies; i++){
                     uint bitangentCount = bitangentCountPerVertex[i];
                     if(bitangentCount ==0)
                         continue;
@@ -220,6 +221,22 @@ namespace Henzai.Geometry
                     vertices[i].Bitangent = bitangent;
 
                     bitangentCountPerVertex[i] = 0;
+                    
+                }
+
+            }
+        }
+
+        public static void CheckTBN(Model<VertexPositionNormalTextureTangentBitangent> model){
+
+            int numberOfMeshes = model.meshes.Length;
+            for(int j = 0; j < numberOfMeshes; j++){
+                var vertices = model.meshes[j].vertices;
+                                
+                for(uint i = 0; i < vertices.Length; i++){
+                    if(Vector3.Dot(Vector3.Cross(vertices[i].Bitangent,vertices[i].Tangent),vertices[i].Normal) < 0){
+                        vertices[i].Tangent *= -1;
+                    }
                     
                 }
             }

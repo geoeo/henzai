@@ -36,7 +36,7 @@ void main()
     
     mat3 TBN = mat3(Tangent, Bitangent, Normal);
 
-    //normal_sample = Normal;
+    // vec3 normalWS = normal_sample;
     vec3 normalWS = normalize(TBN*normal_sample);
 
     vec3 L = normalize(fsin_LightWorld-fsin_FragWorld);
