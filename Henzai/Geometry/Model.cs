@@ -14,7 +14,10 @@ namespace Henzai.Geometry
         private Matrix4x4 _world = Matrix4x4.Identity;
         public int meshCount => meshes.Length;
 
-        public ref Matrix4x4 World => ref _world;
+        /// <summary>
+        /// Should be get only! But this is not possible to enforce with refs
+        /// </summary>
+        public ref Matrix4x4 GetWorld_DontMutate => ref _world;
         public string BaseDir {get;private set;}
 
         public Model(string directory, Mesh<T>[] meshes, uint[][] indicies){
@@ -36,8 +39,20 @@ namespace Henzai.Geometry
             meshes[0] = meshIn;
         }
 
-        public void SetNewWorldTransformation(Matrix4x4 world){
+        public void SetNewWorldTransformation(ref Matrix4x4 world, bool applyToAllMeshes){
             _world = world;
+            if(applyToAllMeshes){
+                foreach(var mesh in meshes)
+                    mesh.SetNewWorldTransformation(ref world);
+            }
+        }
+
+        public void SetNewWorldTranslation(ref Vector3 translation, bool applyToAllMeshes){
+            _world.Translation = translation;
+            if(applyToAllMeshes){
+                foreach(var mesh in meshes)
+                    mesh.SetNewWorldTranslation(ref translation);
+            }
         }
 
         

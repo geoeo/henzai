@@ -47,13 +47,13 @@ namespace Henzai.Examples
         }
 
         private void RotateSphereModel(){
-            var newWorld = _model.World*Matrix4x4.CreateRotationY(Math.PI.ToFloat());
-            _model.SetNewWorldTransformation(newWorld);
+            var newWorld = _model.GetWorld_DontMutate*Matrix4x4.CreateRotationY(Math.PI.ToFloat());
+            _model.SetNewWorldTransformation(ref newWorld,true);
         }
 
         private void RotateSphereModel(float delta){
-            var newWorld = _model.World*Matrix4x4.CreateRotationY(Math.PI.ToFloat()*delta/10.0f);
-            _model.SetNewWorldTransformation(newWorld); 
+            var newWorld = _model.GetWorld_DontMutate*Matrix4x4.CreateRotationY(Math.PI.ToFloat()*delta/10.0f);
+            _model.SetNewWorldTransformation(ref newWorld,true); 
         }
 
         // TODO: Abstract Resource Crreation for Uniforms, Vertex Layouts, Disposing
@@ -211,7 +211,7 @@ namespace Henzai.Examples
                 _commandList.SetIndexBuffer(_indexBuffers[i],IndexFormat.UInt32);
                 _commandList.UpdateBuffer(_cameraProjViewBuffer,0,camera.ViewMatrix);
                 _commandList.UpdateBuffer(_cameraProjViewBuffer,64,camera.ProjectionMatrix);
-                _commandList.UpdateBuffer(_cameraProjViewBuffer,128,_model.World);
+                _commandList.UpdateBuffer(_cameraProjViewBuffer,128,_model.GetWorld_DontMutate);
                 _commandList.SetGraphicsResourceSet(0,_cameraResourceSet); // Always after SetPipeline
                 _commandList.UpdateBuffer(_lightBuffer,0,LIGHT_POS);
                 _commandList.SetGraphicsResourceSet(1,_lightResourceSet);

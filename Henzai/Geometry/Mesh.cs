@@ -48,8 +48,12 @@ namespace Henzai.Geometry
             return material;
         }
 
-        public void SetNewWorldTransformation(Matrix4x4 world){
+        public void SetNewWorldTransformation(ref Matrix4x4 world){
             _world = world;
+        }
+
+        public void SetNewWorldTranslation(ref Vector3 translation){
+            _world.Translation = translation;
         }
 
     }

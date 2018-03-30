@@ -60,8 +60,8 @@ namespace Henzai.Examples
         }
 
         private void RotateModel(float delta){
-            var newWorld = _model.World*Matrix4x4.CreateRotationY(Math.PI.ToFloat()*delta/10.0f);
-            _model.SetNewWorldTransformation(newWorld); 
+            var newWorld = _model.GetWorld_DontMutate*Matrix4x4.CreateRotationY(Math.PI.ToFloat()*delta/10.0f);
+            _model.SetNewWorldTransformation(ref newWorld,true); 
         }
 
         private void FormatResources(){
@@ -85,7 +85,9 @@ namespace Henzai.Examples
             sun.meshes[0].TryGetMaterial().textureDiffuse = "Water.jpg";
             sun.meshes[0].TryGetMaterial().textureNormal = "WaterNorm.jpg";
             sun.meshes[0].TryGetMaterial().ambient = new Vector4(1.0f,1.0f,1.0f,1.0f);
-            sun.World.Translation = new Vector3(LIGHT_POS.X,LIGHT_POS.Y,LIGHT_POS.Z);
+            sun.GetWorld_DontMutate.Translation = new Vector3(LIGHT_POS.X,LIGHT_POS.Y,LIGHT_POS.Z);
+            Vector3 newTranslation = new Vector3(LIGHT_POS.X,LIGHT_POS.Y,LIGHT_POS.Z);
+            sun.SetNewWorldTranslation(ref newTranslation, true);
 
             _modelsList.Add(sun);
             _modelsList.Add(_model);
@@ -236,35 +238,29 @@ namespace Henzai.Examples
             _commandList.ClearDepthStencil(1f);
             for(int j = 0; j < _models.Length; j++){
                 var model = _models[j];
-                _commandList.SetPipeline(_pipeline);
-
-                _commandList.UpdateBuffer(_cameraProjViewBuffer,0,camera.ViewMatrix);
-                _commandList.UpdateBuffer(_cameraProjViewBuffer,64,camera.ProjectionMatrix);
-
-                _commandList.UpdateBuffer(_lightBuffer,0,LIGHT_POS);
+                RenderCommandGenerator.GenerateCommandsForModelPNTTB(
+                    _commandList,
+                    _pipeline,
+                    _cameraProjViewBuffer,
+                    _lightBuffer,
+                    camera,
+                    ref LIGHT_POS,
+                    model);
                 for(int i = 0; i < model.meshCount; i++){
                     var mesh = model.meshes[i];
-                    Material material = mesh.GetMaterialRuntime();
-
-                    _commandList.SetVertexBuffer(0,_vertexBuffers[runningMeshTotal]);
-                    _commandList.SetIndexBuffer(_indexBuffers[runningMeshTotal],IndexFormat.UInt32);
-                    _commandList.UpdateBuffer(_cameraProjViewBuffer,128,model.World);
-                    _commandList.SetGraphicsResourceSet(0,_cameraResourceSet); // Always after SetPipeline
-                    _commandList.SetGraphicsResourceSet(1,_lightResourceSet);
-                    _commandList.UpdateBuffer(_materialBuffer,0,material.diffuse);
-                    _commandList.UpdateBuffer(_materialBuffer,16,material.specular);
-                    _commandList.UpdateBuffer(_materialBuffer,32,material.ambient);
-                    _commandList.UpdateBuffer(_materialBuffer,48,material.coefficients);
-                    _commandList.SetGraphicsResourceSet(2,_materialResourceSet);
-                    _commandList.SetGraphicsResourceSet(3,_textureResourceSets[runningMeshTotal]);
-                    _commandList.DrawIndexed(
-                        indexCount: mesh.meshIndices.Length.ToUnsigned(),
-                        instanceCount: 1,
-                        indexStart: 0,
-                        vertexOffset: 0,
-                        instanceStart: 0
+                    RenderCommandGenerator.GenerateCommandsForMeshPNTTB(
+                        _commandList,
+                        _vertexBuffers[runningMeshTotal],
+                        _indexBuffers[runningMeshTotal],
+                        _cameraProjViewBuffer,
+                        _materialBuffer,
+                        _cameraResourceSet,
+                        _lightResourceSet,
+                        _materialResourceSet,
+                        _textureResourceSets[runningMeshTotal],
+                        mesh
                     );
-                //_commandList.Draw(_sphereModel.meshes[i].vertices.Length.ToUnsigned());
+
                     runningMeshTotal++;
                 }
             }
