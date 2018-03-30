@@ -35,7 +35,6 @@ namespace Henzai.Examples
         private ResourceSet _cameraResourceSet;
         private ResourceSet _materialResourceSet;
         private ResourceSet _lightResourceSet;
-        // private ResourceSet _textureResourceSet;
         private ResourceLayout _cameraResourceLayout;
         private ResourceLayout _materialResourceLayout;
         private ResourceLayout _lightResourceLayout;
@@ -187,7 +186,6 @@ namespace Henzai.Examples
 
             }
             
-
             VertexLayoutDescription vertexLayout 
                 = new VertexLayoutDescription(
                     new VertexElementDescription("Position",VertexElementSemantic.Position,VertexElementFormat.Float3),
@@ -226,26 +224,30 @@ namespace Henzai.Examples
         }
 
         override protected void BuildCommandList(){
+            int runningMeshTotal = 0;
+
             _commandList.Begin();
             _commandList.SetFramebuffer(graphicsDevice.SwapchainFramebuffer);
-            _commandList.SetPipeline(_pipeline);
             _commandList.SetFullViewports();
+
             _commandList.ClearColorTarget(0,RgbaFloat.White);
             _commandList.ClearDepthStencil(1f);
-            int runningMeshTotal = 0;
             for(int j = 0; j < _models.Length; j++){
                 var model = _models[j];
+                _commandList.SetPipeline(_pipeline);
+
+                _commandList.UpdateBuffer(_cameraProjViewBuffer,0,camera.ViewMatrix);
+                _commandList.UpdateBuffer(_cameraProjViewBuffer,64,camera.ProjectionMatrix);
+
+                _commandList.UpdateBuffer(_lightBuffer,0,LIGHT_POS);
                 for(int i = 0; i < model.meshCount; i++){
                     var mesh = model.meshes[i];
                     Material material = mesh.GetMaterialRuntime();
 
                     _commandList.SetVertexBuffer(0,_vertexBuffers[runningMeshTotal]);
                     _commandList.SetIndexBuffer(_indexBuffers[runningMeshTotal],IndexFormat.UInt32);
-                    _commandList.UpdateBuffer(_cameraProjViewBuffer,0,camera.ViewMatrix);
-                    _commandList.UpdateBuffer(_cameraProjViewBuffer,64,camera.ProjectionMatrix);
                     _commandList.UpdateBuffer(_cameraProjViewBuffer,128,model.World);
                     _commandList.SetGraphicsResourceSet(0,_cameraResourceSet); // Always after SetPipeline
-                    _commandList.UpdateBuffer(_lightBuffer,0,LIGHT_POS);
                     _commandList.SetGraphicsResourceSet(1,_lightResourceSet);
                     _commandList.UpdateBuffer(_materialBuffer,0,material.diffuse);
                     _commandList.UpdateBuffer(_materialBuffer,16,material.specular);
