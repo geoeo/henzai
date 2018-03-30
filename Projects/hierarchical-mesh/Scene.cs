@@ -81,7 +81,7 @@ namespace Henzai.Examples
             // _model = AssimpLoader.LoadFromFile<VertexPositionNormalTextureTangentBitangent>(AppContext.BaseDirectory,"sponza/sponza.obj",VertexPositionNormalTextureTangentBitangent.HenzaiType);
             GeometryUtils.GenerateTangentAndBitagentSpaceFor(_model);
             // GeometryUtils.CheckTBN(_model);
-            var sun = new Model<VertexPositionNormalTextureTangentBitangent>("water",GeometryFactory.generateSphereTangentBitangent(10,10,1));
+            var sun = new Model<VertexPositionNormalTextureTangentBitangent>("water",GeometryFactory.generateSphereTangentBitangent(100,100,1));
             sun.meshes[0].TryGetMaterial().textureDiffuse = "Water.jpg";
             sun.meshes[0].TryGetMaterial().textureNormal = "WaterNorm.jpg";
             sun.meshes[0].TryGetMaterial().ambient = new Vector4(1.0f,1.0f,1.0f,1.0f);

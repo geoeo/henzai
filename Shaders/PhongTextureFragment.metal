@@ -35,7 +35,7 @@ fragment float4 FS(PixelInput input[[stage_in]],
 
     float3 Normal = normalize(input.NormalWorld);
     float3 Tangent = normalize(input.TangentWorld);
-    float3 Bitangent = cross(Tangent, Normal);
+    float3 Bitangent = normalize(cross(Tangent, Normal));
     float3x3 TBN = float3x3(Tangent, Bitangent, Normal);
 
     normal_sample = normalize(TBN*normal_sample);
