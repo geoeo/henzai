@@ -70,6 +70,7 @@ namespace Henzai.Geometry
 
         }
 
+        // http://www.terathon.com/code/tangent.html
         public static void GenerateTangentSpaceFor(Model<VertexPositionNormalTextureTangent> model){
 
             int numberOfMeshes = model.meshes.Length;
@@ -197,7 +198,6 @@ namespace Henzai.Geometry
 
                     Vector3 normal = vertices[i].Normal;
 
-                    // vertices[indicie].Tangent = tangent;
                     vertices[i].Tangent = Vector3.Normalize(tangent - Vector3.Dot(normal,tangent) * normal);
                     tangentCountPerVertex[i] = 0;
                 }
@@ -216,8 +216,8 @@ namespace Henzai.Geometry
                     Vector3 normal = vertices[i].Normal;
                     Vector3 tangent = vertices[i].Tangent;
 
-                    bitangent = Vector3.Normalize(bitangent - Vector3.Dot(normal,bitangent) * normal);
-                    bitangent = Vector3.Normalize(bitangent - Vector3.Dot(tangent,bitangent) * tangent);
+                    // bitangent = Vector3.Normalize(bitangent - Vector3.Dot(normal,bitangent) * normal);
+                    // bitangent = Vector3.Normalize(bitangent - Vector3.Dot(tangent,bitangent) * tangent);
                     vertices[i].Bitangent = bitangent;
 
                     bitangentCountPerVertex[i] = 0;
@@ -234,9 +234,10 @@ namespace Henzai.Geometry
                 var vertices = model.meshes[j].vertices;
                                 
                 for(uint i = 0; i < vertices.Length; i++){
-                    if(Vector3.Dot(Vector3.Cross(vertices[i].Bitangent,vertices[i].Tangent),vertices[i].Normal) < 0){
-                        vertices[i].Tangent *= -1;
+                    if(Vector3.Dot(Vector3.Cross(vertices[i].Tangent,vertices[i].Normal),vertices[i].Bitangent) < 0.0f){
+                        vertices[i].Tangent *= -1.0f;
                     }
+
                     
                 }
             }

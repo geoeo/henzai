@@ -39,7 +39,7 @@ namespace Henzai.Examples
         private ResourceLayout _materialResourceLayout;
         private ResourceLayout _lightResourceLayout;
         // TODO: Refactor this into a class with colour
-        private Vector4 LIGHT_POS = new Vector4(0,10,15,1);
+        private Vector4 LIGHT_POS = new Vector4(0,20,15,1);
 
         Model<VertexPositionNormalTextureTangentBitangent> _model;
 
@@ -79,7 +79,7 @@ namespace Henzai.Examples
             // string filePath = Path.Combine(AppContext.BaseDirectory, "nanosuit/nanosuit.obj"); 
             _model = AssimpLoader.LoadFromFile<VertexPositionNormalTextureTangentBitangent>(AppContext.BaseDirectory,"nanosuit/nanosuit.obj",VertexPositionNormalTextureTangentBitangent.HenzaiType);
             GeometryUtils.GenerateTangentAndBitagentSpaceFor(_model);
-            // GeometryUtils.CheckTBN(_model);
+            GeometryUtils.CheckTBN(_model);
             var sun = new Model<VertexPositionNormalTextureTangentBitangent>("water",GeometryFactory.generateSphereTangentBitangent(10,10,1));
             sun.meshes[0].TryGetMaterial().textureDiffuse = "Water.jpg";
             sun.meshes[0].TryGetMaterial().textureNormal = "WaterNorm.jpg";
