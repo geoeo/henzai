@@ -92,8 +92,22 @@ namespace Henzai.Geometry
                     Vector3 edge1 = v1.Position - v0.Position;
                     Vector3 edge2 = v2.Position - v0.Position;
 
-                    Vector2 deltaUV1 = v1.TextureCoordinates - v0.TextureCoordinates;
-                    Vector2 deltaUV2 = v2.TextureCoordinates - v0.TextureCoordinates;
+                    Vector2 v0_texCord = v0.TextureCoordinates;
+                    Vector2 v1_texCord = v1.TextureCoordinates;
+                    Vector2 v2_texCord = v2.TextureCoordinates;
+
+                    // Flipped Uvs
+                    if(v0_texCord.X > 1.0f )
+                        v0_texCord.X = 1.0f-v0_texCord.X%1.0f;
+                    
+                    if(v1_texCord.X > 1.0f)
+                        v1_texCord.X = 1.0f-v1_texCord.X%1.0f;
+                    
+                    if(v2_texCord.X > 1.0f)
+                        v2_texCord.X = 1.0f-v2_texCord.X%1.0f;
+
+                    Vector2 deltaUV1 = v1_texCord - v0_texCord;
+                    Vector2 deltaUV2 = v2_texCord - v0_texCord;
 
                     float inv_det = 1.0f / (deltaUV1.X * deltaUV2.Y - deltaUV2.X * deltaUV1.Y);
 
@@ -153,11 +167,26 @@ namespace Henzai.Geometry
                     Vector3 edge1 = v1.Position - v0.Position;
                     Vector3 edge2 = v2.Position - v0.Position;
 
-                    Vector2 deltaUV1 = v1.TextureCoordinates - v0.TextureCoordinates;
-                    Vector2 deltaUV2 = v2.TextureCoordinates - v0.TextureCoordinates;
+                    Vector2 v0_texCord = v0.TextureCoordinates;
+                    Vector2 v1_texCord = v1.TextureCoordinates;
+                    Vector2 v2_texCord = v2.TextureCoordinates;
+
+                    // Flipped Uvs
+                    if(v0_texCord.X > 1.0f )
+                        v0_texCord.X = 1.0f-v0_texCord.X%1.0f;
+                    
+                    if(v1_texCord.X > 1.0f)
+                        v1_texCord.X = 1.0f-v1_texCord.X%1.0f;
+                    
+                    if(v2_texCord.X > 1.0f)
+                        v2_texCord.X = 1.0f-v2_texCord.X%1.0f;
+
+
+                    Vector2 deltaUV1 = v1_texCord - v0_texCord;
+                    Vector2 deltaUV2 = v2_texCord - v0_texCord;
 
                     float inv_det = 1.0f / (deltaUV1.X * deltaUV2.Y - deltaUV2.X * deltaUV1.Y);
-                    // float inv_det_2 = 1.0f / (deltaUV1.X * -deltaUV2.Y - deltaUV2.X * -deltaUV1.Y);
+                    // float inv_det = 1.0f / (deltaUV1.X * -deltaUV2.Y - deltaUV2.X * -deltaUV1.Y);
 
                     Vector3 tangent = inv_det*(edge1*deltaUV2.Y - edge2*deltaUV1.Y);
 
@@ -216,8 +245,8 @@ namespace Henzai.Geometry
                     Vector3 normal = vertices[i].Normal;
                     Vector3 tangent = vertices[i].Tangent;
 
-                    // bitangent = Vector3.Normalize(bitangent - Vector3.Dot(normal,bitangent) * normal);
-                    // bitangent = Vector3.Normalize(bitangent - Vector3.Dot(tangent,bitangent) * tangent);
+                    bitangent = Vector3.Normalize(bitangent - Vector3.Dot(normal,bitangent) * normal);
+                    bitangent = Vector3.Normalize(bitangent - Vector3.Dot(tangent,bitangent) * tangent);
                     vertices[i].Bitangent = bitangent;
 
                     bitangentCountPerVertex[i] = 0;
@@ -234,7 +263,7 @@ namespace Henzai.Geometry
                 var vertices = model.meshes[j].vertices;
                                 
                 for(uint i = 0; i < vertices.Length; i++){
-                    if(Vector3.Dot(Vector3.Cross(vertices[i].Tangent,vertices[i].Normal),vertices[i].Bitangent) < 0.0f){
+                    if(Vector3.Dot(Vector3.Cross(vertices[i].Tangent,vertices[i].Bitangent),vertices[i].Normal) < 0.0f){
                         vertices[i].Tangent *= -1.0f;
                     }
 

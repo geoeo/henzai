@@ -272,6 +272,8 @@ getting_started/Shaders/*.metallib
 *.ktx
 *.png
 *.jpg
+*.tga
+*.tif
 
 #licenses
 

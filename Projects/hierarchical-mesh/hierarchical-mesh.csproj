@@ -39,6 +39,11 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
 
+    <Content Include="../../Assets/sponza/**/*.*">
+      <Link>/sponza/%(RecursiveDir)/%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+
     <Content Include="../../Assets/Textures/Water_001_COLOR.jpg">
       <Link>/water/Water.jpg</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
