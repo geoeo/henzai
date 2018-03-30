@@ -238,7 +238,7 @@ namespace Henzai.Examples
             _commandList.ClearDepthStencil(1f);
             for(int j = 0; j < _models.Length; j++){
                 var model = _models[j];
-                RenderCommandGenerator.GenerateCommandsForModelPNTTB(
+                RenderCommandGenerator_Inline.GenerateCommandsForModelPNTTB(
                     _commandList,
                     _pipeline,
                     _cameraProjViewBuffer,
@@ -248,7 +248,7 @@ namespace Henzai.Examples
                     model);
                 for(int i = 0; i < model.meshCount; i++){
                     var mesh = model.meshes[i];
-                    RenderCommandGenerator.GenerateCommandsForMeshPNTTB(
+                    RenderCommandGenerator_Inline.GenerateCommandsForMeshPNTTB(
                         _commandList,
                         _vertexBuffers[runningMeshTotal],
                         _indexBuffers[runningMeshTotal],

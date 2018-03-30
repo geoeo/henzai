@@ -7,7 +7,7 @@ using Henzai.Geometry;
 
 namespace Henzai
 {
-    public static class RenderCommandGenerator
+    public static class RenderCommandGenerator_Inline
     {
 
 
@@ -26,7 +26,7 @@ namespace Henzai
                                                     Model<VertexPositionNormalTextureTangentBitangent> model){
 
                 commandList.SetPipeline(pipeline);
-                
+
                 commandList.UpdateBuffer(cameraProjViewBuffer,0,camera.ViewMatrix);
                 commandList.UpdateBuffer(cameraProjViewBuffer,64,camera.ProjectionMatrix);
                 commandList.UpdateBuffer(lightBuffer,0,lightPos);
