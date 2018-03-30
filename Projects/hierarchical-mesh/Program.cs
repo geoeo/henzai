@@ -19,12 +19,19 @@ namespace Henzai.Examples
 
             };
 
+            RenderOptions rdOptions = new RenderOptions()
+            {
+                PreferredGraphicsBackend = GraphicsBackend.OpenGL,
+                UsePreferredGraphicsBackend = true,
+                LimitFrames = true,
+                FPSTarget = 60.0
+            };
+
             Scene scene = new Scene(
                 "Hierarchical Mesh",
                 windowSize,
                 gdOptions,
-                GraphicsBackend.OpenGL,
-                usePreferredGraphicsBackend: true
+                rdOptions
             );
 
             SimpleGUIOverlay gui = new SimpleGUIOverlay(scene.graphicsDevice,scene.contextWindow);

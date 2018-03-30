@@ -25,8 +25,8 @@ namespace Henzai.Examples
         private ResourceSet _resourceSet;
         private ResourceLayout _resourceLayout;
 
-        public Scene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, GraphicsBackend preferredBackend, bool usePreferredGraphicsBackend)
-            : base(title,windowSize,graphicsDeviceOptions,preferredBackend,usePreferredGraphicsBackend){
+        public Scene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
+            : base(title,windowSize,graphicsDeviceOptions,renderOptions){
         }
 
         override protected void CreateResources()

@@ -51,8 +51,8 @@ namespace Henzai.Examples
         private ResourceSet _transformationPipelineResourceSet;
         private ResourceLayout _transformationPipelineResourceLayout;
 
-        public Scene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, GraphicsBackend preferredBackend, bool usePreferredGraphicsBackend)
-            : base(title,windowSize,graphicsDeviceOptions,preferredBackend,usePreferredGraphicsBackend){
+        public Scene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
+            : base(title,windowSize,graphicsDeviceOptions,renderOptions){
             PreRenderLoop += ScaleTextureQuadToMatchResolution;
             PreDraw += this.RotateCube;
         }

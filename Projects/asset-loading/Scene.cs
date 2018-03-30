@@ -36,8 +36,8 @@ namespace Henzai.Examples
 
         Model<VertexPositionNormal> _model;
 
-        public Scene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, GraphicsBackend preferredBackend, bool usePreferredGraphicsBackend)
-            : base(title,windowSize,graphicsDeviceOptions,preferredBackend,usePreferredGraphicsBackend){
+        public Scene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
+            : base(title,windowSize,graphicsDeviceOptions,renderOptions){
                 _vertexBuffers = new List<DeviceBuffer>();
                 _indexBuffers = new List<DeviceBuffer>();
         }

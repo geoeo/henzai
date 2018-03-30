@@ -30,5 +30,9 @@ namespace Henzai
             _frameTimer.Stop();
             _prevFrameTicksInMilliseconds = _ticksInMilliseconds;
         }
+
+        public float Query(){
+            return _ticksInMilliseconds;
+        }
     }
 } 

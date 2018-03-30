@@ -26,8 +26,8 @@ namespace Henzai.Examples
         private ResourceLayout _resourceLayout;
         private Matrix4x4 _worldTransCube;
 
-        public Scene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, GraphicsBackend preferredBackend, bool usePreferredGraphicsBackend)
-            : base(title,windowSize,graphicsDeviceOptions,preferredBackend,usePreferredGraphicsBackend){
+        public Scene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
+            : base(title,windowSize,graphicsDeviceOptions,renderOptions){
                 PreDraw += rotateCameraAround;
                 _worldTransCube = Matrix4x4.CreateWorld(new Vector3(0,0,0),-Vector3.UnitZ,Vector3.UnitY);
             }

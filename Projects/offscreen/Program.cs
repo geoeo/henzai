@@ -18,12 +18,20 @@ namespace Henzai.Examples
 
             };
 
+            RenderOptions rdOptions = new RenderOptions()
+            {
+                PreferredGraphicsBackend = GraphicsBackend.OpenGL,
+                UsePreferredGraphicsBackend = false,
+                LimitFrames = true,
+                FPSTarget = 60.0
+            };
+
+
             Scene scene = new Scene(
                 "Offscreen",
                 windowSize,
                 gdOptions,
-                GraphicsBackend.OpenGL,
-                usePreferredGraphicsBackend: false
+                rdOptions
             );
 
             scene.Run(renderResolution);

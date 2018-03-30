@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Veldrid;
 using Veldrid.StartupUtilities;
 using Veldrid.Sdl2;
 using Henzai.UserInterface;
+using Henzai.Extensions;
 
 namespace Henzai
 {
@@ -29,7 +31,7 @@ namespace Henzai
         public Sdl2Window contextWindow => _contextWindow;
         private GraphicsDevice _graphicsDevice;
         public GraphicsDevice graphicsDevice => _graphicsDevice;
-
+        private RenderOptions _renderOptions;
         protected DisposeCollectorResourceFactory _factory;
         protected Resolution _renderResolution;
         /// <summary>
@@ -56,7 +58,7 @@ namespace Henzai
         private Task[] drawTasksPost;
 
         //TODO: Investigate 60 fps cap
-        public Renderable(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, GraphicsBackend preferredBackend, bool usePreferredGraphicsBackend){
+        public Renderable(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions){
             WindowCreateInfo windowCI = new WindowCreateInfo()
             {
                 X = 100,
@@ -67,11 +69,12 @@ namespace Henzai
             };
             _contextWindow = VeldridStartup.CreateWindow(ref windowCI);
 
-            if(usePreferredGraphicsBackend)
-                _graphicsDevice = VeldridStartup.CreateGraphicsDevice(_contextWindow,graphicsDeviceOptions,preferredBackend);
+            if(renderOptions.UsePreferredGraphicsBackend)
+                _graphicsDevice = VeldridStartup.CreateGraphicsDevice(_contextWindow,graphicsDeviceOptions,renderOptions.PreferredGraphicsBackend);
             else
                 _graphicsDevice = VeldridStartup.CreateGraphicsDevice(_contextWindow,graphicsDeviceOptions);
 
+            _renderOptions = renderOptions;
             _contextWindow.Title = $"{title} / {_graphicsDevice.BackendType.ToString()}";
             _factory = new DisposeCollectorResourceFactory(_graphicsDevice.ResourceFactory);
 
@@ -115,6 +118,8 @@ namespace Henzai
             while (_contextWindow.Exists)
             {
                 _frameTimer.Start();
+
+                // previousFrameTicks = limitFrameRateBlocking(previousFrameTicks,1.0/60.0);
                 InputSnapshot inputSnapshot = _contextWindow.PumpEvents();
                 InputTracker.UpdateFrameInput(inputSnapshot);
 
@@ -141,26 +146,41 @@ namespace Henzai
 
                     Draw();
 
-                    // Perform draw tasks which should be after before "main" draw e.g. UI updates
+                    // Perform draw tasks which should be after after "main" draw e.g. UI updates
                     for(int i = 0; i < childrenPost.Count; i++){
                         var child = childrenPost[i];
                         drawTasksPost[i] = Task.Run(() => child.Draw());
                     } 
 
                     Task.WaitAll(drawTasksPost);
+                    PostDraw?.Invoke();
+
+
+                    if(_renderOptions.LimitFrames)
+                        limitFrameRate_Blocking();
 
                     graphicsDevice.SwapBuffers();
-                    PostDraw?.Invoke();
                 }
 
                 _camera.Update(_frameTimer.prevFrameTicksInSeconds);
                 _frameTimer.Stop();
+
+
             }
 
             _graphicsDevice.WaitForIdle();
             Dispose();
 
         }
+
+        private void limitFrameRate_Blocking(){
+
+            double millisecondsPerFrameDiff = _renderOptions.MillisecondsPerFrame - _frameTimer.Query();
+            int msDiffRounded = millisecondsPerFrameDiff.ToInt32AwayFromZero();
+            if(millisecondsPerFrameDiff > 0)
+                Thread.Sleep(msDiffRounded);
+        }
+
       
         /// <summary>
         /// Executes the defined command list(s)

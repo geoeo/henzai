@@ -1,6 +1,6 @@
 namespace Henzai
 {
-    public interface IUpdatable
+    public interface Updatable
     {
         void Update(float deltaSeconds);
     }

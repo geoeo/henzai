@@ -44,8 +44,8 @@ namespace Henzai.Examples
 
         Model<VertexPositionNormalTextureTangentBitangent> _model;
 
-        public Scene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, GraphicsBackend preferredBackend, bool usePreferredGraphicsBackend)
-            : base(title,windowSize,graphicsDeviceOptions,preferredBackend,usePreferredGraphicsBackend){
+        public Scene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
+            : base(title,windowSize,graphicsDeviceOptions,renderOptions){
                 _vertexBuffersList = new List<DeviceBuffer>();
                 _indexBuffersList = new List<DeviceBuffer>();
                 _textureResourceSetsList = new List<ResourceSet>();

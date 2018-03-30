@@ -19,12 +19,19 @@ namespace Henzai.Examples
 
             };
 
+            RenderOptions rdOptions = new RenderOptions()
+            {
+                PreferredGraphicsBackend = GraphicsBackend.OpenGL,
+                UsePreferredGraphicsBackend = false,
+                LimitFrames = true,
+                FPSTarget = 60.0
+            };
+
             Scene scene = new Scene(
                 "Asset Loading",
                 windowSize,
                 gdOptions,
-                GraphicsBackend.OpenGL,
-                usePreferredGraphicsBackend: false
+                rdOptions
             );
 
             SimpleGUIOverlay gui = new SimpleGUIOverlay(scene.graphicsDevice,scene.contextWindow);

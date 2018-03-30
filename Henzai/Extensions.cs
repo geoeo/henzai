@@ -27,6 +27,10 @@ namespace Henzai.Extensions
         public static Vector4 ToDirection(this Vector3 val){
             return new Vector4(val, 0.0f);
         }
+
+        public static int ToInt32AwayFromZero(this double val){
+            return Convert.ToInt32(Math.Round(val,MidpointRounding.AwayFromZero));
+        }
     }
 
     public static class GenericExtensions

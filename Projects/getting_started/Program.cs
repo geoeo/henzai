@@ -12,12 +12,19 @@ namespace Henzai.Examples
             Resolution windowSize = new Resolution(960,540);
             GraphicsDeviceOptions gdOptions = new GraphicsDeviceOptions();
 
+            RenderOptions rdOptions = new RenderOptions()
+            {
+                PreferredGraphicsBackend = GraphicsBackend.OpenGL,
+                UsePreferredGraphicsBackend = false,
+                LimitFrames = true,
+                FPSTarget = 60.0
+            };
+
             Scene scene = new Scene(
                 "Getting Started",
                 windowSize,
                 gdOptions,
-                GraphicsBackend.OpenGL,
-                usePreferredGraphicsBackend: false
+                rdOptions
             );
 
             scene.Run(renderResolution);
