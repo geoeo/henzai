@@ -37,10 +37,10 @@ namespace Henzai.Examples
             radian *= 10.0f*deltaSeconds;
             // Matrix4x4 rotationAroundY = Matrix4x4.CreateRotationY(radian);
             Quaternion rotationAroundY = Quaternion.CreateFromAxisAngle(Vector3.UnitY,radian);
-            Vector3 cubeToCamera = camera.Position - _worldTransCube.Translation;
+            Vector3 cubeToCamera = Camera.Position - _worldTransCube.Translation;
             Vector3 cameraTranslation = Vector3.Transform(cubeToCamera,rotationAroundY);
-            camera.Position = cameraTranslation;
-            camera.LookDirection = -Vector3.Normalize(cubeToCamera); // not interpolating, might be choppy
+            Camera.Position = cameraTranslation;
+            Camera.LookDirection = -Vector3.Normalize(cubeToCamera); // not interpolating, might be choppy
         }
 
         override protected void CreateResources()
@@ -133,8 +133,8 @@ namespace Henzai.Examples
             _commandList.ClearDepthStencil(1f);
             _commandList.SetVertexBuffer(0,_vertexBuffer);
             _commandList.SetIndexBuffer(_indexBuffer,IndexFormat.UInt16);
-            _commandList.UpdateBuffer(_cameraProjViewBuffer,0,camera.ViewMatrix);
-            _commandList.UpdateBuffer(_cameraProjViewBuffer,64,camera.ProjectionMatrix);
+            _commandList.UpdateBuffer(_cameraProjViewBuffer,0,Camera.ViewMatrix);
+            _commandList.UpdateBuffer(_cameraProjViewBuffer,64,Camera.ProjectionMatrix);
             _commandList.UpdateBuffer(_cameraProjViewBuffer,128,_worldTransCube);
             _commandList.SetGraphicsResourceSet(0,_cameraResourceSet); // Always after SetPipeline
             _commandList.SetGraphicsResourceSet(1,_textureResourceSet); // Always after SetPipeline

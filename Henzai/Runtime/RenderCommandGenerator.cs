@@ -5,7 +5,7 @@ using Veldrid;
 using Henzai.Extensions;
 using Henzai.Geometry;
 
-namespace Henzai
+namespace Henzai.Runtime
 {
     public static class RenderCommandGenerator_Inline
     {
@@ -13,7 +13,7 @@ namespace Henzai
 
         /// <summary>
         /// Render Commands for Model of Type:
-        /// <see cref="VertexPositionNormalTextureTangentBitangent"/> 
+        /// <see cref="VertexStructs"/> 
         ///</summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void GenerateCommandsForModel<T>(
@@ -38,7 +38,7 @@ namespace Henzai
 
         /// <summary>
         /// Render Commands for Mesh of Type:
-        /// <see cref="VertexPositionNormalTextureTangentBitangent"/> 
+        /// <see cref="VertexStructs"/> 
         ///</summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void GenerateCommandsForMesh<T>(

@@ -17,7 +17,7 @@ namespace Henzai
     public abstract class Renderable : IDisposable
     {
         private Camera _camera {get; set;} 
-        public Camera camera => _camera;
+        public Camera Camera => _camera;
         private FrameTimer _frameTimer;
         //TODO: Investigate Switching to Array
         /// <summary>

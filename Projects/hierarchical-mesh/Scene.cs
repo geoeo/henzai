@@ -11,6 +11,7 @@ using Henzai;
 using Henzai.Extensions;
 using Henzai.Geometry;
 using Henzai.Runtime;
+using Henzai.Runtime.Render;
 
 namespace Henzai.Examples
 {
@@ -18,6 +19,7 @@ namespace Henzai.Examples
     {
 
         private CommandList _commandList;
+        private SceneRuntimeState _sceneRuntimeState;
         private List<DeviceBuffer> _vertexBuffersList;
         private List<DeviceBuffer> _indexBuffersList;
         private List<ResourceSet> _textureResourceSetsList;
@@ -29,12 +31,6 @@ namespace Henzai.Examples
         private Shader _vertexShader;
         private Shader _fragmentShader;
         private Pipeline _pipeline;
-        private DeviceBuffer _cameraProjViewBuffer;
-        private DeviceBuffer _materialBuffer;
-        private DeviceBuffer _lightBuffer;
-        private ResourceSet _cameraResourceSet;
-        private ResourceSet _materialResourceSet;
-        private ResourceSet _lightResourceSet;
         private ResourceLayout _cameraResourceLayout;
         private ResourceLayout _materialResourceLayout;
         private ResourceLayout _lightResourceLayout;
@@ -45,10 +41,13 @@ namespace Henzai.Examples
 
         public Scene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
             : base(title,windowSize,graphicsDeviceOptions,renderOptions){
+                _sceneRuntimeState = new SceneRuntimeState();
+
                 _vertexBuffersList = new List<DeviceBuffer>();
                 _indexBuffersList = new List<DeviceBuffer>();
                 _textureResourceSetsList = new List<ResourceSet>();
                 _modelsList = new List<Model<VertexPositionNormalTextureTangentBitangent>>();
+
 
                 PreDraw+=RotateModel;
                 PreRenderLoop+=FormatResources;
@@ -74,6 +73,7 @@ namespace Henzai.Examples
         // TODO: Abstract Resource Crreation for Uniforms, Vertex Layouts, Disposing
         override protected void CreateResources(){
 
+            _sceneRuntimeState.Light = new Light();
 
             // string filePath = Path.Combine(AppContext.BaseDirectory, "armor/armor.dae"); 
             // string filePath = Path.Combine(AppContext.BaseDirectory, "nanosuit/nanosuit.obj"); 
@@ -93,42 +93,42 @@ namespace Henzai.Examples
             _modelsList.Add(_model);
 
             /// Uniform 1 - Camera
-            _cameraProjViewBuffer = _factory.CreateBuffer(new BufferDescription(192,BufferUsage.UniformBuffer | BufferUsage.Dynamic));
+            _sceneRuntimeState.CameraProjViewBuffer  = _factory.CreateBuffer(new BufferDescription(192,BufferUsage.UniformBuffer | BufferUsage.Dynamic));
 
             var resourceLayoutElementDescription = new ResourceLayoutElementDescription("projViewWorld",ResourceKind.UniformBuffer,ShaderStages.Vertex);
             ResourceLayoutElementDescription[] resourceLayoutElementDescriptions = {resourceLayoutElementDescription};
             var resourceLayoutDescription = new ResourceLayoutDescription(resourceLayoutElementDescriptions);
-            BindableResource[] bindableResources = new BindableResource[]{_cameraProjViewBuffer};
+            BindableResource[] bindableResources = new BindableResource[]{_sceneRuntimeState.CameraProjViewBuffer};
             _cameraResourceLayout = _factory.CreateResourceLayout(resourceLayoutDescription);
             var resourceSetDescription = new ResourceSetDescription(_cameraResourceLayout,bindableResources);
             
-            _cameraResourceSet = _factory.CreateResourceSet(resourceSetDescription);
+            _sceneRuntimeState.CameraResourceSet = _factory.CreateResourceSet(resourceSetDescription);
 
             // Uniform 2 - Material
-            _materialBuffer = _factory.CreateBuffer(new BufferDescription(64,BufferUsage.UniformBuffer));
+            _sceneRuntimeState.MaterialBuffer = _factory.CreateBuffer(new BufferDescription(64,BufferUsage.UniformBuffer));
 
             var resourceLayoutElementDescriptionMaterial = new ResourceLayoutElementDescription("material",ResourceKind.UniformBuffer,ShaderStages.Fragment);
             ResourceLayoutElementDescription[] resourceLayoutElementDescriptionsMaterial = {resourceLayoutElementDescriptionMaterial};
             var resourceLayoutDescriptionMaterial = new ResourceLayoutDescription(resourceLayoutElementDescriptionsMaterial);
-            BindableResource[] bindableResourcesMaterial = new BindableResource[]{_materialBuffer};
+            BindableResource[] bindableResourcesMaterial = new BindableResource[]{_sceneRuntimeState.MaterialBuffer};
 
             _materialResourceLayout = _factory.CreateResourceLayout(resourceLayoutDescriptionMaterial);
             var resourceSetDescriptionMaterial = new ResourceSetDescription(_materialResourceLayout,bindableResourcesMaterial);
             
-            _materialResourceSet = _factory.CreateResourceSet(resourceSetDescriptionMaterial);
+            _sceneRuntimeState.MaterialResourceSet = _factory.CreateResourceSet(resourceSetDescriptionMaterial);
 
             // Uniform 3 - Light
-            _lightBuffer = _factory.CreateBuffer(new BufferDescription(16,BufferUsage.UniformBuffer));
+            _sceneRuntimeState.LightBuffer = _factory.CreateBuffer(new BufferDescription(16,BufferUsage.UniformBuffer));
 
             var resourceLayoutElementDescriptionLight = new ResourceLayoutElementDescription("light",ResourceKind.UniformBuffer,ShaderStages.Vertex);
             ResourceLayoutElementDescription[] resourceLayoutElementDescriptionsLight = {resourceLayoutElementDescriptionLight};
             var resourceLayoutDescriptionLight = new ResourceLayoutDescription(resourceLayoutElementDescriptionsLight);
-            BindableResource[] bindableResourcesLight = new BindableResource[]{_lightBuffer};
+            BindableResource[] bindableResourcesLight = new BindableResource[]{_sceneRuntimeState.LightBuffer};
 
             _lightResourceLayout = _factory.CreateResourceLayout(resourceLayoutDescriptionLight);
             var resourceSetDescriptionLight = new ResourceSetDescription(_lightResourceLayout,bindableResourcesLight);
             
-            _lightResourceSet = _factory.CreateResourceSet(resourceSetDescriptionLight);
+            _sceneRuntimeState.LightResourceSet = _factory.CreateResourceSet(resourceSetDescriptionLight);
 
             ResourceLayout textureLayout = _factory.CreateResourceLayout(
                 new ResourceLayoutDescription(
@@ -242,10 +242,10 @@ namespace Henzai.Examples
                 RenderCommandGenerator_Inline.GenerateCommandsForModel(
                     _commandList,
                     _pipeline,
-                    _cameraProjViewBuffer,
-                    _lightBuffer,
-                    camera,
-                    ref LIGHT_POS,
+                    _sceneRuntimeState.CameraProjViewBuffer,
+                    _sceneRuntimeState.LightBuffer,
+                    Camera,
+                    ref _sceneRuntimeState.Light.Light_DontMutate,
                     model);
                 for(int i = 0; i < model.meshCount; i++){
                     var mesh = model.meshes[i];
@@ -253,11 +253,11 @@ namespace Henzai.Examples
                         _commandList,
                         _vertexBuffers[runningMeshTotal],
                         _indexBuffers[runningMeshTotal],
-                        _cameraProjViewBuffer,
-                        _materialBuffer,
-                        _cameraResourceSet,
-                        _lightResourceSet,
-                        _materialResourceSet,
+                        _sceneRuntimeState.CameraProjViewBuffer,
+                        _sceneRuntimeState.MaterialBuffer,
+                        _sceneRuntimeState.CameraResourceSet,
+                        _sceneRuntimeState.LightResourceSet,
+                        _sceneRuntimeState.MaterialResourceSet,
                         _textureResourceSets[runningMeshTotal],
                         mesh
                     );

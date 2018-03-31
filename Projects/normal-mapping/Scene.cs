@@ -209,8 +209,8 @@ namespace Henzai.Examples
 
                 _commandList.SetVertexBuffer(0,_vertexBuffers[i]);
                 _commandList.SetIndexBuffer(_indexBuffers[i],IndexFormat.UInt32);
-                _commandList.UpdateBuffer(_cameraProjViewBuffer,0,camera.ViewMatrix);
-                _commandList.UpdateBuffer(_cameraProjViewBuffer,64,camera.ProjectionMatrix);
+                _commandList.UpdateBuffer(_cameraProjViewBuffer,0,Camera.ViewMatrix);
+                _commandList.UpdateBuffer(_cameraProjViewBuffer,64,Camera.ProjectionMatrix);
                 _commandList.UpdateBuffer(_cameraProjViewBuffer,128,_model.GetWorld_DontMutate);
                 _commandList.SetGraphicsResourceSet(0,_cameraResourceSet); // Always after SetPipeline
                 _commandList.UpdateBuffer(_lightBuffer,0,LIGHT_POS);
