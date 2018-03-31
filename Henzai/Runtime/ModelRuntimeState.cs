@@ -53,6 +53,9 @@ namespace Henzai.Runtime.Render
         /// </summary>
         public Model<T> Model {get;set;}
 
+
+        
+
         public ModelRuntimeState(Model<T> modelIn, string vShaderName, string fShaderName){
             Model = modelIn;
 
@@ -73,29 +76,6 @@ namespace Henzai.Runtime.Render
         public void LoadShaders(GraphicsDevice graphicsDevice){
             VertexShader = IO.LoadShader(_vertexShaderName,ShaderStages.Vertex,graphicsDevice);
             FragmentShader = IO.LoadShader(_fragmentShaderName,ShaderStages.Fragment,graphicsDevice);
-        }
-
-        public void CreateAndAddTextureResourceLayoutForMeshAt(int index, DisposeCollectorResourceFactory factory, GraphicsDevice graphicsDevice){
-                Material material = Model.meshes[index].TryGetMaterial();
-
-                ImageSharpTexture diffuseTextureIS = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, Model.BaseDir, material.textureDiffuse));
-                Texture diffuseTexture = diffuseTextureIS.CreateDeviceTexture(graphicsDevice, factory);
-                TextureView diffuseTextureView = factory.CreateTextureView(diffuseTexture);
-
-                string normalTexPath = material.textureNormal.Length == 0 ? material.textureBump : material.textureNormal;
-                ImageSharpTexture normalTextureIS = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, Model.BaseDir, normalTexPath));
-                Texture normalTexture = normalTextureIS.CreateDeviceTexture(graphicsDevice, factory);
-                TextureView normalTextureView = factory.CreateTextureView(normalTexture);
-
-                ResourceSet textureResourceSet = factory.CreateResourceSet(new ResourceSetDescription(
-                TextureLayout ,
-                diffuseTextureView,
-                TextureSampler,
-                normalTextureView,
-                TextureSampler
-                ));
-
-                TextureResourceSetsList.Add(textureResourceSet);
         }
 
     }

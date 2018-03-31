@@ -103,8 +103,8 @@ namespace Henzai.Examples
                 _vertexBuffers.Add(vertexBuffer);
                 _indexBuffers.Add(indexBuffer);
 
-                graphicsDevice.UpdateBuffer(vertexBuffer,0,_model.meshes[i].vertices);
-                graphicsDevice.UpdateBuffer(indexBuffer,0,_model.meshes[i].meshIndices);
+                GraphicsDevice.UpdateBuffer(vertexBuffer,0,_model.meshes[i].vertices);
+                GraphicsDevice.UpdateBuffer(indexBuffer,0,_model.meshes[i].meshIndices);
             }
 
             VertexLayoutDescription vertexLayout 
@@ -114,8 +114,8 @@ namespace Henzai.Examples
                     //new VertexElementDescription("UV",VertexElementSemantic.TextureCoordinate,VertexElementFormat.Float2)
                 );
 
-            _vertexShader = IO.LoadShader("Phong",ShaderStages.Vertex,graphicsDevice);
-            _fragmentShader = IO.LoadShader("Phong",ShaderStages.Fragment,graphicsDevice);
+            _vertexShader = IO.LoadShader("Phong",ShaderStages.Vertex,GraphicsDevice);
+            _fragmentShader = IO.LoadShader("Phong",ShaderStages.Fragment,GraphicsDevice);
 
             GraphicsPipelineDescription pipelineDescription = new GraphicsPipelineDescription(){
                 BlendState = BlendStateDescription.SingleOverrideBlend,
@@ -134,7 +134,7 @@ namespace Henzai.Examples
                     vertexLayouts: new VertexLayoutDescription[] {vertexLayout},
                     shaders: new Shader[] {_vertexShader,_fragmentShader}
                 ),
-                Outputs = graphicsDevice.SwapchainFramebuffer.OutputDescription
+                Outputs = GraphicsDevice.SwapchainFramebuffer.OutputDescription
             };
 
             _pipeline = _factory.CreateGraphicsPipeline(pipelineDescription);
@@ -145,7 +145,7 @@ namespace Henzai.Examples
 
         override protected void BuildCommandList(){
             _commandList.Begin();
-            _commandList.SetFramebuffer(graphicsDevice.SwapchainFramebuffer);
+            _commandList.SetFramebuffer(GraphicsDevice.SwapchainFramebuffer);
             _commandList.SetPipeline(_pipeline);
             _commandList.SetFullViewports();
             _commandList.ClearColorTarget(0,RgbaFloat.White);
@@ -180,7 +180,7 @@ namespace Henzai.Examples
         }
 
         override protected void Draw(){
-            graphicsDevice.SubmitCommands(_commandList);
+            GraphicsDevice.SubmitCommands(_commandList);
         }
 
 

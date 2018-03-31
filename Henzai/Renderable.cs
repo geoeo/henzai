@@ -31,7 +31,7 @@ namespace Henzai
         private Sdl2Window _contextWindow;
         public Sdl2Window contextWindow => _contextWindow;
         private GraphicsDevice _graphicsDevice;
-        public GraphicsDevice graphicsDevice => _graphicsDevice;
+        public GraphicsDevice GraphicsDevice => _graphicsDevice;
         private RenderOptions _renderOptions;
         protected DisposeCollectorResourceFactory _factory;
         protected Resolution _renderResolution;
@@ -158,7 +158,7 @@ namespace Henzai
                     if(_renderOptions.LimitFrames)
                         limitFrameRate_Blocking();
 
-                    graphicsDevice.SwapBuffers();
+                    GraphicsDevice.SwapBuffers();
                 }
 
                 _camera.Update(_frameTimer.prevFrameTicksInSeconds);

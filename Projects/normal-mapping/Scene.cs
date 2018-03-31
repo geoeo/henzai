@@ -117,20 +117,20 @@ namespace Henzai.Examples
                 _vertexBuffers.Add(vertexBuffer);
                 _indexBuffers.Add(indexBuffer);
 
-                graphicsDevice.UpdateBuffer(vertexBuffer,0,_model.meshes[i].vertices);
-                graphicsDevice.UpdateBuffer(indexBuffer,0,_model.meshes[i].meshIndices);
+                GraphicsDevice.UpdateBuffer(vertexBuffer,0,_model.meshes[i].vertices);
+                GraphicsDevice.UpdateBuffer(indexBuffer,0,_model.meshes[i].meshIndices);
             }
 
             //Texture Samper
             // ImageSharpTexture diffuseTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "Textures", "earth.jpg"));
             // ImageSharpTexture diffuseTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "Textures", "Water.jpg"));
             ImageSharpTexture diffuseTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "armor", "diffuse.png"));
-            Texture sphereDiffuseTexture = diffuseTexture.CreateDeviceTexture(graphicsDevice, _factory);
+            Texture sphereDiffuseTexture = diffuseTexture.CreateDeviceTexture(GraphicsDevice, _factory);
             TextureView sphereDiffuseTextureView = _factory.CreateTextureView(sphereDiffuseTexture);
 
             // ImageSharpTexture normalTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "Textures", "WaterNorm.jpg"));
             ImageSharpTexture normalTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "armor", "normal.png"));
-            Texture sphereNormalTexture = normalTexture.CreateDeviceTexture(graphicsDevice, _factory);
+            Texture sphereNormalTexture = normalTexture.CreateDeviceTexture(GraphicsDevice, _factory);
             TextureView sphereNormalTextureView = _factory.CreateTextureView(sphereNormalTexture);
 
             ResourceLayout textureLayout = _factory.CreateResourceLayout(
@@ -156,7 +156,7 @@ namespace Henzai.Examples
             _textureResourceSet = _factory.CreateResourceSet(new ResourceSetDescription(
                 textureLayout,
                 sphereDiffuseTextureView,
-                graphicsDevice.LinearSampler,
+                GraphicsDevice.LinearSampler,
                 sphereNormalTextureView,
                 sampler
                 ));
@@ -169,8 +169,8 @@ namespace Henzai.Examples
                     new VertexElementDescription("Tangent",VertexElementSemantic.Normal,VertexElementFormat.Float3)
                 );
 
-            _vertexShader = IO.LoadShader("PhongTexture",ShaderStages.Vertex,graphicsDevice);
-            _fragmentShader = IO.LoadShader("PhongTexture",ShaderStages.Fragment,graphicsDevice);
+            _vertexShader = IO.LoadShader("PhongTexture",ShaderStages.Vertex,GraphicsDevice);
+            _fragmentShader = IO.LoadShader("PhongTexture",ShaderStages.Fragment,GraphicsDevice);
 
             GraphicsPipelineDescription pipelineDescription = new GraphicsPipelineDescription(){
                 BlendState = BlendStateDescription.SingleOverrideBlend,
@@ -188,7 +188,7 @@ namespace Henzai.Examples
                     vertexLayouts: new VertexLayoutDescription[] {vertexLayout},
                     shaders: new Shader[] {_vertexShader,_fragmentShader}
                 ),
-                Outputs = graphicsDevice.SwapchainFramebuffer.OutputDescription
+                Outputs = GraphicsDevice.SwapchainFramebuffer.OutputDescription
             };
 
             _pipeline = _factory.CreateGraphicsPipeline(pipelineDescription);
@@ -199,7 +199,7 @@ namespace Henzai.Examples
 
         override protected void BuildCommandList(){
             _commandList.Begin();
-            _commandList.SetFramebuffer(graphicsDevice.SwapchainFramebuffer);
+            _commandList.SetFramebuffer(GraphicsDevice.SwapchainFramebuffer);
             _commandList.SetPipeline(_pipeline);
             _commandList.SetFullViewports();
             _commandList.ClearColorTarget(0,RgbaFloat.White);
@@ -236,7 +236,7 @@ namespace Henzai.Examples
         }
 
         override protected void Draw(){
-            graphicsDevice.SubmitCommands(_commandList);
+            GraphicsDevice.SubmitCommands(_commandList);
         }
 
 

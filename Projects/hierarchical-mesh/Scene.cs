@@ -122,7 +122,7 @@ namespace Henzai.Examples
 
                 modelState.TextureSampler = ResourceGenerator.GenerateLinearSampler(_factory);
 
-                modelState.LoadShaders(graphicsDevice);
+                modelState.LoadShaders(GraphicsDevice);
 
                 for(int i = 0; i < model.meshCount; i++){
 
@@ -136,11 +136,11 @@ namespace Henzai.Examples
                     modelState.VertexBuffersList.Add(vertexBuffer);
                     modelState.IndexBuffersList.Add(indexBuffer);
 
-                    graphicsDevice.UpdateBuffer(vertexBuffer,0,model.meshes[i].vertices);
-                    graphicsDevice.UpdateBuffer(indexBuffer,0,model.meshes[i].meshIndices);
+                    GraphicsDevice.UpdateBuffer(vertexBuffer,0,model.meshes[i].vertices);
+                    GraphicsDevice.UpdateBuffer(indexBuffer,0,model.meshes[i].meshIndices);
 
                     modelState.TextureResourceSetsList.Add(
-                        ResourceGenerator.GenerateTextureResourceSetForNormalMapping(modelState,i,_factory,graphicsDevice)
+                        ResourceGenerator.GenerateTextureResourceSetForNormalMapping(modelState,i,_factory,GraphicsDevice)
                         );
                 }
 
@@ -167,7 +167,7 @@ namespace Henzai.Examples
                         vertexLayouts: new VertexLayoutDescription[] {vertexLayout},
                         shaders: new Shader[] {modelState.VertexShader,modelState.FragmentShader}
                     ),
-                    Outputs = graphicsDevice.SwapchainFramebuffer.OutputDescription
+                    Outputs = GraphicsDevice.SwapchainFramebuffer.OutputDescription
                 };
 
                 modelState.Pipeline = _factory.CreateGraphicsPipeline(pipelineDescription);
@@ -180,7 +180,7 @@ namespace Henzai.Examples
 
         override protected void BuildCommandList(){
             _commandList.Begin();
-            _commandList.SetFramebuffer(graphicsDevice.SwapchainFramebuffer);
+            _commandList.SetFramebuffer(GraphicsDevice.SwapchainFramebuffer);
             _commandList.SetFullViewports();
 
             _commandList.ClearColorTarget(0,RgbaFloat.White);
@@ -218,7 +218,7 @@ namespace Henzai.Examples
         }
 
         override protected void Draw(){
-            graphicsDevice.SubmitCommands(_commandList);
+            GraphicsDevice.SubmitCommands(_commandList);
         }
 
 

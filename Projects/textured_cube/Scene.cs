@@ -59,7 +59,7 @@ namespace Henzai.Examples
             _cameraResourceSet = _factory.CreateResourceSet(resourceSetDescription);
 
             ImageSharpTexture NameImage = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "Textures", "Name.png"));
-            Texture cubeTexture = NameImage.CreateDeviceTexture(graphicsDevice, _factory);
+            Texture cubeTexture = NameImage.CreateDeviceTexture(GraphicsDevice, _factory);
             TextureView cubeTextureView = _factory.CreateTextureView(cubeTexture);
 
             ResourceLayout textureLayout = _factory.CreateResourceLayout(
@@ -70,7 +70,7 @@ namespace Henzai.Examples
             _textureResourceSet = _factory.CreateResourceSet(new ResourceSetDescription(
                 textureLayout,
                 cubeTextureView,
-                graphicsDevice.LinearSampler));
+                GraphicsDevice.LinearSampler));
 
             Mesh<VertexPositionTexture> texturedCube 
                 = GeometryFactory.generateTexturedCube();
@@ -84,8 +84,8 @@ namespace Henzai.Examples
                 = _factory.CreateBuffer(new BufferDescription(cubeIndicies.LengthUnsigned()*sizeof(ushort),BufferUsage.IndexBuffer));
 
             // fill buffers with data
-            graphicsDevice.UpdateBuffer(_vertexBuffer,0,texturedCube.vertices);
-            graphicsDevice.UpdateBuffer(_indexBuffer,0,cubeIndicies);
+            GraphicsDevice.UpdateBuffer(_vertexBuffer,0,texturedCube.vertices);
+            GraphicsDevice.UpdateBuffer(_indexBuffer,0,cubeIndicies);
             //graphicsDevice.UpdateBuffer(_cameraProjViewBuffer,0,camera.ViewMatrix);
             //graphicsDevice.UpdateBuffer(_cameraProjViewBuffer,64,camera.ProjectionMatrix);
 
@@ -95,8 +95,8 @@ namespace Henzai.Examples
                     new VertexElementDescription("UV",VertexElementSemantic.TextureCoordinate,VertexElementFormat.Float2)
                 );
 
-            _vertexShader = IO.LoadShader("Texture",ShaderStages.Vertex,graphicsDevice);
-            _fragmentShader = IO.LoadShader("Texture",ShaderStages.Fragment,graphicsDevice);
+            _vertexShader = IO.LoadShader("Texture",ShaderStages.Vertex,GraphicsDevice);
+            _fragmentShader = IO.LoadShader("Texture",ShaderStages.Fragment,GraphicsDevice);
 
             GraphicsPipelineDescription pipelineDescription = new GraphicsPipelineDescription(){
                 BlendState = BlendStateDescription.SingleOverrideBlend,
@@ -114,7 +114,7 @@ namespace Henzai.Examples
                     vertexLayouts: new VertexLayoutDescription[] {vertexLayout},
                     shaders: new Shader[] {_vertexShader,_fragmentShader}
                 ),
-                Outputs = graphicsDevice.SwapchainFramebuffer.OutputDescription
+                Outputs = GraphicsDevice.SwapchainFramebuffer.OutputDescription
             };
 
             _pipeline = _factory.CreateGraphicsPipeline(pipelineDescription);
@@ -126,7 +126,7 @@ namespace Henzai.Examples
         override protected void BuildCommandList(){
 
             _commandList.Begin();
-            _commandList.SetFramebuffer(graphicsDevice.SwapchainFramebuffer);
+            _commandList.SetFramebuffer(GraphicsDevice.SwapchainFramebuffer);
             _commandList.SetPipeline(_pipeline);
             _commandList.SetFullViewports();
             _commandList.ClearColorTarget(0,RgbaFloat.White);
@@ -150,7 +150,7 @@ namespace Henzai.Examples
         }
 
         override protected void Draw(){
-            graphicsDevice.SubmitCommands(_commandList);
+            GraphicsDevice.SubmitCommands(_commandList);
         }
         
     }

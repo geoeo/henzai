@@ -69,13 +69,13 @@ namespace Henzai.UserInterface
             _indexBuffer = _factory.CreateBuffer(new BufferDescription(2000, BufferUsage.IndexBuffer | BufferUsage.Dynamic));
             _indexBuffer.Name = "ImGui.NET Index Buffer";
     
-            RecreateFontDeviceTexture(graphicsDevice);
+            RecreateFontDeviceTexture(GraphicsDevice);
 
             _projMatrixBuffer = _factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
             _projMatrixBuffer.Name = "ImGui.NET Projection Buffer";
 
-            byte[] vertexShaderBytes = LoadEmbeddedShaderCode(graphicsDevice.ResourceFactory, "imgui-vertex");
-            byte[] fragmentShaderBytes = LoadEmbeddedShaderCode(graphicsDevice.ResourceFactory, "imgui-frag");
+            byte[] vertexShaderBytes = LoadEmbeddedShaderCode(GraphicsDevice.ResourceFactory, "imgui-vertex");
+            byte[] fragmentShaderBytes = LoadEmbeddedShaderCode(GraphicsDevice.ResourceFactory, "imgui-frag");
             _vertexShader = _factory.CreateShader(new ShaderDescription(ShaderStages.Vertex, vertexShaderBytes, "VS"));
             _fragmentShader = _factory.CreateShader(new ShaderDescription(ShaderStages.Fragment, fragmentShaderBytes, "FS"));
 
@@ -100,12 +100,12 @@ namespace Henzai.UserInterface
                 PrimitiveTopology.TriangleList,
                 new ShaderSetDescription(vertexLayouts, new[] { _vertexShader, _fragmentShader }),
                 new ResourceLayout[] { _layout, _textureLayout },
-                graphicsDevice.SwapchainFramebuffer.OutputDescription);
+                GraphicsDevice.SwapchainFramebuffer.OutputDescription);
             _pipeline = _factory.CreateGraphicsPipeline(ref pd);
 
             _mainResourceSet = _factory.CreateResourceSet(new ResourceSetDescription(_layout,
                 _projMatrixBuffer,
-                graphicsDevice.PointSampler));
+                GraphicsDevice.PointSampler));
 
             _fontTextureResourceSet = _factory.CreateResourceSet(new ResourceSetDescription(_textureLayout, _fontTextureView));
 
@@ -113,17 +113,17 @@ namespace Henzai.UserInterface
 
         override protected void BuildCommandList(){
             _commandList.Begin();
-            _commandList.SetFramebuffer(graphicsDevice.SwapchainFramebuffer);
+            _commandList.SetFramebuffer(GraphicsDevice.SwapchainFramebuffer);
 
             unsafe {
-                RenderImGuiDrawData(ImGui.GetDrawData(), graphicsDevice, _commandList);
+                RenderImGuiDrawData(ImGui.GetDrawData(), GraphicsDevice, _commandList);
             }
             _commandList.End();
         }
 
         override protected void Draw(){
 
-            graphicsDevice.SubmitCommands(_commandList);
+            GraphicsDevice.SubmitCommands(_commandList);
 
         }
 
