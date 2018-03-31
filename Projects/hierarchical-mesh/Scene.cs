@@ -31,9 +31,6 @@ namespace Henzai.Examples
         private Shader _vertexShader;
         private Shader _fragmentShader;
         private Pipeline _pipeline;
-        private ResourceLayout _cameraResourceLayout;
-        private ResourceLayout _materialResourceLayout;
-        private ResourceLayout _lightResourceLayout;
         // TODO: Refactor this into a class with colour
         private Vector4 LIGHT_POS = new Vector4(0,20,15,1);
 
@@ -94,41 +91,45 @@ namespace Henzai.Examples
 
             /// Uniform 1 - Camera
             _sceneRuntimeState.CameraProjViewBuffer  = _factory.CreateBuffer(new BufferDescription(192,BufferUsage.UniformBuffer | BufferUsage.Dynamic));
-
-            var resourceLayoutElementDescription = new ResourceLayoutElementDescription("projViewWorld",ResourceKind.UniformBuffer,ShaderStages.Vertex);
-            ResourceLayoutElementDescription[] resourceLayoutElementDescriptions = {resourceLayoutElementDescription};
-            var resourceLayoutDescription = new ResourceLayoutDescription(resourceLayoutElementDescriptions);
-            BindableResource[] bindableResources = new BindableResource[]{_sceneRuntimeState.CameraProjViewBuffer};
-            _cameraResourceLayout = _factory.CreateResourceLayout(resourceLayoutDescription);
-            var resourceSetDescription = new ResourceSetDescription(_cameraResourceLayout,bindableResources);
-            
-            _sceneRuntimeState.CameraResourceSet = _factory.CreateResourceSet(resourceSetDescription);
+            _sceneRuntimeState.CameraResourceLayout 
+                = ResourceGenerator.GenerateResourceLayout(
+                    _factory,
+                    "projViewWorld",
+                    ResourceKind.UniformBuffer,
+                    ShaderStages.Vertex);
+            _sceneRuntimeState.CameraResourceSet 
+                = ResourceGenerator.GenrateResourceSet(
+                    _factory,
+                    _sceneRuntimeState.CameraResourceLayout,
+                    new BindableResource[]{_sceneRuntimeState.CameraProjViewBuffer});
 
             // Uniform 2 - Material
             _sceneRuntimeState.MaterialBuffer = _factory.CreateBuffer(new BufferDescription(64,BufferUsage.UniformBuffer));
-
-            var resourceLayoutElementDescriptionMaterial = new ResourceLayoutElementDescription("material",ResourceKind.UniformBuffer,ShaderStages.Fragment);
-            ResourceLayoutElementDescription[] resourceLayoutElementDescriptionsMaterial = {resourceLayoutElementDescriptionMaterial};
-            var resourceLayoutDescriptionMaterial = new ResourceLayoutDescription(resourceLayoutElementDescriptionsMaterial);
-            BindableResource[] bindableResourcesMaterial = new BindableResource[]{_sceneRuntimeState.MaterialBuffer};
-
-            _materialResourceLayout = _factory.CreateResourceLayout(resourceLayoutDescriptionMaterial);
-            var resourceSetDescriptionMaterial = new ResourceSetDescription(_materialResourceLayout,bindableResourcesMaterial);
-            
-            _sceneRuntimeState.MaterialResourceSet = _factory.CreateResourceSet(resourceSetDescriptionMaterial);
+            _sceneRuntimeState.MaterialResourceLayout 
+                = ResourceGenerator.GenerateResourceLayout(
+                    _factory,
+                    "material",
+                    ResourceKind.UniformBuffer,
+                    ShaderStages.Fragment);
+            _sceneRuntimeState.MaterialResourceSet 
+                = ResourceGenerator.GenrateResourceSet(
+                    _factory,
+                    _sceneRuntimeState.MaterialResourceLayout,
+                    new BindableResource[]{_sceneRuntimeState.MaterialBuffer});
 
             // Uniform 3 - Light
             _sceneRuntimeState.LightBuffer = _factory.CreateBuffer(new BufferDescription(16,BufferUsage.UniformBuffer));
-
-            var resourceLayoutElementDescriptionLight = new ResourceLayoutElementDescription("light",ResourceKind.UniformBuffer,ShaderStages.Vertex);
-            ResourceLayoutElementDescription[] resourceLayoutElementDescriptionsLight = {resourceLayoutElementDescriptionLight};
-            var resourceLayoutDescriptionLight = new ResourceLayoutDescription(resourceLayoutElementDescriptionsLight);
-            BindableResource[] bindableResourcesLight = new BindableResource[]{_sceneRuntimeState.LightBuffer};
-
-            _lightResourceLayout = _factory.CreateResourceLayout(resourceLayoutDescriptionLight);
-            var resourceSetDescriptionLight = new ResourceSetDescription(_lightResourceLayout,bindableResourcesLight);
-            
-            _sceneRuntimeState.LightResourceSet = _factory.CreateResourceSet(resourceSetDescriptionLight);
+            _sceneRuntimeState.LightResourceLayout 
+                = ResourceGenerator.GenerateResourceLayout(
+                    _factory,
+                    "light",
+                    ResourceKind.UniformBuffer,
+                    ShaderStages.Fragment);
+            _sceneRuntimeState.LightResourceSet 
+                = ResourceGenerator.GenrateResourceSet(
+                    _factory,
+                    _sceneRuntimeState.LightResourceLayout,
+                    new BindableResource[]{_sceneRuntimeState.LightBuffer});
 
             ResourceLayout textureLayout = _factory.CreateResourceLayout(
                 new ResourceLayoutDescription(
@@ -213,7 +214,11 @@ namespace Henzai.Examples
                     scissorTestEnabled: false
                 ),
                 PrimitiveTopology = PrimitiveTopology.TriangleList,
-                ResourceLayouts = new ResourceLayout[] {_cameraResourceLayout,_lightResourceLayout,_materialResourceLayout,textureLayout},
+                ResourceLayouts = new ResourceLayout[] {
+                    _sceneRuntimeState.CameraResourceLayout,
+                    _sceneRuntimeState.LightResourceLayout,
+                    _sceneRuntimeState.MaterialResourceLayout,
+                    textureLayout},
                 ShaderSet = new ShaderSetDescription(
                     vertexLayouts: new VertexLayoutDescription[] {vertexLayout},
                     shaders: new Shader[] {_vertexShader,_fragmentShader}

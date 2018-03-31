@@ -24,20 +24,39 @@ namespace Henzai.Runtime.Render
        /// Buffer Encapsulates CPU Memory for Material
        /// </summary>
        public DeviceBuffer MaterialBuffer {get; set;}
-
        /// <summary>
        /// Encapsulates GPU Memory Layout. See:
+       /// <see cref="Veldrid.ResourceLayout"/>
+       /// </summary>
+       public ResourceLayout CameraResourceLayout {get; set;}
+
+       /// <summary>
+         /// Encapsulates GPU Memory Layout. See:
+       /// <see cref="Veldrid.ResourceLayout"/>
+       /// </summary>
+       public ResourceLayout LightResourceLayout {get; set;}
+       /// <summary>
+       /// Encapsulates GPU Memory Layout. See:
+       /// <see cref="Veldrid.ResourceLayout"/>
+       /// </summary>
+       public ResourceLayout MaterialResourceLayout {get; set;}
+
+       /// <summary>
+       /// Encapsulates GPU Memory Layout and Resource. See:
        /// <see cref="Veldrid.ResourceSet"/>
+       /// <see cref="Veldrid.BindableResource"/>
        /// </summary>
        public ResourceSet CameraResourceSet {get;set;}
        /// <summary>
-       /// Encapsulates GPU Memory Layout. See:
+       /// Encapsulates GPU Memory Layout and Resource. See:
        /// <see cref="Veldrid.ResourceSet"/>
+       /// <see cref="Veldrid.BindableResource"/>
        /// </summary>
        public ResourceSet LightResourceSet {get;set;}
        /// <summary>
-       /// Encapsulates GPU Memory Layout. See:
+       /// Encapsulates GPU Memory Layout and Resource. See:
        /// <see cref="Veldrid.ResourceSet"/>
+       /// <see cref="Veldrid.BindableResource"/>
        /// </summary>
        public ResourceSet MaterialResourceSet {get;set;}
        /// <summary>
