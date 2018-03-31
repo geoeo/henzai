@@ -42,13 +42,13 @@ fragment float4 FS(PixelInput input[[stage_in]],
 
 
     float3 L = normalize(input.LightWorld-input.FragWorld);
-    float l_dot_n = dot(L,normal_sample);
+    float l_dot_n = fmax(dot(L,normal_sample),0.0);
     float4 diffuse = l_dot_n*material.Diffuse*diffuseTextureSample;
 
     float3 R = reflect(-L,normal_sample);
     float3 V = normalize(input.CamPosWorld - input.FragWorld);
     float isDotFront = fmax(sign(dot(normal_sample,L)),0.0);
-    float spec = powr(isDotFront*dot(V,R),material.Coefficients.x);
+    float spec = fmax(powr(isDotFront*dot(V,R),material.Coefficients.x),0.0);
     float4 specular = material.Specular*spec;
 
     float4 color_out = material.Ambient;

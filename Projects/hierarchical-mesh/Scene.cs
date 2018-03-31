@@ -138,7 +138,7 @@ namespace Henzai.Examples
                     _sceneRuntimeState.LightResourceLayout,
                     new BindableResource[]{_sceneRuntimeState.LightBuffer});
 
-            foreach(var modelState in _modelStatesList){
+            foreach(var modelState in _modelStatesPNList){
 
                 var model = modelState.Model;
 
@@ -194,8 +194,8 @@ namespace Henzai.Examples
             _commandList.ClearColorTarget(0,RgbaFloat.White);
             _commandList.ClearDepthStencil(1f);
 
-            for(int j = 0; j < _modelStates.Length; j++){
-                var modelState = _modelStates[j];
+            for(int j = 0; j < _modelStatesPN.Length; j++){
+                var modelState = _modelStatesPN[j];
                 var model = modelState.Model;
                 RenderCommandGenerator_Inline.GenerateCommandsForModel(
                     _commandList,

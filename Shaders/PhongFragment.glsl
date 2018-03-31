@@ -18,13 +18,13 @@ out vec4 fsout_Color;
 void main()
 {
     vec3 L = normalize(fsin_LightWorld-fsin_FragWorld);
-    float l_dot_n = dot(L,fsin_NormalWorld);
+    float l_dot_n = max(dot(L,fsin_NormalWorld),0.0);
     vec4 diffuse = l_dot_n*Diffuse;
 
     vec3 R = reflect(-L,fsin_NormalWorld);
     vec3 V = normalize(fsin_CamPosWorld-fsin_FragWorld);
     float isDotFront = max(sign(dot(fsin_NormalWorld,L)),0.0);
-    float spec = pow(isDotFront*dot(V,R),Coefficients.x);
+    float spec = max(pow(isDotFront*dot(V,R),Coefficients.x),0.0);
     vec4 specular = Specular*spec;
 
     vec4 color_out = Ambient;

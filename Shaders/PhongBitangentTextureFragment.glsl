@@ -38,13 +38,13 @@ void main()
     vec3 normalWS = normalize(TBN*normal_sample);
 
     vec3 L = normalize(fsin_LightWorld-fsin_FragWorld);
-    float l_dot_n = dot(L,normalWS);
+    float l_dot_n = max(dot(L,normalWS),0.0);
     vec4 diffuse = l_dot_n*Diffuse*textureColor;
 
     vec3 R = reflect(-L,normalWS);
     vec3 V = normalize(fsin_CamPosWorld-fsin_FragWorld);
     float isDotFront = max(sign(dot(normalWS,L)),0.0);
-    float spec = pow(isDotFront*dot(V,R),Coefficients.x);
+    float spec = max(pow(isDotFront*dot(V,R),Coefficients.x),0.0);
     vec4 specular = Specular*spec;
 
     vec4 color_out = vec4(0.0,0.0,0.0,0.0);

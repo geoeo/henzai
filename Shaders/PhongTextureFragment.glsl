@@ -3,17 +3,12 @@
 uniform sampler2D DiffuseTexture;
 uniform sampler2D NormTexture;
 
-struct Material
+layout(std140) uniform material
 {
     vec4 Diffuse;
     vec4 Specular;
     vec4 Ambient;
     vec4 Coefficients;
-};
-
-layout(std140) uniform material
-{
-    Material field_material;
 };
 
 in vec3 fsin_NormalWorld;
@@ -40,17 +35,17 @@ void main()
     vec3 normalWS = normalize(TBN*normal_sample);
 
     vec3 L = normalize(fsin_LightWorld-fsin_FragWorld);
-    float l_dot_n = dot(L,normalWS);
-    vec4 diffuse = field_material.Diffuse*textureColor;
+    float l_dot_n = max(dot(L,normalWS),0.0);
+    vec4 diffuse = Diffuse*textureColor;
 
     vec3 R = reflect(-L,normalWS);
     vec3 V = normalize(fsin_CamPosWorld-fsin_FragWorld);
     float isDotFront = max(sign(dot(normalWS,L)),0.0);
-    float spec = pow(isDotFront*dot(V,R),field_material.Coefficients.x);
-    vec4 specular = field_material.Specular*spec;
+    float spec = max(pow(isDotFront*dot(V,R),Coefficients.x),0.0);
+    vec4 specular = Specular*spec;
 
     vec4 color_out = vec4(0.0,0.0,0.0,0.0);
-    color_out += field_material.Ambient;
+    color_out += Ambient;
     color_out += diffuse;
     color_out += specular;
     fsout_Color = color_out;
