@@ -30,12 +30,7 @@ void main()
 {
     vec4 worldPos = World*vec4(Position, 1);
 
-    mat4 viewMatrix = View;
-    vec4 viewPos = viewMatrix*worldPos;
-
-    mat4 projMatrix = Proj;
-
-    gl_Position = projMatrix*viewPos;
+    gl_Position = Proj*View*worldPos;
     // composensate for D3D projection
     gl_Position.z = 2.0*gl_Position.z -gl_Position.w;
 
@@ -43,7 +38,7 @@ void main()
     fsin_NormalWorld = normalMatrix*Normal;
     fsin_FragWorld = worldPos.xyz;
     fsin_LightWorld = LightPosition.xyz;
-    fsin_CamPosWorld = viewMatrix[3].xyz;
+    fsin_CamPosWorld = View[3].xyz;
     fsin_TangentWorld = normalMatrix*Tangent;
     fsin_BitangentWorld = normalMatrix*Bitangent;
     fsin_UV = UV;

@@ -35,6 +35,15 @@ namespace Henzai
 
         }
 
+        public static ResourceLayout GenerateTextureResourceLayoutForDiffuseMapping(DisposeCollectorResourceFactory factory){
+            return factory.CreateResourceLayout(
+                    new ResourceLayoutDescription(
+                        new ResourceLayoutElementDescription("DiffuseTexture", ResourceKind.TextureReadOnly, ShaderStages.Fragment),
+                        new ResourceLayoutElementDescription("DiffuseSampler", ResourceKind.Sampler, ShaderStages.Fragment)
+                        ));
+
+        }
+
         public static Sampler GenerateLinearSampler(DisposeCollectorResourceFactory factory){
             return factory.CreateSampler(new SamplerDescription
                 {
@@ -71,6 +80,22 @@ namespace Henzai
 
         }
 
+                public static ResourceSet GenerateTextureResourceSetForDiffuseMapping(ModelRuntimeState<VertexPositionNormalTextureTangentBitangent> modelRuntimeState,int meshIndex, DisposeCollectorResourceFactory factory, GraphicsDevice graphicsDevice){
+                Material material = modelRuntimeState.Model.meshes[meshIndex].TryGetMaterial();
+
+                ImageSharpTexture diffuseTextureIS = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, modelRuntimeState.Model.BaseDir, material.textureDiffuse));
+                Texture diffuseTexture = diffuseTextureIS.CreateDeviceTexture(graphicsDevice, factory);
+                TextureView diffuseTextureView = factory.CreateTextureView(diffuseTexture);
+
+                return  factory.CreateResourceSet(new ResourceSetDescription(
+                modelRuntimeState.TextureResourceLayout,
+                diffuseTextureView,
+                modelRuntimeState.TextureSampler
+                ));
+
+        }
+
+
         /// <summary>
         /// <see cref="Henzai.Geometry.VertexPositionNormalTextureTangentBitangent"/>
         /// </summary>
@@ -81,6 +106,38 @@ namespace Henzai
                     new VertexElementDescription("UV",VertexElementSemantic.TextureCoordinate,VertexElementFormat.Float2),
                     new VertexElementDescription("Tangent",VertexElementSemantic.Normal,VertexElementFormat.Float3),
                     new VertexElementDescription("Bitangent",VertexElementSemantic.Normal,VertexElementFormat.Float3)
+                );
+        }
+
+        /// <summary>
+        /// <see cref="Henzai.Geometry.VertexPositionNormalTextureTangent"/>
+        /// </summary>
+        public static VertexLayoutDescription GenerateVertexLayoutForPNTT(){
+                return new VertexLayoutDescription(
+                    new VertexElementDescription("Position",VertexElementSemantic.Position,VertexElementFormat.Float3),
+                    new VertexElementDescription("Normal",VertexElementSemantic.Normal,VertexElementFormat.Float3),
+                    new VertexElementDescription("UV",VertexElementSemantic.TextureCoordinate,VertexElementFormat.Float2),
+                    new VertexElementDescription("Tangent",VertexElementSemantic.Normal,VertexElementFormat.Float3)
+                );
+        }
+
+        /// <summary>
+        /// <see cref="Henzai.Geometry.VertexPositionNormalTexture"/>
+        /// </summary>
+        public static VertexLayoutDescription GenerateVertexLayoutForPNT(){
+                return new VertexLayoutDescription(
+                    new VertexElementDescription("Position",VertexElementSemantic.Position,VertexElementFormat.Float3),
+                    new VertexElementDescription("Normal",VertexElementSemantic.Normal,VertexElementFormat.Float3),
+                    new VertexElementDescription("UV",VertexElementSemantic.TextureCoordinate,VertexElementFormat.Float2)
+                );
+        }
+        /// <summary>
+        /// <see cref="Henzai.Geometry.VertexPositionNormalTexture"/>
+        /// </summary>
+        public static VertexLayoutDescription GenerateVertexLayoutForPN(){
+                return new VertexLayoutDescription(
+                    new VertexElementDescription("Position",VertexElementSemantic.Position,VertexElementFormat.Float3),
+                    new VertexElementDescription("Normal",VertexElementSemantic.Normal,VertexElementFormat.Float3)
                 );
         }
 

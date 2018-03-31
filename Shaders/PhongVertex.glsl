@@ -16,27 +16,21 @@ layout(std140) uniform light
 layout(location = 0)in vec3 Position;
 layout(location = 1)in vec3 Normal;
 
-smooth out vec3 fsin_NormalView;
-smooth out vec3 fsin_FragView;
-smooth out vec3 fsin_LightView;
+smooth out vec3 fsin_NormalWorld;
+smooth out vec3 fsin_FragWorld;
+smooth out vec3 fsin_LightWorld;
+smooth out vec3 fsin_ComPosWorld
 
 void main()
 {
     vec4 worldPos = World*vec4(Position, 1);
-
-    mat4 viewMatrix = View;
-    mat3 normalViewMatrix = mat3(viewMatrix);
-    vec4 viewPos = viewMatrix*worldPos;
-
-    mat4 projMatrix = Proj;
-
-    gl_Position = projMatrix*viewPos;
+    gl_Position = Proj*View*worldPos;
     // composensate for D3D projection
     gl_Position.z = 2.0*gl_Position.z -gl_Position.w;
 
     mat3 normalMatrix = mat3(World);
-    fsin_NormalView = normalViewMatrix*normalMatrix*Normal;
-    fsin_FragView = viewPos.xyz;
-    vec4 lightView = viewMatrix*vec4(LightPosition.xyz,1.0);
-    fsin_LightView = lightView.xyz;
+    fsin_NormalWorld = normalMatrix*Normal;
+    fsin_FragWorld = worldPos.xyz;
+    fsin_LightWorld = LightPosition.xyz;
+    fsin_CamPosWorld = View[3].xyz;
 }

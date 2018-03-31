@@ -1,39 +1,36 @@
 #version 330 core
 
-struct Material
+layout(std140) uniform material
 {
     vec4 Diffuse;
     vec4 Specular;
     vec4 Ambient;
+    vec4 Coefficients
 };
 
-layout(std140) uniform material
-{
-    Material field_material;
-};
-
-in vec3 fsin_NormalView;
-in vec3 fsin_FragView;
-in vec3 fsin_LightView;
+in vec3 fsin_NormalWorld;
+in vec3 fsin_FragWorld;
+in vec3 fsin_LightWorld;
+in vec3 fsin_CamPosWorld;
 
 out vec4 fsout_Color;
 
 void main()
 {
-    vec3 L = normalize(fsin_LightView-fsin_FragView);
-    float l_dot_n = dot(L,fsin_NormalView);
-    vec4 diffuse = l_dot_n*field_material.Diffuse;
+    vec3 L = normalize(fsin_LightWorld-fsin_FragWorld);
+    float l_dot_n = dot(L,fsin_NormalWorld);
+    vec4 diffuse = l_dot_n*Diffuse;
 
-    vec3 R = reflect(-L,fsin_NormalView);
-    vec3 V = normalize(-fsin_FragView);
-    float isDotFront = max(sign(dot(fsin_NormalView,L)),0.0);
-    float spec = pow(isDotFront*dot(V,R),32.0);
-    vec4 specular = field_material.Specular*spec;
+    vec3 R = reflect(-L,fsin_NormalWorld);
+    vec3 V = normalize(fsin_CamPosWorld-fsin_FragWorld);
+    float isDotFront = max(sign(dot(fsin_NormalWorld,L)),0.0);
+    float spec = pow(isDotFront*dot(V,R),Coefficients.x);
+    vec4 specular = Specular*spec;
 
-    vec4 color_out = field_material.Ambient;
+    vec4 color_out = Ambient;
     color_out += diffuse;
     color_out += specular;
     fsout_Color = color_out;
-    //fsout_Color = vec4(fsin_NormalView,1.0);
-    //fsout_Color = vec4(fsin_LightView,1.0);
+    //fsout_Color = vec4(fsin_NormalWorld,1.0);
+    //fsout_Color = vec4(fsin_LightWorld,1.0);
 }
