@@ -34,14 +34,14 @@ namespace Henzai.Runtime.Render
         /// </summary>
         public ResourceSet[] TextureResourceSets {get; private set;}
         public Model<T> model;
-        public Shader vertexShader;
-        public Shader fragmentShader;
+        public Shader VertexShader {get; set;}
+        public Shader FragmentShader {get; set;}
         /// <summary>
         /// Defines a Higher Level Render State.
         /// Buffers, Layouts, Shaders, Ratsterizer.
         /// See: <see cref="Veldrid.Pipeline"/>
         /// </summary>
-        public Pipeline pipeline;
+        public Pipeline Pipeline {get; set;}
 
         public ModelRuntimeState(Model<T> modelIn){
             model = modelIn;

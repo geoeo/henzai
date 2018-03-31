@@ -27,9 +27,9 @@ namespace Henzai.Examples
         // private DeviceBuffer[] _indexBuffers;
         // private ResourceSet[] _textureResourceSets;
         // private Model<VertexPositionNormalTextureTangentBitangent>[] _models;
-        private Shader _vertexShader;
-        private Shader _fragmentShader;
-        private Pipeline _pipeline;
+        // private Shader _vertexShader;
+        // private Shader _fragmentShader;
+        // private Pipeline _pipeline;
 
         private List<ModelRuntimeState<VertexPositionNormalTextureTangentBitangent>> _modelStatesList;
         private ModelRuntimeState<VertexPositionNormalTextureTangentBitangent> [] _modelStates;
@@ -216,9 +216,7 @@ namespace Henzai.Examples
                     modelState.TextureResourceSetsList.Add(textureResourceSet);
                 }
 
-            }
-            
-            VertexLayoutDescription vertexLayout 
+                VertexLayoutDescription vertexLayout 
                 = new VertexLayoutDescription(
                     new VertexElementDescription("Position",VertexElementSemantic.Position,VertexElementFormat.Float3),
                     new VertexElementDescription("Normal",VertexElementSemantic.Normal,VertexElementFormat.Float3),
@@ -227,33 +225,74 @@ namespace Henzai.Examples
                     new VertexElementDescription("Bitangent",VertexElementSemantic.Normal,VertexElementFormat.Float3)
                 );
 
-            _vertexShader = IO.LoadShader("PhongBitangentTexture",ShaderStages.Vertex,graphicsDevice);
-            _fragmentShader = IO.LoadShader("PhongBitangentTexture",ShaderStages.Fragment,graphicsDevice);
+                modelState.VertexShader = IO.LoadShader("PhongBitangentTexture",ShaderStages.Vertex,graphicsDevice);
+                modelState.FragmentShader = IO.LoadShader("PhongBitangentTexture",ShaderStages.Fragment,graphicsDevice);
 
-            GraphicsPipelineDescription pipelineDescription = new GraphicsPipelineDescription(){
-                BlendState = BlendStateDescription.SingleOverrideBlend,
-                DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
-                RasterizerState = new RasterizerStateDescription(
-                    cullMode: FaceCullMode.Back,
-                    fillMode: PolygonFillMode.Solid,
-                    frontFace: FrontFace.Clockwise,
-                    depthClipEnabled: true,
-                    scissorTestEnabled: false
-                ),
-                PrimitiveTopology = PrimitiveTopology.TriangleList,
-                ResourceLayouts = new ResourceLayout[] {
-                    _sceneRuntimeState.CameraResourceLayout,
-                    _sceneRuntimeState.LightResourceLayout,
-                    _sceneRuntimeState.MaterialResourceLayout,
-                    textureLayout},
-                ShaderSet = new ShaderSetDescription(
-                    vertexLayouts: new VertexLayoutDescription[] {vertexLayout},
-                    shaders: new Shader[] {_vertexShader,_fragmentShader}
-                ),
-                Outputs = graphicsDevice.SwapchainFramebuffer.OutputDescription
-            };
+                GraphicsPipelineDescription pipelineDescription = new GraphicsPipelineDescription(){
+                    BlendState = BlendStateDescription.SingleOverrideBlend,
+                    DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
+                    RasterizerState = new RasterizerStateDescription(
+                        cullMode: FaceCullMode.Back,
+                        fillMode: PolygonFillMode.Solid,
+                        frontFace: FrontFace.Clockwise,
+                        depthClipEnabled: true,
+                        scissorTestEnabled: false
+                    ),
+                    PrimitiveTopology = PrimitiveTopology.TriangleList,
+                    ResourceLayouts = new ResourceLayout[] {
+                        _sceneRuntimeState.CameraResourceLayout,
+                        _sceneRuntimeState.LightResourceLayout,
+                        _sceneRuntimeState.MaterialResourceLayout,
+                        textureLayout},
+                    ShaderSet = new ShaderSetDescription(
+                        vertexLayouts: new VertexLayoutDescription[] {vertexLayout},
+                        shaders: new Shader[] {modelState.VertexShader,modelState.FragmentShader}
+                    ),
+                    Outputs = graphicsDevice.SwapchainFramebuffer.OutputDescription
+                };
 
-            _pipeline = _factory.CreateGraphicsPipeline(pipelineDescription);
+                modelState.Pipeline = _factory.CreateGraphicsPipeline(pipelineDescription);
+
+            // _pipeline = _factory.CreateGraphicsPipeline(pipelineDescription);
+
+            }
+            
+            // VertexLayoutDescription vertexLayout 
+            //     = new VertexLayoutDescription(
+            //         new VertexElementDescription("Position",VertexElementSemantic.Position,VertexElementFormat.Float3),
+            //         new VertexElementDescription("Normal",VertexElementSemantic.Normal,VertexElementFormat.Float3),
+            //         new VertexElementDescription("UV",VertexElementSemantic.TextureCoordinate,VertexElementFormat.Float2),
+            //         new VertexElementDescription("Tangent",VertexElementSemantic.Normal,VertexElementFormat.Float3),
+            //         new VertexElementDescription("Bitangent",VertexElementSemantic.Normal,VertexElementFormat.Float3)
+            //     );
+
+            // _vertexShader = IO.LoadShader("PhongBitangentTexture",ShaderStages.Vertex,graphicsDevice);
+            // _fragmentShader = IO.LoadShader("PhongBitangentTexture",ShaderStages.Fragment,graphicsDevice);
+
+            // GraphicsPipelineDescription pipelineDescription = new GraphicsPipelineDescription(){
+            //     BlendState = BlendStateDescription.SingleOverrideBlend,
+            //     DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
+            //     RasterizerState = new RasterizerStateDescription(
+            //         cullMode: FaceCullMode.Back,
+            //         fillMode: PolygonFillMode.Solid,
+            //         frontFace: FrontFace.Clockwise,
+            //         depthClipEnabled: true,
+            //         scissorTestEnabled: false
+            //     ),
+            //     PrimitiveTopology = PrimitiveTopology.TriangleList,
+            //     ResourceLayouts = new ResourceLayout[] {
+            //         _sceneRuntimeState.CameraResourceLayout,
+            //         _sceneRuntimeState.LightResourceLayout,
+            //         _sceneRuntimeState.MaterialResourceLayout,
+            //         textureLayout},
+            //     ShaderSet = new ShaderSetDescription(
+            //         vertexLayouts: new VertexLayoutDescription[] {vertexLayout},
+            //         shaders: new Shader[] {_vertexShader,_fragmentShader}
+            //     ),
+            //     Outputs = graphicsDevice.SwapchainFramebuffer.OutputDescription
+            // };
+
+            // _pipeline = _factory.CreateGraphicsPipeline(pipelineDescription);
 
             _commandList = _factory.CreateCommandList();
 
@@ -272,7 +311,7 @@ namespace Henzai.Examples
                 var model = modelState.model;
                 RenderCommandGenerator_Inline.GenerateCommandsForModel(
                     _commandList,
-                    _pipeline,
+                    modelState.Pipeline,
                     _sceneRuntimeState.CameraProjViewBuffer,
                     _sceneRuntimeState.LightBuffer,
                     Camera,
