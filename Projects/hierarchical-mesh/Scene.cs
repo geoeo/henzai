@@ -42,14 +42,12 @@ namespace Henzai.Examples
         }
 
         private void FormatResourcesForRuntime(){
-        // _vertexBuffers = _vertexBuffersList.ToArray();
-        // _indexBuffers = _indexBuffersList.ToArray();
-        // _textureResourceSets = _textureResourceSetsList.ToArray();
-        foreach(var modelState in _modelStatesList)
-            modelState.FormatResourcesForRuntime();
+
+            foreach(var modelState in _modelStatesList)
+                modelState.FormatResourcesForRuntime();
 
 
-        _modelStates = _modelStatesList.ToArray();
+            _modelStates = _modelStatesList.ToArray();
         }
 
         // TODO: Abstract Resource Crreation for Uniforms, Vertex Layouts, Disposing
@@ -71,8 +69,8 @@ namespace Henzai.Examples
             Vector3 newTranslation = new Vector3(lightPos.X,lightPos.Y,lightPos.Z);
             sun.SetNewWorldTranslation(ref newTranslation, true);
 
-            _modelStatesList.Add(new ModelRuntimeState<VertexPositionNormalTextureTangentBitangent>(sun));
-            _modelStatesList.Add(new ModelRuntimeState<VertexPositionNormalTextureTangentBitangent>(_model));
+            _modelStatesList.Add(new ModelRuntimeState<VertexPositionNormalTextureTangentBitangent>(sun,"PhongBitangentTexture","PhongBitangentTexture"));
+            _modelStatesList.Add(new ModelRuntimeState<VertexPositionNormalTextureTangentBitangent>(_model,"PhongBitangentTexture","PhongBitangentTexture"));
 
             /// Uniform 1 - Camera
             _sceneRuntimeState.CameraProjViewBuffer  = _factory.CreateBuffer(new BufferDescription(192,BufferUsage.UniformBuffer | BufferUsage.Dynamic));
@@ -116,49 +114,15 @@ namespace Henzai.Examples
                     _sceneRuntimeState.LightResourceLayout,
                     new BindableResource[]{_sceneRuntimeState.LightBuffer});
 
-                ResourceLayout textureLayout = _factory.CreateResourceLayout(
-                    new ResourceLayoutDescription(
-                        new ResourceLayoutElementDescription("DiffuseTexture", ResourceKind.TextureReadOnly, ShaderStages.Fragment),
-                        new ResourceLayoutElementDescription("DiffuseSampler", ResourceKind.Sampler, ShaderStages.Fragment),
-                        new ResourceLayoutElementDescription("NormTexture", ResourceKind.TextureReadOnly, ShaderStages.Fragment),
-                        new ResourceLayoutElementDescription("NormSampler", ResourceKind.Sampler, ShaderStages.Fragment)
-                        ));
-
-                var sampler = _factory.CreateSampler(new SamplerDescription
-                {
-                    AddressModeU = SamplerAddressMode.Wrap,
-                    AddressModeV = SamplerAddressMode.Wrap,
-                    AddressModeW = SamplerAddressMode.Wrap,
-                    Filter = SamplerFilter.MinLinear_MagLinear_MipLinear,
-                    LodBias = 0,
-                    MinimumLod = 0,
-                    MaximumLod = uint.MaxValue,
-                    MaximumAnisotropy = 0,
-                });
-
             foreach(var modelState in _modelStatesList){
 
-                var model = modelState.model;
+                var model = modelState.Model;
 
-                // ResourceLayout textureLayout = _factory.CreateResourceLayout(
-                //     new ResourceLayoutDescription(
-                //         new ResourceLayoutElementDescription("DiffuseTexture", ResourceKind.TextureReadOnly, ShaderStages.Fragment),
-                //         new ResourceLayoutElementDescription("DiffuseSampler", ResourceKind.Sampler, ShaderStages.Fragment),
-                //         new ResourceLayoutElementDescription("NormTexture", ResourceKind.TextureReadOnly, ShaderStages.Fragment),
-                //         new ResourceLayoutElementDescription("NormSampler", ResourceKind.Sampler, ShaderStages.Fragment)
-                //         ));
+                modelState.TextureLayout = ResourceGenerator.GenerateTextureResourceLayoutForNormalMapping(_factory);
 
-                // var sampler = _factory.CreateSampler(new SamplerDescription
-                // {
-                //     AddressModeU = SamplerAddressMode.Wrap,
-                //     AddressModeV = SamplerAddressMode.Wrap,
-                //     AddressModeW = SamplerAddressMode.Wrap,
-                //     Filter = SamplerFilter.MinLinear_MagLinear_MipLinear,
-                //     LodBias = 0,
-                //     MinimumLod = 0,
-                //     MaximumLod = uint.MaxValue,
-                //     MaximumAnisotropy = 0,
-                // });
+                modelState.TextureSampler = ResourceGenerator.GenerateLinearSampler(_factory);
+
+                modelState.LoadShaders(graphicsDevice);
 
                 for(int i = 0; i < model.meshCount; i++){
 
@@ -171,46 +135,18 @@ namespace Henzai.Examples
 
                     modelState.VertexBuffersList.Add(vertexBuffer);
                     modelState.IndexBuffersList.Add(indexBuffer);
-                    // _vertexBuffersList.Add(vertexBuffer);
-                    // _indexBuffersList.Add(indexBuffer);
 
                     graphicsDevice.UpdateBuffer(vertexBuffer,0,model.meshes[i].vertices);
                     graphicsDevice.UpdateBuffer(indexBuffer,0,model.meshes[i].meshIndices);
 
-                    Material material = model.meshes[i].TryGetMaterial();
-
-                    ImageSharpTexture diffuseTextureIS = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, model.BaseDir, material.textureDiffuse));
-                    Texture diffuseTexture = diffuseTextureIS.CreateDeviceTexture(graphicsDevice, _factory);
-                    TextureView diffuseTextureView = _factory.CreateTextureView(diffuseTexture);
-
-                    string normalTexPath = material.textureNormal.Length == 0 ? material.textureBump : material.textureNormal;
-                    ImageSharpTexture normalTextureIS = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, model.BaseDir, normalTexPath));
-                    Texture normalTexture = normalTextureIS.CreateDeviceTexture(graphicsDevice, _factory);
-                    TextureView normalTextureView = _factory.CreateTextureView(normalTexture);
-
-                    ResourceSet textureResourceSet = _factory.CreateResourceSet(new ResourceSetDescription(
-                    textureLayout,
-                    diffuseTextureView,
-                    sampler,
-                    normalTextureView,
-                    sampler
-                    ));
-
-                    modelState.TextureResourceSetsList.Add(textureResourceSet);
+                    modelState.TextureResourceSetsList.Add(
+                        ResourceGenerator.GenerateTextureResourceSetForNormalMapping(modelState,i,_factory,graphicsDevice)
+                        );
                 }
 
-                VertexLayoutDescription vertexLayout 
-                = new VertexLayoutDescription(
-                    new VertexElementDescription("Position",VertexElementSemantic.Position,VertexElementFormat.Float3),
-                    new VertexElementDescription("Normal",VertexElementSemantic.Normal,VertexElementFormat.Float3),
-                    new VertexElementDescription("UV",VertexElementSemantic.TextureCoordinate,VertexElementFormat.Float2),
-                    new VertexElementDescription("Tangent",VertexElementSemantic.Normal,VertexElementFormat.Float3),
-                    new VertexElementDescription("Bitangent",VertexElementSemantic.Normal,VertexElementFormat.Float3)
-                );
+                VertexLayoutDescription vertexLayout = ResourceGenerator.GenerateVertexLayoutForPNTTB();
 
-                modelState.VertexShader = IO.LoadShader("PhongBitangentTexture",ShaderStages.Vertex,graphicsDevice);
-                modelState.FragmentShader = IO.LoadShader("PhongBitangentTexture",ShaderStages.Fragment,graphicsDevice);
-
+                //TODO: For multipass rendering abstract States into ModeRuntimeState
                 GraphicsPipelineDescription pipelineDescription = new GraphicsPipelineDescription(){
                     BlendState = BlendStateDescription.SingleOverrideBlend,
                     DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
@@ -226,7 +162,7 @@ namespace Henzai.Examples
                         _sceneRuntimeState.CameraResourceLayout,
                         _sceneRuntimeState.LightResourceLayout,
                         _sceneRuntimeState.MaterialResourceLayout,
-                        textureLayout},
+                        modelState.TextureLayout },
                     ShaderSet = new ShaderSetDescription(
                         vertexLayouts: new VertexLayoutDescription[] {vertexLayout},
                         shaders: new Shader[] {modelState.VertexShader,modelState.FragmentShader}
@@ -252,7 +188,7 @@ namespace Henzai.Examples
 
             for(int j = 0; j < _modelStates.Length; j++){
                 var modelState = _modelStates[j];
-                var model = modelState.model;
+                var model = modelState.Model;
                 RenderCommandGenerator_Inline.GenerateCommandsForModel(
                     _commandList,
                     modelState.Pipeline,
