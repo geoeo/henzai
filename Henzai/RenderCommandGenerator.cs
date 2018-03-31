@@ -16,14 +16,15 @@ namespace Henzai
         /// <see cref="VertexPositionNormalTextureTangentBitangent"/> 
         ///</summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void GenerateCommandsForModelPNTTB(
+        public static void GenerateCommandsForModel<T>(
                                                     CommandList commandList, 
                                                     Pipeline pipeline,
                                                     DeviceBuffer cameraProjViewBuffer,
                                                     DeviceBuffer lightBuffer,
                                                     Camera camera,
                                                     ref Vector4 lightPos,
-                                                    Model<VertexPositionNormalTextureTangentBitangent> model){
+                                                    Model<T> model) where T : struct
+                                                    {
 
                 commandList.SetPipeline(pipeline);
 
@@ -40,7 +41,7 @@ namespace Henzai
         /// <see cref="VertexPositionNormalTextureTangentBitangent"/> 
         ///</summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void GenerateCommandsForMeshPNTTB(
+        public static void GenerateCommandsForMesh<T>(
                                                     CommandList commandList, 
                                                     DeviceBuffer vertexBuffer, 
                                                     DeviceBuffer indexBuffer,
@@ -50,7 +51,8 @@ namespace Henzai
                                                     ResourceSet lightResourceSet,
                                                     ResourceSet materialResourceSet,
                                                     ResourceSet textureResourceSet,
-                                                    Mesh<VertexPositionNormalTextureTangentBitangent> mesh){
+                                                    Mesh<T> mesh) where T : struct
+                                                    {
 
 
             Material material = mesh.GetMaterialRuntime();

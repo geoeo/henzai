@@ -236,9 +236,10 @@ namespace Henzai.Examples
 
             _commandList.ClearColorTarget(0,RgbaFloat.White);
             _commandList.ClearDepthStencil(1f);
+            //TODO: Splitup into SceneRuntime(camera,lights etc.) and ObjectRuntime(model..)
             for(int j = 0; j < _models.Length; j++){
                 var model = _models[j];
-                RenderCommandGenerator_Inline.GenerateCommandsForModelPNTTB(
+                RenderCommandGenerator_Inline.GenerateCommandsForModel(
                     _commandList,
                     _pipeline,
                     _cameraProjViewBuffer,
@@ -248,7 +249,7 @@ namespace Henzai.Examples
                     model);
                 for(int i = 0; i < model.meshCount; i++){
                     var mesh = model.meshes[i];
-                    RenderCommandGenerator_Inline.GenerateCommandsForMeshPNTTB(
+                    RenderCommandGenerator_Inline.GenerateCommandsForMesh(
                         _commandList,
                         _vertexBuffers[runningMeshTotal],
                         _indexBuffers[runningMeshTotal],
