@@ -69,8 +69,20 @@ namespace Henzai.Examples
             Vector3 newTranslation = new Vector3(lightPos.X,lightPos.Y,lightPos.Z);
             sun.SetNewWorldTranslation(ref newTranslation, true);
 
-            _modelStatesList.Add(new ModelRuntimeState<VertexPositionNormalTextureTangentBitangent>(sun,"PhongBitangentTexture","PhongBitangentTexture"));
-            _modelStatesList.Add(new ModelRuntimeState<VertexPositionNormalTextureTangentBitangent>(_model,"PhongBitangentTexture","PhongBitangentTexture"));
+            var nanoSuitRuntimeState = new ModelRuntimeState<VertexPositionNormalTextureTangentBitangent>(_model,"PhongBitangentTexture","PhongBitangentTexture");
+            nanoSuitRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPNTTB;
+            nanoSuitRuntimeState.CallSamplerGeneration+=ResourceGenerator.GenerateLinearSampler;
+            nanoSuitRuntimeState.CallTextureResourceLayoutGeneration+=ResourceGenerator.GenerateTextureResourceLayoutForNormalMapping;
+            nanoSuitRuntimeState.CallTextureResourceSetGeneration+=ResourceGenerator.GenerateTextureResourceSetForNormalMapping;
+
+            var sunRuntimeState = new ModelRuntimeState<VertexPositionNormalTextureTangentBitangent>(sun,"PhongBitangentTexture","PhongBitangentTexture");
+            sunRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPNTTB;
+            sunRuntimeState.CallSamplerGeneration+=ResourceGenerator.GenerateLinearSampler;
+            sunRuntimeState.CallTextureResourceLayoutGeneration+=ResourceGenerator.GenerateTextureResourceLayoutForNormalMapping;
+            sunRuntimeState.CallTextureResourceSetGeneration+=ResourceGenerator.GenerateTextureResourceSetForNormalMapping;
+
+            _modelStatesList.Add(nanoSuitRuntimeState);
+            _modelStatesList.Add(sunRuntimeState);
 
             /// Uniform 1 - Camera
             _sceneRuntimeState.CameraProjViewBuffer  = _factory.CreateBuffer(new BufferDescription(192,BufferUsage.UniformBuffer | BufferUsage.Dynamic));
@@ -118,9 +130,9 @@ namespace Henzai.Examples
 
                 var model = modelState.Model;
 
-                modelState.TextureLayout = ResourceGenerator.GenerateTextureResourceLayoutForNormalMapping(_factory);
+                modelState.TextureResourceLayout = modelState.InvokeTextureResourceLayoutGeneration(_factory);
 
-                modelState.TextureSampler = ResourceGenerator.GenerateLinearSampler(_factory);
+                modelState.TextureSampler = modelState.InvokeSamplerGeneration(_factory);
 
                 modelState.LoadShaders(GraphicsDevice);
 
@@ -140,11 +152,10 @@ namespace Henzai.Examples
                     GraphicsDevice.UpdateBuffer(indexBuffer,0,model.meshes[i].meshIndices);
 
                     modelState.TextureResourceSetsList.Add(
-                        ResourceGenerator.GenerateTextureResourceSetForNormalMapping(modelState,i,_factory,GraphicsDevice)
+                        modelState.InvokeTextureResourceSetGeneration(i,_factory,GraphicsDevice)
                         );
                 }
-
-                VertexLayoutDescription vertexLayout = ResourceGenerator.GenerateVertexLayoutForPNTTB();
+                VertexLayoutDescription vertexLayout = modelState.InvokeVertexLayoutGeneration();
 
                 //TODO: For multipass rendering abstract States into ModeRuntimeState
                 GraphicsPipelineDescription pipelineDescription = new GraphicsPipelineDescription(){
@@ -162,7 +173,7 @@ namespace Henzai.Examples
                         _sceneRuntimeState.CameraResourceLayout,
                         _sceneRuntimeState.LightResourceLayout,
                         _sceneRuntimeState.MaterialResourceLayout,
-                        modelState.TextureLayout },
+                        modelState.TextureResourceLayout },
                     ShaderSet = new ShaderSetDescription(
                         vertexLayouts: new VertexLayoutDescription[] {vertexLayout},
                         shaders: new Shader[] {modelState.VertexShader,modelState.FragmentShader}

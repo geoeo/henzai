@@ -35,7 +35,7 @@ namespace Henzai.Runtime.Render
         /// Used During Rendering
         /// </summary>
         public ResourceSet[] TextureResourceSets {get; private set;}
-        public ResourceLayout TextureLayout {get; set;}
+        public ResourceLayout TextureResourceLayout {get; set;}
         public Sampler TextureSampler {get;set;}
         public Shader VertexShader {get; private set;}
         private string _vertexShaderName;
@@ -54,7 +54,10 @@ namespace Henzai.Runtime.Render
         public Model<T> Model {get;set;}
 
 
-        
+        public event Func<VertexLayoutDescription> CallVertexLayoutGeneration;
+        public event Func<DisposeCollectorResourceFactory,Sampler> CallSamplerGeneration;
+        public event Func<DisposeCollectorResourceFactory,ResourceLayout> CallTextureResourceLayoutGeneration;
+        public event Func<ModelRuntimeState<T>,int,DisposeCollectorResourceFactory,GraphicsDevice,ResourceSet> CallTextureResourceSetGeneration;
 
         public ModelRuntimeState(Model<T> modelIn, string vShaderName, string fShaderName){
             Model = modelIn;
@@ -76,6 +79,22 @@ namespace Henzai.Runtime.Render
         public void LoadShaders(GraphicsDevice graphicsDevice){
             VertexShader = IO.LoadShader(_vertexShaderName,ShaderStages.Vertex,graphicsDevice);
             FragmentShader = IO.LoadShader(_fragmentShaderName,ShaderStages.Fragment,graphicsDevice);
+        }
+
+        public VertexLayoutDescription InvokeVertexLayoutGeneration(){
+            return CallVertexLayoutGeneration.Invoke();
+        }
+
+        public Sampler InvokeSamplerGeneration(DisposeCollectorResourceFactory factory){
+            return CallSamplerGeneration(factory);
+        }
+
+        public ResourceLayout InvokeTextureResourceLayoutGeneration(DisposeCollectorResourceFactory factory){
+            return CallTextureResourceLayoutGeneration(factory);
+        }
+
+        public ResourceSet InvokeTextureResourceSetGeneration(int meshIndex, DisposeCollectorResourceFactory factory, GraphicsDevice graphicsDevice){
+            return CallTextureResourceSetGeneration(this,meshIndex,factory,graphicsDevice);
         }
 
     }

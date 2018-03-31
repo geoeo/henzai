@@ -62,7 +62,7 @@ namespace Henzai
                 TextureView normalTextureView = factory.CreateTextureView(normalTexture);
 
                 return  factory.CreateResourceSet(new ResourceSetDescription(
-                modelRuntimeState.TextureLayout ,
+                modelRuntimeState.TextureResourceLayout ,
                 diffuseTextureView,
                 modelRuntimeState.TextureSampler,
                 normalTextureView,
