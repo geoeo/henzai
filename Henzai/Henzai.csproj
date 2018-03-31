@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Veldrid" Version="4.1.3" />
+    <PackageReference Include="Veldrid" Version="4.1.4" />
     <!-- <Reference Include="../../veldrid/bin/Debug/Veldrid/netstandard2.0/*.dll"/> -->
     <PackageReference Include="Veldrid.Sdl2" Version="4.0.0" />
     <PackageReference Include="Veldrid.ImGui" Version="4.0.0" />
