@@ -23,6 +23,9 @@ namespace Henzai.Examples
         private List<ModelRuntimeState<VertexPositionNormalTextureTangentBitangent>> _modelStatesList;
         private ModelRuntimeState<VertexPositionNormalTextureTangentBitangent> [] _modelStates;
 
+        private List<ModelRuntimeState<VertexPositionNormal>> _modelStatesPNList;
+        private ModelRuntimeState<VertexPositionNormal> [] _modelStatesPN;
+
         Model<VertexPositionNormalTextureTangentBitangent> _model;
 
         public Scene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
@@ -30,6 +33,7 @@ namespace Henzai.Examples
                 _sceneRuntimeState = new SceneRuntimeState();
 
                 _modelStatesList = new List<ModelRuntimeState<VertexPositionNormalTextureTangentBitangent>>();
+                _modelStatesPNList = new List<ModelRuntimeState<VertexPositionNormal>>();
 
 
                 PreDraw+=RotateModel;
@@ -45,9 +49,12 @@ namespace Henzai.Examples
 
             foreach(var modelState in _modelStatesList)
                 modelState.FormatResourcesForRuntime();
+            foreach(var modelState in _modelStatesPNList)
+                modelState.FormatResourcesForRuntime();
 
 
             _modelStates = _modelStatesList.ToArray();
+            _modelStatesPN = _modelStatesPNList.ToArray();
         }
 
         // TODO: Abstract Resource Crreation for Uniforms, Vertex Layouts, Disposing
@@ -61,28 +68,33 @@ namespace Henzai.Examples
             // _model = AssimpLoader.LoadFromFile<VertexPositionNormalTextureTangentBitangent>(AppContext.BaseDirectory,"sponza/sponza.obj",VertexPositionNormalTextureTangentBitangent.HenzaiType);
             GeometryUtils.GenerateTangentAndBitagentSpaceFor(_model);
             // GeometryUtils.CheckTBN(_model);
-            var sun = new Model<VertexPositionNormalTextureTangentBitangent>("water",GeometryFactory.generateSphereTangentBitangent(100,100,1));
+            // var sun = new Model<VertexPositionNormalTextureTangentBitangent>("water",GeometryFactory.generateSphereTangentBitangent(100,100,1));
+            var sun = new Model<VertexPositionNormal>(String.Empty,GeometryFactory.generateSphereNormal(100,100,1));
             sun.meshes[0].TryGetMaterial().textureDiffuse = "Water.jpg";
             sun.meshes[0].TryGetMaterial().textureNormal = "WaterNorm.jpg";
-            sun.meshes[0].TryGetMaterial().ambient = new Vector4(1.0f,1.0f,1.0f,1.0f);
+            sun.meshes[0].TryGetMaterial().ambient = new Vector4(1.0f,0.0f,0.0f,1.0f);
             ref Vector4 lightPos = ref _sceneRuntimeState.Light.Light_DontMutate;
             Vector3 newTranslation = new Vector3(lightPos.X,lightPos.Y,lightPos.Z);
             sun.SetNewWorldTranslation(ref newTranslation, true);
 
-            var nanoSuitRuntimeState = new ModelRuntimeState<VertexPositionNormalTextureTangentBitangent>(_model,"PhongBitangentTexture","PhongBitangentTexture");
+            var nanoSuitRuntimeState = new ModelRuntimeState<VertexPositionNormalTextureTangentBitangent>(_model,"PhongBitangentTexture","PhongBitangentTexture", VertexTypes.VertexPositionNormalTextureTangentBitangent);
             nanoSuitRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPNTTB;
             nanoSuitRuntimeState.CallSamplerGeneration+=ResourceGenerator.GenerateLinearSampler;
             nanoSuitRuntimeState.CallTextureResourceLayoutGeneration+=ResourceGenerator.GenerateTextureResourceLayoutForNormalMapping;
             nanoSuitRuntimeState.CallTextureResourceSetGeneration+=ResourceGenerator.GenerateTextureResourceSetForNormalMapping;
 
-            var sunRuntimeState = new ModelRuntimeState<VertexPositionNormalTextureTangentBitangent>(sun,"PhongBitangentTexture","PhongBitangentTexture");
-            sunRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPNTTB;
-            sunRuntimeState.CallSamplerGeneration+=ResourceGenerator.GenerateLinearSampler;
-            sunRuntimeState.CallTextureResourceLayoutGeneration+=ResourceGenerator.GenerateTextureResourceLayoutForNormalMapping;
-            sunRuntimeState.CallTextureResourceSetGeneration+=ResourceGenerator.GenerateTextureResourceSetForNormalMapping;
+            // var sunRuntimeState = new ModelRuntimeState<VertexPositionNormalTextureTangentBitangent>(sun,"PhongBitangentTexture","PhongBitangentTexture");
+            // sunRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPNTTB;
+            // sunRuntimeState.CallSamplerGeneration+=ResourceGenerator.GenerateLinearSampler;
+            // sunRuntimeState.CallTextureResourceLayoutGeneration+=ResourceGenerator.GenerateTextureResourceLayoutForNormalMapping;
+            // sunRuntimeState.CallTextureResourceSetGeneration+=ResourceGenerator.GenerateTextureResourceSetForNormalMapping;
 
             _modelStatesList.Add(nanoSuitRuntimeState);
-            _modelStatesList.Add(sunRuntimeState);
+            // _modelStatesList.Add(sunRuntimeState);
+
+            var sunRuntimeState = new ModelRuntimeState<VertexPositionNormal>(sun,"Phong","Phong",VertexTypes.VertexPositionNormal);
+            sunRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPN;
+            _modelStatesPNList.Add(sunRuntimeState);
 
             /// Uniform 1 - Camera
             _sceneRuntimeState.CameraProjViewBuffer  = _factory.CreateBuffer(new BufferDescription(192,BufferUsage.UniformBuffer | BufferUsage.Dynamic));
@@ -155,34 +167,19 @@ namespace Henzai.Examples
                         modelState.InvokeTextureResourceSetGeneration(i,_factory,GraphicsDevice)
                         );
                 }
-                VertexLayoutDescription vertexLayout = modelState.InvokeVertexLayoutGeneration();
+                modelState.VertexLayout = modelState.InvokeVertexLayoutGeneration();
 
-                //TODO: For multipass rendering abstract States into ModeRuntimeState
-                GraphicsPipelineDescription pipelineDescription = new GraphicsPipelineDescription(){
-                    BlendState = BlendStateDescription.SingleOverrideBlend,
-                    DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
-                    RasterizerState = new RasterizerStateDescription(
-                        cullMode: FaceCullMode.Back,
-                        fillMode: PolygonFillMode.Solid,
-                        frontFace: FrontFace.Clockwise,
-                        depthClipEnabled: true,
-                        scissorTestEnabled: false
-                    ),
-                    PrimitiveTopology = PrimitiveTopology.TriangleList,
-                    ResourceLayouts = new ResourceLayout[] {
-                        _sceneRuntimeState.CameraResourceLayout,
-                        _sceneRuntimeState.LightResourceLayout,
-                        _sceneRuntimeState.MaterialResourceLayout,
-                        modelState.TextureResourceLayout },
-                    ShaderSet = new ShaderSetDescription(
-                        vertexLayouts: new VertexLayoutDescription[] {vertexLayout},
-                        shaders: new Shader[] {modelState.VertexShader,modelState.FragmentShader}
-                    ),
-                    Outputs = GraphicsDevice.SwapchainFramebuffer.OutputDescription
-                };
-
-                modelState.Pipeline = _factory.CreateGraphicsPipeline(pipelineDescription);
-
+                switch(modelState.VertexType){
+                    case VertexTypes.VertexPositionNormal:
+                        modelState.Pipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GeneratePipelinePN(modelState,_sceneRuntimeState,GraphicsDevice));
+                        break;
+                    case VertexTypes.VertexPositionNormalTextureTangentBitangent:
+                            modelState.Pipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GeneratePipelinePNTTB(modelState,_sceneRuntimeState,GraphicsDevice));
+                        break;
+                    default:
+                        throw new NotImplementedException($"{modelState.VertexType.ToString("g")} not implemented");
+                }
+ 
             }
             
             _commandList = _factory.CreateCommandList();

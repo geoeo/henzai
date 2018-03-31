@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Veldrid;
 using Veldrid.ImageSharp;
 using Henzai;
+using Henzai.Runtime;
 using Henzai.Geometry;
 
 namespace Henzai.Runtime.Render
@@ -38,6 +39,7 @@ namespace Henzai.Runtime.Render
         public ResourceLayout TextureResourceLayout {get; set;}
         public Sampler TextureSampler {get;set;}
         public Shader VertexShader {get; private set;}
+        public VertexLayoutDescription VertexLayout {get;set;}
         private string _vertexShaderName;
         public Shader FragmentShader {get; private set;}
         private string _fragmentShaderName;
@@ -52,18 +54,20 @@ namespace Henzai.Runtime.Render
         /// See: <see cref="Henzai.Geometry.Model{T}"/>
         /// </summary>
         public Model<T> Model {get;set;}
-
+        public VertexTypes VertexType {get; private set;}
 
         public event Func<VertexLayoutDescription> CallVertexLayoutGeneration;
         public event Func<DisposeCollectorResourceFactory,Sampler> CallSamplerGeneration;
         public event Func<DisposeCollectorResourceFactory,ResourceLayout> CallTextureResourceLayoutGeneration;
         public event Func<ModelRuntimeState<T>,int,DisposeCollectorResourceFactory,GraphicsDevice,ResourceSet> CallTextureResourceSetGeneration;
 
-        public ModelRuntimeState(Model<T> modelIn, string vShaderName, string fShaderName){
+        public ModelRuntimeState(Model<T> modelIn, string vShaderName, string fShaderName, VertexTypes vertexType){
             Model = modelIn;
 
             _vertexShaderName = vShaderName;
             _fragmentShaderName = fShaderName;
+
+            VertexType = vertexType;
 
             VertexBuffersList = new List<DeviceBuffer>();
             IndexBuffersList = new List<DeviceBuffer>();
@@ -86,15 +90,15 @@ namespace Henzai.Runtime.Render
         }
 
         public Sampler InvokeSamplerGeneration(DisposeCollectorResourceFactory factory){
-            return CallSamplerGeneration(factory);
+            return CallSamplerGeneration!=null?CallSamplerGeneration(factory):null;
         }
 
         public ResourceLayout InvokeTextureResourceLayoutGeneration(DisposeCollectorResourceFactory factory){
-            return CallTextureResourceLayoutGeneration(factory);
+            return CallTextureResourceLayoutGeneration!=null?CallTextureResourceLayoutGeneration(factory):null;
         }
 
         public ResourceSet InvokeTextureResourceSetGeneration(int meshIndex, DisposeCollectorResourceFactory factory, GraphicsDevice graphicsDevice){
-            return CallTextureResourceSetGeneration(this,meshIndex,factory,graphicsDevice);
+            return CallTextureResourceSetGeneration!=null?CallTextureResourceSetGeneration(this,meshIndex,factory,graphicsDevice):null;
         }
 
     }

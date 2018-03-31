@@ -208,7 +208,6 @@ namespace Henzai.Geometry
 
         /// <summary>
         /// Returns a Sphere Mesh with the corresponing vertex struct.
-        /// Extremely inefficient in OpenGL und MacOS
         /// </summary>
         public static Mesh<VertexPositionNormalTextureTangentBitangent> generateSphereTangentBitangent(int numLatitudeLines, int numLongitudeLines, float radius){
             // One vertex at every latitude-longitude intersection,
@@ -325,6 +324,100 @@ namespace Henzai.Geometry
             indices.Add(v.ToUnsigned()+1.ToUnsigned());
             indices.Add(numVertices.ToUnsigned()-1.ToUnsigned());
             return new Mesh<VertexPositionNormalTextureTangentBitangent>(vertices,indices.ToArray());
+        }
+
+/// <summary>
+        /// Returns a Sphere Mesh with the corresponing vertex struct.
+        /// </summary>
+        public static Mesh<VertexPositionNormal> generateSphereNormal(int numLatitudeLines, int numLongitudeLines, float radius){
+            // One vertex at every latitude-longitude intersection,
+            // plus one for the north pole and one for the south.
+            // One meridian serves as a UV seam, so we double the vertices there.
+            int numVertices = numLatitudeLines * (numLongitudeLines + 1) + 2;
+
+            VertexPositionNormal[] vertices = new VertexPositionNormal[numVertices];
+            Vector2[] SphereParamters = new Vector2[numVertices];
+            List<uint> indices = new List<uint>();
+
+            // North pole.
+            vertices[0].Position = new Vector3(0, radius, 0);
+
+            // South pole.
+            vertices[numVertices - 1].Position = new Vector3(0, -radius, 0);
+            SphereParamters[numVertices - 1] = new Vector2(0, 1);
+
+            // +1.0f because there's a gap between the poles and the first parallel.
+            float latitudeSpacing = 1.0f / (numLatitudeLines + 1.0f);
+            float longitudeSpacing = 1.0f / (numLongitudeLines);
+
+            // start writing new vertices at position 1
+            int v = 1;
+            for(int latitude = 0; latitude < numLatitudeLines; latitude++) {
+                for(int longitude = 0; longitude <= numLongitudeLines; longitude++) {
+
+                // Scale coordinates into the 0...1 texture coordinate range,
+                // with north at the top (y = 0).
+                SphereParamters[v] = new Vector2(
+                                    longitude.ToFloat() * longitudeSpacing,
+                                    (latitude.ToFloat() + 1.0f) * latitudeSpacing                            
+                                );
+
+                // Convert to spherical coordinates:
+                // theta is a longitude angle (around the equator) in radians.
+                // phi is a latitude angle (north or south of the equator).
+                float theta =  SphereParamters[v].X * 2.0f * Math.PI.ToFloat();
+                float phi = SphereParamters[v].Y * Math.PI.ToFloat();
+
+                // This determines the radius of the ring of this line of latitude.
+                // It's widest at the equator, and narrows as phi increases/decreases.
+                // float c = Math.Sin(phi).ToFloat();
+
+                // Usual formula for a vector in spherical coordinates.
+                // You can exchange x & z to wind the opposite way around the sphere.
+                 vertices[v].Position = new Vector3(
+                    Math.Sin(phi).ToFloat() * Math.Sin(theta).ToFloat(),
+                    Math.Cos(phi).ToFloat(),
+                    Math.Sin(phi).ToFloat() * Math.Cos(theta).ToFloat()
+                                ) * radius;
+
+                vertices[v].Normal = Vector3.Normalize(vertices[v].Position);
+
+                if(latitude < numLatitudeLines -1){
+                    indices.Add(v.ToUnsigned());
+                    indices.Add(v.ToUnsigned()+1.ToUnsigned());
+                    indices.Add(v.ToUnsigned()+1.ToUnsigned()+numLongitudeLines.ToUnsigned());
+                    
+                    indices.Add(v.ToUnsigned()+1.ToUnsigned());
+                    indices.Add(v.ToUnsigned()+2.ToUnsigned()+numLongitudeLines.ToUnsigned());
+                    indices.Add(v.ToUnsigned()+numLongitudeLines.ToUnsigned()+1.ToUnsigned());
+                }
+
+                // Proceed to the next vertex.
+                v++;
+                }
+            }
+
+            // North pole indices
+            for(int longitude = 1; longitude < numLongitudeLines; longitude++) {
+                indices.Add(0);
+                indices.Add(longitude.ToUnsigned()+1.ToUnsigned());
+                indices.Add(longitude.ToUnsigned());
+            }
+             indices.Add(0);
+             indices.Add(1);
+             indices.Add(numLongitudeLines.ToUnsigned());
+
+            v-= numLongitudeLines+1;
+            // southpole
+            for(int longitude = 0; longitude <= numLongitudeLines; longitude++) {
+                indices.Add(v.ToUnsigned() + longitude.ToUnsigned());
+                indices.Add(v.ToUnsigned()+ longitude.ToUnsigned() +1.ToUnsigned());
+                indices.Add(numVertices.ToUnsigned()-1.ToUnsigned());
+            }
+            indices.Add(numVertices.ToUnsigned()-2.ToUnsigned());
+            indices.Add(v.ToUnsigned()+1.ToUnsigned());
+            indices.Add(numVertices.ToUnsigned()-1.ToUnsigned());
+            return new Mesh<VertexPositionNormal>(vertices,indices.ToArray());
         }
     }
 }

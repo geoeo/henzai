@@ -5,7 +5,7 @@ layout(std140) uniform material
     vec4 Diffuse;
     vec4 Specular;
     vec4 Ambient;
-    vec4 Coefficients
+    vec4 Coefficients;
 };
 
 in vec3 fsin_NormalWorld;

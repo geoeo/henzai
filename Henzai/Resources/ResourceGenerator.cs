@@ -80,7 +80,7 @@ namespace Henzai
 
         }
 
-                public static ResourceSet GenerateTextureResourceSetForDiffuseMapping(ModelRuntimeState<VertexPositionNormalTextureTangentBitangent> modelRuntimeState,int meshIndex, DisposeCollectorResourceFactory factory, GraphicsDevice graphicsDevice){
+                public static ResourceSet GenerateTextureResourceSetForDiffuseMapping(ModelRuntimeState<VertexPositionNormalTexture> modelRuntimeState,int meshIndex, DisposeCollectorResourceFactory factory, GraphicsDevice graphicsDevice){
                 Material material = modelRuntimeState.Model.meshes[meshIndex].TryGetMaterial();
 
                 ImageSharpTexture diffuseTextureIS = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, modelRuntimeState.Model.BaseDir, material.textureDiffuse));
@@ -139,6 +139,63 @@ namespace Henzai
                     new VertexElementDescription("Position",VertexElementSemantic.Position,VertexElementFormat.Float3),
                     new VertexElementDescription("Normal",VertexElementSemantic.Normal,VertexElementFormat.Float3)
                 );
+        }
+
+        public static GraphicsPipelineDescription GeneratePipelinePN<T>(
+            ModelRuntimeState<T> modelRuntimeState, 
+            SceneRuntimeState sceneRuntimeState, 
+            GraphicsDevice graphicsDevice) where T : struct{
+
+            return new GraphicsPipelineDescription(){
+                    BlendState = BlendStateDescription.SingleOverrideBlend,
+                    DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
+                    RasterizerState = new RasterizerStateDescription(
+                        cullMode: FaceCullMode.Back,
+                        fillMode: PolygonFillMode.Solid,
+                        frontFace: FrontFace.Clockwise,
+                        depthClipEnabled: true,
+                        scissorTestEnabled: false
+                    ),
+                    PrimitiveTopology = PrimitiveTopology.TriangleList,
+                    ResourceLayouts = new ResourceLayout[] {
+                        sceneRuntimeState.CameraResourceLayout,
+                        sceneRuntimeState.LightResourceLayout,
+                        sceneRuntimeState.MaterialResourceLayout},
+                    ShaderSet = new ShaderSetDescription(
+                        vertexLayouts: new VertexLayoutDescription[] {modelRuntimeState.VertexLayout},
+                        shaders: new Shader[] {modelRuntimeState.VertexShader,modelRuntimeState.FragmentShader}
+                    ),
+                    Outputs = graphicsDevice.SwapchainFramebuffer.OutputDescription
+                };
+        }
+
+        public static GraphicsPipelineDescription GeneratePipelinePNTTB<T>(
+            ModelRuntimeState<T> modelRuntimeState, 
+            SceneRuntimeState sceneRuntimeState, 
+            GraphicsDevice graphicsDevice) where T : struct{
+
+            return new GraphicsPipelineDescription(){
+                    BlendState = BlendStateDescription.SingleOverrideBlend,
+                    DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
+                    RasterizerState = new RasterizerStateDescription(
+                        cullMode: FaceCullMode.Back,
+                        fillMode: PolygonFillMode.Solid,
+                        frontFace: FrontFace.Clockwise,
+                        depthClipEnabled: true,
+                        scissorTestEnabled: false
+                    ),
+                    PrimitiveTopology = PrimitiveTopology.TriangleList,
+                    ResourceLayouts = new ResourceLayout[] {
+                        sceneRuntimeState.CameraResourceLayout,
+                        sceneRuntimeState.LightResourceLayout,
+                        sceneRuntimeState.MaterialResourceLayout,
+                        modelRuntimeState.TextureResourceLayout},
+                    ShaderSet = new ShaderSetDescription(
+                        vertexLayouts: new VertexLayoutDescription[] {modelRuntimeState.VertexLayout},
+                        shaders: new Shader[] {modelRuntimeState.VertexShader,modelRuntimeState.FragmentShader}
+                    ),
+                    Outputs = graphicsDevice.SwapchainFramebuffer.OutputDescription
+                };
         }
 
     }

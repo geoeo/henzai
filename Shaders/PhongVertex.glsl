@@ -19,7 +19,7 @@ layout(location = 1)in vec3 Normal;
 smooth out vec3 fsin_NormalWorld;
 smooth out vec3 fsin_FragWorld;
 smooth out vec3 fsin_LightWorld;
-smooth out vec3 fsin_ComPosWorld
+smooth out vec3 fsin_CamPosWorld;
 
 void main()
 {

@@ -35,13 +35,12 @@ namespace Henzai.Runtime
 
         }
 
-
         /// <summary>
         /// Render Commands for Mesh of Type:
-        /// <see cref="VertexStructs"/> 
+        /// <see cref="Henzai.Geometry.VertexPositionNormalTextureTangentBitangent"/> 
         ///</summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void GenerateCommandsForMesh<T>(
+        public static void GenerateCommandsForMesh(
                                                     CommandList commandList, 
                                                     DeviceBuffer vertexBuffer, 
                                                     DeviceBuffer indexBuffer,
@@ -51,7 +50,7 @@ namespace Henzai.Runtime
                                                     ResourceSet lightResourceSet,
                                                     ResourceSet materialResourceSet,
                                                     ResourceSet textureResourceSet,
-                                                    Mesh<T> mesh) where T : struct
+                                                    Mesh<VertexPositionNormalTextureTangentBitangent> mesh)
                                                     {
 
 
@@ -68,6 +67,47 @@ namespace Henzai.Runtime
             commandList.UpdateBuffer(materialBuffer,48,material.coefficients);
             commandList.SetGraphicsResourceSet(2,materialResourceSet);
             commandList.SetGraphicsResourceSet(3,textureResourceSet);
+            commandList.DrawIndexed(
+                indexCount: mesh.meshIndices.Length.ToUnsigned(),
+                instanceCount: 1,
+                indexStart: 0,
+                vertexOffset: 0,
+                instanceStart: 0
+            );
+
+        }
+
+        /// <summary>
+        /// Render Commands for Mesh of Type:
+        /// <see cref="Henzai.Geometry.VertexPositionNormal"/> 
+        ///</summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void GenerateCommandsForMesh(
+                                                    CommandList commandList, 
+                                                    DeviceBuffer vertexBuffer, 
+                                                    DeviceBuffer indexBuffer,
+                                                    DeviceBuffer cameraProjViewBuffer,
+                                                    DeviceBuffer materialBuffer,
+                                                    ResourceSet cameraResourceSet,
+                                                    ResourceSet lightResourceSet,
+                                                    ResourceSet materialResourceSet,
+                                                    ResourceSet textureResourceSet,
+                                                    Mesh<VertexPositionNormal> mesh)
+                                                    {
+
+
+            Material material = mesh.GetMaterialRuntime();
+
+            commandList.SetVertexBuffer(0,vertexBuffer);
+            commandList.SetIndexBuffer(indexBuffer,IndexFormat.UInt32);
+            commandList.UpdateBuffer(cameraProjViewBuffer,128,mesh.World);
+            commandList.SetGraphicsResourceSet(0,cameraResourceSet); // Always after SetPipeline
+            commandList.SetGraphicsResourceSet(1,lightResourceSet);
+            commandList.UpdateBuffer(materialBuffer,0,material.diffuse);
+            commandList.UpdateBuffer(materialBuffer,16,material.specular);
+            commandList.UpdateBuffer(materialBuffer,32,material.ambient);
+            commandList.UpdateBuffer(materialBuffer,48,material.coefficients);
+            commandList.SetGraphicsResourceSet(2,materialResourceSet);
             commandList.DrawIndexed(
                 indexCount: mesh.meshIndices.Length.ToUnsigned(),
                 instanceCount: 1,

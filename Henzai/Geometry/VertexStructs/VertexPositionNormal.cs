@@ -11,8 +11,8 @@ namespace Henzai.Geometry
         public const byte ElementCount = 2;
         public const VertexTypes HenzaiType = VertexTypes.VertexPositionNormal;
 
-        public readonly Vector3 Position;
-        public readonly Vector3 Normal;
+        public Vector3 Position;
+        public Vector3 Normal;
 
         public VertexPositionNormal(Vector3 position, Vector3 normal)
         {
