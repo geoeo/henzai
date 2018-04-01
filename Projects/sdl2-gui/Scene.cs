@@ -16,7 +16,6 @@ namespace Henzai.Examples
     {
         private Camera _staticCamera;
 
-        private CommandList _commandList;
         private Framebuffer _offScreenFBO;
         private Matrix4x4 _worldTransCube;
         private DeviceBuffer _vertexBufferCube;
@@ -61,8 +60,6 @@ namespace Henzai.Examples
 
             _staticCamera = new Camera(_renderResolution.Horizontal,_renderResolution.Vertical);
 
-            _commandList = _factory.CreateCommandList();
-
             createOffscreenFBO();
 
             createTransformationPipelineUniform();
@@ -74,6 +71,8 @@ namespace Henzai.Examples
             createTexturedQuadResources();
 
         }
+
+        override protected void FormatResourcesForRuntime(){}
 
         private List<IDisposable> createOffscreenFBO(){
             Texture offscreenTexture = _factory.CreateTexture(TextureDescription.Texture2D(

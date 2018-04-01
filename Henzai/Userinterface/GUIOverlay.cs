@@ -15,7 +15,6 @@ namespace Henzai.UserInterface
     {
 
         private readonly Assembly _assembly;
-        private CommandList _commandList;
         private DeviceBuffer _vertexBuffer;
         private DeviceBuffer _indexBuffer;
         private DeviceBuffer _projMatrixBuffer;
@@ -56,9 +55,9 @@ namespace Henzai.UserInterface
 
         }
 
-        override protected void CreateResources(){
+        override protected void FormatResourcesForRuntime(){}
 
-            _commandList = _factory.CreateCommandList();
+        override protected void CreateResources(){
 
             _vertexBuffer = _factory.CreateBuffer(new BufferDescription(10000, BufferUsage.VertexBuffer | BufferUsage.Dynamic));
             _vertexBuffer.Name = "ImGui.NET Vertex Buffer";

@@ -5,7 +5,6 @@ using Veldrid.ImageSharp;
 using Henzai;
 using Henzai.Geometry;
 using Henzai.Runtime;
-using Henzai.Runtime.Render;
 
 namespace Henzai
 {

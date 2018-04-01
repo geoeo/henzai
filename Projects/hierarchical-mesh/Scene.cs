@@ -11,13 +11,12 @@ using Henzai;
 using Henzai.Extensions;
 using Henzai.Geometry;
 using Henzai.Runtime;
-using Henzai.Runtime.Render;
 
 namespace Henzai.Examples
 {
     internal class Scene : Renderable
     {
-        private CommandList _commandList;
+
         private SceneRuntimeDescriptor _sceneRuntimeState;
 
         private List<ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>> _modelPNTTBDescriptorList;
@@ -46,7 +45,7 @@ namespace Henzai.Examples
         }
 
         // TODO: Investigate putting this in renderable
-        private void FormatResourcesForRuntime(){
+        override protected void FormatResourcesForRuntime(){
 
             foreach(var modelState in _modelPNTTBDescriptorList)
                 modelState.FormatResourcesForRuntime();
@@ -61,6 +60,7 @@ namespace Henzai.Examples
         override protected void CreateResources(){
 
             _sceneRuntimeState.Light = new Light();
+            _sceneRuntimeState.Camera = Camera;
 
             // string filePath = Path.Combine(AppContext.BaseDirectory, "armor/armor.dae"); 
             // string filePath = Path.Combine(AppContext.BaseDirectory, "nanosuit/nanosuit.obj"); 
@@ -72,7 +72,8 @@ namespace Henzai.Examples
             var sun = new Model<VertexPositionNormal>(String.Empty,GeometryFactory.generateSphereNormal(100,100,1));
             sun.meshes[0].TryGetMaterial().textureDiffuse = "Water.jpg";
             sun.meshes[0].TryGetMaterial().textureNormal = "WaterNorm.jpg";
-            sun.meshes[0].TryGetMaterial().ambient = new Vector4(1.0f,0.0f,0.0f,1.0f);
+            // sun.meshes[0].TryGetMaterial().ambient = new Vector4(1.0f,0.0f,0.0f,1.0f);
+            sun.meshes[0].TryGetMaterial().ambient = RgbaFloat.Orange.ToVector4();
             ref Vector4 lightPos = ref _sceneRuntimeState.Light.Light_DontMutate;
             Vector3 newTranslation = new Vector3(lightPos.X,lightPos.Y,lightPos.Z);
             sun.SetNewWorldTranslation(ref newTranslation, true);
@@ -145,8 +146,6 @@ namespace Henzai.Examples
             foreach(var modelDescriptor in _modelPNDescriptorList){
                 FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState); 
             }
-            
-            _commandList = _factory.CreateCommandList();
 
         }
 
@@ -158,62 +157,9 @@ namespace Henzai.Examples
             _commandList.ClearColorTarget(0,RgbaFloat.White);
             _commandList.ClearDepthStencil(1f);
 
-            for(int j = 0; j < _modelPNTTBDescriptorArray.Length; j++){
-                var modelState = _modelPNTTBDescriptorArray[j];
-                var model = modelState.Model;
-                RenderCommandGenerator_Inline.GenerateCommandsForModel(
-                    _commandList,
-                    modelState.Pipeline,
-                    _sceneRuntimeState.CameraProjViewBuffer,
-                    _sceneRuntimeState.LightBuffer,
-                    Camera,
-                    ref _sceneRuntimeState.Light.Light_DontMutate,
-                    model);
-                for(int i = 0; i < model.meshCount; i++){
-                    var mesh = model.meshes[i];
-                    RenderCommandGenerator_Inline.GenerateCommandsForMesh(
-                        _commandList,
-                        modelState.VertexBuffers[i],
-                        modelState.IndexBuffers[i],
-                        _sceneRuntimeState.CameraProjViewBuffer,
-                        _sceneRuntimeState.MaterialBuffer,
-                        _sceneRuntimeState.CameraResourceSet,
-                        _sceneRuntimeState.LightResourceSet,
-                        _sceneRuntimeState.MaterialResourceSet,
-                        modelState.TextureResourceSets[i],
-                        mesh
-                    );
-                }
-            }
+            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPNTTBDescriptorArray,_sceneRuntimeState);
+            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPNDescriptorArray,_sceneRuntimeState);
 
-
-            for(int j = 0; j < _modelPNDescriptorArray.Length; j++){
-                var modelState = _modelPNDescriptorArray[j];
-                var model = modelState.Model;
-                RenderCommandGenerator_Inline.GenerateCommandsForModel(
-                    _commandList,
-                    modelState.Pipeline,
-                    _sceneRuntimeState.CameraProjViewBuffer,
-                    _sceneRuntimeState.LightBuffer,
-                    Camera,
-                    ref _sceneRuntimeState.Light.Light_DontMutate,
-                    model);
-                for(int i = 0; i < model.meshCount; i++){
-                    var mesh = model.meshes[i];
-                    RenderCommandGenerator_Inline.GenerateCommandsForMesh(
-                        _commandList,
-                        modelState.VertexBuffers[i],
-                        modelState.IndexBuffers[i],
-                        _sceneRuntimeState.CameraProjViewBuffer,
-                        _sceneRuntimeState.MaterialBuffer,
-                        _sceneRuntimeState.CameraResourceSet,
-                        _sceneRuntimeState.LightResourceSet,
-                        _sceneRuntimeState.MaterialResourceSet,
-                        modelState.TextureResourceSets[i],
-                        mesh
-                    );
-                }
-            }
              
             _commandList.End();
         }

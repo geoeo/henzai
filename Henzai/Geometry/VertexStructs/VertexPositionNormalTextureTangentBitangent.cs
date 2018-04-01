@@ -3,7 +3,7 @@ using Henzai.Runtime;
 
 namespace Henzai.Geometry
 {
-    public struct VertexPositionNormalTextureTangentBitangent : VertexSizeable
+    public struct VertexPositionNormalTextureTangentBitangent : VertexRuntime
     {
         public const byte SizeInBytes = 56;
         public const byte PositionOffset = 0;

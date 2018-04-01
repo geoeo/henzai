@@ -14,7 +14,6 @@ namespace Henzai.Examples
 {
     internal class Scene : Renderable
     {
-        private CommandList _commandList;
         private DeviceBuffer _vertexBuffer;
         private DeviceBuffer _indexBuffer;
         private Shader _vertexShader;
@@ -42,6 +41,8 @@ namespace Henzai.Examples
             Camera.Position = cameraTranslation;
             Camera.LookDirection = -Vector3.Normalize(cubeToCamera); // not interpolating, might be choppy
         }
+
+        override protected void FormatResourcesForRuntime(){}
 
         override protected void CreateResources()
         {
@@ -118,8 +119,6 @@ namespace Henzai.Examples
             };
 
             _pipeline = _factory.CreateGraphicsPipeline(pipelineDescription);
-
-            _commandList = _factory.CreateCommandList();
 
         }
 

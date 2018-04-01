@@ -14,7 +14,6 @@ namespace Henzai.Examples
     // https://mellinoe.github.io/veldrid-docs/articles/getting-started/getting-started-part1.html
     internal class Scene : Renderable
     {
-        private CommandList _commandList;
         private DeviceBuffer _vertexBuffer;
         private DeviceBuffer _indexBuffer;
         private DeviceBuffer _xOffsetBuffer;
@@ -28,6 +27,8 @@ namespace Henzai.Examples
         public Scene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
             : base(title,windowSize,graphicsDeviceOptions,renderOptions){
         }
+
+        override protected void FormatResourcesForRuntime(){}
 
         override protected void CreateResources()
         {
@@ -108,8 +109,6 @@ namespace Henzai.Examples
             };
 
             _pipeline = _factory.CreateGraphicsPipeline(pipelineDescription);
-
-            _commandList = _factory.CreateCommandList();
 
         }
 

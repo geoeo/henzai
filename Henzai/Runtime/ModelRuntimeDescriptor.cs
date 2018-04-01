@@ -7,8 +7,9 @@ using Henzai;
 using Henzai.Runtime;
 using Henzai.Geometry;
 
-namespace Henzai.Runtime.Render
+namespace Henzai.Runtime
 {
+    // TODO: Add Instancing Capabilities
     public sealed class ModelRuntimeDescriptor<T> where T : struct
     {
 

@@ -16,8 +16,6 @@ namespace Henzai.Examples
 {
     internal class Scene : Renderable
     {
-
-        private CommandList _commandList;
         private List<DeviceBuffer> _vertexBuffers;
         private List<DeviceBuffer> _indexBuffers;
         private Shader _vertexShader;
@@ -55,6 +53,8 @@ namespace Henzai.Examples
             var newWorld = _model.GetWorld_DontMutate*Matrix4x4.CreateRotationY(Math.PI.ToFloat()*delta/10.0f);
             _model.SetNewWorldTransformation(ref newWorld,true); 
         }
+
+        override protected void FormatResourcesForRuntime(){}
 
         // TODO: Abstract Resource Crreation for Uniforms, Vertex Layouts, Disposing
         override protected void CreateResources(){
@@ -192,8 +192,6 @@ namespace Henzai.Examples
             };
 
             _pipeline = _factory.CreateGraphicsPipeline(pipelineDescription);
-
-            _commandList = _factory.CreateCommandList();
 
         }
 

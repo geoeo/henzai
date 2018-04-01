@@ -8,10 +8,10 @@ using Veldrid.Sdl2;
 using Henzai.UserInterface;
 using Henzai.Extensions;
 using Henzai.Runtime;
-using Henzai.Runtime.Render;
 
 namespace Henzai
 {
+    //TODO: Investigate Making a Completely Separate Thread for UI
     /// <summary>
     /// A boilerplate for renderable scenes.
     /// Every disposable resource should be returned by its respective method
@@ -36,6 +36,7 @@ namespace Henzai
         public GraphicsDevice GraphicsDevice => _graphicsDevice;
         private RenderOptions _renderOptions;
         protected DisposeCollectorResourceFactory _factory;
+        protected CommandList _commandList;
         protected Resolution _renderResolution;
         /// <summary>
         /// Holds all created resources which implement IDisposable
@@ -60,7 +61,6 @@ namespace Henzai
         private Task[] drawTasksPre;
         private Task[] drawTasksPost;
 
-        //TODO: Investigate 60 fps cap
         public Renderable(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions){
             WindowCreateInfo windowCI = new WindowCreateInfo()
             {
@@ -80,6 +80,7 @@ namespace Henzai
             _renderOptions = renderOptions;
             _contextWindow.Title = $"{title} / {_graphicsDevice.BackendType.ToString()}";
             _factory = new DisposeCollectorResourceFactory(_graphicsDevice.ResourceFactory);
+            _commandList = _factory.CreateCommandList();
 
         }
 
@@ -88,8 +89,10 @@ namespace Henzai
             _contextWindow = contextWindow;
 
             _factory = new DisposeCollectorResourceFactory(_graphicsDevice.ResourceFactory);
+            _commandList = _factory.CreateCommandList();
         }
 
+        //TODO: Investigate passing Render options
         /// <summary>
         /// Sets up windowing and keyboard input
         /// Calls Draw() method in rendering loop
@@ -181,7 +184,7 @@ namespace Henzai
                 Thread.Sleep(msDiffRounded);
         }
 
-        protected void FillRuntimeDescriptor<T>(ModelRuntimeDescriptor<T> modelDescriptor, SceneRuntimeDescriptor sceneRuntimeDescriptor) where T : struct, VertexSizeable{
+        protected void FillRuntimeDescriptor<T>(ModelRuntimeDescriptor<T> modelDescriptor, SceneRuntimeDescriptor sceneRuntimeDescriptor) where T : struct, VertexRuntime{
                 var model = modelDescriptor.Model;
 
                 modelDescriptor.TextureResourceLayout = modelDescriptor.InvokeTextureResourceLayoutGeneration(_factory);
@@ -215,7 +218,7 @@ namespace Henzai
                         modelDescriptor.Pipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GeneratePipelinePN(modelDescriptor,sceneRuntimeDescriptor,GraphicsDevice));
                         break;
                     case VertexTypes.VertexPositionNormalTextureTangentBitangent:
-                            modelDescriptor.Pipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GeneratePipelinePNTTB(modelDescriptor,sceneRuntimeDescriptor,GraphicsDevice));
+                        modelDescriptor.Pipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GeneratePipelinePNTTB(modelDescriptor,sceneRuntimeDescriptor,GraphicsDevice));
                         break;
                     default:
                         throw new NotImplementedException($"{modelDescriptor.VertexType.ToString("g")} not implemented");
@@ -233,7 +236,15 @@ namespace Henzai
         /// </summary>
         abstract protected void CreateResources();
 
+        /// <summary>
+        /// Creates the command list and its containing render commands
+        /// </summary>
         abstract protected void BuildCommandList();
+
+        /// <summary>
+        /// Convertes vertex list aggregation to arrays for runtime
+        /// </summary>
+        abstract protected void FormatResourcesForRuntime();
 
         /// <summary>
         /// Disposes of all elements in _sceneResources

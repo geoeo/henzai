@@ -7,7 +7,7 @@ using Henzai.Geometry;
 
 namespace Henzai.Runtime
 {
-    public static class RenderCommandGenerator_Inline
+    public static class RenderCommandGenerator
     {
 
 
@@ -16,7 +16,7 @@ namespace Henzai.Runtime
         /// <see cref="VertexStructs"/> 
         ///</summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void GenerateCommandsForModel<T>(
+        public static void GenerateCommandsForModel_Inline<T>(
                                                     CommandList commandList, 
                                                     Pipeline pipeline,
                                                     DeviceBuffer cameraProjViewBuffer,
@@ -40,7 +40,7 @@ namespace Henzai.Runtime
         /// <see cref="Henzai.Geometry.VertexPositionNormalTextureTangentBitangent"/> 
         ///</summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void GenerateCommandsForMesh(
+        public static void GenerateCommandsForMesh_Inline(
                                                     CommandList commandList, 
                                                     DeviceBuffer vertexBuffer, 
                                                     DeviceBuffer indexBuffer,
@@ -82,7 +82,7 @@ namespace Henzai.Runtime
         /// <see cref="Henzai.Geometry.VertexPositionNormal"/> 
         ///</summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void GenerateCommandsForMesh(
+        public static void GenerateCommandsForMesh_Inline(
                                                     CommandList commandList, 
                                                     DeviceBuffer vertexBuffer, 
                                                     DeviceBuffer indexBuffer,
@@ -116,6 +116,70 @@ namespace Henzai.Runtime
                 instanceStart: 0
             );
 
+        }
+
+        public static void GenerateRenderCommandsForModelDescriptor(CommandList commandList, 
+                                                                    ModelRuntimeDescriptor<VertexPositionNormal>[] descriptorArray,
+                                                                    SceneRuntimeDescriptor sceneRuntimeDescriptor){
+            for(int j = 0; j < descriptorArray.Length; j++){
+                var modelState = descriptorArray[j];
+                var model = modelState.Model;
+                RenderCommandGenerator.GenerateCommandsForModel_Inline(
+                    commandList,
+                    modelState.Pipeline,
+                    sceneRuntimeDescriptor.CameraProjViewBuffer,
+                    sceneRuntimeDescriptor.LightBuffer,
+                    sceneRuntimeDescriptor.Camera,
+                    ref sceneRuntimeDescriptor.Light.Light_DontMutate,
+                    model);
+                for(int i = 0; i < model.meshCount; i++){
+                    var mesh = model.meshes[i];
+                    RenderCommandGenerator.GenerateCommandsForMesh_Inline(
+                        commandList,
+                        modelState.VertexBuffers[i],
+                        modelState.IndexBuffers[i],
+                        sceneRuntimeDescriptor.CameraProjViewBuffer,
+                        sceneRuntimeDescriptor.MaterialBuffer,
+                        sceneRuntimeDescriptor.CameraResourceSet,
+                        sceneRuntimeDescriptor.LightResourceSet,
+                        sceneRuntimeDescriptor.MaterialResourceSet,
+                        modelState.TextureResourceSets[i],
+                        mesh
+                    );
+                }
+            }
+        }
+
+        public static void GenerateRenderCommandsForModelDescriptor(CommandList commandList, 
+                                                                    ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] descriptorArray,
+                                                                    SceneRuntimeDescriptor sceneRuntimeDescriptor){
+            for(int j = 0; j < descriptorArray.Length; j++){
+                var modelState = descriptorArray[j];
+                var model = modelState.Model;
+                RenderCommandGenerator.GenerateCommandsForModel_Inline(
+                    commandList,
+                    modelState.Pipeline,
+                    sceneRuntimeDescriptor.CameraProjViewBuffer,
+                    sceneRuntimeDescriptor.LightBuffer,
+                    sceneRuntimeDescriptor.Camera,
+                    ref sceneRuntimeDescriptor.Light.Light_DontMutate,
+                    model);
+                for(int i = 0; i < model.meshCount; i++){
+                    var mesh = model.meshes[i];
+                    RenderCommandGenerator.GenerateCommandsForMesh_Inline(
+                        commandList,
+                        modelState.VertexBuffers[i],
+                        modelState.IndexBuffers[i],
+                        sceneRuntimeDescriptor.CameraProjViewBuffer,
+                        sceneRuntimeDescriptor.MaterialBuffer,
+                        sceneRuntimeDescriptor.CameraResourceSet,
+                        sceneRuntimeDescriptor.LightResourceSet,
+                        sceneRuntimeDescriptor.MaterialResourceSet,
+                        modelState.TextureResourceSets[i],
+                        mesh
+                    );
+                }
+            }
         }
 
     }

@@ -2,7 +2,7 @@ using System;
 using System.Numerics;
 using Veldrid;
 
-namespace Henzai.Runtime.Render
+namespace Henzai.Runtime
 {
     ///<summary>
     /// Encapsulates Resources Needed at Scene Level for Rendering at Runtime.
@@ -63,6 +63,7 @@ namespace Henzai.Runtime.Render
        /// Encapsulates Lighting Layout.
        /// </summary>
        public Light Light {get;set;}
+       public Camera Camera {get;set;}
 
    } 
 }

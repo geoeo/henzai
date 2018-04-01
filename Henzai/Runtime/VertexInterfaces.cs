@@ -1,7 +1,7 @@
     
     namespace Henzai.Runtime
     {
-        public interface VertexSizeable
+        public interface VertexRuntime
         {
             byte GetSizeInBytes();
         }

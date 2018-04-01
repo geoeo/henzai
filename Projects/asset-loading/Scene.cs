@@ -16,7 +16,6 @@ namespace Henzai.Examples
     internal class Scene : Renderable
     {
 
-        private CommandList _commandList;
         private List<DeviceBuffer> _vertexBuffers;
         private List<DeviceBuffer> _indexBuffers;
         private Shader _vertexShader;
@@ -41,6 +40,8 @@ namespace Henzai.Examples
                 _vertexBuffers = new List<DeviceBuffer>();
                 _indexBuffers = new List<DeviceBuffer>();
         }
+
+        override protected void FormatResourcesForRuntime(){}
 
         // TODO: Abstract Resource Crreation for Uniforms, Vertex Layouts, Disposing
         override protected void CreateResources(){
@@ -138,8 +139,6 @@ namespace Henzai.Examples
             };
 
             _pipeline = _factory.CreateGraphicsPipeline(pipelineDescription);
-
-            _commandList = _factory.CreateCommandList();
 
         }
 
