@@ -223,7 +223,6 @@ namespace Henzai.Runtime
                         throw new NotImplementedException($"{modelDescriptor.VertexType.ToString("g")} not implemented");
                 }
         }
-
       
         /// <summary>
         /// Executes the defined command list(s)

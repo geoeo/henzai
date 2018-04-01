@@ -16,7 +16,7 @@ namespace Henzai.Runtime
         /// <see cref="VertexStructs"/> 
         ///</summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void GenerateCommandsForModel_Inline<T>(
+        private static void GenerateCommandsForModel_Inline<T>(
                                                     CommandList commandList, 
                                                     Pipeline pipeline,
                                                     DeviceBuffer cameraProjViewBuffer,
@@ -40,7 +40,7 @@ namespace Henzai.Runtime
         /// <see cref="Henzai.Geometry.VertexPositionNormalTextureTangentBitangent"/> 
         ///</summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void GenerateCommandsForMesh_Inline(
+        private static void GenerateCommandsForMesh_Inline(
                                                     CommandList commandList, 
                                                     DeviceBuffer vertexBuffer, 
                                                     DeviceBuffer indexBuffer,
@@ -82,7 +82,7 @@ namespace Henzai.Runtime
         /// <see cref="Henzai.Geometry.VertexPositionNormal"/> 
         ///</summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void GenerateCommandsForMesh_Inline(
+        private static void GenerateCommandsForMesh_Inline(
                                                     CommandList commandList, 
                                                     DeviceBuffer vertexBuffer, 
                                                     DeviceBuffer indexBuffer,
