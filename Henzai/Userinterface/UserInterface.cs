@@ -6,7 +6,7 @@ using System.Numerics;
 using ImGuiNET;
 using Veldrid;
 using Veldrid.Sdl2;
-using Henzai;
+using Henzai.Runtime;
 
 
 namespace Henzai.UserInterface

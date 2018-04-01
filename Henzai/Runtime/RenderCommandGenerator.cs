@@ -150,6 +150,7 @@ namespace Henzai.Runtime
             }
         }
 
+        //TODO: Investigate Loop Unrolling
         public static void GenerateRenderCommandsForModelDescriptor(CommandList commandList, 
                                                                     ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] descriptorArray,
                                                                     SceneRuntimeDescriptor sceneRuntimeDescriptor){

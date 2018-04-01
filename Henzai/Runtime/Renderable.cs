@@ -7,9 +7,8 @@ using Veldrid.StartupUtilities;
 using Veldrid.Sdl2;
 using Henzai.UserInterface;
 using Henzai.Extensions;
-using Henzai.Runtime;
 
-namespace Henzai
+namespace Henzai.Runtime
 {
     //TODO: Investigate Making a Completely Separate Thread for UI
     /// <summary>

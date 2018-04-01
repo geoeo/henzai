@@ -1,5 +1,5 @@
 using System;
-using Henzai;
+using Henzai.Runtime;
 using Veldrid;
 
 namespace Henzai.Examples
