@@ -9,7 +9,7 @@ using Henzai.Geometry;
 
 namespace Henzai.Runtime.Render
 {
-    public sealed class ModelRuntimeState<T> where T : struct
+    public sealed class ModelRuntimeDescriptor<T> where T : struct
     {
 
         /// <summary>
@@ -59,9 +59,9 @@ namespace Henzai.Runtime.Render
         public event Func<VertexLayoutDescription> CallVertexLayoutGeneration;
         public event Func<DisposeCollectorResourceFactory,Sampler> CallSamplerGeneration;
         public event Func<DisposeCollectorResourceFactory,ResourceLayout> CallTextureResourceLayoutGeneration;
-        public event Func<ModelRuntimeState<T>,int,DisposeCollectorResourceFactory,GraphicsDevice,ResourceSet> CallTextureResourceSetGeneration;
+        public event Func<ModelRuntimeDescriptor<T>,int,DisposeCollectorResourceFactory,GraphicsDevice,ResourceSet> CallTextureResourceSetGeneration;
 
-        public ModelRuntimeState(Model<T> modelIn, string vShaderName, string fShaderName, VertexTypes vertexType){
+        public ModelRuntimeDescriptor(Model<T> modelIn, string vShaderName, string fShaderName, VertexTypes vertexType){
             Model = modelIn;
 
             _vertexShaderName = vShaderName;

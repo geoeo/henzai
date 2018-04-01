@@ -9,6 +9,7 @@ using Henzai.Runtime.Render;
 
 namespace Henzai
 {
+    // TODO: Investigate splitting this up / VertexStruct abstraction
     public static class ResourceGenerator
     {
 
@@ -58,7 +59,7 @@ namespace Henzai
                 });
         }
 
-        public static ResourceSet GenerateTextureResourceSetForNormalMapping(ModelRuntimeState<VertexPositionNormalTextureTangentBitangent> modelRuntimeState,int meshIndex, DisposeCollectorResourceFactory factory, GraphicsDevice graphicsDevice){
+        public static ResourceSet GenerateTextureResourceSetForNormalMapping(ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent> modelRuntimeState,int meshIndex, DisposeCollectorResourceFactory factory, GraphicsDevice graphicsDevice){
                 Material material = modelRuntimeState.Model.meshes[meshIndex].TryGetMaterial();
 
                 ImageSharpTexture diffuseTextureIS = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, modelRuntimeState.Model.BaseDir, material.textureDiffuse));
@@ -70,6 +71,7 @@ namespace Henzai
                 Texture normalTexture = normalTextureIS.CreateDeviceTexture(graphicsDevice, factory);
                 TextureView normalTextureView = factory.CreateTextureView(normalTexture);
 
+
                 return  factory.CreateResourceSet(new ResourceSetDescription(
                 modelRuntimeState.TextureResourceLayout ,
                 diffuseTextureView,
@@ -80,7 +82,7 @@ namespace Henzai
 
         }
 
-                public static ResourceSet GenerateTextureResourceSetForDiffuseMapping(ModelRuntimeState<VertexPositionNormalTexture> modelRuntimeState,int meshIndex, DisposeCollectorResourceFactory factory, GraphicsDevice graphicsDevice){
+                public static ResourceSet GenerateTextureResourceSetForDiffuseMapping(ModelRuntimeDescriptor<VertexPositionNormalTexture> modelRuntimeState,int meshIndex, DisposeCollectorResourceFactory factory, GraphicsDevice graphicsDevice){
                 Material material = modelRuntimeState.Model.meshes[meshIndex].TryGetMaterial();
 
                 ImageSharpTexture diffuseTextureIS = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, modelRuntimeState.Model.BaseDir, material.textureDiffuse));
@@ -142,8 +144,8 @@ namespace Henzai
         }
 
         public static GraphicsPipelineDescription GeneratePipelinePN<T>(
-            ModelRuntimeState<T> modelRuntimeState, 
-            SceneRuntimeState sceneRuntimeState, 
+            ModelRuntimeDescriptor<T> modelRuntimeState, 
+            SceneRuntimeDescriptor sceneRuntimeState, 
             GraphicsDevice graphicsDevice) where T : struct{
 
             return new GraphicsPipelineDescription(){
@@ -170,8 +172,8 @@ namespace Henzai
         }
 
         public static GraphicsPipelineDescription GeneratePipelinePNTTB<T>(
-            ModelRuntimeState<T> modelRuntimeState, 
-            SceneRuntimeState sceneRuntimeState, 
+            ModelRuntimeDescriptor<T> modelRuntimeState, 
+            SceneRuntimeDescriptor sceneRuntimeState, 
             GraphicsDevice graphicsDevice) where T : struct{
 
             return new GraphicsPipelineDescription(){

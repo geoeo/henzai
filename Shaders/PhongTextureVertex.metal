@@ -28,7 +28,7 @@ struct ProjViewWorld
 };
 
 struct Light {
-    float3 Position;
+    float4 Position;
 };
 
 
@@ -39,13 +39,12 @@ vertex PixelInput VS(VertexInput input[[stage_in]],constant ProjViewWorld &pjw [
     float4 positionCS = pjw.Proj*pjw.View*positionWorld;
 
     float3x3 normalMatrix =  float3x3(pjw.World[0].xyz,pjw.World[1].xyz,pjw.World[2].xyz);
-    float4 lightWorld = float4(l.Position,1);
 
     output.Position = positionCS;
     output.FragWorld = positionWorld.xyz;
     output.NormalWorld = normalMatrix*input.Normal;
     output.TangentWorld = normalMatrix*input.Tangent;
-    output.LightWorld = lightWorld.xyz;
+    output.LightWorld = l.Position.xyz;
     output.UV = input.UV;
     output.CamPosWorld = pjw.View[3].xyz;
     return output;

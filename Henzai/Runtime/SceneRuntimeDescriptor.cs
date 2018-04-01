@@ -9,7 +9,7 @@ namespace Henzai.Runtime.Render
     /// Although Resources are at Scene Level, the data may be set per Model.
     /// Veldrid Resources are Managed By <see cref="DisposeCollectorResourceFactory"/>
     ///</summary>
-    public sealed class SceneRuntimeState
+    public sealed class SceneRuntimeDescriptor
    {
        /// <summary>
        /// Buffer Encapsulates CPU Memory for MVP Matrix

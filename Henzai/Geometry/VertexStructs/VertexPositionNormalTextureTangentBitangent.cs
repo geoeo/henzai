@@ -3,7 +3,7 @@ using Henzai.Runtime;
 
 namespace Henzai.Geometry
 {
-    public struct VertexPositionNormalTextureTangentBitangent
+    public struct VertexPositionNormalTextureTangentBitangent : VertexSizeable
     {
         public const byte SizeInBytes = 56;
         public const byte PositionOffset = 0;
@@ -36,6 +36,10 @@ namespace Henzai.Geometry
             TextureCoordinates = texCoords;
             Tangent = tangent;
             Bitangent = bitangent;
+        }
+
+        public byte GetSizeInBytes(){
+            return SizeInBytes;
         }
     }
 }

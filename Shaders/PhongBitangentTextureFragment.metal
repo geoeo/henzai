@@ -57,10 +57,13 @@ fragment float4 FS(PixelInput input[[stage_in]],
     color_out += diffuse;
     color_out += specular;
     //color_out = float4(input.NormalWorld,1.0);
+    //color_out = float4(normal_sample,1.0);
+    //color_out = float4(input.FragWorld,1.0);
     //color_out = float4(input.LightWorld,1.0);
     //color_out = diffuseTextureSample;
-    //color_out = normalTextureSample;
+    //color_out = float4(normalTextureSample,1.0);
     //color_out = float4(l_dot_n,l_dot_n,l_dot_n,1.0);
+    //color_out = float4(L.z,0.0,0.0,1.0);
 
     return color_out;
 }

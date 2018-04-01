@@ -18,22 +18,22 @@ namespace Henzai.Examples
     internal class Scene : Renderable
     {
         private CommandList _commandList;
-        private SceneRuntimeState _sceneRuntimeState;
+        private SceneRuntimeDescriptor _sceneRuntimeState;
 
-        private List<ModelRuntimeState<VertexPositionNormalTextureTangentBitangent>> _modelStatesList;
-        private ModelRuntimeState<VertexPositionNormalTextureTangentBitangent> [] _modelStates;
+        private List<ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>> _modelPNTTBDescriptorList;
+        private ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent> [] _modelPNTTBDescriptorArray;
 
-        private List<ModelRuntimeState<VertexPositionNormal>> _modelStatesPNList;
-        private ModelRuntimeState<VertexPositionNormal> [] _modelStatesPN;
+        private List<ModelRuntimeDescriptor<VertexPositionNormal>> _modelPNDescriptorList;
+        private ModelRuntimeDescriptor<VertexPositionNormal> [] _modelPNDescriptorArray;
 
         Model<VertexPositionNormalTextureTangentBitangent> _model;
 
         public Scene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
             : base(title,windowSize,graphicsDeviceOptions,renderOptions){
-                _sceneRuntimeState = new SceneRuntimeState();
+                _sceneRuntimeState = new SceneRuntimeDescriptor();
 
-                _modelStatesList = new List<ModelRuntimeState<VertexPositionNormalTextureTangentBitangent>>();
-                _modelStatesPNList = new List<ModelRuntimeState<VertexPositionNormal>>();
+                _modelPNTTBDescriptorList = new List<ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>>();
+                _modelPNDescriptorList = new List<ModelRuntimeDescriptor<VertexPositionNormal>>();
 
 
                 PreDraw+=RotateModel;
@@ -45,19 +45,19 @@ namespace Henzai.Examples
             _model.SetNewWorldTransformation(ref newWorld,true); 
         }
 
+        // TODO: Investigate putting this in renderable
         private void FormatResourcesForRuntime(){
 
-            foreach(var modelState in _modelStatesList)
+            foreach(var modelState in _modelPNTTBDescriptorList)
                 modelState.FormatResourcesForRuntime();
-            foreach(var modelState in _modelStatesPNList)
+            foreach(var modelState in _modelPNDescriptorList)
                 modelState.FormatResourcesForRuntime();
 
 
-            _modelStates = _modelStatesList.ToArray();
-            _modelStatesPN = _modelStatesPNList.ToArray();
+            _modelPNTTBDescriptorArray = _modelPNTTBDescriptorList.ToArray();
+            _modelPNDescriptorArray = _modelPNDescriptorList.ToArray();
         }
 
-        // TODO: Abstract Resource Crreation for Uniforms, Vertex Layouts, Disposing
         override protected void CreateResources(){
 
             _sceneRuntimeState.Light = new Light();
@@ -77,7 +77,7 @@ namespace Henzai.Examples
             Vector3 newTranslation = new Vector3(lightPos.X,lightPos.Y,lightPos.Z);
             sun.SetNewWorldTranslation(ref newTranslation, true);
 
-            var nanoSuitRuntimeState = new ModelRuntimeState<VertexPositionNormalTextureTangentBitangent>(_model,"PhongBitangentTexture","PhongBitangentTexture", VertexTypes.VertexPositionNormalTextureTangentBitangent);
+            var nanoSuitRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>(_model,"PhongBitangentTexture","PhongBitangentTexture", VertexTypes.VertexPositionNormalTextureTangentBitangent);
             nanoSuitRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPNTTB;
             nanoSuitRuntimeState.CallSamplerGeneration+=ResourceGenerator.GenerateLinearSampler;
             nanoSuitRuntimeState.CallTextureResourceLayoutGeneration+=ResourceGenerator.GenerateTextureResourceLayoutForNormalMapping;
@@ -89,12 +89,12 @@ namespace Henzai.Examples
             // sunRuntimeState.CallTextureResourceLayoutGeneration+=ResourceGenerator.GenerateTextureResourceLayoutForNormalMapping;
             // sunRuntimeState.CallTextureResourceSetGeneration+=ResourceGenerator.GenerateTextureResourceSetForNormalMapping;
 
-            _modelStatesList.Add(nanoSuitRuntimeState);
+            _modelPNTTBDescriptorList.Add(nanoSuitRuntimeState);
             // _modelStatesList.Add(sunRuntimeState);
 
-            var sunRuntimeState = new ModelRuntimeState<VertexPositionNormal>(sun,"Phong","Phong",VertexTypes.VertexPositionNormal);
+            var sunRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormal>(sun,"Phong","Phong",VertexTypes.VertexPositionNormal);
             sunRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPN;
-            _modelStatesPNList.Add(sunRuntimeState);
+            _modelPNDescriptorList.Add(sunRuntimeState);
 
             /// Uniform 1 - Camera
             _sceneRuntimeState.CameraProjViewBuffer  = _factory.CreateBuffer(new BufferDescription(192,BufferUsage.UniformBuffer | BufferUsage.Dynamic));
@@ -131,55 +131,19 @@ namespace Henzai.Examples
                     _factory,
                     "light",
                     ResourceKind.UniformBuffer,
-                    ShaderStages.Fragment);
+                    ShaderStages.Vertex);
             _sceneRuntimeState.LightResourceSet 
                 = ResourceGenerator.GenrateResourceSet(
                     _factory,
                     _sceneRuntimeState.LightResourceLayout,
                     new BindableResource[]{_sceneRuntimeState.LightBuffer});
 
-            foreach(var modelState in _modelStatesPNList){
+            foreach(var modelDescriptor in _modelPNTTBDescriptorList){
+                FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState); 
+            }
 
-                var model = modelState.Model;
-
-                modelState.TextureResourceLayout = modelState.InvokeTextureResourceLayoutGeneration(_factory);
-
-                modelState.TextureSampler = modelState.InvokeSamplerGeneration(_factory);
-
-                modelState.LoadShaders(GraphicsDevice);
-
-                for(int i = 0; i < model.meshCount; i++){
-
-                    DeviceBuffer vertexBuffer 
-                        =  _factory.CreateBuffer(new BufferDescription(model.meshes[i].vertices.LengthUnsigned() * VertexPositionNormalTextureTangentBitangent.SizeInBytes, BufferUsage.VertexBuffer)); 
-
-                    DeviceBuffer indexBuffer
-                        = _factory.CreateBuffer(new BufferDescription(model.meshes[i].meshIndices.LengthUnsigned()*sizeof(uint),BufferUsage.IndexBuffer));
-                        
-
-                    modelState.VertexBuffersList.Add(vertexBuffer);
-                    modelState.IndexBuffersList.Add(indexBuffer);
-
-                    GraphicsDevice.UpdateBuffer(vertexBuffer,0,model.meshes[i].vertices);
-                    GraphicsDevice.UpdateBuffer(indexBuffer,0,model.meshes[i].meshIndices);
-
-                    modelState.TextureResourceSetsList.Add(
-                        modelState.InvokeTextureResourceSetGeneration(i,_factory,GraphicsDevice)
-                        );
-                }
-                modelState.VertexLayout = modelState.InvokeVertexLayoutGeneration();
-
-                switch(modelState.VertexType){
-                    case VertexTypes.VertexPositionNormal:
-                        modelState.Pipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GeneratePipelinePN(modelState,_sceneRuntimeState,GraphicsDevice));
-                        break;
-                    case VertexTypes.VertexPositionNormalTextureTangentBitangent:
-                            modelState.Pipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GeneratePipelinePNTTB(modelState,_sceneRuntimeState,GraphicsDevice));
-                        break;
-                    default:
-                        throw new NotImplementedException($"{modelState.VertexType.ToString("g")} not implemented");
-                }
- 
+            foreach(var modelDescriptor in _modelPNDescriptorList){
+                FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState); 
             }
             
             _commandList = _factory.CreateCommandList();
@@ -194,8 +158,37 @@ namespace Henzai.Examples
             _commandList.ClearColorTarget(0,RgbaFloat.White);
             _commandList.ClearDepthStencil(1f);
 
-            for(int j = 0; j < _modelStatesPN.Length; j++){
-                var modelState = _modelStatesPN[j];
+            for(int j = 0; j < _modelPNTTBDescriptorArray.Length; j++){
+                var modelState = _modelPNTTBDescriptorArray[j];
+                var model = modelState.Model;
+                RenderCommandGenerator_Inline.GenerateCommandsForModel(
+                    _commandList,
+                    modelState.Pipeline,
+                    _sceneRuntimeState.CameraProjViewBuffer,
+                    _sceneRuntimeState.LightBuffer,
+                    Camera,
+                    ref _sceneRuntimeState.Light.Light_DontMutate,
+                    model);
+                for(int i = 0; i < model.meshCount; i++){
+                    var mesh = model.meshes[i];
+                    RenderCommandGenerator_Inline.GenerateCommandsForMesh(
+                        _commandList,
+                        modelState.VertexBuffers[i],
+                        modelState.IndexBuffers[i],
+                        _sceneRuntimeState.CameraProjViewBuffer,
+                        _sceneRuntimeState.MaterialBuffer,
+                        _sceneRuntimeState.CameraResourceSet,
+                        _sceneRuntimeState.LightResourceSet,
+                        _sceneRuntimeState.MaterialResourceSet,
+                        modelState.TextureResourceSets[i],
+                        mesh
+                    );
+                }
+            }
+
+
+            for(int j = 0; j < _modelPNDescriptorArray.Length; j++){
+                var modelState = _modelPNDescriptorArray[j];
                 var model = modelState.Model;
                 RenderCommandGenerator_Inline.GenerateCommandsForModel(
                     _commandList,

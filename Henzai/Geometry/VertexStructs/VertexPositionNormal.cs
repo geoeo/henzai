@@ -3,7 +3,7 @@ using Henzai.Runtime;
 
 namespace Henzai.Geometry
 {
-    public struct VertexPositionNormal
+    public struct VertexPositionNormal : VertexSizeable
     {
         public const byte SizeInBytes = 24;
         public const byte PositionOffset = 0;
@@ -18,6 +18,10 @@ namespace Henzai.Geometry
         {
             Position = position;
             Normal = Vector3.Normalize(normal);
+        }
+
+        public byte GetSizeInBytes(){
+            return SizeInBytes;
         }
     }
 }

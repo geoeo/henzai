@@ -7,6 +7,8 @@ using Veldrid.StartupUtilities;
 using Veldrid.Sdl2;
 using Henzai.UserInterface;
 using Henzai.Extensions;
+using Henzai.Runtime;
+using Henzai.Runtime.Render;
 
 namespace Henzai
 {
@@ -177,6 +179,47 @@ namespace Henzai
             int msDiffRounded = millisecondsPerFrameDiff.ToInt32AwayFromZero();
             if(millisecondsPerFrameDiff > 0)
                 Thread.Sleep(msDiffRounded);
+        }
+
+        protected void FillRuntimeDescriptor<T>(ModelRuntimeDescriptor<T> modelDescriptor, SceneRuntimeDescriptor sceneRuntimeDescriptor) where T : struct, VertexSizeable{
+                var model = modelDescriptor.Model;
+
+                modelDescriptor.TextureResourceLayout = modelDescriptor.InvokeTextureResourceLayoutGeneration(_factory);
+                modelDescriptor.TextureSampler = modelDescriptor.InvokeSamplerGeneration(_factory);
+                modelDescriptor.LoadShaders(GraphicsDevice);
+                var vertexSizeInBytes = model.meshes[0].vertices[0].GetSizeInBytes();
+
+                for(int i = 0; i < model.meshCount; i++){
+
+                    DeviceBuffer vertexBuffer 
+                        =  _factory.CreateBuffer(new BufferDescription(model.meshes[i].vertices.LengthUnsigned() * vertexSizeInBytes, BufferUsage.VertexBuffer)); 
+
+                    DeviceBuffer indexBuffer
+                        = _factory.CreateBuffer(new BufferDescription(model.meshes[i].meshIndices.LengthUnsigned()*sizeof(uint),BufferUsage.IndexBuffer));
+                        
+
+                    modelDescriptor.VertexBuffersList.Add(vertexBuffer);
+                    modelDescriptor.IndexBuffersList.Add(indexBuffer);
+
+                    GraphicsDevice.UpdateBuffer(vertexBuffer,0,model.meshes[i].vertices);
+                    GraphicsDevice.UpdateBuffer(indexBuffer,0,model.meshes[i].meshIndices);
+
+                    modelDescriptor.TextureResourceSetsList.Add(
+                        modelDescriptor.InvokeTextureResourceSetGeneration(i,_factory,GraphicsDevice)
+                        );
+                }
+                modelDescriptor.VertexLayout = modelDescriptor.InvokeVertexLayoutGeneration();
+
+                switch(modelDescriptor.VertexType){
+                    case VertexTypes.VertexPositionNormal:
+                        modelDescriptor.Pipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GeneratePipelinePN(modelDescriptor,sceneRuntimeDescriptor,GraphicsDevice));
+                        break;
+                    case VertexTypes.VertexPositionNormalTextureTangentBitangent:
+                            modelDescriptor.Pipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GeneratePipelinePNTTB(modelDescriptor,sceneRuntimeDescriptor,GraphicsDevice));
+                        break;
+                    default:
+                        throw new NotImplementedException($"{modelDescriptor.VertexType.ToString("g")} not implemented");
+                }
         }
 
       
