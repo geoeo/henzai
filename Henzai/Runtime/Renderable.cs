@@ -24,7 +24,7 @@ namespace Henzai.Runtime
         /// <summary>
         /// Flag indicated if this is a child to another renderable
         /// </summary>
-        private byte _isChild = 0;
+        private bool _isChild = false;
         //TODO: Investigate Switching to Array
         /// <summary>
         /// Renderable objects which should be drawn before this.Draw()
@@ -233,12 +233,12 @@ namespace Henzai.Runtime
 
         public void AddThisAsPreTo(Renderable parent){
             parent._childrenPre.Add(this);
-            _isChild = 1;
+            _isChild = true;
         }
 
         public void AddThisAsPostTo(Renderable parent){
             parent._childrenPost.Add(this);
-            _isChild = 1;
+            _isChild = true;
         }
       
         /// <summary>
@@ -271,7 +271,7 @@ namespace Henzai.Runtime
                 child.Dispose();
             foreach(var child in _childrenPost)
                 child.Dispose();  
-            if(_isChild == 0)
+            if(!_isChild)
                 _graphicsDevice.Dispose();
         }
     }
