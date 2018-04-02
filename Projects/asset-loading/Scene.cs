@@ -67,7 +67,7 @@ namespace Henzai.Examples
             _cameraResourceSet = _factory.CreateResourceSet(resourceSetDescription);
 
             // Uniform 2 - Material
-            _materialBuffer = _factory.CreateBuffer(new BufferDescription(48,BufferUsage.UniformBuffer));
+            _materialBuffer = _factory.CreateBuffer(new BufferDescription(64,BufferUsage.UniformBuffer));
 
             var resourceLayoutElementDescriptionMaterial = new ResourceLayoutElementDescription("material",ResourceKind.UniformBuffer,ShaderStages.Fragment);
             ResourceLayoutElementDescription[] resourceLayoutElementDescriptionsMaterial = {resourceLayoutElementDescriptionMaterial};
@@ -95,7 +95,7 @@ namespace Henzai.Examples
             for(int i = 0; i < _model.meshCount; i++){
 
                 DeviceBuffer vertexBuffer 
-                    =  _factory.CreateBuffer(new BufferDescription(_model.meshes[i].vertices.LengthUnsigned() * VertexPositionNormalTexture.SizeInBytes, BufferUsage.VertexBuffer)); 
+                    =  _factory.CreateBuffer(new BufferDescription(_model.meshes[i].vertices.LengthUnsigned() * VertexPositionNormal.SizeInBytes, BufferUsage.VertexBuffer)); 
 
                 DeviceBuffer indexBuffer
                     = _factory.CreateBuffer(new BufferDescription(_model.meshes[i].meshIndices.LengthUnsigned()*sizeof(uint),BufferUsage.IndexBuffer));
@@ -163,6 +163,7 @@ namespace Henzai.Examples
                 _commandList.UpdateBuffer(_materialBuffer,0,material.diffuse);
                 _commandList.UpdateBuffer(_materialBuffer,16,material.specular);
                 _commandList.UpdateBuffer(_materialBuffer,32,material.ambient);
+                _commandList.UpdateBuffer(_materialBuffer,48,material.coefficients);
                 _commandList.SetGraphicsResourceSet(2,_materialResourceSet);
                 _commandList.DrawIndexed(
                     indexCount: _model.meshes[i].meshIndices.Length.ToUnsigned(),

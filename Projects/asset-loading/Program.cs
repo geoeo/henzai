@@ -22,7 +22,7 @@ namespace Henzai.Examples
             RenderOptions rdOptions = new RenderOptions()
             {
                 PreferredGraphicsBackend = GraphicsBackend.OpenGL,
-                UsePreferredGraphicsBackend = false,
+                UsePreferredGraphicsBackend = true,
                 LimitFrames = true,
                 FPSTarget = 60.0
             };

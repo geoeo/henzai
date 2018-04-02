@@ -32,5 +32,6 @@ void main()
     color_out += specular;
     fsout_Color = color_out;
     //fsout_Color = vec4(fsin_NormalWorld,1.0);
+    // fsout_Color = vec4(fsin_FragWorld,1.0);
     //fsout_Color = vec4(fsin_LightWorld,1.0);
 }

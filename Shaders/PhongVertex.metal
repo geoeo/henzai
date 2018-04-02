@@ -34,12 +34,11 @@ vertex PixelInput VS(VertexInput input[[stage_in]],constant ProjViewWorld &pjw [
     float4 positionCS = pjw.Proj*pjw.View*positionWorld;
     
     float3x3 normalMatrix =  float3x3(pjw.World[0].xyz,pjw.World[1].xyz,pjw.World[2].xyz);
-    float4 lightView = pjw.View*float4(l.Position,1);
 
     output.Position = positionCS;
     output.FragWorld = positionWorld.xyz;
     output.NormalWorld = float3x3(pjw.View[0].xyz,pjw.View[1].xyz,pjw.View[2].xyz)*normalMatrix*input.Normal;
-    output.LightWorld = lightView.xyz;
+    output.LightWorld = l.Position.xyz;
     output.CamPosWorld = pjw.View[3].xyz;
     return output;
 }
