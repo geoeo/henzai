@@ -39,7 +39,7 @@ namespace Henzai.UserInterface
 
         public void SetOverlayFor(Renderable scene){
             scene.PreDraw += UpdateImGui;
-            scene.childrenPost.Add(this);
+            AddThisAsPostTo(scene);
         }
 
         public void UpdateImGui(float deltaSeconds){

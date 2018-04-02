@@ -11,6 +11,7 @@ using Henzai.Runtime;
 
 namespace Henzai.UserInterface
 {
+    // TODO: Refactor into explicity UI Renderable
     /// See Veldrid.ImGuiRenderer
     public abstract class UserInterface : Renderable
     {
@@ -40,7 +41,7 @@ namespace Henzai.UserInterface
 
         public void SetOverlayFor(Renderable scene){
             scene.PreDraw += UpdateImGui;
-            scene.childrenPost.Add(this);
+            AddThisAsPostTo(scene);
         }
 
         public void UpdateImGui(float deltaSeconds){
@@ -301,15 +302,6 @@ namespace Henzai.UserInterface
                 default:
                     throw new NotImplementedException();
             }
-        }
-
-        override public void Dispose(){
-            _factory.DisposeCollector.DisposeAll();
-            foreach(var child in childrenPre)
-                child.Dispose();
-            foreach(var child in childrenPost)
-                child.Dispose();  
-
         }
 
     }

@@ -14,7 +14,7 @@ using Henzai.Runtime;
 
 namespace Henzai.Examples
 {
-    internal class Scene : Renderable
+    sealed class Scene : Renderable
     {
 
         private SceneRuntimeDescriptor _sceneRuntimeState;

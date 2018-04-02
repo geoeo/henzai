@@ -11,6 +11,7 @@ using Henzai.Extensions;
 namespace Henzai.Runtime
 {
     //TODO: Investigate Making a Completely Separate Thread for UI
+    // TODO: Profile Render Loop
     /// <summary>
     /// A boilerplate for renderable scenes.
     /// Every disposable resource should be returned by its respective method
@@ -20,15 +21,21 @@ namespace Henzai.Runtime
         private Camera _camera {get; set;} 
         public Camera Camera => _camera;
         private FrameTimer _frameTimer;
+        /// <summary>
+        /// Flag indicated if this is a child to another renderable
+        /// </summary>
+        private byte _isChild = 0;
         //TODO: Investigate Switching to Array
         /// <summary>
         /// Renderable objects which should be drawn before this.Draw()
         /// </summary>
-        public List<Renderable> childrenPre = new List<Renderable>();
+        private List<Renderable> _childrenPre = new List<Renderable>();
+        public List<Renderable> ChildrenPre => _childrenPre;
         /// <summary>
         /// Renderable objects which should be drawn after this.Draw()
         /// </summary>
-        public List<Renderable> childrenPost = new List<Renderable>();
+        private List<Renderable> _childrenPost = new List<Renderable>();
+        public List<Renderable> ChildrenPost => _childrenPost;
         private Sdl2Window _contextWindow;
         public Sdl2Window contextWindow => _contextWindow;
         private GraphicsDevice _graphicsDevice;
@@ -106,18 +113,18 @@ namespace Henzai.Runtime
             _frameTimer = new FrameTimer(1.0);
 
             CreateResources();
-            foreach(var child in childrenPre)
+            foreach(var child in _childrenPre)
                 child.CreateResources();
-            foreach(var child in childrenPost)
+            foreach(var child in _childrenPost)
                 child.CreateResources();           
 
             List<Renderable> allChildren = new List<Renderable>();
-            allChildren.AddRange(childrenPre);
-            allChildren.AddRange(childrenPost);
+            allChildren.AddRange(_childrenPre);
+            allChildren.AddRange(_childrenPost);
 
             buildCommandListTasks = new Task[allChildren.Count+1];
-            drawTasksPre = new Task[childrenPre.Count];
-            drawTasksPost = new Task[childrenPost.Count];
+            drawTasksPre = new Task[_childrenPre.Count];
+            drawTasksPost = new Task[_childrenPost.Count];
 
             PreRenderLoop?.Invoke();
             while (_contextWindow.Exists)
@@ -141,8 +148,8 @@ namespace Henzai.Runtime
                     Task.WaitAll(buildCommandListTasks);
 
                     // Perform draw tasks which should be done before "main" draw e.g. shadow maps
-                    for(int i = 0; i < childrenPre.Count; i++){
-                        var child = childrenPre[i];
+                    for(int i = 0; i < _childrenPre.Count; i++){
+                        var child = _childrenPre[i];
                         drawTasksPre[i] = Task.Run(() => child.Draw());
                     } 
 
@@ -151,8 +158,8 @@ namespace Henzai.Runtime
                     Draw();
 
                     // Perform draw tasks which should be after after "main" draw e.g. UI updates
-                    for(int i = 0; i < childrenPost.Count; i++){
-                        var child = childrenPost[i];
+                    for(int i = 0; i < _childrenPost.Count; i++){
+                        var child = _childrenPost[i];
                         drawTasksPost[i] = Task.Run(() => child.Draw());
                     } 
 
@@ -223,6 +230,16 @@ namespace Henzai.Runtime
                         throw new NotImplementedException($"{modelDescriptor.VertexType.ToString("g")} not implemented");
                 }
         }
+
+        public void AddThisAsPreTo(Renderable parent){
+            parent._childrenPre.Add(this);
+            _isChild = 1;
+        }
+
+        public void AddThisAsPostTo(Renderable parent){
+            parent._childrenPost.Add(this);
+            _isChild = 1;
+        }
       
         /// <summary>
         /// Executes the defined command list(s)
@@ -247,15 +264,15 @@ namespace Henzai.Runtime
         /// <summary>
         /// Disposes of all elements in _sceneResources
         /// </summary>
-        virtual public void Dispose(){
+         public void Dispose(){
 
             _factory.DisposeCollector.DisposeAll();
-            foreach(var child in childrenPre)
+            foreach(var child in _childrenPre)
                 child.Dispose();
-            foreach(var child in childrenPost)
+            foreach(var child in _childrenPost)
                 child.Dispose();  
-
-            _graphicsDevice.Dispose();
+            if(_isChild == 0)
+                _graphicsDevice.Dispose();
         }
     }
 }
