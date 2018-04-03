@@ -25,7 +25,8 @@ namespace Henzai.Examples
         private List<ModelRuntimeDescriptor<VertexPositionNormal>> _modelPNDescriptorList;
         private ModelRuntimeDescriptor<VertexPositionNormal> [] _modelPNDescriptorArray;
 
-        Model<VertexPositionNormalTextureTangentBitangent> _model;
+        Model<VertexPositionNormalTextureTangentBitangent> _nanosuit;
+        Model<VertexPositionNormal> _sun;
 
         public Scene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
             : base(title,windowSize,graphicsDeviceOptions,renderOptions){
@@ -40,8 +41,30 @@ namespace Henzai.Examples
         }
 
         private void RotateModel(float delta){
-            var newWorld = _model.GetWorld_DontMutate*Matrix4x4.CreateRotationY(Math.PI.ToFloat()*delta/10.0f);
-            _model.SetNewWorldTransformation(ref newWorld,true); 
+            var radian_slow = (Math.PI.ToFloat()/180.0f)*delta*10.0f;
+            var radian_fast = (Math.PI.ToFloat()/180.0f)*delta*100.0f;
+
+            // Rotate  nanosuit around itself
+            var newWorld = _nanosuit.GetWorld_DontMutate*Matrix4x4.CreateRotationY(radian_fast);
+
+            // Rotate around Sun without rotation around oneself
+            Vector3 pos  = _nanosuit.GetWorld_DontMutate.Translation;
+            Vector3 sunToSuit = _sun.GetWorld_DontMutate.Translation;
+            Quaternion rotationAroundY = Quaternion.CreateFromAxisAngle(Vector3.UnitY,radian_slow);
+            pos -= sunToSuit;
+            pos = Vector3.Transform(pos,rotationAroundY);
+            pos += sunToSuit;
+
+            // add the translating rotation to the orientation defining rotation
+            newWorld.Translation = pos;
+            _nanosuit.SetNewWorldTransformation(ref newWorld,true);
+
+
+            // Sun around nanosuit
+            // Vector3 suitToSun = _sun.GetWorld_DontMutate.Translation - _nanosuit.GetWorld_DontMutate.Translation;
+            // Quaternion rotationAroundY_2 = Quaternion.CreateFromAxisAngle(Vector3.UnitY,radian);
+            // Vector3 newPos_2 = Vector3.Transform(suitToSun,rotationAroundY_2);
+            // _sun.SetNewWorldTranslation(ref newPos_2,true);
         }
 
         // TODO: Investigate putting this in renderable
@@ -64,21 +87,21 @@ namespace Henzai.Examples
 
             // string filePath = Path.Combine(AppContext.BaseDirectory, "armor/armor.dae"); 
             // string filePath = Path.Combine(AppContext.BaseDirectory, "nanosuit/nanosuit.obj"); 
-            _model = AssimpLoader.LoadFromFile<VertexPositionNormalTextureTangentBitangent>(AppContext.BaseDirectory,"nanosuit/nanosuit.obj",VertexPositionNormalTextureTangentBitangent.HenzaiType);
+            _nanosuit = AssimpLoader.LoadFromFile<VertexPositionNormalTextureTangentBitangent>(AppContext.BaseDirectory,"nanosuit/nanosuit.obj",VertexPositionNormalTextureTangentBitangent.HenzaiType);
             // _model = AssimpLoader.LoadFromFile<VertexPositionNormalTextureTangentBitangent>(AppContext.BaseDirectory,"sponza/sponza.obj",VertexPositionNormalTextureTangentBitangent.HenzaiType);
-            GeometryUtils.GenerateTangentAndBitagentSpaceFor(_model);
+            GeometryUtils.GenerateTangentAndBitagentSpaceFor(_nanosuit);
             // GeometryUtils.CheckTBN(_model);
             // var sun = new Model<VertexPositionNormalTextureTangentBitangent>("water",GeometryFactory.generateSphereTangentBitangent(100,100,1));
-            var sun = new Model<VertexPositionNormal>(String.Empty,GeometryFactory.generateSphereNormal(100,100,1));
-            sun.meshes[0].TryGetMaterial().textureDiffuse = "Water.jpg";
-            sun.meshes[0].TryGetMaterial().textureNormal = "WaterNorm.jpg";
+            _sun = new Model<VertexPositionNormal>(String.Empty,GeometryFactory.generateSphereNormal(100,100,1));
+            _sun.meshes[0].TryGetMaterial().textureDiffuse = "Water.jpg";
+            _sun.meshes[0].TryGetMaterial().textureNormal = "WaterNorm.jpg";
             // sun.meshes[0].TryGetMaterial().ambient = new Vector4(1.0f,0.0f,0.0f,1.0f);
-            sun.meshes[0].TryGetMaterial().ambient = RgbaFloat.Orange.ToVector4();
+            _sun.meshes[0].TryGetMaterial().ambient = RgbaFloat.Orange.ToVector4();
             ref Vector4 lightPos = ref _sceneRuntimeState.Light.Light_DontMutate;
             Vector3 newTranslation = new Vector3(lightPos.X,lightPos.Y,lightPos.Z);
-            sun.SetNewWorldTranslation(ref newTranslation, true);
+            _sun.SetNewWorldTranslation(ref newTranslation, true);
 
-            var nanoSuitRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>(_model,"PhongBitangentTexture","PhongBitangentTexture", VertexTypes.VertexPositionNormalTextureTangentBitangent);
+            var nanoSuitRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>(_nanosuit,"PhongBitangentTexture","PhongBitangentTexture", VertexTypes.VertexPositionNormalTextureTangentBitangent);
             nanoSuitRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPNTTB;
             nanoSuitRuntimeState.CallSamplerGeneration+=ResourceGenerator.GenerateLinearSampler;
             nanoSuitRuntimeState.CallTextureResourceLayoutGeneration+=ResourceGenerator.GenerateTextureResourceLayoutForNormalMapping;
@@ -93,7 +116,7 @@ namespace Henzai.Examples
             _modelPNTTBDescriptorList.Add(nanoSuitRuntimeState);
             // _modelStatesList.Add(sunRuntimeState);
 
-            var sunRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormal>(sun,"Phong","Phong",VertexTypes.VertexPositionNormal);
+            var sunRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormal>(_sun,"Phong","Phong",VertexTypes.VertexPositionNormal);
             sunRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPN;
             _modelPNDescriptorList.Add(sunRuntimeState);
 
