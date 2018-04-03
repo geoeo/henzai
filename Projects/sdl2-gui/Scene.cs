@@ -28,12 +28,12 @@ namespace Henzai.Examples
 
         private DeviceBuffer _indexBufferQuad;
 
-        private Matrix4x4 _worldTransColouredQuad;
-        private DeviceBuffer _vertexBufferColouredQuad;
-        private Shader _vertexShaderColouredQuad;
-        private Shader _fragmentShaderColouredQuad;
-        private Pipeline _pipelineColouredQuad;
-        private Pipeline _pipelineColouredQuadOffscreen;
+        private Matrix4x4 _worldTranscoloredQuad;
+        private DeviceBuffer _vertexBuffercoloredQuad;
+        private Shader _vertexShadercoloredQuad;
+        private Shader _fragmentShadercoloredQuad;
+        private Pipeline _pipelinecoloredQuad;
+        private Pipeline _pipelinecoloredQuadOffscreen;
 
         private Matrix4x4 _worldTransTexturedQuad;
         private DeviceBuffer _vertexBufferTexturedQuad;
@@ -67,7 +67,7 @@ namespace Henzai.Examples
 
             createCubeResources();
 
-            createColouredQuadResources();
+            createcoloredQuadResources();
 
             createTexturedQuadResources();
 
@@ -91,8 +91,8 @@ namespace Henzai.Examples
             _offScreenFBO = _factory.CreateFramebuffer(new FramebufferDescription(offscreenDepth,offscreenTexture));
 
             _offscreenLayout = _factory.CreateResourceLayout(new ResourceLayoutDescription(
-                new ResourceLayoutElementDescription("ColourTexture",ResourceKind.TextureReadOnly,ShaderStages.Fragment),
-                new ResourceLayoutElementDescription("ColourSampler",ResourceKind.Sampler,ShaderStages.Fragment)
+                new ResourceLayoutElementDescription("colorTexture",ResourceKind.TextureReadOnly,ShaderStages.Fragment),
+                new ResourceLayoutElementDescription("colorSampler",ResourceKind.Sampler,ShaderStages.Fragment)
             ));
 
             _textureOffscreenResourceSet = _factory.CreateResourceSet(new ResourceSetDescription(_offscreenLayout,_offscreenTextureView,GraphicsDevice.LinearSampler));
@@ -228,27 +228,27 @@ namespace Henzai.Examples
             };
         }
 
-        private List<IDisposable> createColouredQuadResources(){
+        private List<IDisposable> createcoloredQuadResources(){
 
-            Mesh<VertexPositionNDCColour> quad = GeometryFactory.generateColouredQuad(RgbaFloat.Red, RgbaFloat.Blue,RgbaFloat.Green,RgbaFloat.Orange);
+            Mesh<VertexPositionNDCColor> quad = GeometryFactory.generatecoloredQuad(RgbaFloat.Red, RgbaFloat.Blue,RgbaFloat.Green,RgbaFloat.Orange);
             ushort[] quadIndicies = GeometryFactory.generateQuadIndicies_TriangleStrip_CW();
 
-            _vertexBufferColouredQuad = _factory.CreateBuffer(new BufferDescription(quad.vertices.LengthUnsigned()* VertexPositionNDCColour.SizeInBytes, BufferUsage.VertexBuffer));
+            _vertexBuffercoloredQuad = _factory.CreateBuffer(new BufferDescription(quad.vertices.LengthUnsigned()* VertexPositionNDCColor.SizeInBytes, BufferUsage.VertexBuffer));
             _indexBufferQuad = _factory.CreateBuffer(new BufferDescription(quadIndicies.LengthUnsigned()* sizeof(ushort), BufferUsage.IndexBuffer));
 
-            GraphicsDevice.UpdateBuffer(_vertexBufferColouredQuad,0,quad.vertices);
+            GraphicsDevice.UpdateBuffer(_vertexBuffercoloredQuad,0,quad.vertices);
             GraphicsDevice.UpdateBuffer(_indexBufferQuad,0,quadIndicies);
 
             VertexLayoutDescription vertexLayout 
                 = new VertexLayoutDescription(
                     new VertexElementDescription("Position",VertexElementSemantic.Position,VertexElementFormat.Float2),
-                    new VertexElementDescription("Colour",VertexElementSemantic.Color,VertexElementFormat.Float4)
+                    new VertexElementDescription("color",VertexElementSemantic.Color,VertexElementFormat.Float4)
                 );
 
-            _worldTransColouredQuad = Matrix4x4.CreateWorld(new Vector3(-5,0,0),-Vector3.UnitZ,Vector3.UnitY);
+            _worldTranscoloredQuad = Matrix4x4.CreateWorld(new Vector3(-5,0,0),-Vector3.UnitZ,Vector3.UnitY);
 
-            _vertexShaderColouredQuad = IO.LoadShader("QuadColour",ShaderStages.Vertex,GraphicsDevice);
-            _fragmentShaderColouredQuad = IO.LoadShader("QuadColour",ShaderStages.Fragment,GraphicsDevice);
+            _vertexShadercoloredQuad = IO.LoadShader("Quadcolor",ShaderStages.Vertex,GraphicsDevice);
+            _fragmentShadercoloredQuad = IO.LoadShader("Quadcolor",ShaderStages.Fragment,GraphicsDevice);
 
             GraphicsPipelineDescription pipelineDescription = new GraphicsPipelineDescription(){
                 BlendState = BlendStateDescription.SingleOverrideBlend,
@@ -264,12 +264,12 @@ namespace Henzai.Examples
                 ResourceLayouts = new ResourceLayout[] {_transformationPipelineResourceLayout},
                 ShaderSet = new ShaderSetDescription(
                     vertexLayouts: new VertexLayoutDescription[] {vertexLayout},
-                    shaders: new Shader[] {_vertexShaderColouredQuad,_fragmentShaderColouredQuad}
+                    shaders: new Shader[] {_vertexShadercoloredQuad,_fragmentShadercoloredQuad}
                 ),
                 Outputs = GraphicsDevice.SwapchainFramebuffer.OutputDescription
             };
 
-            _pipelineColouredQuad = _factory.CreateGraphicsPipeline(pipelineDescription);
+            _pipelinecoloredQuad = _factory.CreateGraphicsPipeline(pipelineDescription);
 
             pipelineDescription = new GraphicsPipelineDescription(){
                 BlendState = BlendStateDescription.SingleOverrideBlend,
@@ -285,20 +285,20 @@ namespace Henzai.Examples
                 ResourceLayouts = new ResourceLayout[] {_transformationPipelineResourceLayout},
                 ShaderSet = new ShaderSetDescription(
                     vertexLayouts: new VertexLayoutDescription[] {vertexLayout},
-                    shaders: new Shader[] {_vertexShaderColouredQuad,_fragmentShaderColouredQuad}
+                    shaders: new Shader[] {_vertexShadercoloredQuad,_fragmentShadercoloredQuad}
                 ),
                 Outputs = _offScreenFBO.OutputDescription
             };
 
-            _pipelineColouredQuadOffscreen = _factory.CreateGraphicsPipeline(pipelineDescription);
+            _pipelinecoloredQuadOffscreen = _factory.CreateGraphicsPipeline(pipelineDescription);
 
             return new List<IDisposable>()
             {
-                _vertexBufferColouredQuad,
+                _vertexBuffercoloredQuad,
                 _indexBufferQuad,
-                _vertexShaderColouredQuad,
-                _fragmentShaderColouredQuad,
-                _pipelineColouredQuad
+                _vertexShadercoloredQuad,
+                _fragmentShadercoloredQuad,
+                _pipelinecoloredQuad
             };
 
         }
@@ -381,11 +381,11 @@ namespace Henzai.Examples
                 instanceStart: 0
             );
 
-            _commandList.SetPipeline(_pipelineColouredQuadOffscreen);
-            _commandList.SetVertexBuffer(0,_vertexBufferColouredQuad);
+            _commandList.SetPipeline(_pipelinecoloredQuadOffscreen);
+            _commandList.SetVertexBuffer(0,_vertexBuffercoloredQuad);
             _commandList.SetIndexBuffer(_indexBufferQuad,IndexFormat.UInt16);
             _commandList.UpdateBuffer(_transformationPipelineBuffer,0,_staticCamera.ViewMatrix);
-            _commandList.UpdateBuffer(_transformationPipelineBuffer,128,_worldTransColouredQuad);
+            _commandList.UpdateBuffer(_transformationPipelineBuffer,128,_worldTranscoloredQuad);
             _commandList.SetGraphicsResourceSet(0,_transformationPipelineResourceSet);
             _commandList.DrawIndexed(
                 indexCount: 4,
@@ -415,11 +415,11 @@ namespace Henzai.Examples
                 instanceStart: 0
             );
 
-            _commandList.SetPipeline(_pipelineColouredQuad);
-            _commandList.SetVertexBuffer(0,_vertexBufferColouredQuad);
+            _commandList.SetPipeline(_pipelinecoloredQuad);
+            _commandList.SetVertexBuffer(0,_vertexBuffercoloredQuad);
             _commandList.SetIndexBuffer(_indexBufferQuad,IndexFormat.UInt16);
             _commandList.UpdateBuffer(_transformationPipelineBuffer,0,Camera.ViewMatrix);
-            _commandList.UpdateBuffer(_transformationPipelineBuffer,128,_worldTransColouredQuad);
+            _commandList.UpdateBuffer(_transformationPipelineBuffer,128,_worldTranscoloredQuad);
             _commandList.SetGraphicsResourceSet(0,_transformationPipelineResourceSet);
             _commandList.DrawIndexed(
                 indexCount: 4,

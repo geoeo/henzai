@@ -7,6 +7,7 @@ namespace Henzai
     public sealed class Light
     {
         private Vector4 _light; 
+        private Vector3 _color;
 
         public ref Vector4 Light_DontMutate => ref _light;
 

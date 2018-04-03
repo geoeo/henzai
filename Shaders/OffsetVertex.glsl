@@ -10,7 +10,7 @@ layout(location = 0)in vec2 Position;
 layout(location = 1)in vec4 Color;
 layout(location = 2)in float xOff;
 
-// flat out vec4 fsin_Color; // takes colour from "dominant" vertex
+// flat out vec4 fsin_Color; // takes color from "dominant" vertex
 smooth out vec4 fsin_Color;
 // noperspective out vec4 fsin_Color; // interpolates in screen space
 

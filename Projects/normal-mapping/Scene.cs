@@ -31,7 +31,7 @@ namespace Henzai.Examples
         private ResourceLayout _cameraResourceLayout;
         private ResourceLayout _materialResourceLayout;
         private ResourceLayout _lightResourceLayout;
-        // TODO: Refactor this into a class with colour
+        // TODO: Refactor this into a class with color
         private Vector4 LIGHT_POS = new Vector4(0,30,30,0);
 
         Model<VertexPositionNormalTextureTangent> _model;

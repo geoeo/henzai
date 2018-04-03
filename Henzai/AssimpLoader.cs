@@ -44,7 +44,7 @@ namespace Henzai
     public static class AssimpLoader
     {
         private static Vector3D Zero3D = new Vector3D(0.0f, 0.0f, 0.0f);
-        private static Color4D NoColour = new Color4D(0.0f, 0.0f, 0.0f,0.0f);
+        private static Color4D Nocolor = new Color4D(0.0f, 0.0f, 0.0f,0.0f);
 
         // http://assimp.sourceforge.net/lib_html/postprocess_8h.html#a64795260b95f5a4b3f3dc1be4f52e410a9c3de834f0307f31fa2b1b6d05dd592b
         private const PostProcessSteps DefaultPostProcessSteps 
@@ -88,7 +88,7 @@ namespace Henzai
                     Vector3D pPos = aiMesh.Vertices[j];
                     Vector3D pNormal = aiMesh.Normals[j];
                     Vector3D pTexCoord = aiMesh.HasTextureCoords(0) ? aiMesh.TextureCoordinateChannels[0][j] : Zero3D;
-                    Color4D pColour = aiMesh.HasVertexColors(0) ? aiMesh.VertexColorChannels[0][j] : NoColour;
+                    Color4D pcolor = aiMesh.HasVertexColors(0) ? aiMesh.VertexColorChannels[0][j] : Nocolor;
                     // Vector3D pTangent = aiMesh.HasTangentBasis ? aiMesh.Tangents[j] : Zero3D;
                     // Vector3D pBiTangent = aiMesh.HasTangentBasis ? aiMesh.BiTangents[j] : Zero3D;
                     Vector3D pTangent = Zero3D;

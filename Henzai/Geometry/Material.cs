@@ -28,7 +28,7 @@ namespace Henzai.Geometry
 
     ///<summary>
     // Based on http://assimp.sourceforge.net/lib_html/materials.html
-    // Colours Vector4 are RGBA
+    // colors Vector4 are RGBA
     ///</summary>
     public sealed class Material
     {

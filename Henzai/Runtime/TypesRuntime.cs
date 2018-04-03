@@ -8,7 +8,7 @@ namespace Henzai.Runtime
 
     public enum VertexTypes { 
         VertexPosition, 
-        VertexPositionNDCColour, 
+        VertexPositionNDCColor, 
         VertexPositionNormal,
         VertexPositionTexture, 
         VertexPositionNormalTexture,

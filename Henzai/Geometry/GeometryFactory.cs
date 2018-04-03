@@ -61,19 +61,19 @@ namespace Henzai.Geometry
             };
         }
 
-        public static Mesh<VertexPositionNDCColour> generateColouredQuad(params RgbaFloat[] colours)
+        public static Mesh<VertexPositionNDCColor> generatecoloredQuad(params RgbaFloat[] colors)
         {
-            if(colours.Length < 4)
-                throw new ArgumentException("At least 4 colour values are needed for a Quad");
+            if(colors.Length < 4)
+                throw new ArgumentException("At least 4 color values are needed for a Quad");
 
-            VertexPositionNDCColour[] quadVerticies = {
-                new VertexPositionNDCColour(new Vector2(-1.0f,1.0f),colours[0]),
-                new VertexPositionNDCColour(new Vector2(1.0f,1.0f),colours[1]),
-                new VertexPositionNDCColour(new Vector2(-1.0f,-1.0f),colours[2]),
-                new VertexPositionNDCColour(new Vector2(1.0f,-1.0f),colours[3])
+            VertexPositionNDCColor[] quadVerticies = {
+                new VertexPositionNDCColor(new Vector2(-1.0f,1.0f),colors[0]),
+                new VertexPositionNDCColor(new Vector2(1.0f,1.0f),colors[1]),
+                new VertexPositionNDCColor(new Vector2(-1.0f,-1.0f),colors[2]),
+                new VertexPositionNDCColor(new Vector2(1.0f,-1.0f),colors[3])
             };
 
-            return new Mesh<VertexPositionNDCColour>(quadVerticies);
+            return new Mesh<VertexPositionNDCColor>(quadVerticies);
         }
 
         public static Mesh<VertexPositionTexture> generateTexturedQuad()

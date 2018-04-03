@@ -10,7 +10,7 @@ layout(std140) uniform transformPipeline
 layout(location = 0)in vec3 Position;
 layout(location = 1)in vec2 UV;
 
-// flat out vec4 fsin_Color; // takes colour from "dominant" vertex
+// flat out vec4 fsin_Color; // takes color from "dominant" vertex
 smooth out vec2 fsin_UV;
 // noperspective out vec4 fsin_Color; // interpolates in screen space
 
