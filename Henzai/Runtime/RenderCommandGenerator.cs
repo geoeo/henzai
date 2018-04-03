@@ -22,7 +22,7 @@ namespace Henzai.Runtime
                                                     DeviceBuffer cameraProjViewBuffer,
                                                     DeviceBuffer lightBuffer,
                                                     Camera camera,
-                                                    ref Vector4 lightPos,
+                                                    Light light,
                                                     Model<T> model) where T : struct
                                                     {
 
@@ -30,7 +30,8 @@ namespace Henzai.Runtime
 
                 commandList.UpdateBuffer(cameraProjViewBuffer,0,camera.ViewMatrix);
                 commandList.UpdateBuffer(cameraProjViewBuffer,64,camera.ProjectionMatrix);
-                commandList.UpdateBuffer(lightBuffer,0,lightPos);
+                commandList.UpdateBuffer(lightBuffer,0,ref light.Light_DontMutate);
+                commandList.UpdateBuffer(lightBuffer,16,ref light.Color_DontMutate);
 
 
         }
@@ -130,7 +131,7 @@ namespace Henzai.Runtime
                     sceneRuntimeDescriptor.CameraProjViewBuffer,
                     sceneRuntimeDescriptor.LightBuffer,
                     sceneRuntimeDescriptor.Camera,
-                    ref sceneRuntimeDescriptor.Light.Light_DontMutate,
+                    sceneRuntimeDescriptor.Light,
                     model);
                 for(int i = 0; i < model.meshCount; i++){
                     var mesh = model.meshes[i];
@@ -163,7 +164,7 @@ namespace Henzai.Runtime
                     sceneRuntimeDescriptor.CameraProjViewBuffer,
                     sceneRuntimeDescriptor.LightBuffer,
                     sceneRuntimeDescriptor.Camera,
-                    ref sceneRuntimeDescriptor.Light.Light_DontMutate,
+                    sceneRuntimeDescriptor.Light,
                     model);
                 for(int i = 0; i < model.meshCount; i++){
                     var mesh = model.meshes[i];

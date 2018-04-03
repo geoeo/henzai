@@ -10,6 +10,7 @@ layout(std140) uniform projViewWorld
 layout(std140) uniform light
 {
     vec4 LightPosition;
+    vec4 LightColor;
 };
 
 layout(location = 0)in vec3 Position;

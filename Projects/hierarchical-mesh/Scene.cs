@@ -82,12 +82,15 @@ namespace Henzai.Examples
 
         override protected void CreateResources(){
 
-            _sceneRuntimeState.Light = new Light();
+            // RgbaFloat lightColor = RgbaFloat.Orange;
+            RgbaFloat lightColor = RgbaFloat.LightGrey;
+            _sceneRuntimeState.Light = new Light(lightColor);
             _sceneRuntimeState.Camera = Camera;
 
             // string filePath = Path.Combine(AppContext.BaseDirectory, "armor/armor.dae"); 
             // string filePath = Path.Combine(AppContext.BaseDirectory, "nanosuit/nanosuit.obj"); 
             _nanosuit = AssimpLoader.LoadFromFile<VertexPositionNormalTextureTangentBitangent>(AppContext.BaseDirectory,"nanosuit/nanosuit.obj",VertexPositionNormalTextureTangentBitangent.HenzaiType);
+            _nanosuit.SetAmbientForAllMeshes(new Vector4(0.1f,0.1f,0.1f,1.0f));
             // _model = AssimpLoader.LoadFromFile<VertexPositionNormalTextureTangentBitangent>(AppContext.BaseDirectory,"sponza/sponza.obj",VertexPositionNormalTextureTangentBitangent.HenzaiType);
             GeometryUtils.GenerateTangentAndBitagentSpaceFor(_nanosuit);
             // GeometryUtils.CheckTBN(_model);
@@ -95,8 +98,8 @@ namespace Henzai.Examples
             _sun = new Model<VertexPositionNormal>(String.Empty,GeometryFactory.generateSphereNormal(100,100,1));
             _sun.meshes[0].TryGetMaterial().textureDiffuse = "Water.jpg";
             _sun.meshes[0].TryGetMaterial().textureNormal = "WaterNorm.jpg";
-            // sun.meshes[0].TryGetMaterial().ambient = new Vector4(1.0f,0.0f,0.0f,1.0f);
-            _sun.meshes[0].TryGetMaterial().ambient = RgbaFloat.Orange.ToVector4();
+            _sun.meshes[0].TryGetMaterial().ambient = new Vector4(1.0f,1.0f,1.0f,1.0f);
+            // _sun.meshes[0].TryGetMaterial().ambient = lightColor.ToVector4();
             ref Vector4 lightPos = ref _sceneRuntimeState.Light.Light_DontMutate;
             Vector3 newTranslation = new Vector3(lightPos.X,lightPos.Y,lightPos.Z);
             _sun.SetNewWorldTranslation(ref newTranslation, true);
@@ -149,13 +152,13 @@ namespace Henzai.Examples
                     new BindableResource[]{_sceneRuntimeState.MaterialBuffer});
 
             // Uniform 3 - Light
-            _sceneRuntimeState.LightBuffer = _factory.CreateBuffer(new BufferDescription(16,BufferUsage.UniformBuffer));
+            _sceneRuntimeState.LightBuffer = _factory.CreateBuffer(new BufferDescription(32,BufferUsage.UniformBuffer));
             _sceneRuntimeState.LightResourceLayout 
                 = ResourceGenerator.GenerateResourceLayout(
                     _factory,
                     "light",
                     ResourceKind.UniformBuffer,
-                    ShaderStages.Vertex);
+                    ShaderStages.Vertex | ShaderStages.Fragment);
             _sceneRuntimeState.LightResourceSet 
                 = ResourceGenerator.GenrateResourceSet(
                     _factory,

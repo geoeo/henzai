@@ -55,6 +55,11 @@ namespace Henzai.Geometry
             }
         }
 
+        public void SetAmbientForAllMeshes(Vector4 ambient){
+            foreach(var mesh in meshes)
+                mesh.TryGetMaterial().ambient = ambient;
+        }
+
         
     }
 }

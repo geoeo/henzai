@@ -31,6 +31,7 @@ struct ProjViewWorld
 
 struct Light {
     float4 Position;
+    float4 Color;
 };
 
 

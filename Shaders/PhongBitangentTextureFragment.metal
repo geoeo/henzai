@@ -21,13 +21,21 @@ struct Material
     float4 Coefficients;
 };
 
+struct Light {
+    float4 Position;
+    float4 Color;
+};
+
 fragment float4 FS(PixelInput input[[stage_in]],
+                    constant Light &light [[buffer(1)]],
                    constant Material &material [[buffer(2)]],
                    texture2d<float> diffuseTexture [[texture(0)]],
                    texture2d<float> normalTexture [[texture(1)]],
                    sampler diffuseSampler [[sampler(0)]],
                    sampler normalSampler [[sampler(1)]])
 {
+    float4 lightColor = light.Color.w*float4(light.Color.x,light.Color.y,light.Color.z,1.0);
+
     float4 diffuseTextureSample = diffuseTexture.sample(diffuseSampler,input.UV);
     float3 normalTextureSample = normalTexture.sample(normalSampler,input.UV).xyz;
 
@@ -65,5 +73,5 @@ fragment float4 FS(PixelInput input[[stage_in]],
     //color_out = float4(l_dot_n,l_dot_n,l_dot_n,1.0);
     //color_out = float4(L.z,0.0,0.0,1.0);
 
-    return color_out;
+    return lightColor*color_out;
 }

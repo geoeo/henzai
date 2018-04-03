@@ -8,6 +8,12 @@ layout(std140) uniform material
     vec4 Coefficients;
 };
 
+layout(std140) uniform light
+{
+    vec4 LightPosition;
+    vec4 LightColor;
+};
+
 in vec3 fsin_NormalWorld;
 in vec3 fsin_FragWorld;
 in vec3 fsin_LightWorld;
@@ -17,6 +23,8 @@ out vec4 fsout_Color;
 
 void main()
 {
+    vec4 lightColor = LightColor.a*vec4(LightColor.rgb,1.0);
+
     vec3 L = normalize(fsin_LightWorld-fsin_FragWorld);
     float l_dot_n = max(dot(L,fsin_NormalWorld),0.0);
     vec4 diffuse = l_dot_n*Diffuse;
@@ -30,7 +38,8 @@ void main()
     vec4 color_out = Ambient;
     color_out += diffuse;
     color_out += specular;
-    fsout_Color = color_out;
+    fsout_Color = lightColor*color_out;
+    //fsout_Color = vec4(LightColor.rgb,1.0);
     //fsout_Color = vec4(fsin_NormalWorld,1.0);
     // fsout_Color = vec4(fsin_FragWorld,1.0);
     //fsout_Color = vec4(fsin_LightWorld,1.0);

@@ -18,8 +18,15 @@ struct Material
     float4 Coefficients;
 };
 
-fragment float4 FS(PixelInput input[[stage_in]],constant Material &material [[buffer(2)]])
+struct Light {
+    float4 Position;
+    float4 Color;
+};
+
+fragment float4 FS(PixelInput input[[stage_in]],constant Light &light [[buffer(1)]], constant Material &material [[buffer(2)]])
 {
+    float4 lightColor = light.Color.w*float4(light.Color.x,light.Color.y,light.Color.z,1.0);
+    
     float3 L = normalize(input.LightWorld-input.FragWorld);
     float l_dot_n = fmax(dot(L,input.NormalWorld),0.0);
     float4 diffuse = l_dot_n*material.Diffuse;
@@ -36,5 +43,5 @@ fragment float4 FS(PixelInput input[[stage_in]],constant Material &material [[bu
     //color_out = float4(input.NormalWorld,1.0);
     //color_out = float4(input.LightWorld,1.0);
 
-    return color_out;
+    return lightColor*color_out;
 }

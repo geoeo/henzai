@@ -3,6 +3,12 @@
 uniform sampler2D DiffuseTexture;
 uniform sampler2D NormTexture;
 
+layout(std140) uniform light
+{
+    vec4 LightPosition;
+    vec4 LightColor;
+};
+
 layout(std140) uniform material
 {
     vec4 Diffuse;
@@ -23,6 +29,8 @@ out vec4 fsout_Color;
 
 void main()
 {
+    vec4 lightColor = LightColor.a*vec4(LightColor.rgb,1.0);
+
     vec4 textureColor = texture(DiffuseTexture,fsin_UV);
     vec3 normalColor = texture(NormTexture,fsin_UV).xyz;
     vec3 normal_sample = normalize(2.0*normalColor-1.0);
@@ -47,11 +55,12 @@ void main()
     float spec = max(pow(isDotFront*dot(V,R),Coefficients.x),0.0);
     vec4 specular = Specular*spec;
 
-    vec4 color_out = vec4(0.0,0.0,0.0,0.0);
+    vec4 color_out = vec4(0.0);
     color_out += Ambient;
     color_out += diffuse;
     color_out += specular;
-    fsout_Color = color_out;
+    fsout_Color = lightColor*color_out;
+    // fsout_Color = color_out;
     // fsout_Color = vec4(fsin_NormalWorld,1.0);
     // fsout_Color = vec4(fsin_TangentWorld,1.0);
     // fsout_Color = vec4(fsin_BitangentWorld,1.0);
