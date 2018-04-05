@@ -71,7 +71,7 @@ namespace Henzai.Examples
             VertexLayoutDescription vertexLayout 
                 = new VertexLayoutDescription(
                     new VertexElementDescription("Position",VertexElementSemantic.Position,VertexElementFormat.Float2),
-                    new VertexElementDescription("color",VertexElementSemantic.Color,VertexElementFormat.Float4)
+                    new VertexElementDescription("Color",VertexElementSemantic.Color,VertexElementFormat.Float4)
                 );
             
             VertexElementDescription vertexElementPerInstance
@@ -85,7 +85,7 @@ namespace Henzai.Examples
                 );
 
             _vertexShader = IO.LoadShader("Offset",ShaderStages.Vertex,GraphicsDevice);
-            _fragmentShader = IO.LoadShader("color",ShaderStages.Fragment,GraphicsDevice);
+            _fragmentShader = IO.LoadShader("Color",ShaderStages.Fragment,GraphicsDevice);
 
             GraphicsPipelineDescription pipelineDescription = new GraphicsPipelineDescription(){
                 BlendState = BlendStateDescription.SingleOverrideBlend,
