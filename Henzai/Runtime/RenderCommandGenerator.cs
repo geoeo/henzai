@@ -32,6 +32,7 @@ namespace Henzai.Runtime
                 commandList.UpdateBuffer(cameraProjViewBuffer,64,camera.ProjectionMatrix);
                 commandList.UpdateBuffer(lightBuffer,0,ref light.Light_DontMutate);
                 commandList.UpdateBuffer(lightBuffer,16,ref light.Color_DontMutate);
+                commandList.UpdateBuffer(lightBuffer,32,ref light.Attentuation_DontMutate);
 
 
         }

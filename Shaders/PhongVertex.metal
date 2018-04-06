@@ -26,6 +26,7 @@ struct ProjViewWorld
 struct Light {
     float4 Position;
     float4 Color;
+    float4 Attenuation;
 };
 
 vertex PixelInput VS(VertexInput input[[stage_in]],constant ProjViewWorld &pjw [[ buffer(1) ]],constant Light &l [[ buffer(2) ]])

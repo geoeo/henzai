@@ -21,6 +21,7 @@ struct Material
 struct Light {
     float4 Position;
     float4 Color;
+    float4 Attenuation;
 };
 
 fragment float4 FS(PixelInput input[[stage_in]],constant Light &light [[buffer(1)]], constant Material &material [[buffer(2)]])

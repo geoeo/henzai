@@ -8,6 +8,12 @@ namespace Henzai
 {
     public class Camera
     {
+        /// <summary>
+        /// Size of MVP pipeline.
+        /// 3 x Matrix4x4 of type float = 192
+        /// </summary>
+        public static uint SizeInBytes => 192;
+
         private readonly Vector3 DEFAULT_POSITION = new Vector3(0,0,10f);
         private readonly Vector3 DEFAULT_LOOK_DIRECTION = new Vector3(0,0,-1f);
 

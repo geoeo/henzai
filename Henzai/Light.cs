@@ -8,12 +8,28 @@ namespace Henzai
     {
         public static Vector4 DEFAULT_POSITION = new Vector4(0,20,15,1);
         // W channel is 1 for point and 0 for directional
+        /// <summary>
+        /// Postion, Color and Attenuation are passed to shaders. 3xVector4
+        /// </summary>
+        public static uint SizeInBytes => 48;
         private Vector4 _light; 
         // W channel used for intensity
         private Vector4 _color;
+        // Constant,Linear,Quadratic,Unsused
+        private Vector4 _attenuation = new Vector4(1.0f,0.06f,0.025f,0.0f);
 
+        /// <summary>
+        /// W channel is 1 for point and 0 for directional
+        /// </summary>
         public ref Vector4 Light_DontMutate => ref _light;
+        /// <summary>
+        /// W channel used for intensity
+        /// </summary>
         public ref Vector4 Color_DontMutate => ref _color;
+        /// <summary>
+        /// Constant, Linear ,Quadratic, Unsused
+        /// </summary>
+        public ref Vector4 Attentuation_DontMutate => ref _attenuation;
 
         public Light(){
             _light = DEFAULT_POSITION;
@@ -39,6 +55,12 @@ namespace Henzai
             _color = color.ToVector4();
             _color.W = intensity;
             _light = DEFAULT_POSITION;
+        }
+
+        public Light(Vector4 light, RgbaFloat color, float intensity){
+            _color = color.ToVector4();
+            _color.W = intensity;
+            _light = light;
         }
 
     }

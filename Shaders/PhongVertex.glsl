@@ -11,6 +11,7 @@ layout(std140) uniform light
 {
     vec4 LightPosition;
     vec4 LightColor;
+    vec4 LightAttenuation;
 };
 
 
