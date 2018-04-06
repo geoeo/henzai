@@ -27,6 +27,9 @@ void main()
     vec4 lightColor = LightColor.a*vec4(LightColor.rgb,1.0);
 
     vec3 L = normalize(fsin_LightWorld-fsin_FragWorld);
+    float distance = length(L);
+    float attenuation = 1.0 / (LightAttenuation.x + distance*LightAttenuation.y + distance*distance*LightAttenuation.z);
+
     float l_dot_n = max(dot(L,fsin_NormalWorld),0.0);
     vec4 diffuse = l_dot_n*Diffuse;
 
@@ -39,7 +42,7 @@ void main()
     vec4 color_out = Ambient;
     color_out += diffuse;
     color_out += specular;
-    fsout_Color = lightColor*color_out;
+    fsout_Color = attenuation*lightColor*color_out;
     //fsout_Color = vec4(LightColor.rgb,1.0);
     //fsout_Color = vec4(fsin_NormalWorld,1.0);
     // fsout_Color = vec4(fsin_FragWorld,1.0);

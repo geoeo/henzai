@@ -52,6 +52,9 @@ fragment float4 FS(PixelInput input[[stage_in]],
 
 
     float3 L = normalize(input.LightWorld-input.FragWorld);
+    float distance = length(L);
+    float attenuation = 1.0 / (light.x + distance*light.y + distance*distance*light.z);
+
     float l_dot_n = fmax(dot(L,normal_sample),0.0);
     float4 diffuse = l_dot_n*material.Diffuse*diffuseTextureSample;
 
@@ -74,5 +77,5 @@ fragment float4 FS(PixelInput input[[stage_in]],
     //color_out = float4(l_dot_n,l_dot_n,l_dot_n,1.0);
     //color_out = float4(L.z,0.0,0.0,1.0);
 
-    return lightColor*color_out;
+    return attenuation*lightColor*color_out;
 }

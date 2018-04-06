@@ -47,6 +47,9 @@ void main()
     vec3 normalWS = normalize(TBN*normal_sample);
 
     vec3 L = normalize(fsin_LightWorld-fsin_FragWorld);
+    float distance = length(L);
+    float attenuation = 1.0 / (LightAttenuation.x + distance*LightAttenuation.y + distance*distance*LightAttenuation.z);
+
     float l_dot_n = max(dot(L,normalWS),0.0);
     vec4 diffuse = l_dot_n*Diffuse*textureColor;
 
@@ -60,7 +63,7 @@ void main()
     color_out += Ambient;
     color_out += diffuse;
     color_out += specular;
-    fsout_Color = lightColor*color_out;
+    fsout_Color = attenuation*lightColor*color_out;
     // fsout_Color = color_out;
     // fsout_Color = vec4(fsin_NormalWorld,1.0);
     // fsout_Color = vec4(fsin_TangentWorld,1.0);
