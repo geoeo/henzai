@@ -89,6 +89,18 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
+            "name": ".NET Core Launch (lights)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build lights",
+            "program": "${workspaceFolder}/Projects/lights/bin/Debug/netcoreapp2.0/lights.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Projects/lights",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
             "name": ".NET Core Attach",
             "type": "coreclr",
             "request": "attach",
