@@ -7,6 +7,7 @@ using Henzai.Geometry;
 
 namespace Henzai.Runtime
 {
+    //TODO: Refactor this class
     public static class RenderCommandGenerator
     {
 
@@ -132,6 +133,40 @@ namespace Henzai.Runtime
             commandList.UpdateBuffer(materialBuffer,32,material.ambient);
             commandList.UpdateBuffer(materialBuffer,48,material.coefficients);
             commandList.SetGraphicsResourceSet(2,materialResourceSet);
+            commandList.DrawIndexed(
+                indexCount: mesh.meshIndices.Length.ToUnsigned(),
+                instanceCount: modelInstanceCount,
+                indexStart: 0,
+                vertexOffset: 0,
+                instanceStart: 0
+            );
+
+        }
+
+        /// <summary>
+        /// Render Commands for Mesh of Type:
+        /// <see cref="Henzai.Geometry.VertexPositionTexture"/> 
+        ///</summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void GenerateCommandsForMesh_Inline(
+                                                    CommandList commandList, 
+                                                    DeviceBuffer vertexBuffer, 
+                                                    DeviceBuffer indexBuffer,
+                                                    DeviceBuffer cameraProjViewBuffer,
+                                                    ResourceSet cameraResourceSet,
+                                                    ResourceSet textureResourceSet,
+                                                    Mesh<VertexPositionTexture> mesh,
+                                                    uint modelInstanceCount)
+                                                    {
+
+
+            Material material = mesh.GetMaterialRuntime();
+
+            commandList.SetVertexBuffer(0,vertexBuffer);
+            commandList.SetIndexBuffer(indexBuffer,IndexFormat.UInt16);
+            commandList.UpdateBuffer(cameraProjViewBuffer,128,mesh.World);
+            commandList.SetGraphicsResourceSet(0,cameraResourceSet); // Always after SetPipeline
+            commandList.SetGraphicsResourceSet(1,textureResourceSet);
             commandList.DrawIndexed(
                 indexCount: mesh.meshIndices.Length.ToUnsigned(),
                 instanceCount: modelInstanceCount,
@@ -288,6 +323,37 @@ namespace Henzai.Runtime
                         modelState.IndexBuffers[i],
                         sceneRuntimeDescriptor.CameraProjViewBuffer,
                         sceneRuntimeDescriptor.CameraResourceSet,
+                        mesh,
+                        modelState.TotalInstanceCount
+                    );
+                }
+            }
+        }
+
+     public static void GenerateRenderCommandsForModelDescriptor_Instancing(CommandList commandList, 
+                                                                    ModelRuntimeDescriptor<VertexPositionTexture>[] descriptorArray,
+                                                                    SceneRuntimeDescriptor sceneRuntimeDescriptor){
+            for(int j = 0; j < descriptorArray.Length; j++){
+                var modelState = descriptorArray[j];
+                var model = modelState.Model;
+                RenderCommandGenerator.GenerateCommandsForModel_Inline(
+                    commandList,
+                    modelState.Pipeline,
+                    sceneRuntimeDescriptor.CameraProjViewBuffer,
+                    sceneRuntimeDescriptor.Camera,
+                    model);
+                //TODO:Inline this if more instance buffers are ever used
+                for(int i = 0; i<modelState.InstanceBuffers.Length; i++)
+                    commandList.SetVertexBuffer(i.ToUnsigned()+1,modelState.InstanceBuffers[i]);
+                for(int i = 0; i < model.meshCount; i++){
+                    var mesh = model.meshes[i];
+                    RenderCommandGenerator.GenerateCommandsForMesh_Inline(
+                        commandList,
+                        modelState.VertexBuffers[i],
+                        modelState.IndexBuffers[i],
+                        sceneRuntimeDescriptor.CameraProjViewBuffer,
+                        sceneRuntimeDescriptor.CameraResourceSet,
+                        modelState.TextureResourceSets[i],
                         mesh,
                         modelState.TotalInstanceCount
                     );

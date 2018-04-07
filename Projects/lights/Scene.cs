@@ -25,6 +25,11 @@ namespace Henzai.Examples
         private List<ModelRuntimeDescriptor<VertexPositionNormal>> _modelPNDescriptorList;
         private ModelRuntimeDescriptor<VertexPositionNormal> [] _modelPNDescriptorArray;
 
+        private List<ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>> _modelPNTTBDescriptorList;
+        private ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent> [] _modelPNTTBDescriptorArray;
+        private List<ModelRuntimeDescriptor<VertexPositionTexture>> _modelPTDescriptorList;
+        private ModelRuntimeDescriptor<VertexPositionTexture> [] _modelPTDescriptorArray;
+
         Model<VertexPositionNormal> _sun;
         // Model<VertexPositionColor> _floor;
 
@@ -34,6 +39,8 @@ namespace Henzai.Examples
 
                 _modelPCDescriptorList = new List<ModelRuntimeDescriptor<VertexPositionColor>>();
                 _modelPNDescriptorList = new List<ModelRuntimeDescriptor<VertexPositionNormal>>();
+                _modelPTDescriptorList = new List<ModelRuntimeDescriptor<VertexPositionTexture>>();
+                _modelPNTTBDescriptorList = new List<ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>>();
 
                 PreRenderLoop+=FormatResourcesForRuntime;
         }
@@ -47,10 +54,16 @@ namespace Henzai.Examples
                 modelState.FormatResourcesForRuntime();
             foreach(var modelState in _modelPNDescriptorList)
                 modelState.FormatResourcesForRuntime();
+            foreach(var modelState in _modelPNTTBDescriptorList)
+                modelState.FormatResourcesForRuntime();
+            foreach(var modelState in _modelPTDescriptorList)
+                modelState.FormatResourcesForRuntime();
 
 
             _modelPCDescriptorArray = _modelPCDescriptorList.ToArray();
             _modelPNDescriptorArray = _modelPNDescriptorList.ToArray();
+            _modelPTDescriptorArray = _modelPTDescriptorList.ToArray();
+            _modelPNTTBDescriptorArray = _modelPNTTBDescriptorList.ToArray();
         }
 
         override protected void CreateResources(){
@@ -62,8 +75,6 @@ namespace Henzai.Examples
 
             // Sun
             _sun = new Model<VertexPositionNormal>(String.Empty,GeometryFactory.GenerateSphereNormal(100,100,1));
-            _sun.meshes[0].TryGetMaterial().textureDiffuse = "Water.jpg";
-            _sun.meshes[0].TryGetMaterial().textureNormal = "WaterNorm.jpg";
             _sun.meshes[0].TryGetMaterial().ambient = new Vector4(1.0f,1.0f,1.0f,1.0f);
             // _sun.meshes[0].TryGetMaterial().ambient = lightColor.ToVector4();
             ref Vector4 lightPos = ref _sceneRuntimeState.Light.Light_DontMutate;
@@ -74,16 +85,32 @@ namespace Henzai.Examples
             sunRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPN;
             _modelPNDescriptorList.Add(sunRuntimeState);
 
-            // Floor
+            // Colored Quad
+            // var offsets = new Vector3[] {new Vector3(-1.0f,0.0f,0f),new Vector3(1.0f,0.0f,0.0f)};
+            // // var offsets = new Vector3[] {new Vector3(0.0f,0.0f,0.0f)};
+            // var instancingData = new InstancingData {Positions = offsets};
+            // var floor = new Model<VertexPositionColor>(String.Empty,GeometryFactory.GenerateColorQuad(RgbaFloat.Red,RgbaFloat.Yellow,RgbaFloat.Green,RgbaFloat.LightGrey));
+            // var floorRuntimeState = new ModelRuntimeDescriptor<VertexPositionColor>(floor,"OffsetColor","Color",VertexTypes.VertexPositionColor,PrimitiveTopology.TriangleStrip);
+            // floorRuntimeState.TotalInstanceCount = offsets.Length.ToUnsigned();
+            // floorRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPC;
+            // floorRuntimeState.CallVertexInstanceLayoutGeneration+=ResourceGenerator.GenerateVertexInstanceLayoutForPC;
+            // _modelPCDescriptorList.Add(floorRuntimeState);
+
+            //Floor 
             var offsets = new Vector3[] {new Vector3(-1.0f,0.0f,0f),new Vector3(1.0f,0.0f,0.0f)};
             // var offsets = new Vector3[] {new Vector3(0.0f,0.0f,0.0f)};
             var instancingData = new InstancingData {Positions = offsets};
-            var floor = new Model<VertexPositionColor>(String.Empty,GeometryFactory.GenerateColorQuad(RgbaFloat.Red,RgbaFloat.Yellow,RgbaFloat.Green,RgbaFloat.LightGrey));
-            var floorRuntimeState = new ModelRuntimeDescriptor<VertexPositionColor>(floor,"OffsetColor","Color",VertexTypes.VertexPositionColor,PrimitiveTopology.TriangleStrip);
+            var floor = new Model<VertexPositionTexture>("paving",GeometryFactory.GenerateTexturedQuad());
+            floor.meshes[0].TryGetMaterial().textureDiffuse="pavingColor.jpg";
+            var floorRuntimeState = new ModelRuntimeDescriptor<VertexPositionTexture>(floor,"PositionOffsetTexture","Texture",VertexTypes.VertexPositionTexture,PrimitiveTopology.TriangleStrip);
             floorRuntimeState.TotalInstanceCount = offsets.Length.ToUnsigned();
-            floorRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPC;
-            floorRuntimeState.CallVertexInstanceLayoutGeneration+=ResourceGenerator.GenerateVertexInstanceLayoutForPC;
-            _modelPCDescriptorList.Add(floorRuntimeState);
+
+            floorRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPT;
+            floorRuntimeState.CallVertexInstanceLayoutGeneration+=ResourceGenerator.GenerateVertexInstanceLayoutForPositionOffset;
+            floorRuntimeState.CallTextureResourceLayoutGeneration+=ResourceGenerator.GenerateTextureResourceLayoutForDiffuseMapping;
+            floorRuntimeState.CallTextureResourceSetGeneration+=ResourceGenerator.GenerateTextureResourceSetForDiffuseMapping;
+            floorRuntimeState.CallSamplerGeneration+=ResourceGenerator.GenerateLinearSampler;
+            _modelPTDescriptorList.Add(floorRuntimeState);
 
             /// Uniform 1 - Camera
             _sceneRuntimeState.CameraProjViewBuffer  = _factory.CreateBuffer(new BufferDescription(Camera.SizeInBytes,BufferUsage.UniformBuffer | BufferUsage.Dynamic));
@@ -135,6 +162,10 @@ namespace Henzai.Examples
                 FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,InstancingData.NO_DATA); 
             }
 
+            foreach(var modelDescriptor in _modelPTDescriptorList){
+                FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,instancingData); 
+            }
+
         }
 
         override protected void BuildCommandList(){
@@ -146,7 +177,8 @@ namespace Henzai.Examples
             _commandList.ClearDepthStencil(1f);
 
             // RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPCDescriptorArray,_sceneRuntimeState);
-            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor_Instancing(_commandList,_modelPCDescriptorArray,_sceneRuntimeState);
+            // RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor_Instancing(_commandList,_modelPCDescriptorArray,_sceneRuntimeState);
+            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor_Instancing(_commandList,_modelPTDescriptorArray,_sceneRuntimeState);
             RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPNDescriptorArray,_sceneRuntimeState);
             
             _commandList.End();

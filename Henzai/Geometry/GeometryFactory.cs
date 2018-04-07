@@ -86,7 +86,7 @@ namespace Henzai.Geometry
                 new VertexPositionTexture(new Vector3(1.0f,-1.0f,1.0f),new Vector2(1,1))
             };
 
-            return new Mesh<VertexPositionTexture>(quadVerticies);
+            return new Mesh<VertexPositionTexture>(quadVerticies,GenerateQuadIndicies_TriangleStrip_CW());
         }
 
         public static Mesh<VertexPositionColor> GenerateColorQuad(params RgbaFloat[] colors)

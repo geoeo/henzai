@@ -195,7 +195,7 @@ namespace Henzai.Runtime
 
                 modelDescriptor.TextureResourceLayout = modelDescriptor.InvokeTextureResourceLayoutGeneration(_factory);
                 modelDescriptor.TextureSampler = modelDescriptor.InvokeSamplerGeneration(_factory);
-                modelDescriptor.LoadShaders(GraphicsDevice);
+                modelDescriptor.LoadShaders(_graphicsDevice);
                 var vertexSizeInBytes = model.meshes[0].vertices[0].GetSizeInBytes();
 
                 for(int i = 0; i < model.meshCount; i++){
@@ -240,6 +240,9 @@ namespace Henzai.Runtime
                         break;
                     case VertexTypes.VertexPositionColor:
                         modelDescriptor.Pipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GeneratePipelinePC(modelDescriptor,sceneRuntimeDescriptor,_graphicsDevice));
+                        break;
+                    case VertexTypes.VertexPositionTexture:
+                        modelDescriptor.Pipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GeneratePipelinePT(modelDescriptor,sceneRuntimeDescriptor,_graphicsDevice));
                         break;
                     default:
                         throw new NotImplementedException($"{modelDescriptor.VertexType.ToString("g")} not implemented");
