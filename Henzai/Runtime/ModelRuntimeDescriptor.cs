@@ -47,8 +47,6 @@ namespace Henzai.Runtime
         public ResourceLayout TextureResourceLayout {get; set;}
         public Sampler TextureSampler {get;set;}
         public Shader VertexShader {get; private set;}
-        // public VertexLayoutDescription VertexLayout {get;set;}
-        // public VertexLayoutDescription VertexInstanceLayout {get;set;}
         public List<VertexLayoutDescription> VertexLayoutList {get;private set;}
         public VertexLayoutDescription[] VertexLayouts {get;private set;}
         private string _vertexShaderName;
@@ -67,6 +65,7 @@ namespace Henzai.Runtime
         public Model<T> Model {get;set;}
         public VertexTypes VertexType {get; private set;}
         public PrimitiveTopology PrimitiveTopology {get; private set;}
+        public uint TotalInstanceCount{get;set;}
 
         public event Func<VertexLayoutDescription> CallVertexLayoutGeneration;
         public event Func<VertexLayoutDescription> CallVertexInstanceLayoutGeneration;
@@ -76,6 +75,8 @@ namespace Henzai.Runtime
 
         public ModelRuntimeDescriptor(Model<T> modelIn, string vShaderName, string fShaderName, VertexTypes vertexType, PrimitiveTopology primitiveTopology){
             Model = modelIn;
+
+            TotalInstanceCount = 1;
 
             _vertexShaderName = vShaderName;
             _fragmentShaderName = fShaderName;

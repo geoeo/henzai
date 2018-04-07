@@ -1,6 +1,6 @@
 #version 330 core
 
-layout(std140) uniform transformPipeline
+layout(std140) uniform projViewWorld
 {
     mat4 View;
     mat4 Proj;

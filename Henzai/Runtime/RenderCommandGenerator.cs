@@ -73,7 +73,8 @@ namespace Henzai.Runtime
                                                     ResourceSet lightResourceSet,
                                                     ResourceSet materialResourceSet,
                                                     ResourceSet textureResourceSet,
-                                                    Mesh<VertexPositionNormalTextureTangentBitangent> mesh)
+                                                    Mesh<VertexPositionNormalTextureTangentBitangent> mesh,
+                                                    uint modelInstanceCount)
                                                     {
 
 
@@ -92,7 +93,7 @@ namespace Henzai.Runtime
             commandList.SetGraphicsResourceSet(3,textureResourceSet);
             commandList.DrawIndexed(
                 indexCount: mesh.meshIndices.Length.ToUnsigned(),
-                instanceCount: 1,
+                instanceCount: modelInstanceCount,
                 indexStart: 0,
                 vertexOffset: 0,
                 instanceStart: 0
@@ -114,7 +115,8 @@ namespace Henzai.Runtime
                                                     ResourceSet cameraResourceSet,
                                                     ResourceSet lightResourceSet,
                                                     ResourceSet materialResourceSet,
-                                                    Mesh<VertexPositionNormal> mesh)
+                                                    Mesh<VertexPositionNormal> mesh,
+                                                    uint modelInstanceCount)
                                                     {
 
 
@@ -132,7 +134,7 @@ namespace Henzai.Runtime
             commandList.SetGraphicsResourceSet(2,materialResourceSet);
             commandList.DrawIndexed(
                 indexCount: mesh.meshIndices.Length.ToUnsigned(),
-                instanceCount: 1,
+                instanceCount: modelInstanceCount,
                 indexStart: 0,
                 vertexOffset: 0,
                 instanceStart: 0
@@ -151,7 +153,8 @@ namespace Henzai.Runtime
                                                     DeviceBuffer indexBuffer,
                                                     DeviceBuffer cameraProjViewBuffer,
                                                     ResourceSet cameraResourceSet,
-                                                    Mesh<VertexPositionColor> mesh)
+                                                    Mesh<VertexPositionColor> mesh,
+                                                    uint modelInstanceCount)
                                                     {
 
 
@@ -163,7 +166,7 @@ namespace Henzai.Runtime
             commandList.SetGraphicsResourceSet(0,cameraResourceSet); // Always after SetPipeline
             commandList.DrawIndexed(
                 indexCount: mesh.meshIndices.Length.ToUnsigned(),
-                instanceCount: 1,
+                instanceCount: modelInstanceCount,
                 indexStart: 0,
                 vertexOffset: 0,
                 instanceStart: 0
@@ -183,7 +186,8 @@ namespace Henzai.Runtime
                                                     DeviceBuffer instanceBuffer,
                                                     DeviceBuffer cameraProjViewBuffer,
                                                     ResourceSet cameraResourceSet,
-                                                    Mesh<VertexPositionColor> mesh)
+                                                    Mesh<VertexPositionColor> mesh,
+                                                    uint modelInstanceCount)
                                                     {
 
 
@@ -191,12 +195,11 @@ namespace Henzai.Runtime
 
             commandList.SetVertexBuffer(0,vertexBuffer);
             commandList.SetIndexBuffer(indexBuffer,IndexFormat.UInt16);
-            // commandList.SetVertexBuffer(1,instanceBuffer);
             commandList.UpdateBuffer(cameraProjViewBuffer,128,mesh.World);
             commandList.SetGraphicsResourceSet(0,cameraResourceSet); // Always after SetPipeline
             commandList.DrawIndexed(
                 indexCount: mesh.meshIndices.Length.ToUnsigned(),
-                instanceCount: 2,
+                instanceCount: modelInstanceCount,
                 indexStart: 0,
                 vertexOffset: 0,
                 instanceStart: 0
@@ -229,7 +232,8 @@ namespace Henzai.Runtime
                         sceneRuntimeDescriptor.CameraResourceSet,
                         sceneRuntimeDescriptor.LightResourceSet,
                         sceneRuntimeDescriptor.MaterialResourceSet,
-                        mesh
+                        mesh,
+                        modelState.TotalInstanceCount
                     );
                 }
             }
@@ -254,7 +258,8 @@ namespace Henzai.Runtime
                         modelState.IndexBuffers[i],
                         sceneRuntimeDescriptor.CameraProjViewBuffer,
                         sceneRuntimeDescriptor.CameraResourceSet,
-                        mesh
+                        mesh,
+                        modelState.TotalInstanceCount
                     );
                 }
             }
@@ -273,18 +278,18 @@ namespace Henzai.Runtime
                     sceneRuntimeDescriptor.Camera,
                     model);
                 //TODO:Inline this if more instance buffers are ever used
-                // for(int i = 0; i<modelState.InstanceBuffers.Length; i++)
-                    commandList.SetVertexBuffer(1,modelState.InstanceBuffers[0]);
+                for(int i = 0; i<modelState.InstanceBuffers.Length; i++)
+                    commandList.SetVertexBuffer(i.ToUnsigned()+1,modelState.InstanceBuffers[i]);
                 for(int i = 0; i < model.meshCount; i++){
                     var mesh = model.meshes[i];
-                    RenderCommandGenerator.GenerateCommandsForMesh_InlineInstancing(
+                    RenderCommandGenerator.GenerateCommandsForMesh_Inline(
                         commandList,
                         modelState.VertexBuffers[i],
                         modelState.IndexBuffers[i],
-                        modelState.InstanceBuffers[0],
                         sceneRuntimeDescriptor.CameraProjViewBuffer,
                         sceneRuntimeDescriptor.CameraResourceSet,
-                        mesh
+                        mesh,
+                        modelState.TotalInstanceCount
                     );
                 }
             }
@@ -317,7 +322,8 @@ namespace Henzai.Runtime
                         sceneRuntimeDescriptor.LightResourceSet,
                         sceneRuntimeDescriptor.MaterialResourceSet,
                         modelState.TextureResourceSets[i],
-                        mesh
+                        mesh,
+                        modelState.TotalInstanceCount
                     );
                 }
             }
