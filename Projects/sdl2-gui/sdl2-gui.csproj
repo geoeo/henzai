@@ -6,11 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Veldrid.ImageSharp" Version="4.1.4" />
-    <PackageReference Include="Veldrid.StartupUtilities" Version="4.0.0" />
-    <PackageReference Include="NativeLibraryLoader" Version="1.0.5" />
     <ProjectReference Include="../../Henzai/Henzai.csproj" />
-    <!-- <Reference Include="../../veldrid/bin/Debug/Veldrid/netstandard2.0/*.dll"/> -->
   </ItemGroup>
 
   <ItemGroup>
