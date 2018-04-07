@@ -30,7 +30,7 @@ fragment float4 FS(PixelInput input[[stage_in]],constant Light &light [[buffer(1
     
     float3 L = normalize(input.LightWorld-input.FragWorld);
     float distance = length(L);
-    float attenuation = 1.0 / (light.x + distance*light.y + distance*distance*light.z);
+    float attenuation = 1.0 / (light.Attenuation.x + distance*light.Attenuation.y + distance*distance*light.Attenuation.z);
 
     float l_dot_n = fmax(dot(L,input.NormalWorld),0.0);
     float4 diffuse = l_dot_n*material.Diffuse;

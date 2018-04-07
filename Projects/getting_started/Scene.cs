@@ -84,7 +84,7 @@ namespace Henzai.Examples
                     elements: new VertexElementDescription[] {vertexElementPerInstance}
                 );
 
-            _vertexShader = IO.LoadShader("Offset",ShaderStages.Vertex,GraphicsDevice);
+            _vertexShader = IO.LoadShader("OffsetXNDCColor",ShaderStages.Vertex,GraphicsDevice);
             _fragmentShader = IO.LoadShader("Color",ShaderStages.Fragment,GraphicsDevice);
 
             GraphicsPipelineDescription pipelineDescription = new GraphicsPipelineDescription(){

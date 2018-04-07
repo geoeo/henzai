@@ -50,6 +50,7 @@ void main()
     color_out += specular;
     fsout_Color = color_out;
     // fsout_Color = vec4(fsin_NormalWorld,1.0);
+    // fsout_Color = vec4(Normal,1.0);
     // fsout_Color = vec4(fsin_TangentWorld,1.0);
     // fsout_Color = vec4(normalWS,1.0);
     // fsout_Color = vec4(normal_sample,1.0);
