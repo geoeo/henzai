@@ -50,6 +50,16 @@ namespace Henzai.Extensions
 
         }
 
+        public static ushort ToUnsignedShort(this int val){
+            if(val < 0)
+                throw new ArgumentException("Cannot cast a negative interger value");
+            if(val > System.UInt16.MaxValue)
+                throw new ArgumentException("Cannot cast to ushort: Value too large");
+
+            return (ushort)val;
+
+        }
+
         public static double ToDouble(this float val){
             return (double)val;
         }

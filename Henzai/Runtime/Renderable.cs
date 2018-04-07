@@ -190,7 +190,7 @@ namespace Henzai.Runtime
                 Thread.Sleep(msDiffRounded);
         }
 
-        protected void FillRuntimeDescriptor<T>(ModelRuntimeDescriptor<T> modelDescriptor, SceneRuntimeDescriptor sceneRuntimeDescriptor) where T : struct, VertexRuntime{
+        protected void FillRuntimeDescriptor<T>(ModelRuntimeDescriptor<T> modelDescriptor, SceneRuntimeDescriptor sceneRuntimeDescriptor) where T : struct, VertexRuntime {
                 var model = modelDescriptor.Model;
 
                 modelDescriptor.TextureResourceLayout = modelDescriptor.InvokeTextureResourceLayoutGeneration(_factory);
@@ -200,11 +200,12 @@ namespace Henzai.Runtime
 
                 for(int i = 0; i < model.meshCount; i++){
 
+                    //TODO: access this through DisposableResourceCollector properly
                     DeviceBuffer vertexBuffer 
                         =  _factory.CreateBuffer(new BufferDescription(model.meshes[i].vertices.LengthUnsigned() * vertexSizeInBytes, BufferUsage.VertexBuffer)); 
 
                     DeviceBuffer indexBuffer
-                        = _factory.CreateBuffer(new BufferDescription(model.meshes[i].meshIndices.LengthUnsigned()*sizeof(uint),BufferUsage.IndexBuffer));
+                        = _factory.CreateBuffer(new BufferDescription(model.meshes[i].meshIndices.LengthUnsigned()*sizeof(ushort),BufferUsage.IndexBuffer));
                         
 
                     modelDescriptor.VertexBuffersList.Add(vertexBuffer);

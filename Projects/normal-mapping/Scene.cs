@@ -111,7 +111,7 @@ namespace Henzai.Examples
                     =  _factory.CreateBuffer(new BufferDescription(_model.meshes[i].vertices.LengthUnsigned() * VertexPositionNormalTextureTangent.SizeInBytes, BufferUsage.VertexBuffer)); 
 
                 DeviceBuffer indexBuffer
-                    = _factory.CreateBuffer(new BufferDescription(_model.meshes[i].meshIndices.LengthUnsigned()*sizeof(uint),BufferUsage.IndexBuffer));
+                    = _factory.CreateBuffer(new BufferDescription(_model.meshes[i].meshIndices.LengthUnsigned()*sizeof(ushort),BufferUsage.IndexBuffer));
                     
 
                 _vertexBuffers.Add(vertexBuffer);
@@ -206,7 +206,7 @@ namespace Henzai.Examples
                 Material material = _model.meshes[i].TryGetMaterial();
 
                 _commandList.SetVertexBuffer(0,_vertexBuffers[i]);
-                _commandList.SetIndexBuffer(_indexBuffers[i],IndexFormat.UInt32);
+                _commandList.SetIndexBuffer(_indexBuffers[i],IndexFormat.UInt16);
                 _commandList.UpdateBuffer(_cameraProjViewBuffer,0,Camera.ViewMatrix);
                 _commandList.UpdateBuffer(_cameraProjViewBuffer,64,Camera.ProjectionMatrix);
                 _commandList.UpdateBuffer(_cameraProjViewBuffer,128,_model.GetWorld_DontMutate);

@@ -7,6 +7,8 @@ namespace Henzai
     public sealed class Light
     {
         public static Vector4 DEFAULT_POSITION = new Vector4(0,20,15,1);
+        public static Vector4 DEFAULT_COLOR = Vector4.One;
+        public static Vector4 DEFAULT_ATTENTUATION = new Vector4(1.0f,0.06f,0.025f,0.0f);
         // W channel is 1 for point and 0 for directional
         /// <summary>
         /// Postion, Color and Attenuation are passed to shaders. 3xVector4
@@ -16,7 +18,7 @@ namespace Henzai
         // W channel used for intensity
         private Vector4 _color;
         // Constant,Linear,Quadratic,Unsused
-        private Vector4 _attenuation = new Vector4(1.0f,0.06f,0.025f,0.0f);
+        private Vector4 _attenuation = DEFAULT_ATTENTUATION;
 
         /// <summary>
         /// W channel is 1 for point and 0 for directional
@@ -33,12 +35,12 @@ namespace Henzai
 
         public Light(){
             _light = DEFAULT_POSITION;
-            _color = Vector4.One;
+            _color = DEFAULT_COLOR;
         }
 
         public Light(Vector4 lightPos){
             _light = lightPos;
-            _color = Vector4.One;
+            _color = DEFAULT_COLOR;
         }
 
         public Light(Vector4 light, Vector4 color){

@@ -7,6 +7,7 @@ layout(std140) uniform projViewWorld
     mat4 World;
 };
 
+//TODO: Update this to Color and Attentuation
 layout(std140) uniform light
 {
     vec4 LightPosition;

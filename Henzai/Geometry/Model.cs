@@ -20,7 +20,7 @@ namespace Henzai.Geometry
         public ref Matrix4x4 GetWorld_DontMutate => ref _world;
         public string BaseDir {get;private set;}
 
-        public Model(string directory, Mesh<T>[] meshes, uint[][] indicies){
+        public Model(string directory, Mesh<T>[] meshes, ushort[][] indicies){
             BaseDir = directory;
             this.meshes = meshes;
             for(int i = 0; i < meshCount; i++){

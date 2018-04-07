@@ -101,7 +101,7 @@ namespace Henzai.Geometry
                 new VertexPositionColor(new Vector3(1.0f,-1.0f,0.0f),colors[3])
             };
 
-            return new Mesh<VertexPositionColor>(quadVerticies);
+            return new Mesh<VertexPositionColor>(quadVerticies,GenerateQuadIndicies_TriangleStrip_CW());
         }
 
         public static ushort[] GenerateQuadIndicies_TriangleStrip_CW()
@@ -122,7 +122,7 @@ namespace Henzai.Geometry
             int numVertices = numLatitudeLines * (numLongitudeLines + 1) + 2;
 
             VertexPositionNormalTextureTangent[] vertices = new VertexPositionNormalTextureTangent[numVertices];
-            List<uint> indices = new List<uint>();
+            List<ushort> indices = new List<ushort>();
 
             // North pole.
             vertices[0].Position = new Vector3(0, radius, 0);
@@ -169,13 +169,13 @@ namespace Henzai.Geometry
                 vertices[v].Normal = Vector3.Normalize(vertices[v].Position);
 
                 if(latitude < numLatitudeLines -1){
-                                        indices.Add(v.ToUnsigned());
-                    indices.Add(v.ToUnsigned()+1.ToUnsigned());
-                    indices.Add(v.ToUnsigned()+1.ToUnsigned()+numLongitudeLines.ToUnsigned());
+                    indices.Add(v.ToUnsignedShort());
+                    indices.Add((v+1).ToUnsignedShort());
+                    indices.Add((v+1+numLongitudeLines).ToUnsignedShort());
                     
-                    indices.Add(v.ToUnsigned()+1.ToUnsigned());
-                    indices.Add(v.ToUnsigned()+2.ToUnsigned()+numLongitudeLines.ToUnsigned());
-                    indices.Add(v.ToUnsigned()+numLongitudeLines.ToUnsigned()+1.ToUnsigned());
+                    indices.Add((v+1).ToUnsignedShort());
+                    indices.Add((v+2+numLongitudeLines).ToUnsignedShort());
+                    indices.Add((v+numLongitudeLines+1).ToUnsignedShort());
                 }
 
 
@@ -201,23 +201,23 @@ namespace Henzai.Geometry
             // North pole indices
             for(int longitude = 1; longitude < numLongitudeLines; longitude++) {
                 indices.Add(0);
-                indices.Add(longitude.ToUnsigned()+1.ToUnsigned());
-                indices.Add(longitude.ToUnsigned());
+                indices.Add((longitude+1).ToUnsignedShort());
+                indices.Add(longitude.ToUnsignedShort());
             }
              indices.Add(0);
              indices.Add(1);
-             indices.Add(numLongitudeLines.ToUnsigned());
+             indices.Add(numLongitudeLines.ToUnsignedShort());
 
             v-= numLongitudeLines+1;
             // southpole
             for(int longitude = 0; longitude <= numLongitudeLines; longitude++) {
-                indices.Add(v.ToUnsigned() + longitude.ToUnsigned());
-                indices.Add(v.ToUnsigned()+ longitude.ToUnsigned() +1.ToUnsigned());
-                indices.Add(numVertices.ToUnsigned()-1.ToUnsigned());
+                indices.Add((v + longitude).ToUnsignedShort());
+                indices.Add((v+ longitude +1).ToUnsignedShort());
+                indices.Add((numVertices-1).ToUnsignedShort());
             }
-            indices.Add(numVertices.ToUnsigned()-2.ToUnsigned());
-            indices.Add(v.ToUnsigned()+1.ToUnsigned());
-            indices.Add(numVertices.ToUnsigned()-1.ToUnsigned());
+            indices.Add((numVertices-2).ToUnsignedShort());
+            indices.Add((v+1).ToUnsignedShort());
+            indices.Add((numVertices-1).ToUnsignedShort());
             return new Mesh<VertexPositionNormalTextureTangent>(vertices,indices.ToArray());
         }
 
@@ -231,7 +231,7 @@ namespace Henzai.Geometry
             int numVertices = numLatitudeLines * (numLongitudeLines + 1) + 2;
 
             VertexPositionNormalTextureTangentBitangent[] vertices = new VertexPositionNormalTextureTangentBitangent[numVertices];
-            List<uint> indices = new List<uint>();
+            List<ushort> indices = new List<ushort>();
 
             // North pole.
             vertices[0].Position = new Vector3(0, radius, 0);
@@ -278,13 +278,13 @@ namespace Henzai.Geometry
                 vertices[v].Normal = Vector3.Normalize(vertices[v].Position);
 
                 if(latitude < numLatitudeLines -1){
-                                        indices.Add(v.ToUnsigned());
-                    indices.Add(v.ToUnsigned()+1.ToUnsigned());
-                    indices.Add(v.ToUnsigned()+1.ToUnsigned()+numLongitudeLines.ToUnsigned());
+                    indices.Add(v.ToUnsignedShort());
+                    indices.Add((v+1).ToUnsignedShort());
+                    indices.Add((v+1+numLongitudeLines).ToUnsignedShort());
                     
-                    indices.Add(v.ToUnsigned()+1.ToUnsigned());
-                    indices.Add(v.ToUnsigned()+2.ToUnsigned()+numLongitudeLines.ToUnsigned());
-                    indices.Add(v.ToUnsigned()+numLongitudeLines.ToUnsigned()+1.ToUnsigned());
+                    indices.Add((v+1).ToUnsignedShort());
+                    indices.Add((v+2+numLongitudeLines).ToUnsignedShort());
+                    indices.Add((v+numLongitudeLines+1).ToUnsignedShort());
                 }
 
 
@@ -321,23 +321,23 @@ namespace Henzai.Geometry
             // North pole indices
             for(int longitude = 1; longitude < numLongitudeLines; longitude++) {
                 indices.Add(0);
-                indices.Add(longitude.ToUnsigned()+1.ToUnsigned());
-                indices.Add(longitude.ToUnsigned());
+                indices.Add((longitude+1).ToUnsignedShort());
+                indices.Add(longitude.ToUnsignedShort());
             }
              indices.Add(0);
              indices.Add(1);
-             indices.Add(numLongitudeLines.ToUnsigned());
+             indices.Add(numLongitudeLines.ToUnsignedShort());
 
             v-= numLongitudeLines+1;
             // southpole
             for(int longitude = 0; longitude <= numLongitudeLines; longitude++) {
-                indices.Add(v.ToUnsigned() + longitude.ToUnsigned());
-                indices.Add(v.ToUnsigned()+ longitude.ToUnsigned() +1.ToUnsigned());
-                indices.Add(numVertices.ToUnsigned()-1.ToUnsigned());
+                indices.Add((v + longitude).ToUnsignedShort());
+                indices.Add((v+ longitude +1).ToUnsignedShort());
+                indices.Add((numVertices-1).ToUnsignedShort());
             }
-            indices.Add(numVertices.ToUnsigned()-2.ToUnsigned());
-            indices.Add(v.ToUnsigned()+1.ToUnsigned());
-            indices.Add(numVertices.ToUnsigned()-1.ToUnsigned());
+            indices.Add((numVertices-2).ToUnsignedShort());
+            indices.Add((v+1).ToUnsignedShort());
+            indices.Add((numVertices-1).ToUnsignedShort());
             return new Mesh<VertexPositionNormalTextureTangentBitangent>(vertices,indices.ToArray());
         }
 
@@ -352,7 +352,7 @@ namespace Henzai.Geometry
 
             VertexPositionNormal[] vertices = new VertexPositionNormal[numVertices];
             Vector2[] SphereParamters = new Vector2[numVertices];
-            List<uint> indices = new List<uint>();
+            List<ushort> indices = new List<ushort>();
 
             // North pole.
             vertices[0].Position = new Vector3(0, radius, 0);
@@ -398,13 +398,13 @@ namespace Henzai.Geometry
                 vertices[v].Normal = Vector3.Normalize(vertices[v].Position);
 
                 if(latitude < numLatitudeLines -1){
-                    indices.Add(v.ToUnsigned());
-                    indices.Add(v.ToUnsigned()+1.ToUnsigned());
-                    indices.Add(v.ToUnsigned()+1.ToUnsigned()+numLongitudeLines.ToUnsigned());
+                    indices.Add(v.ToUnsignedShort());
+                    indices.Add((v+1).ToUnsignedShort());
+                    indices.Add((v+1+numLongitudeLines).ToUnsignedShort());
                     
-                    indices.Add(v.ToUnsigned()+1.ToUnsigned());
-                    indices.Add(v.ToUnsigned()+2.ToUnsigned()+numLongitudeLines.ToUnsigned());
-                    indices.Add(v.ToUnsigned()+numLongitudeLines.ToUnsigned()+1.ToUnsigned());
+                    indices.Add((v+1).ToUnsignedShort());
+                    indices.Add((v+2+numLongitudeLines).ToUnsignedShort());
+                    indices.Add((v+numLongitudeLines+1).ToUnsignedShort());
                 }
 
                 // Proceed to the next vertex.
@@ -415,23 +415,23 @@ namespace Henzai.Geometry
             // North pole indices
             for(int longitude = 1; longitude < numLongitudeLines; longitude++) {
                 indices.Add(0);
-                indices.Add(longitude.ToUnsigned()+1.ToUnsigned());
-                indices.Add(longitude.ToUnsigned());
+                indices.Add((longitude+1).ToUnsignedShort());
+                indices.Add(longitude.ToUnsignedShort());
             }
              indices.Add(0);
              indices.Add(1);
-             indices.Add(numLongitudeLines.ToUnsigned());
+             indices.Add(numLongitudeLines.ToUnsignedShort());
 
             v-= numLongitudeLines+1;
             // southpole
             for(int longitude = 0; longitude <= numLongitudeLines; longitude++) {
-                indices.Add(v.ToUnsigned() + longitude.ToUnsigned());
-                indices.Add(v.ToUnsigned()+ longitude.ToUnsigned() +1.ToUnsigned());
-                indices.Add(numVertices.ToUnsigned()-1.ToUnsigned());
+                indices.Add((v + longitude).ToUnsignedShort());
+                indices.Add((v+ longitude +1).ToUnsignedShort());
+                indices.Add((numVertices-1).ToUnsignedShort());
             }
-            indices.Add(numVertices.ToUnsigned()-2.ToUnsigned());
-            indices.Add(v.ToUnsigned()+1.ToUnsigned());
-            indices.Add(numVertices.ToUnsigned()-1.ToUnsigned());
+            indices.Add((numVertices-2).ToUnsignedShort());
+            indices.Add((v+1).ToUnsignedShort());
+            indices.Add((numVertices-1).ToUnsignedShort());
             return new Mesh<VertexPositionNormal>(vertices,indices.ToArray());
         }
     }
