@@ -47,9 +47,9 @@ namespace Henzai.Examples
             _resourceSet = _factory.CreateResourceSet(resourceSetDescription);
 
            Mesh<VertexPositionNDCColor> coloredQuad 
-                = GeometryFactory.generateColorQuadNDC(RgbaFloat.Red,RgbaFloat.Green,RgbaFloat.Blue,RgbaFloat.Yellow);
+                = GeometryFactory.GenerateColorQuadNDC(RgbaFloat.Red,RgbaFloat.Green,RgbaFloat.Blue,RgbaFloat.Yellow);
 
-            ushort[] quadIndicies = GeometryFactory.generateQuadIndicies_TriangleStrip_CW();
+            ushort[] quadIndicies = GeometryFactory.GenerateQuadIndicies_TriangleStrip_CW();
 
             float[] _xOffset = {-2f,2f};
 

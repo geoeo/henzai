@@ -9,7 +9,7 @@ namespace Henzai.Geometry
 {
     public static class GeometryFactory
     {
-        public static Mesh<VertexPositionTexture> generateTexturedCube()
+        public static Mesh<VertexPositionTexture> GenerateTexturedCube()
         {
             VertexPositionTexture[] cubeVerticies =
                 new VertexPositionTexture[]
@@ -61,7 +61,7 @@ namespace Henzai.Geometry
             };
         }
 
-        public static Mesh<VertexPositionNDCColor> generateColorQuadNDC(params RgbaFloat[] colors)
+        public static Mesh<VertexPositionNDCColor> GenerateColorQuadNDC(params RgbaFloat[] colors)
         {
             if(colors.Length < 4)
                 throw new ArgumentException("At least 4 color values are needed for a Quad");
@@ -76,7 +76,7 @@ namespace Henzai.Geometry
             return new Mesh<VertexPositionNDCColor>(quadVerticies);
         }
 
-        public static Mesh<VertexPositionTexture> generateTexturedQuad()
+        public static Mesh<VertexPositionTexture> GenerateTexturedQuad()
         {
 
             VertexPositionTexture[] quadVerticies = {
@@ -89,7 +89,7 @@ namespace Henzai.Geometry
             return new Mesh<VertexPositionTexture>(quadVerticies);
         }
 
-        public static Mesh<VertexPositionColor> generateColorQuad(params RgbaFloat[] colors)
+        public static Mesh<VertexPositionColor> GenerateColorQuad(params RgbaFloat[] colors)
         {
             if(colors.Length < 4)
                 throw new ArgumentException("At least 4 color values are needed for a Quad");
@@ -104,7 +104,7 @@ namespace Henzai.Geometry
             return new Mesh<VertexPositionColor>(quadVerticies);
         }
 
-        public static ushort[] generateQuadIndicies_TriangleStrip_CW()
+        public static ushort[] GenerateQuadIndicies_TriangleStrip_CW()
         {
             return new ushort[]{ 0, 1, 2, 3 };
         }
@@ -115,7 +115,7 @@ namespace Henzai.Geometry
         /// Returns a Sphere Mesh with the corresponing vertex struct
         /// Extremely inefficient in OpenGL und MacOS
         /// </summary>
-        public static Mesh<VertexPositionNormalTextureTangent> generateSphereTangent(int numLatitudeLines, int numLongitudeLines, float radius){
+        public static Mesh<VertexPositionNormalTextureTangent> GenerateSphereTangent(int numLatitudeLines, int numLongitudeLines, float radius){
             // One vertex at every latitude-longitude intersection,
             // plus one for the north pole and one for the south.
             // One meridian serves as a UV seam, so we double the vertices there.
@@ -224,7 +224,7 @@ namespace Henzai.Geometry
         /// <summary>
         /// Returns a Sphere Mesh with the corresponing vertex struct.
         /// </summary>
-        public static Mesh<VertexPositionNormalTextureTangentBitangent> generateSphereTangentBitangent(int numLatitudeLines, int numLongitudeLines, float radius){
+        public static Mesh<VertexPositionNormalTextureTangentBitangent> GenerateSphereTangentBitangent(int numLatitudeLines, int numLongitudeLines, float radius){
             // One vertex at every latitude-longitude intersection,
             // plus one for the north pole and one for the south.
             // One meridian serves as a UV seam, so we double the vertices there.
@@ -344,7 +344,7 @@ namespace Henzai.Geometry
 /// <summary>
         /// Returns a Sphere Mesh with the corresponing vertex struct.
         /// </summary>
-        public static Mesh<VertexPositionNormal> generateSphereNormal(int numLatitudeLines, int numLongitudeLines, float radius){
+        public static Mesh<VertexPositionNormal> GenerateSphereNormal(int numLatitudeLines, int numLongitudeLines, float radius){
             // One vertex at every latitude-longitude intersection,
             // plus one for the north pole and one for the south.
             // One meridian serves as a UV seam, so we double the vertices there.

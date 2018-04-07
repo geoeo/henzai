@@ -150,7 +150,7 @@ namespace Henzai.Examples
                 GraphicsDevice.LinearSampler));
 
             Mesh<VertexPositionTexture> texturedCube 
-                = GeometryFactory.generateTexturedCube();
+                = GeometryFactory.GenerateTexturedCube();
 
             ushort[] cubeIndicies = GeometryFactory.generateCubeIndicies_TriangleList_CW();
 
@@ -230,8 +230,8 @@ namespace Henzai.Examples
 
         private List<IDisposable> createcoloredQuadResources(){
 
-            Mesh<VertexPositionNDCColor> quad = GeometryFactory.generateColorQuadNDC(RgbaFloat.Red, RgbaFloat.Blue,RgbaFloat.Green,RgbaFloat.Orange);
-            ushort[] quadIndicies = GeometryFactory.generateQuadIndicies_TriangleStrip_CW();
+            Mesh<VertexPositionNDCColor> quad = GeometryFactory.GenerateColorQuadNDC(RgbaFloat.Red, RgbaFloat.Blue,RgbaFloat.Green,RgbaFloat.Orange);
+            ushort[] quadIndicies = GeometryFactory.GenerateQuadIndicies_TriangleStrip_CW();
 
             _vertexBuffercoloredQuad = _factory.CreateBuffer(new BufferDescription(quad.vertices.LengthUnsigned()* VertexPositionNDCColor.SizeInBytes, BufferUsage.VertexBuffer));
             _indexBufferQuad = _factory.CreateBuffer(new BufferDescription(quadIndicies.LengthUnsigned()* sizeof(ushort), BufferUsage.IndexBuffer));
@@ -305,7 +305,7 @@ namespace Henzai.Examples
 
         private IList<IDisposable> createTexturedQuadResources(){
 
-            Mesh<VertexPositionTexture> quad = GeometryFactory.generateTexturedQuad();
+            Mesh<VertexPositionTexture> quad = GeometryFactory.GenerateTexturedQuad();
             if(_indexBufferQuad == null)
                 throw new ApplicationException("_indexBufferQuad should have been created");
 

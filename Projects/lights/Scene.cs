@@ -19,58 +19,37 @@ namespace Henzai.Examples
 
         private SceneRuntimeDescriptor _sceneRuntimeState;
 
-        private List<ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>> _modelPNTTBDescriptorList;
-        private ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent> [] _modelPNTTBDescriptorArray;
+        private List<ModelRuntimeDescriptor<VertexPositionColor>> _modelPCDescriptorList;
+        private ModelRuntimeDescriptor<VertexPositionColor> [] _modelPCDescriptorArray;
 
         private List<ModelRuntimeDescriptor<VertexPositionNormal>> _modelPNDescriptorList;
         private ModelRuntimeDescriptor<VertexPositionNormal> [] _modelPNDescriptorArray;
 
-        Model<VertexPositionNormalTextureTangentBitangent> _nanosuit;
         Model<VertexPositionNormal> _sun;
+        Model<VertexPositionColor> _floor;
 
         public Scene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
             : base(title,windowSize,graphicsDeviceOptions,renderOptions){
                 _sceneRuntimeState = new SceneRuntimeDescriptor();
 
-                _modelPNTTBDescriptorList = new List<ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>>();
+                _modelPNTTBDescriptorList = new List<ModelRuntimeDescriptor<VertexPositionColor>>();
                 _modelPNDescriptorList = new List<ModelRuntimeDescriptor<VertexPositionNormal>>();
 
-
-                PreDraw+=RotateModel;
                 PreRenderLoop+=FormatResourcesForRuntime;
         }
 
-        private void RotateModel(float delta){
-            var radian_slow = (Math.PI.ToFloat()/180.0f)*delta*10.0f;
-            var radian_fast = (Math.PI.ToFloat()/180.0f)*delta*100.0f;
 
-            // Rotate  nanosuit around itself
-            var newWorld = _nanosuit.GetWorld_DontMutate*Matrix4x4.CreateRotationY(radian_fast);
-
-            // Rotate around Sun without rotation around oneself
-            Vector3 pos  = _nanosuit.GetWorld_DontMutate.Translation;
-            Vector3 sunToSuit = _sun.GetWorld_DontMutate.Translation;
-            Quaternion rotationAroundY = Quaternion.CreateFromAxisAngle(Vector3.UnitY,radian_slow);
-            pos -= sunToSuit;
-            pos = Vector3.Transform(pos,rotationAroundY);
-            pos += sunToSuit;
-
-            // add the translating rotation to the orientation defining rotation
-            newWorld.Translation = pos;
-            _nanosuit.SetNewWorldTransformation(ref newWorld,true);
-
-        }
 
         // TODO: Investigate putting this in renderable
         override protected void FormatResourcesForRuntime(){
 
-            foreach(var modelState in _modelPNTTBDescriptorList)
+            foreach(var modelState in _modelPCDescriptorList)
                 modelState.FormatResourcesForRuntime();
             foreach(var modelState in _modelPNDescriptorList)
                 modelState.FormatResourcesForRuntime();
 
 
-            _modelPNTTBDescriptorArray = _modelPNTTBDescriptorList.ToArray();
+            _modelPCDescriptorArray = _modelPCDescriptorList.ToArray();
             _modelPNDescriptorArray = _modelPNDescriptorList.ToArray();
         }
 
@@ -81,14 +60,7 @@ namespace Henzai.Examples
             _sceneRuntimeState.Light = new Light(lightColor);
             _sceneRuntimeState.Camera = Camera;
 
-            // string filePath = Path.Combine(AppContext.BaseDirectory, "armor/armor.dae"); 
-            // string filePath = Path.Combine(AppContext.BaseDirectory, "nanosuit/nanosuit.obj"); 
-            _nanosuit = AssimpLoader.LoadFromFile<VertexPositionNormalTextureTangentBitangent>(AppContext.BaseDirectory,"nanosuit/nanosuit.obj",VertexPositionNormalTextureTangentBitangent.HenzaiType);
-            _nanosuit.SetAmbientForAllMeshes(new Vector4(0.1f,0.1f,0.1f,1.0f));
-            // _model = AssimpLoader.LoadFromFile<VertexPositionNormalTextureTangentBitangent>(AppContext.BaseDirectory,"sponza/sponza.obj",VertexPositionNormalTextureTangentBitangent.HenzaiType);
-            GeometryUtils.GenerateTangentAndBitagentSpaceFor(_nanosuit);
-            // GeometryUtils.CheckTBN(_model);
-            // var sun = new Model<VertexPositionNormalTextureTangentBitangent>("water",GeometryFactory.generateSphereTangentBitangent(100,100,1));
+            // Sun
             _sun = new Model<VertexPositionNormal>(String.Empty,GeometryFactory.generateSphereNormal(100,100,1));
             _sun.meshes[0].TryGetMaterial().textureDiffuse = "Water.jpg";
             _sun.meshes[0].TryGetMaterial().textureNormal = "WaterNorm.jpg";
@@ -98,18 +70,12 @@ namespace Henzai.Examples
             Vector3 newTranslation = new Vector3(lightPos.X,lightPos.Y,lightPos.Z);
             _sun.SetNewWorldTranslation(ref newTranslation, true);
 
-            var nanoSuitRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>(_nanosuit,"PhongBitangentTexture","PhongBitangentTexture", VertexTypes.VertexPositionNormalTextureTangentBitangent);
-            nanoSuitRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPNTTB;
-            nanoSuitRuntimeState.CallSamplerGeneration+=ResourceGenerator.GenerateLinearSampler;
-            nanoSuitRuntimeState.CallTextureResourceLayoutGeneration+=ResourceGenerator.GenerateTextureResourceLayoutForNormalMapping;
-            nanoSuitRuntimeState.CallTextureResourceSetGeneration+=ResourceGenerator.GenerateTextureResourceSetForNormalMapping;
-
-            _modelPNTTBDescriptorList.Add(nanoSuitRuntimeState);
-            // _modelStatesList.Add(sunRuntimeState);
-
             var sunRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormal>(_sun,"Phong","Phong",VertexTypes.VertexPositionNormal);
             sunRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPN;
             _modelPNDescriptorList.Add(sunRuntimeState);
+
+            // Floor
+            // var floor = Geomet
 
             /// Uniform 1 - Camera
             _sceneRuntimeState.CameraProjViewBuffer  = _factory.CreateBuffer(new BufferDescription(Camera.SizeInBytes,BufferUsage.UniformBuffer | BufferUsage.Dynamic));

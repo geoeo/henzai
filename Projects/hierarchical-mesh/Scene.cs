@@ -95,7 +95,7 @@ namespace Henzai.Examples
             GeometryUtils.GenerateTangentAndBitagentSpaceFor(_nanosuit);
             // GeometryUtils.CheckTBN(_model);
             // var sun = new Model<VertexPositionNormalTextureTangentBitangent>("water",GeometryFactory.generateSphereTangentBitangent(100,100,1));
-            _sun = new Model<VertexPositionNormal>(String.Empty,GeometryFactory.generateSphereNormal(100,100,1));
+            _sun = new Model<VertexPositionNormal>(String.Empty,GeometryFactory.GenerateSphereNormal(100,100,1));
             _sun.meshes[0].TryGetMaterial().textureDiffuse = "Water.jpg";
             _sun.meshes[0].TryGetMaterial().textureNormal = "WaterNorm.jpg";
             _sun.meshes[0].TryGetMaterial().ambient = new Vector4(1.0f,1.0f,1.0f,1.0f);

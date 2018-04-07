@@ -75,7 +75,7 @@ namespace Henzai.Examples
                 GraphicsDevice.LinearSampler));
 
             Mesh<VertexPositionTexture> texturedCube 
-                = GeometryFactory.generateTexturedCube();
+                = GeometryFactory.GenerateTexturedCube();
 
             ushort[] cubeIndicies = GeometryFactory.generateCubeIndicies_TriangleList_CW();
 
