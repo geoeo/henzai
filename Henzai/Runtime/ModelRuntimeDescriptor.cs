@@ -56,19 +56,21 @@ namespace Henzai.Runtime
         /// </summary>
         public Model<T> Model {get;set;}
         public VertexTypes VertexType {get; private set;}
+        public PrimitiveTopology PrimitiveTopology {get; private set;}
 
         public event Func<VertexLayoutDescription> CallVertexLayoutGeneration;
         public event Func<DisposeCollectorResourceFactory,Sampler> CallSamplerGeneration;
         public event Func<DisposeCollectorResourceFactory,ResourceLayout> CallTextureResourceLayoutGeneration;
         public event Func<ModelRuntimeDescriptor<T>,int,DisposeCollectorResourceFactory,GraphicsDevice,ResourceSet> CallTextureResourceSetGeneration;
 
-        public ModelRuntimeDescriptor(Model<T> modelIn, string vShaderName, string fShaderName, VertexTypes vertexType){
+        public ModelRuntimeDescriptor(Model<T> modelIn, string vShaderName, string fShaderName, VertexTypes vertexType, PrimitiveTopology primitiveTopology){
             Model = modelIn;
 
             _vertexShaderName = vShaderName;
             _fragmentShaderName = fShaderName;
 
             VertexType = vertexType;
+            PrimitiveTopology = primitiveTopology;
 
             VertexBuffersList = new List<DeviceBuffer>();
             IndexBuffersList = new List<DeviceBuffer>();

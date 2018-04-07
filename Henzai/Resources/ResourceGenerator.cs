@@ -141,6 +141,15 @@ namespace Henzai
                     new VertexElementDescription("Normal",VertexElementSemantic.Normal,VertexElementFormat.Float3)
                 );
         }
+        /// <summary>
+        /// <see cref="Henzai.Geometry.VertexPositionColor"/>
+        /// </summary>
+        public static VertexLayoutDescription GenerateVertexLayoutForPC(){
+                return new VertexLayoutDescription(
+                    new VertexElementDescription("Position",VertexElementSemantic.Position,VertexElementFormat.Float3),
+                    new VertexElementDescription("Color",VertexElementSemantic.Color,VertexElementFormat.Float4)
+                );
+        }
 
         public static GraphicsPipelineDescription GeneratePipelinePN<T>(
             ModelRuntimeDescriptor<T> modelRuntimeState, 
@@ -157,7 +166,7 @@ namespace Henzai
                         depthClipEnabled: true,
                         scissorTestEnabled: false
                     ),
-                    PrimitiveTopology = PrimitiveTopology.TriangleList,
+                    PrimitiveTopology = modelRuntimeState.PrimitiveTopology,
                     ResourceLayouts = new ResourceLayout[] {
                         sceneRuntimeState.CameraResourceLayout,
                         sceneRuntimeState.LightResourceLayout,
@@ -185,12 +194,38 @@ namespace Henzai
                         depthClipEnabled: true,
                         scissorTestEnabled: false
                     ),
-                    PrimitiveTopology = PrimitiveTopology.TriangleList,
+                    PrimitiveTopology = modelRuntimeState.PrimitiveTopology,
                     ResourceLayouts = new ResourceLayout[] {
                         sceneRuntimeState.CameraResourceLayout,
                         sceneRuntimeState.LightResourceLayout,
                         sceneRuntimeState.MaterialResourceLayout,
                         modelRuntimeState.TextureResourceLayout},
+                    ShaderSet = new ShaderSetDescription(
+                        vertexLayouts: new VertexLayoutDescription[] {modelRuntimeState.VertexLayout},
+                        shaders: new Shader[] {modelRuntimeState.VertexShader,modelRuntimeState.FragmentShader}
+                    ),
+                    Outputs = graphicsDevice.SwapchainFramebuffer.OutputDescription
+                };
+        }
+
+        public static GraphicsPipelineDescription GeneratePipelinePC<T>(
+            ModelRuntimeDescriptor<T> modelRuntimeState, 
+            SceneRuntimeDescriptor sceneRuntimeState, 
+            GraphicsDevice graphicsDevice) where T : struct {
+
+            return new GraphicsPipelineDescription(){
+                    BlendState = BlendStateDescription.SingleOverrideBlend,
+                    DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
+                    RasterizerState = new RasterizerStateDescription(
+                        cullMode: FaceCullMode.Back,
+                        fillMode: PolygonFillMode.Solid,
+                        frontFace: FrontFace.Clockwise,
+                        depthClipEnabled: true,
+                        scissorTestEnabled: false
+                    ),
+                    PrimitiveTopology = modelRuntimeState.PrimitiveTopology,
+                    ResourceLayouts = new ResourceLayout[] {
+                        sceneRuntimeState.CameraResourceLayout},
                     ShaderSet = new ShaderSetDescription(
                         vertexLayouts: new VertexLayoutDescription[] {modelRuntimeState.VertexLayout},
                         shaders: new Shader[] {modelRuntimeState.VertexShader,modelRuntimeState.FragmentShader}

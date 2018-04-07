@@ -222,10 +222,13 @@ namespace Henzai.Runtime
 
                 switch(modelDescriptor.VertexType){
                     case VertexTypes.VertexPositionNormal:
-                        modelDescriptor.Pipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GeneratePipelinePN(modelDescriptor,sceneRuntimeDescriptor,GraphicsDevice));
+                        modelDescriptor.Pipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GeneratePipelinePN(modelDescriptor,sceneRuntimeDescriptor,_graphicsDevice));
                         break;
                     case VertexTypes.VertexPositionNormalTextureTangentBitangent:
-                        modelDescriptor.Pipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GeneratePipelinePNTTB(modelDescriptor,sceneRuntimeDescriptor,GraphicsDevice));
+                        modelDescriptor.Pipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GeneratePipelinePNTTB(modelDescriptor,sceneRuntimeDescriptor,_graphicsDevice));
+                        break;
+                    case VertexTypes.VertexPositionColor:
+                        modelDescriptor.Pipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GeneratePipelinePC(modelDescriptor,sceneRuntimeDescriptor,_graphicsDevice));
                         break;
                     default:
                         throw new NotImplementedException($"{modelDescriptor.VertexType.ToString("g")} not implemented");

@@ -32,7 +32,7 @@ namespace Henzai.Examples
             : base(title,windowSize,graphicsDeviceOptions,renderOptions){
                 _sceneRuntimeState = new SceneRuntimeDescriptor();
 
-                _modelPNTTBDescriptorList = new List<ModelRuntimeDescriptor<VertexPositionColor>>();
+                _modelPCDescriptorList = new List<ModelRuntimeDescriptor<VertexPositionColor>>();
                 _modelPNDescriptorList = new List<ModelRuntimeDescriptor<VertexPositionNormal>>();
 
                 PreRenderLoop+=FormatResourcesForRuntime;
@@ -61,7 +61,7 @@ namespace Henzai.Examples
             _sceneRuntimeState.Camera = Camera;
 
             // Sun
-            _sun = new Model<VertexPositionNormal>(String.Empty,GeometryFactory.generateSphereNormal(100,100,1));
+            _sun = new Model<VertexPositionNormal>(String.Empty,GeometryFactory.GenerateSphereNormal(100,100,1));
             _sun.meshes[0].TryGetMaterial().textureDiffuse = "Water.jpg";
             _sun.meshes[0].TryGetMaterial().textureNormal = "WaterNorm.jpg";
             _sun.meshes[0].TryGetMaterial().ambient = new Vector4(1.0f,1.0f,1.0f,1.0f);
@@ -70,12 +70,15 @@ namespace Henzai.Examples
             Vector3 newTranslation = new Vector3(lightPos.X,lightPos.Y,lightPos.Z);
             _sun.SetNewWorldTranslation(ref newTranslation, true);
 
-            var sunRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormal>(_sun,"Phong","Phong",VertexTypes.VertexPositionNormal);
+            var sunRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormal>(_sun,"Phong","Phong",VertexTypes.VertexPositionNormal,PrimitiveTopology.TriangleList);
             sunRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPN;
             _modelPNDescriptorList.Add(sunRuntimeState);
 
             // Floor
-            // var floor = Geomet
+            var floor = new Model<VertexPositionColor>(String.Empty,GeometryFactory.GenerateColorQuad(RgbaFloat.Red,RgbaFloat.Yellow,RgbaFloat.Green,RgbaFloat.LightGrey));
+            var floorRuntimeState = new ModelRuntimeDescriptor<VertexPositionColor>(floor,"Color","Color",VertexTypes.VertexPositionColor,PrimitiveTopology.TriangleStrip);
+            floorRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPC;
+            _modelPCDescriptorList.Add(floorRuntimeState);
 
             /// Uniform 1 - Camera
             _sceneRuntimeState.CameraProjViewBuffer  = _factory.CreateBuffer(new BufferDescription(Camera.SizeInBytes,BufferUsage.UniformBuffer | BufferUsage.Dynamic));
@@ -119,7 +122,7 @@ namespace Henzai.Examples
                     _sceneRuntimeState.LightResourceLayout,
                     new BindableResource[]{_sceneRuntimeState.LightBuffer});
 
-            foreach(var modelDescriptor in _modelPNTTBDescriptorList){
+            foreach(var modelDescriptor in _modelPCDescriptorList){
                 FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState); 
             }
 
@@ -137,7 +140,7 @@ namespace Henzai.Examples
             _commandList.ClearColorTarget(0,RgbaFloat.White);
             _commandList.ClearDepthStencil(1f);
 
-            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPNTTBDescriptorArray,_sceneRuntimeState);
+            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPCDescriptorArray,_sceneRuntimeState);
             RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPNDescriptorArray,_sceneRuntimeState);
             
             _commandList.End();
