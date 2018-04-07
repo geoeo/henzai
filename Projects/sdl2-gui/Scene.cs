@@ -230,7 +230,7 @@ namespace Henzai.Examples
 
         private List<IDisposable> createcoloredQuadResources(){
 
-            Mesh<VertexPositionNDCColor> quad = GeometryFactory.generatecoloredQuad(RgbaFloat.Red, RgbaFloat.Blue,RgbaFloat.Green,RgbaFloat.Orange);
+            Mesh<VertexPositionNDCColor> quad = GeometryFactory.generateColorQuadNDC(RgbaFloat.Red, RgbaFloat.Blue,RgbaFloat.Green,RgbaFloat.Orange);
             ushort[] quadIndicies = GeometryFactory.generateQuadIndicies_TriangleStrip_CW();
 
             _vertexBuffercoloredQuad = _factory.CreateBuffer(new BufferDescription(quad.vertices.LengthUnsigned()* VertexPositionNDCColor.SizeInBytes, BufferUsage.VertexBuffer));

@@ -61,7 +61,7 @@ namespace Henzai.Geometry
             };
         }
 
-        public static Mesh<VertexPositionNDCColor> generatecoloredQuad(params RgbaFloat[] colors)
+        public static Mesh<VertexPositionNDCColor> generateColorQuadNDC(params RgbaFloat[] colors)
         {
             if(colors.Length < 4)
                 throw new ArgumentException("At least 4 color values are needed for a Quad");
@@ -87,6 +87,21 @@ namespace Henzai.Geometry
             };
 
             return new Mesh<VertexPositionTexture>(quadVerticies);
+        }
+
+        public static Mesh<VertexPositionColor> generateColorQuad(params RgbaFloat[] colors)
+        {
+            if(colors.Length < 4)
+                throw new ArgumentException("At least 4 color values are needed for a Quad");
+
+            VertexPositionColor[] quadVerticies = {
+                new VertexPositionColor(new Vector3(-1.0f,1.0f,0.0f),colors[0]),
+                new VertexPositionColor(new Vector3(1.0f,1.0f,0.0f),colors[1]),
+                new VertexPositionColor(new Vector3(-1.0f,-1.0f,0.0f),colors[2]),
+                new VertexPositionColor(new Vector3(1.0f,-1.0f,0.0f),colors[3])
+            };
+
+            return new Mesh<VertexPositionColor>(quadVerticies);
         }
 
         public static ushort[] generateQuadIndicies_TriangleStrip_CW()
