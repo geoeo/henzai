@@ -1,6 +1,6 @@
 #version 330 core
 
-layout(std140) uniform transformPipeline
+layout(std140) uniform projViewWorld
 {
     mat4 View;
     mat4 Proj;
@@ -16,7 +16,7 @@ smooth out vec4 fsin_Color;
 
 void main()
 {
-    vec4 position = vec4(Position, 1);
+    vec4 position = vec4(Position, 1.0);
     gl_Position = Proj*View*World*position;
     // composensate for D3D projection
     gl_Position.z = 2.0*gl_Position.z -gl_Position.w;

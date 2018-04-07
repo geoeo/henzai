@@ -190,7 +190,7 @@ namespace Henzai.Runtime
                 Thread.Sleep(msDiffRounded);
         }
 
-        protected void FillRuntimeDescriptor<T>(ModelRuntimeDescriptor<T> modelDescriptor, SceneRuntimeDescriptor sceneRuntimeDescriptor) where T : struct, VertexRuntime {
+        protected void FillRuntimeDescriptor<T>(ModelRuntimeDescriptor<T> modelDescriptor, SceneRuntimeDescriptor sceneRuntimeDescriptor, InstancingData instancingData) where T : struct, VertexRuntime {
                 var model = modelDescriptor.Model;
 
                 modelDescriptor.TextureResourceLayout = modelDescriptor.InvokeTextureResourceLayoutGeneration(_factory);
@@ -208,17 +208,28 @@ namespace Henzai.Runtime
                         = _factory.CreateBuffer(new BufferDescription(model.meshes[i].meshIndices.LengthUnsigned()*sizeof(ushort),BufferUsage.IndexBuffer));
                         
 
-                    modelDescriptor.VertexBuffersList.Add(vertexBuffer);
-                    modelDescriptor.IndexBuffersList.Add(indexBuffer);
+                    modelDescriptor.VertexBufferList.Add(vertexBuffer);
+                    modelDescriptor.IndexBufferList.Add(indexBuffer);
 
-                    GraphicsDevice.UpdateBuffer(vertexBuffer,0,model.meshes[i].vertices);
-                    GraphicsDevice.UpdateBuffer(indexBuffer,0,model.meshes[i].meshIndices);
+                    //TODO: Make this more generic for more complex instancing behaviour
+                    if(instancingData != null){
+                        var instancingBuffer = _factory.CreateBuffer(new BufferDescription(instancingData.Positions.Length.ToUnsigned()*12,BufferUsage.VertexBuffer));
+                        modelDescriptor.InstanceBufferList.Add(instancingBuffer);
+                        _graphicsDevice.UpdateBuffer(instancingBuffer,0,instancingData.Positions);
+                    }
 
-                    modelDescriptor.TextureResourceSetsList.Add(
-                        modelDescriptor.InvokeTextureResourceSetGeneration(i,_factory,GraphicsDevice)
-                        );
+                    _graphicsDevice.UpdateBuffer(vertexBuffer,0,model.meshes[i].vertices);
+                    _graphicsDevice.UpdateBuffer(indexBuffer,0,model.meshes[i].meshIndices);
+
+                    var resourceSet = modelDescriptor.InvokeTextureResourceSetGeneration(i,_factory,_graphicsDevice);
+                    if(resourceSet != null)
+                        modelDescriptor.TextureResourceSetsList.Add(resourceSet);
                 }
-                modelDescriptor.VertexLayout = modelDescriptor.InvokeVertexLayoutGeneration();
+
+                modelDescriptor.InvokeVertexLayoutGeneration();
+                modelDescriptor.InvokeVertexInstanceLayoutGeneration();
+
+                modelDescriptor.FormatResourcesForPipelineGeneration();
 
                 switch(modelDescriptor.VertexType){
                     case VertexTypes.VertexPositionNormal:

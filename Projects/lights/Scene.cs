@@ -26,7 +26,7 @@ namespace Henzai.Examples
         private ModelRuntimeDescriptor<VertexPositionNormal> [] _modelPNDescriptorArray;
 
         Model<VertexPositionNormal> _sun;
-        Model<VertexPositionColor> _floor;
+        // Model<VertexPositionColor> _floor;
 
         public Scene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
             : base(title,windowSize,graphicsDeviceOptions,renderOptions){
@@ -75,9 +75,13 @@ namespace Henzai.Examples
             _modelPNDescriptorList.Add(sunRuntimeState);
 
             // Floor
+            var offsets = new Vector3[] {new Vector3(-1.0f,0.0f,0f),new Vector3(1.0f,0.0f,0.0f)};
+            // var offsets = new Vector3[] {new Vector3(0.0f,0.0f,0.0f)};
+            var instancingData = new InstancingData {Positions = offsets};
             var floor = new Model<VertexPositionColor>(String.Empty,GeometryFactory.GenerateColorQuad(RgbaFloat.Red,RgbaFloat.Yellow,RgbaFloat.Green,RgbaFloat.LightGrey));
-            var floorRuntimeState = new ModelRuntimeDescriptor<VertexPositionColor>(floor,"Color","Color",VertexTypes.VertexPositionColor,PrimitiveTopology.TriangleStrip);
+            var floorRuntimeState = new ModelRuntimeDescriptor<VertexPositionColor>(floor,"OffsetColor","Color",VertexTypes.VertexPositionColor,PrimitiveTopology.TriangleStrip);
             floorRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPC;
+            floorRuntimeState.CallVertexInstanceLayoutGeneration+=ResourceGenerator.GenerateVertexInstanceLayoutForPC;
             _modelPCDescriptorList.Add(floorRuntimeState);
 
             /// Uniform 1 - Camera
@@ -123,11 +127,11 @@ namespace Henzai.Examples
                     new BindableResource[]{_sceneRuntimeState.LightBuffer});
 
             foreach(var modelDescriptor in _modelPCDescriptorList){
-                FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState); 
+                FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,instancingData); 
             }
 
             foreach(var modelDescriptor in _modelPNDescriptorList){
-                FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState); 
+                FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,InstancingData.NO_DATA); 
             }
 
         }
@@ -140,7 +144,8 @@ namespace Henzai.Examples
             _commandList.ClearColorTarget(0,RgbaFloat.White);
             _commandList.ClearDepthStencil(1f);
 
-            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPCDescriptorArray,_sceneRuntimeState);
+            // RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPCDescriptorArray,_sceneRuntimeState);
+            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor_Instancing(_commandList,_modelPCDescriptorArray,_sceneRuntimeState);
             RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPNDescriptorArray,_sceneRuntimeState);
             
             _commandList.End();

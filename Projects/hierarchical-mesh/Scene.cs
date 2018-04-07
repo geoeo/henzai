@@ -166,11 +166,11 @@ namespace Henzai.Examples
                     new BindableResource[]{_sceneRuntimeState.LightBuffer});
 
             foreach(var modelDescriptor in _modelPNTTBDescriptorList){
-                FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState); 
+                FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,InstancingData.NO_DATA); 
             }
 
             foreach(var modelDescriptor in _modelPNDescriptorList){
-                FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState); 
+                FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,InstancingData.NO_DATA); 
             }
 
         }

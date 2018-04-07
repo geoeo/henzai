@@ -9,18 +9,21 @@ using Henzai.Geometry;
 
 namespace Henzai.Runtime
 {
-    // TODO: Add Instancing Capabilities
     public sealed class ModelRuntimeDescriptor<T> where T : struct
     {
 
         /// <summary>
         /// Used During Resource Creation
         /// </summary>
-        public List<DeviceBuffer> VertexBuffersList {get; private set;}
+        public List<DeviceBuffer> VertexBufferList {get; private set;}
         /// <summary>
         /// Used During Resource Creation
         /// </summary>
-        public List<DeviceBuffer> IndexBuffersList {get; private set;}
+        public List<DeviceBuffer> IndexBufferList {get; private set;}
+        /// <summary>
+        /// Used During Resource Creation
+        /// </summary>
+        public List<DeviceBuffer> InstanceBufferList {get; private set;}
         /// <summary>
         /// Used During Resource Creation
         /// </summary>
@@ -36,11 +39,18 @@ namespace Henzai.Runtime
         /// <summary>
         /// Used During Rendering
         /// </summary>
+        public DeviceBuffer[] InstanceBuffers {get; private set;}
+        /// <summary>
+        /// Used During Rendering
+        /// </summary>
         public ResourceSet[] TextureResourceSets {get; private set;}
         public ResourceLayout TextureResourceLayout {get; set;}
         public Sampler TextureSampler {get;set;}
         public Shader VertexShader {get; private set;}
-        public VertexLayoutDescription VertexLayout {get;set;}
+        // public VertexLayoutDescription VertexLayout {get;set;}
+        // public VertexLayoutDescription VertexInstanceLayout {get;set;}
+        public List<VertexLayoutDescription> VertexLayoutList {get;private set;}
+        public VertexLayoutDescription[] VertexLayouts {get;private set;}
         private string _vertexShaderName;
         public Shader FragmentShader {get; private set;}
         private string _fragmentShaderName;
@@ -59,6 +69,7 @@ namespace Henzai.Runtime
         public PrimitiveTopology PrimitiveTopology {get; private set;}
 
         public event Func<VertexLayoutDescription> CallVertexLayoutGeneration;
+        public event Func<VertexLayoutDescription> CallVertexInstanceLayoutGeneration;
         public event Func<DisposeCollectorResourceFactory,Sampler> CallSamplerGeneration;
         public event Func<DisposeCollectorResourceFactory,ResourceLayout> CallTextureResourceLayoutGeneration;
         public event Func<ModelRuntimeDescriptor<T>,int,DisposeCollectorResourceFactory,GraphicsDevice,ResourceSet> CallTextureResourceSetGeneration;
@@ -72,15 +83,29 @@ namespace Henzai.Runtime
             VertexType = vertexType;
             PrimitiveTopology = primitiveTopology;
 
-            VertexBuffersList = new List<DeviceBuffer>();
-            IndexBuffersList = new List<DeviceBuffer>();
+            VertexBufferList = new List<DeviceBuffer>();
+            IndexBufferList = new List<DeviceBuffer>();
+            InstanceBufferList = new List<DeviceBuffer>();
             TextureResourceSetsList = new List<ResourceSet>();
+            VertexLayoutList = new List<VertexLayoutDescription>();
         }
 
+        /// <summary>
+        /// Formats Lists to Arrays for the Commandlist generation.
+        /// These items are used only during the renderloop
+        /// </summary>
         public void FormatResourcesForRuntime(){
-            VertexBuffers = VertexBuffersList.ToArray();
-            IndexBuffers = IndexBuffersList.ToArray();
+            VertexBuffers = VertexBufferList.ToArray();
+            IndexBuffers = IndexBufferList.ToArray();
+            InstanceBuffers = InstanceBufferList.ToArray();
             TextureResourceSets = TextureResourceSetsList.ToArray();
+        }
+        /// <summary>
+        /// Formats Lists to Arrays for the Pipeline Generation
+        /// These items are used during the CreateResources() stage
+        /// </summary>
+        public void FormatResourcesForPipelineGeneration(){
+            VertexLayouts = VertexLayoutList.ToArray();
         }
 
         public void LoadShaders(GraphicsDevice graphicsDevice){
@@ -88,8 +113,13 @@ namespace Henzai.Runtime
             FragmentShader = IO.LoadShader(_fragmentShaderName,ShaderStages.Fragment,graphicsDevice);
         }
 
-        public VertexLayoutDescription InvokeVertexLayoutGeneration(){
-            return CallVertexLayoutGeneration.Invoke();
+        public void InvokeVertexLayoutGeneration(){
+            VertexLayoutList.Add(CallVertexLayoutGeneration.Invoke());
+        }
+
+        public void InvokeVertexInstanceLayoutGeneration(){
+            if(CallVertexInstanceLayoutGeneration != null)
+                VertexLayoutList.Add(CallVertexInstanceLayoutGeneration.Invoke());
         }
 
         public Sampler InvokeSamplerGeneration(DisposeCollectorResourceFactory factory){

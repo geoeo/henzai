@@ -150,6 +150,16 @@ namespace Henzai
                     new VertexElementDescription("Color",VertexElementSemantic.Color,VertexElementFormat.Float4)
                 );
         }
+        /// <summary>
+        /// <see cref="Henzai.Geometry.VertexPositionColor"/>
+        /// </summary>
+        public static VertexLayoutDescription GenerateVertexInstanceLayoutForPC(){
+                return new VertexLayoutDescription(
+                    stride:12, // Size of Vector 3
+                    instanceStepRate:1,
+                    elements: new VertexElementDescription[] {  new VertexElementDescription("Offset",VertexElementSemantic.Position,VertexElementFormat.Float3)}
+                );
+        }
 
         public static GraphicsPipelineDescription GeneratePipelinePN<T>(
             ModelRuntimeDescriptor<T> modelRuntimeState, 
@@ -172,7 +182,7 @@ namespace Henzai
                         sceneRuntimeState.LightResourceLayout,
                         sceneRuntimeState.MaterialResourceLayout},
                     ShaderSet = new ShaderSetDescription(
-                        vertexLayouts: new VertexLayoutDescription[] {modelRuntimeState.VertexLayout},
+                        vertexLayouts: modelRuntimeState.VertexLayouts,
                         shaders: new Shader[] {modelRuntimeState.VertexShader,modelRuntimeState.FragmentShader}
                     ),
                     Outputs = graphicsDevice.SwapchainFramebuffer.OutputDescription
@@ -201,7 +211,7 @@ namespace Henzai
                         sceneRuntimeState.MaterialResourceLayout,
                         modelRuntimeState.TextureResourceLayout},
                     ShaderSet = new ShaderSetDescription(
-                        vertexLayouts: new VertexLayoutDescription[] {modelRuntimeState.VertexLayout},
+                        vertexLayouts: modelRuntimeState.VertexLayouts,
                         shaders: new Shader[] {modelRuntimeState.VertexShader,modelRuntimeState.FragmentShader}
                     ),
                     Outputs = graphicsDevice.SwapchainFramebuffer.OutputDescription
@@ -227,7 +237,7 @@ namespace Henzai
                     ResourceLayouts = new ResourceLayout[] {
                         sceneRuntimeState.CameraResourceLayout},
                     ShaderSet = new ShaderSetDescription(
-                        vertexLayouts: new VertexLayoutDescription[] {modelRuntimeState.VertexLayout},
+                        vertexLayouts: modelRuntimeState.VertexLayouts,
                         shaders: new Shader[] {modelRuntimeState.VertexShader,modelRuntimeState.FragmentShader}
                     ),
                     Outputs = graphicsDevice.SwapchainFramebuffer.OutputDescription
