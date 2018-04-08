@@ -61,7 +61,7 @@ namespace Henzai.Geometry
             };
         }
 
-        public static Mesh<VertexPositionNDCColor> GenerateColorQuadNDC(params RgbaFloat[] colors)
+        public static Mesh<VertexPositionNDCColor> GenerateColorQuadNDC_XY(params RgbaFloat[] colors)
         {
             if(colors.Length < 4)
                 throw new ArgumentException("At least 4 color values are needed for a Quad");
@@ -76,7 +76,7 @@ namespace Henzai.Geometry
             return new Mesh<VertexPositionNDCColor>(quadVerticies);
         }
 
-        public static Mesh<VertexPositionTexture> GenerateTexturedQuad()
+        public static Mesh<VertexPositionTexture> GenerateQuadPT_XY()
         {
 
             VertexPositionTexture[] quadVerticies = {
@@ -90,7 +90,7 @@ namespace Henzai.Geometry
         }
 
 
-        public static Mesh<VertexPositionNormalTextureTangentBitangent> GenerateTexturedQuadPNTTB()
+        public static Mesh<VertexPositionNormalTextureTangentBitangent> GenerateQuadPNTTB_XY()
         {
 
             VertexPositionNormalTextureTangentBitangent[] quadVerticies = {
@@ -98,6 +98,18 @@ namespace Henzai.Geometry
                 new VertexPositionNormalTextureTangentBitangent(new Vector3(1.0f,1.0f,1.0f),Vector3.UnitZ,new Vector2(1,0),Vector3.UnitX,-Vector3.UnitY),
                 new VertexPositionNormalTextureTangentBitangent(new Vector3(-1.0f,-1.0f,1.0f),Vector3.UnitZ,new Vector2(0,1),Vector3.UnitX,-Vector3.UnitY),
                 new VertexPositionNormalTextureTangentBitangent(new Vector3(1.0f,-1.0f,1.0f),Vector3.UnitZ,new Vector2(1,1),Vector3.UnitX,-Vector3.UnitY)
+            };
+
+            return new Mesh<VertexPositionNormalTextureTangentBitangent>(quadVerticies,GenerateQuadIndicies_TriangleStrip_CW());
+        }
+        public static Mesh<VertexPositionNormalTextureTangentBitangent> GenerateQuadPNTTB_XZ()
+        {
+
+            VertexPositionNormalTextureTangentBitangent[] quadVerticies = {
+                new VertexPositionNormalTextureTangentBitangent(new Vector3(-1.0f,0.0f,-1.0f),Vector3.UnitY,new Vector2(0,0),Vector3.UnitX,Vector3.UnitZ),
+                new VertexPositionNormalTextureTangentBitangent(new Vector3(1.0f,0.0f,-1.0f),Vector3.UnitY,new Vector2(1,0),Vector3.UnitX,Vector3.UnitZ),
+                new VertexPositionNormalTextureTangentBitangent(new Vector3(-1.0f,0.0f,1.0f),Vector3.UnitY,new Vector2(0,1),Vector3.UnitX,Vector3.UnitZ),
+                new VertexPositionNormalTextureTangentBitangent(new Vector3(1.0f,0.0f,1.0f),Vector3.UnitY,new Vector2(1,1),Vector3.UnitX,Vector3.UnitZ)
             };
 
             return new Mesh<VertexPositionNormalTextureTangentBitangent>(quadVerticies,GenerateQuadIndicies_TriangleStrip_CW());

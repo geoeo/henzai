@@ -118,10 +118,12 @@ namespace Henzai.Examples
             var offsets = new Vector3[] {new Vector3(-1.0f,0.0f,0f),new Vector3(1.0f,0.0f,0.0f)};
             // var offsets = new Vector3[] {new Vector3(0.0f,0.0f,0.0f)};
             var instancingData = new InstancingData {Positions = offsets};
-            var floor = new Model<VertexPositionNormalTextureTangentBitangent>("paving/",GeometryFactory.GenerateTexturedQuadPNTTB());
+            var floor = new Model<VertexPositionNormalTextureTangentBitangent>("paving/",GeometryFactory.GenerateQuadPNTTB_XZ());
             floor.meshes[0].TryGetMaterial().textureDiffuse="pavingColor.jpg";
             floor.meshes[0].TryGetMaterial().textureNormal="pavingNorm.jpg";
             floor.meshes[0].TryGetMaterial().ambient=new Vector4(0.3f,0.3f,0.3f,1.0f);
+            var floorTranslation = new Vector3(0.0f,-2.0f,0.0f);
+            floor.SetNewWorldTranslation(ref floorTranslation,true);
             var floorRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>(floor,"PositionOffsetPhongBitangentTexture","PhongBitangentTexture",VertexTypes.VertexPositionNormalTextureTangentBitangent,PrimitiveTopology.TriangleStrip);
             floorRuntimeState.TotalInstanceCount = offsets.Length.ToUnsigned();
 
