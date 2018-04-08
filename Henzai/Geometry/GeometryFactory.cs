@@ -9,6 +9,11 @@ namespace Henzai.Geometry
 {
     public static class GeometryFactory
     {
+
+        public static readonly int QUAD_WIDTH = 2;
+        public static readonly int QUAD_HEIGHT = 2;
+
+
         public static Mesh<VertexPositionTexture> GenerateTexturedCube()
         {
             VertexPositionTexture[] cubeVerticies =

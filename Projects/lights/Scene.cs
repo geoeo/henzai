@@ -115,8 +115,10 @@ namespace Henzai.Examples
             // _modelPTDescriptorList.Add(floorRuntimeState);
 
             // floor
-            var offsets = new Vector3[] {new Vector3(-1.0f,0.0f,0f),new Vector3(1.0f,0.0f,0.0f)};
+            // var offsets = new Vector3[] {new Vector3(-1.0f,0.0f,0f),new Vector3(1.0f,0.0f,0.0f)};
             // var offsets = new Vector3[] {new Vector3(0.0f,0.0f,0.0f)};
+            var offsets = GeometryUtils.CreateTilingList_XZ(-20,20,-10,10,0,GeometryFactory.QUAD_WIDTH,GeometryFactory.QUAD_HEIGHT);
+            // var offsets = GeometryUtils.CreateTilingList_XZ(-1,1,0,0,0,GeometryFactory.QUAD_WIDTH,GeometryFactory.QUAD_HEIGHT);
             var instancingData = new InstancingData {Positions = offsets};
             var floor = new Model<VertexPositionNormalTextureTangentBitangent>("paving/",GeometryFactory.GenerateQuadPNTTB_XZ());
             floor.meshes[0].TryGetMaterial().textureDiffuse="pavingColor.jpg";

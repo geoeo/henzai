@@ -71,6 +71,7 @@ namespace Henzai.Runtime
         public event Func<VertexLayoutDescription> CallVertexInstanceLayoutGeneration;
         public event Func<DisposeCollectorResourceFactory,Sampler> CallSamplerGeneration;
         public event Func<DisposeCollectorResourceFactory,ResourceLayout> CallTextureResourceLayoutGeneration;
+        // TODO: Investigate Texture Cache for already loaded textures
         public event Func<ModelRuntimeDescriptor<T>,int,DisposeCollectorResourceFactory,GraphicsDevice,ResourceSet> CallTextureResourceSetGeneration;
 
         public ModelRuntimeDescriptor(Model<T> modelIn, string vShaderName, string fShaderName, VertexTypes vertexType, PrimitiveTopology primitiveTopology){

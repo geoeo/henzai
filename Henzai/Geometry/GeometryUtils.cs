@@ -274,6 +274,42 @@ namespace Henzai.Geometry
 
         // http://www.iquilezles.org/www/articles/patchedsphere/patchedsphere.htm
         //TODO: Implement Tangent space calculation for a spehre
+
+
+        public static Vector3[] CreateTilingList_XZ(int xStart,int xEnd, int zStart,int zEnd, int y,int tileWidth,int tileHeight){
+            int xSize = Math.Abs(xEnd - xStart);
+            int ZSize = Math.Abs(zEnd - zStart);
+            int size = xSize;
+            if(ZSize > 0 && size >0)
+                size*=ZSize;
+            else if(ZSize > 0)
+                size = ZSize;
+
+            Vector3[] tiles = new Vector3[size];
+            int numerator = xSize > 0 ? xSize : ZSize;
+
+            for(int i = 0;i < size; i++){
+                int x = xStart;
+                int z = zStart;
+
+                if(xSize > 0){
+                    x += tileWidth*(i%numerator);
+                    z += tileHeight*(i/numerator);
+                }
+                else{
+                    x += tileWidth*(i/numerator);
+                    z += tileHeight*(i%numerator);                    
+                }
+
+                tiles[i] = new Vector3(x,y,z);
+            }
+
+            return tiles;
+
+
+
+        
+        }
     }
 
 }
