@@ -8,7 +8,6 @@ struct PixelInput
     float3 NormalWorld;
     float3 TangentWorld;
     float3 BitangentWorld;
-    float3 LightWorld;
     float2 UV;
     float3 CamPosWorld;
 };
@@ -48,10 +47,17 @@ fragment float4 FS(PixelInput input[[stage_in]],
     float3 Bitangent = normalize(input.BitangentWorld);
     float3x3 TBN = float3x3(Tangent, Bitangent, Normal);
 
+    //normal_sample = Normal;
     normal_sample = normalize(TBN*normal_sample);
 
 
-    float3 L = normalize(input.LightWorld-input.FragWorld);
+    float3 L; 
+    if(light.Position.z ==1.0){
+        L = normalize(light.Position.xyz-input.FragWorld);
+    }
+    else {
+        L = -light.Position.xyz
+    }
     float distance = length(L);
     float attenuation = 1.0 / (light.Attenuation.x + distance*light.Attenuation.y + distance*distance*light.Attenuation.z);
 
@@ -68,6 +74,7 @@ fragment float4 FS(PixelInput input[[stage_in]],
     color_out += material.Ambient;
     color_out += diffuse;
     color_out += specular;
+    color_out *= (attenuation*lightColor);
     //color_out = float4(input.NormalWorld,1.0);
     //color_out = float4(normal_sample,1.0);
     //color_out = float4(input.FragWorld,1.0);
@@ -77,5 +84,5 @@ fragment float4 FS(PixelInput input[[stage_in]],
     //color_out = float4(l_dot_n,l_dot_n,l_dot_n,1.0);
     //color_out = float4(L.z,0.0,0.0,1.0);
 
-    return attenuation*lightColor*color_out;
+    return color_out;
 }

@@ -46,7 +46,13 @@ void main()
     // vec3 normalWS = Normal;
     vec3 normalWS = normalize(TBN*normal_sample);
 
-    vec3 L = normalize(fsin_LightWorld-fsin_FragWorld);
+    vec3 L;
+    if(LightPosition.w == 1.0){
+        L = normalize(LightPosition.xyz-fsin_FragWorld);
+    }
+    else {
+        L = -LightPosition.xyz;
+    }
     float distance = length(L);
     float attenuation = 1.0 / (LightAttenuation.x + distance*LightAttenuation.y + distance*distance*LightAttenuation.z);
 

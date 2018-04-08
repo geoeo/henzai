@@ -17,7 +17,6 @@ struct PixelInput
     float3 NormalWorld;
     float3 TangentWorld;
     float3 BitangentWorld;
-    float3 LightWorld;
     float2 UV;
     float3 CamPosWorld;
 };
@@ -49,7 +48,6 @@ vertex PixelInput VS(VertexInput input[[stage_in]],constant ProjViewWorld &pjw [
     output.NormalWorld = normalMatrix*input.Normal;
     output.TangentWorld = normalMatrix*input.Tangent;
     output.BitangentWorld = normalMatrix*input.Bitangent;
-    output.LightWorld = l.Position.xyz;
     output.UV = input.UV;
     output.CamPosWorld = pjw.View[3].xyz;
     return output;
