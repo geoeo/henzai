@@ -19,6 +19,7 @@ namespace Henzai.Examples
 
         private SceneRuntimeDescriptor _sceneRuntimeState;
 
+        // TODO: Make this part of renderable?
         private List<ModelRuntimeDescriptor<VertexPositionColor>> _modelPCDescriptorList;
         private ModelRuntimeDescriptor<VertexPositionColor> [] _modelPCDescriptorArray;
 
@@ -70,6 +71,7 @@ namespace Henzai.Examples
 
             // RgbaFloat lightColor = RgbaFloat.Orange;
             RgbaFloat lightColor = RgbaFloat.LightGrey;
+            // RgbaFloat lightColor = new RgbaFloat(1.0f,0.36f,0.0f,0.2f);
             _sceneRuntimeState.Light = new Light(lightColor);
             _sceneRuntimeState.Camera = Camera;
 
@@ -96,21 +98,39 @@ namespace Henzai.Examples
             // floorRuntimeState.CallVertexInstanceLayoutGeneration+=ResourceGenerator.GenerateVertexInstanceLayoutForPC;
             // _modelPCDescriptorList.Add(floorRuntimeState);
 
-            //Floor 
+            //Quad Textured
+            // var offsets = new Vector3[] {new Vector3(-1.0f,0.0f,0f),new Vector3(1.0f,0.0f,0.0f)};
+            // // var offsets = new Vector3[] {new Vector3(0.0f,0.0f,0.0f)};
+            // var instancingData = new InstancingData {Positions = offsets};
+            // var floor = new Model<VertexPositionTexture>("paving",GeometryFactory.GenerateTexturedQuad());
+            // floor.meshes[0].TryGetMaterial().textureDiffuse="pavingColor.jpg";
+            // var floorRuntimeState = new ModelRuntimeDescriptor<VertexPositionTexture>(floor,"PositionOffsetTexture","Texture",VertexTypes.VertexPositionTexture,PrimitiveTopology.TriangleStrip);
+            // floorRuntimeState.TotalInstanceCount = offsets.Length.ToUnsigned();
+
+            // floorRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPT;
+            // floorRuntimeState.CallVertexInstanceLayoutGeneration+=ResourceGenerator.GenerateVertexInstanceLayoutForPositionOffset;
+            // floorRuntimeState.CallTextureResourceLayoutGeneration+=ResourceGenerator.GenerateTextureResourceLayoutForDiffuseMapping;
+            // floorRuntimeState.CallTextureResourceSetGeneration+=ResourceGenerator.GenerateTextureResourceSetForDiffuseMapping;
+            // floorRuntimeState.CallSamplerGeneration+=ResourceGenerator.GenerateLinearSampler;
+            // _modelPTDescriptorList.Add(floorRuntimeState);
+
+            // floor
             var offsets = new Vector3[] {new Vector3(-1.0f,0.0f,0f),new Vector3(1.0f,0.0f,0.0f)};
             // var offsets = new Vector3[] {new Vector3(0.0f,0.0f,0.0f)};
             var instancingData = new InstancingData {Positions = offsets};
-            var floor = new Model<VertexPositionTexture>("paving",GeometryFactory.GenerateTexturedQuad());
+            var floor = new Model<VertexPositionNormalTextureTangentBitangent>("paving/",GeometryFactory.GenerateTexturedQuadPNTTB());
             floor.meshes[0].TryGetMaterial().textureDiffuse="pavingColor.jpg";
-            var floorRuntimeState = new ModelRuntimeDescriptor<VertexPositionTexture>(floor,"PositionOffsetTexture","Texture",VertexTypes.VertexPositionTexture,PrimitiveTopology.TriangleStrip);
+            floor.meshes[0].TryGetMaterial().textureNormal="pavingNorm.jpg";
+            floor.meshes[0].TryGetMaterial().ambient=new Vector4(0.3f,0.3f,0.3f,1.0f);
+            var floorRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>(floor,"PositionOffsetPhongBitangentTexture","PhongBitangentTexture",VertexTypes.VertexPositionNormalTextureTangentBitangent,PrimitiveTopology.TriangleStrip);
             floorRuntimeState.TotalInstanceCount = offsets.Length.ToUnsigned();
 
-            floorRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPT;
+            floorRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPNTTB;
             floorRuntimeState.CallVertexInstanceLayoutGeneration+=ResourceGenerator.GenerateVertexInstanceLayoutForPositionOffset;
-            floorRuntimeState.CallTextureResourceLayoutGeneration+=ResourceGenerator.GenerateTextureResourceLayoutForDiffuseMapping;
-            floorRuntimeState.CallTextureResourceSetGeneration+=ResourceGenerator.GenerateTextureResourceSetForDiffuseMapping;
+            floorRuntimeState.CallTextureResourceLayoutGeneration+=ResourceGenerator.GenerateTextureResourceLayoutForNormalMapping;
+            floorRuntimeState.CallTextureResourceSetGeneration+=ResourceGenerator.GenerateTextureResourceSetForNormalMapping;
             floorRuntimeState.CallSamplerGeneration+=ResourceGenerator.GenerateLinearSampler;
-            _modelPTDescriptorList.Add(floorRuntimeState);
+            _modelPNTTBDescriptorList.Add(floorRuntimeState);
 
             /// Uniform 1 - Camera
             _sceneRuntimeState.CameraProjViewBuffer  = _factory.CreateBuffer(new BufferDescription(Camera.SizeInBytes,BufferUsage.UniformBuffer | BufferUsage.Dynamic));
@@ -154,6 +174,7 @@ namespace Henzai.Examples
                     _sceneRuntimeState.LightResourceLayout,
                     new BindableResource[]{_sceneRuntimeState.LightBuffer});
 
+            // TODO: Make this part of renderable?
             foreach(var modelDescriptor in _modelPCDescriptorList){
                 FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,instancingData); 
             }
@@ -163,6 +184,10 @@ namespace Henzai.Examples
             }
 
             foreach(var modelDescriptor in _modelPTDescriptorList){
+                FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,instancingData); 
+            }
+
+            foreach(var modelDescriptor in _modelPNTTBDescriptorList){
                 FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,instancingData); 
             }
 
@@ -178,7 +203,8 @@ namespace Henzai.Examples
 
             // RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPCDescriptorArray,_sceneRuntimeState);
             // RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor_Instancing(_commandList,_modelPCDescriptorArray,_sceneRuntimeState);
-            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor_Instancing(_commandList,_modelPTDescriptorArray,_sceneRuntimeState);
+            // RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor_Instancing(_commandList,_modelPTDescriptorArray,_sceneRuntimeState);
+            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor_Instancing(_commandList,_modelPNTTBDescriptorArray,_sceneRuntimeState);
             RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPNDescriptorArray,_sceneRuntimeState);
             
             _commandList.End();

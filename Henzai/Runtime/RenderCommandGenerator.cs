@@ -361,6 +361,41 @@ namespace Henzai.Runtime
             }
         }
 
+        public static void GenerateRenderCommandsForModelDescriptor_Instancing(CommandList commandList, 
+                                                                    ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] descriptorArray,
+                                                                    SceneRuntimeDescriptor sceneRuntimeDescriptor){
+            for(int j = 0; j < descriptorArray.Length; j++){
+                var modelState = descriptorArray[j];
+                var model = modelState.Model;
+                RenderCommandGenerator.GenerateCommandsForModel_Inline(
+                    commandList,
+                    modelState.Pipeline,
+                    sceneRuntimeDescriptor.CameraProjViewBuffer,
+                    sceneRuntimeDescriptor.LightBuffer,
+                    sceneRuntimeDescriptor.Camera,
+                    sceneRuntimeDescriptor.Light,
+                    model);
+                for(int i = 0; i<modelState.InstanceBuffers.Length; i++)
+                    commandList.SetVertexBuffer(i.ToUnsigned()+1,modelState.InstanceBuffers[i]);
+                for(int i = 0; i < model.meshCount; i++){
+                    var mesh = model.meshes[i];
+                    RenderCommandGenerator.GenerateCommandsForMesh_Inline(
+                        commandList,
+                        modelState.VertexBuffers[i],
+                        modelState.IndexBuffers[i],
+                        sceneRuntimeDescriptor.CameraProjViewBuffer,
+                        sceneRuntimeDescriptor.MaterialBuffer,
+                        sceneRuntimeDescriptor.CameraResourceSet,
+                        sceneRuntimeDescriptor.LightResourceSet,
+                        sceneRuntimeDescriptor.MaterialResourceSet,
+                        modelState.TextureResourceSets[i],
+                        mesh,
+                        modelState.TotalInstanceCount
+                    );
+                }
+            }
+        }
+
 
         public static void GenerateRenderCommandsForModelDescriptor(CommandList commandList, 
                                                                     ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] descriptorArray,

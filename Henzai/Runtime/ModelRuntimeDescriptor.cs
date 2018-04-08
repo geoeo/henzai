@@ -74,6 +74,10 @@ namespace Henzai.Runtime
         public event Func<ModelRuntimeDescriptor<T>,int,DisposeCollectorResourceFactory,GraphicsDevice,ResourceSet> CallTextureResourceSetGeneration;
 
         public ModelRuntimeDescriptor(Model<T> modelIn, string vShaderName, string fShaderName, VertexTypes vertexType, PrimitiveTopology primitiveTopology){
+
+            if(!Verifier.verifyVertexStruct<T>(vertexType))
+                throw new ArgumentException($"Type Mismatch ModelRuntimeDescriptor");
+
             Model = modelIn;
 
             TotalInstanceCount = 1;

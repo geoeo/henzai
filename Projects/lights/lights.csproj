@@ -87,6 +87,7 @@
 
     <RemoveDir Directories="$(OutputPath)/Textures/" />
     <RemoveDir Directories="$(OutputPath)/armor/" />
+    <RemoveDir Directories="$(OutputPath)/paving/" />
     <RemoveDir Directories="$(OutputPath)/nanosuit/" />
   </Target>
 

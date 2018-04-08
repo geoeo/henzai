@@ -28,7 +28,7 @@ struct Light {
 };
 
 fragment float4 FS(PixelInput input[[stage_in]],
-                    constant Light &light [[buffer(1)]],
+                   constant Light &light [[buffer(1)]],
                    constant Material &material [[buffer(2)]],
                    texture2d<float> diffuseTexture [[texture(0)]],
                    texture2d<float> normalTexture [[texture(1)]],

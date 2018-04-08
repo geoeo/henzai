@@ -89,6 +89,20 @@ namespace Henzai.Geometry
             return new Mesh<VertexPositionTexture>(quadVerticies,GenerateQuadIndicies_TriangleStrip_CW());
         }
 
+
+        public static Mesh<VertexPositionNormalTextureTangentBitangent> GenerateTexturedQuadPNTTB()
+        {
+
+            VertexPositionNormalTextureTangentBitangent[] quadVerticies = {
+                new VertexPositionNormalTextureTangentBitangent(new Vector3(-1.0f,1.0f,1.0f),Vector3.UnitZ,new Vector2(0,0),Vector3.UnitX,-Vector3.UnitY),
+                new VertexPositionNormalTextureTangentBitangent(new Vector3(1.0f,1.0f,1.0f),Vector3.UnitZ,new Vector2(1,0),Vector3.UnitX,-Vector3.UnitY),
+                new VertexPositionNormalTextureTangentBitangent(new Vector3(-1.0f,-1.0f,1.0f),Vector3.UnitZ,new Vector2(0,1),Vector3.UnitX,-Vector3.UnitY),
+                new VertexPositionNormalTextureTangentBitangent(new Vector3(1.0f,-1.0f,1.0f),Vector3.UnitZ,new Vector2(1,1),Vector3.UnitX,-Vector3.UnitY)
+            };
+
+            return new Mesh<VertexPositionNormalTextureTangentBitangent>(quadVerticies,GenerateQuadIndicies_TriangleStrip_CW());
+        }
+
         public static Mesh<VertexPositionColor> GenerateColorQuad(params RgbaFloat[] colors)
         {
             if(colors.Length < 4)
