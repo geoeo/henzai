@@ -17,7 +17,6 @@ layout(std140) uniform light
 
 in vec3 fsin_NormalWorld;
 in vec3 fsin_FragWorld;
-in vec3 fsin_LightWorld;
 in vec3 fsin_CamPosWorld;
 
 out vec4 fsout_Color;
@@ -26,11 +25,12 @@ void main()
 {
     vec4 lightColor = LightColor.a*vec4(LightColor.rgb,1.0);
 
-    vec3 L = normalize(fsin_LightWorld-fsin_FragWorld);
+    vec3 L = LightPosition.xyz-fsin_FragWorld;
     float distance = length(L);
+    L = normalize(L);
     float attenuation = 1.0 / (LightAttenuation.x + distance*LightAttenuation.y + distance*distance*LightAttenuation.z);
 
-    float l_dot_n = max(dot(L,fsin_NormalWorld),0.0);
+    float l_dot_n = max(dot(L,normalize(fsin_NormalWorld)),0.0);
     vec4 diffuse = l_dot_n*Diffuse;
 
     vec3 R = reflect(-L,fsin_NormalWorld);

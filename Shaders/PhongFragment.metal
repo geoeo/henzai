@@ -6,7 +6,6 @@ struct PixelInput
     float4 Position[[position]];
     float3 FragWorld;
     float3 NormalWorld;
-    float3 LightWorld;
     float3 CamPosWorld;
 };
 
@@ -28,11 +27,12 @@ fragment float4 FS(PixelInput input[[stage_in]],constant Light &light [[buffer(1
 {
     float4 lightColor = light.Color.w*float4(light.Color.x,light.Color.y,light.Color.z,1.0);
     
-    float3 L = normalize(input.LightWorld-input.FragWorld);
+    float3 L = light.Position.xyz-input.FragWorld;
     float distance = length(L);
+    L = normalize(L);
     float attenuation = 1.0 / (light.Attenuation.x + distance*light.Attenuation.y + distance*distance*light.Attenuation.z);
 
-    float l_dot_n = fmax(dot(L,input.NormalWorld),0.0);
+    float l_dot_n = fmax(dot(L,normalize(input.NormalWorld),0.0);
     float4 diffuse = l_dot_n*material.Diffuse;
 
     float3 R = reflect(-L,input.NormalWorld);
