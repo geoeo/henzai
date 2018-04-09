@@ -86,6 +86,7 @@ namespace Henzai.Examples
             RgbaFloat lightColor = RgbaFloat.LightGrey;
             _sceneRuntimeState.Light = new Light(lightColor);
             _sceneRuntimeState.Camera = Camera;
+            _sceneRuntimeState.PointLight = Light.NO_POINTLIGHT;
 
             // string filePath = Path.Combine(AppContext.BaseDirectory, "armor/armor.dae"); 
             // string filePath = Path.Combine(AppContext.BaseDirectory, "nanosuit/nanosuit.obj"); 
@@ -164,6 +165,20 @@ namespace Henzai.Examples
                     _factory,
                     _sceneRuntimeState.LightResourceLayout,
                     new BindableResource[]{_sceneRuntimeState.LightBuffer});
+
+                // Uniform 4 - PointLight
+            _sceneRuntimeState.PointLightBuffer = _factory.CreateBuffer(new BufferDescription(4*4*4,BufferUsage.UniformBuffer));
+            _sceneRuntimeState.PointLightResourceLayout 
+                = ResourceGenerator.GenerateResourceLayout(
+                    _factory,
+                    "pointlight",
+                    ResourceKind.UniformBuffer,
+                    ShaderStages.Fragment);
+            _sceneRuntimeState.PointLightResourceSet 
+                = ResourceGenerator.GenrateResourceSet(
+                    _factory,
+                    _sceneRuntimeState.PointLightResourceLayout,
+                    new BindableResource[]{_sceneRuntimeState.PointLightBuffer});
 
             foreach(var modelDescriptor in _modelPNTTBDescriptorList){
                 FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,InstancingData.NO_DATA); 

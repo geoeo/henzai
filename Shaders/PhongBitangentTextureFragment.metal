@@ -71,7 +71,7 @@ fragment float4 FS(PixelInput input[[stage_in]],
         attenuation = 1.0;
     }
 
-    float4 pl_color = float4(1.0f);
+    float4 pl_color = float4(0.0f);
     if(pointlight.Parameters.w == 1.0f){
         float3 lightDir = input.FragWorld-pointlight.Position.xyz;
         float distance = length(lightDir);

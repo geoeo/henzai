@@ -157,7 +157,7 @@ namespace Henzai.Examples
                     _sceneRuntimeState.CameraResourceLayout,
                     new BindableResource[]{_sceneRuntimeState.CameraProjViewBuffer});
 
-            // Uniform 2 - Material
+            // Uniform 4 - Material
             _sceneRuntimeState.MaterialBuffer = _factory.CreateBuffer(new BufferDescription(Material.SizeInBytes,BufferUsage.UniformBuffer));
             _sceneRuntimeState.MaterialResourceLayout 
                 = ResourceGenerator.GenerateResourceLayout(
@@ -171,7 +171,7 @@ namespace Henzai.Examples
                     _sceneRuntimeState.MaterialResourceLayout,
                     new BindableResource[]{_sceneRuntimeState.MaterialBuffer});
 
-            // Uniform 3 - Light
+            // Uniform 2 - Light
             _sceneRuntimeState.LightBuffer = _factory.CreateBuffer(new BufferDescription(Light.SizeInBytes,BufferUsage.UniformBuffer));
             _sceneRuntimeState.LightResourceLayout 
                 = ResourceGenerator.GenerateResourceLayout(
@@ -185,7 +185,7 @@ namespace Henzai.Examples
                     _sceneRuntimeState.LightResourceLayout,
                     new BindableResource[]{_sceneRuntimeState.LightBuffer});
 
-            // Uniform 4 - PointLight
+            // Uniform 3 - PointLight
             _sceneRuntimeState.PointLightBuffer = _factory.CreateBuffer(new BufferDescription(4*4*4,BufferUsage.UniformBuffer));
             _sceneRuntimeState.PointLightResourceLayout 
                 = ResourceGenerator.GenerateResourceLayout(

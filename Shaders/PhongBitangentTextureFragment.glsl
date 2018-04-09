@@ -66,7 +66,7 @@ void main()
         attenuation = 1.0;
     }
 
-    vec4 pl_color = vec4(1.0f);
+    vec4 pl_color = vec4(0.0f);
     if(PointLightParameters.w == 1.0f){
         vec3 lightDir = fsin_FragWorld-PointLightPosition.xyz;
         float distance = length(lightDir);
