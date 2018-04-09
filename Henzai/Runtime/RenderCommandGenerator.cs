@@ -40,6 +40,38 @@ namespace Henzai.Runtime
 
         /// <summary>
         /// Render Commands for Model of Type:
+        /// <see cref="VertexStructs"/> which need light/material interactions
+        ///</summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void GenerateCommandsForModel_Inline<T>(
+                                                    CommandList commandList, 
+                                                    Pipeline pipeline,
+                                                    DeviceBuffer cameraProjViewBuffer,
+                                                    DeviceBuffer lightBuffer,
+                                                    DeviceBuffer pointLightBuffer,
+                                                    Camera camera,
+                                                    Light light,
+                                                    Light pointLight,
+                                                    Model<T> model) where T : struct
+                                                    {
+
+                commandList.SetPipeline(pipeline);
+
+                commandList.UpdateBuffer(cameraProjViewBuffer,0,camera.ViewMatrix);
+                commandList.UpdateBuffer(cameraProjViewBuffer,64,camera.ProjectionMatrix);
+                commandList.UpdateBuffer(lightBuffer,0,ref light.Light_DontMutate);
+                commandList.UpdateBuffer(lightBuffer,16,ref light.Color_DontMutate);
+                commandList.UpdateBuffer(lightBuffer,32,ref light.Attentuation_DontMutate);
+                commandList.UpdateBuffer(pointLightBuffer,0,ref pointLight.Light_DontMutate);
+                commandList.UpdateBuffer(pointLightBuffer,16,ref pointLight.Color_DontMutate);
+                commandList.UpdateBuffer(pointLightBuffer,32,ref pointLight.Direction_DontMutate);
+                commandList.UpdateBuffer(pointLightBuffer,48,ref pointLight.Parameters_DontMutate);
+
+
+        }
+
+        /// <summary>
+        /// Render Commands for Model of Type:
         /// <see cref="VertexStructs"/> which only need to be displayed in 3D
         ///</summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -72,6 +104,7 @@ namespace Henzai.Runtime
                                                     DeviceBuffer materialBuffer,
                                                     ResourceSet cameraResourceSet,
                                                     ResourceSet lightResourceSet,
+                                                    ResourceSet pointlightResourceSet,
                                                     ResourceSet materialResourceSet,
                                                     ResourceSet textureResourceSet,
                                                     Mesh<VertexPositionNormalTextureTangentBitangent> mesh,
@@ -86,12 +119,13 @@ namespace Henzai.Runtime
             commandList.UpdateBuffer(cameraProjViewBuffer,128,mesh.World);
             commandList.SetGraphicsResourceSet(0,cameraResourceSet); // Always after SetPipeline
             commandList.SetGraphicsResourceSet(1,lightResourceSet);
+            commandList.SetGraphicsResourceSet(2,pointlightResourceSet);
             commandList.UpdateBuffer(materialBuffer,0,material.diffuse);
             commandList.UpdateBuffer(materialBuffer,16,material.specular);
             commandList.UpdateBuffer(materialBuffer,32,material.ambient);
             commandList.UpdateBuffer(materialBuffer,48,material.coefficients);
-            commandList.SetGraphicsResourceSet(2,materialResourceSet);
-            commandList.SetGraphicsResourceSet(3,textureResourceSet);
+            commandList.SetGraphicsResourceSet(3,materialResourceSet);
+            commandList.SetGraphicsResourceSet(4,textureResourceSet);
             commandList.DrawIndexed(
                 indexCount: mesh.meshIndices.Length.ToUnsigned(),
                 instanceCount: modelInstanceCount,
@@ -372,8 +406,10 @@ namespace Henzai.Runtime
                     modelState.Pipeline,
                     sceneRuntimeDescriptor.CameraProjViewBuffer,
                     sceneRuntimeDescriptor.LightBuffer,
+                    sceneRuntimeDescriptor.PointLightBuffer,
                     sceneRuntimeDescriptor.Camera,
                     sceneRuntimeDescriptor.Light,
+                    sceneRuntimeDescriptor.PointLight,
                     model);
                 for(int i = 0; i<modelState.InstanceBuffers.Length; i++)
                     commandList.SetVertexBuffer(i.ToUnsigned()+1,modelState.InstanceBuffers[i]);
@@ -387,6 +423,7 @@ namespace Henzai.Runtime
                         sceneRuntimeDescriptor.MaterialBuffer,
                         sceneRuntimeDescriptor.CameraResourceSet,
                         sceneRuntimeDescriptor.LightResourceSet,
+                        sceneRuntimeDescriptor.PointLightResourceSet,
                         sceneRuntimeDescriptor.MaterialResourceSet,
                         modelState.TextureResourceSets[i],
                         mesh,
@@ -408,8 +445,10 @@ namespace Henzai.Runtime
                     modelState.Pipeline,
                     sceneRuntimeDescriptor.CameraProjViewBuffer,
                     sceneRuntimeDescriptor.LightBuffer,
+                    sceneRuntimeDescriptor.PointLightBuffer,
                     sceneRuntimeDescriptor.Camera,
                     sceneRuntimeDescriptor.Light,
+                    sceneRuntimeDescriptor.PointLight,
                     model);
                 for(int i = 0; i < model.meshCount; i++){
                     var mesh = model.meshes[i];
@@ -421,6 +460,7 @@ namespace Henzai.Runtime
                         sceneRuntimeDescriptor.MaterialBuffer,
                         sceneRuntimeDescriptor.CameraResourceSet,
                         sceneRuntimeDescriptor.LightResourceSet,
+                        sceneRuntimeDescriptor.PointLightResourceSet,
                         sceneRuntimeDescriptor.MaterialResourceSet,
                         modelState.TextureResourceSets[i],
                         mesh,

@@ -4,6 +4,7 @@ using Veldrid;
 
 namespace Henzai
 {
+    //TODO: Refactor Pointlight - make more efficient
     public sealed class Light
     {
         public static Vector4 DEFAULT_POSITION = new Vector4(0,20,15,1);
@@ -19,6 +20,10 @@ namespace Henzai
         private Vector4 _color;
         // Constant,Linear,Quadratic,Unsused
         private Vector4 _attenuation = DEFAULT_ATTENTUATION;
+        // Pointlight - xyz are direction, w is linear attenuation
+        private Vector4 _direction;
+        // outer cutoff, inner cutoff, epsilon
+        private Vector4 _parameters;
 
         /// <summary>
         /// W channel is 1 for point and 0 for directional
@@ -32,6 +37,14 @@ namespace Henzai
         /// Constant, Linear ,Quadratic, Unsused
         /// </summary>
         public ref Vector4 Attentuation_DontMutate => ref _attenuation;
+        /// <summary>
+        /// PointL: Direction (XYZ), Linear Attenuation
+        /// </summary>
+        public ref Vector4 Direction_DontMutate => ref _direction;
+        /// <summary>
+        /// PointL: outer cutoff, inner cutoff, Unused, Unused
+        /// </summary>
+        public ref Vector4 Parameters_DontMutate => ref _parameters;
 
         public Light(){
             _light = DEFAULT_POSITION;
@@ -63,6 +76,14 @@ namespace Henzai
             _color = color.ToVector4();
             _color.W = intensity;
             _light = light;
+        }
+
+        public Light(Vector4 light, RgbaFloat color, float intensity,Vector4 direction, Vector4 parameters){
+            _color = color.ToVector4();
+            _color.W = intensity;
+            _light = light;
+            _direction = direction;
+            _parameters = parameters;
         }
 
     }

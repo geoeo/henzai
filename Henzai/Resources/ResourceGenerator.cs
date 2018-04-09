@@ -217,6 +217,7 @@ namespace Henzai
                     ResourceLayouts = new ResourceLayout[] {
                         sceneRuntimeState.CameraResourceLayout,
                         sceneRuntimeState.LightResourceLayout,
+                        sceneRuntimeState.PointLightResourceLayout,
                         sceneRuntimeState.MaterialResourceLayout,
                         modelRuntimeState.TextureResourceLayout},
                     ShaderSet = new ShaderSetDescription(

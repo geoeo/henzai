@@ -28,14 +28,9 @@ struct ProjViewWorld
     float4x4 World;
 };
 
-struct Light {
-    float4 Position;
-    float4 Color;
-    float4 Attenuation;
-};
 
 
-vertex PixelInput VS(VertexInput input[[stage_in]],constant ProjViewWorld &pjw [[ buffer(1) ]],constant Light &l [[ buffer(2) ]])
+vertex PixelInput VS(VertexInput input[[stage_in]],constant ProjViewWorld &pjw [[ buffer(1) ]])
 {
     PixelInput output;
     float4 positionWorld = pjw.World*float4(input.Position, 1);

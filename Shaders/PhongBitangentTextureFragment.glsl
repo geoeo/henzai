@@ -10,6 +10,14 @@ layout(std140) uniform light
     vec4 LightAttenuation;
 };
 
+layout(std140) uniform pointlight
+{
+    vec4 PointLightPosition;
+    vec4 PointLightColor;
+    vec4 PointLightDirection;// xyz for direction, w for linear attenuation
+    vec4 PointLightParameters; // cutoff,inner cutoff,epsilon,is Set
+};
+
 layout(std140) uniform material
 {
     vec4 Diffuse;
@@ -47,14 +55,28 @@ void main()
     vec3 normalWS = normalize(TBN*normal_sample);
 
     vec3 L;
+    float attenuation;
     if(LightPosition.w == 1.0){
         L = normalize(LightPosition.xyz-fsin_FragWorld);
+        float distance = length(L);
+        attenuation = 1.0 / (LightAttenuation.x + distance*LightAttenuation.y + distance*distance*LightAttenuation.z);
     }
     else {
         L = -LightPosition.xyz;
+        attenuation = 1.0;
     }
-    float distance = length(L);
-    float attenuation = 1.0 / (LightAttenuation.x + distance*LightAttenuation.y + distance*distance*LightAttenuation.z);
+
+    vec4 pl_color = vec4(1.0f);
+    if(PointLightParameters.w == 1.0f){
+        vec3 lightDir = fsin_FragWorld-PointLightPosition.xyz;
+        float distance = length(lightDir);
+        float theta = dot(normalize(lightDir),normalize(PointLightDirection.xyz));
+        float epsilon = PointLightParameters.y - PointLightParameters.x;
+        float intensity = clamp((theta - PointLightParameters.x) / epsilon, 0.0, 1.0);
+        float pl_attenuation = 1.0 / (1.0 +PointLightDirection.w *distance );
+        pl_color = PointLightColor*pl_attenuation*intensity;
+    }
+
 
     float l_dot_n = max(dot(L,normalWS),0.0);
     vec4 diffuse = l_dot_n*Diffuse*textureColor;
@@ -69,7 +91,9 @@ void main()
     color_out += Ambient;
     color_out += diffuse;
     color_out += specular;
-    fsout_Color = attenuation*lightColor*color_out;
+    color_out *= attenuation*lightColor;
+    color_out += pl_color;
+    fsout_Color = color_out;
     // fsout_Color = color_out;
     // fsout_Color = vec4(fsin_NormalWorld,1.0);
     // fsout_Color = vec4(fsin_TangentWorld,1.0);

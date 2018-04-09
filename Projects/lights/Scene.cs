@@ -74,6 +74,13 @@ namespace Henzai.Examples
             // RgbaFloat lightColor = new RgbaFloat(1.0f,0.36f,0.0f,0.2f);
             _sceneRuntimeState.Light = new Light(lightColor);
             _sceneRuntimeState.Camera = Camera;
+            _sceneRuntimeState.PointLight 
+                = new Light(
+                    new Vector4(0.0f,5.0f,0.0f,1.0f),
+                    RgbaFloat.DarkRed,
+                    1.0f,
+                    new Vector4(0,-1,0,0.02f),
+                    new Vector4(Math.Cos(17.5f.ToRadians()).ToFloat(),Math.Cos(12.5f.ToRadians()).ToFloat(),0.0f,1.0f));
 
             // Sun
             _sun = new Model<VertexPositionNormal>(String.Empty,GeometryFactory.GenerateSphereNormal(100,100,1));
@@ -171,12 +178,26 @@ namespace Henzai.Examples
                     _factory,
                     "light",
                     ResourceKind.UniformBuffer,
-                    ShaderStages.Vertex | ShaderStages.Fragment);
+                    ShaderStages.Fragment);
             _sceneRuntimeState.LightResourceSet 
                 = ResourceGenerator.GenrateResourceSet(
                     _factory,
                     _sceneRuntimeState.LightResourceLayout,
                     new BindableResource[]{_sceneRuntimeState.LightBuffer});
+
+            // Uniform 4 - PointLight
+            _sceneRuntimeState.PointLightBuffer = _factory.CreateBuffer(new BufferDescription(4*4*4,BufferUsage.UniformBuffer));
+            _sceneRuntimeState.PointLightResourceLayout 
+                = ResourceGenerator.GenerateResourceLayout(
+                    _factory,
+                    "pointlight",
+                    ResourceKind.UniformBuffer,
+                    ShaderStages.Fragment);
+            _sceneRuntimeState.PointLightResourceSet 
+                = ResourceGenerator.GenrateResourceSet(
+                    _factory,
+                    _sceneRuntimeState.PointLightResourceLayout,
+                    new BindableResource[]{_sceneRuntimeState.PointLightBuffer});
 
             // TODO: Make this part of renderable?
             foreach(var modelDescriptor in _modelPCDescriptorList){
