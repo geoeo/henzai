@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../../Henzai/Henzai.csproj" />
+    <!-- <Reference Include="../../../veldrid/bin/Debug/Veldrid/netstandard2.0/*.dll"/> -->
   </ItemGroup>
 
   <ItemGroup>
