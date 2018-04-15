@@ -2,6 +2,8 @@
 
 Henzai (遍在) meaning ubiquitous, is a cross platform 3D rendering engine using .NetCore and [veldrid](https://github.com/mellinoe/veldrid).
 
+![Henzai Metal](/docs/Pictures/lights_v_01_metal.png)
+
 ## Resources
 
 ### Graphics
