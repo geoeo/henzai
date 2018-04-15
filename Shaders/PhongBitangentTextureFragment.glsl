@@ -10,12 +10,12 @@ layout(std140) uniform light
     vec4 LightAttenuation;
 };
 
-layout(std140) uniform pointlight
+layout(std140) uniform spotlight
 {
-    vec4 PointLightPosition;
-    vec4 PointLightColor;
-    vec4 PointLightDirection;// xyz for direction, w for linear attenuation
-    vec4 PointLightParameters; // cutoff,inner cutoff,epsilon,is Set
+    vec4 SpotLightPosition;
+    vec4 SpotLightColor;
+    vec4 SpotLightDirection;// xyz for direction, w for linear attenuation
+    vec4 SpotLightParameters; // cutoff,inner cutoff,epsilon,is Set
 };
 
 layout(std140) uniform material
@@ -57,7 +57,7 @@ void main()
     vec3 L;
     float attenuation;
     if(LightPosition.w == 1.0){
-        L = normalize(LightPosition.xyz-fsin_FragWorld);
+        L = LightPosition.xyz-fsin_FragWorld;
         float distance = length(L);
         attenuation = 1.0 / (LightAttenuation.x + distance*LightAttenuation.y + distance*distance*LightAttenuation.z);
     }
@@ -66,15 +66,16 @@ void main()
         attenuation = 1.0;
     }
 
+    L = normalize(L);
     vec4 pl_color = vec4(0.0f);
-    if(PointLightParameters.w == 1.0f){
-        vec3 lightDir = fsin_FragWorld-PointLightPosition.xyz;
+    if(SpotLightParameters.w == 1.0f){
+        vec3 lightDir = fsin_FragWorld-SpotLightPosition.xyz;
         float distance = length(lightDir);
-        float theta = dot(normalize(lightDir),normalize(PointLightDirection.xyz));
-        float epsilon = PointLightParameters.y - PointLightParameters.x;
-        float intensity = clamp((theta - PointLightParameters.x) / epsilon, 0.0, 1.0);
-        float pl_attenuation = 1.0 / (1.0 +PointLightDirection.w *distance );
-        pl_color = PointLightColor*pl_attenuation*intensity;
+        float theta = dot(normalize(lightDir),normalize(SpotLightDirection.xyz));
+        float epsilon = SpotLightParameters.y - SpotLightParameters.x;
+        float intensity = clamp((theta - SpotLightParameters.x) / epsilon, 0.0, 1.0);
+        float pl_attenuation = 1.0 / (1.0 +SpotLightDirection.w *distance );
+        pl_color = SpotLightColor*pl_attenuation*intensity;
     }
 
 
@@ -106,4 +107,5 @@ void main()
     // fsout_Color = textureColor;
     // fsout_Color = vec4(L,1.0);
     // fsout_Color = vec4(l_dot_n,l_dot_n,l_dot_n,1.0);
+    // fsout_Color = vec4(attenuation,attenuation,attenuation,1.0);
 }

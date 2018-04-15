@@ -74,7 +74,7 @@ namespace Henzai.Examples
             // RgbaFloat lightColor = new RgbaFloat(1.0f,0.36f,0.0f,0.2f);
             _sceneRuntimeState.Light = new Light(lightColor);
             _sceneRuntimeState.Camera = Camera;
-            _sceneRuntimeState.PointLight 
+            _sceneRuntimeState.SpotLight 
                 = new Light(
                     new Vector4(0.0f,5.0f,0.0f,1.0f),
                     RgbaFloat.DarkRed,
@@ -86,13 +86,25 @@ namespace Henzai.Examples
             _sun = new Model<VertexPositionNormal>(String.Empty,GeometryFactory.GenerateSphereNormal(100,100,1));
             _sun.meshes[0].TryGetMaterial().ambient = new Vector4(1.0f,1.0f,1.0f,1.0f);
             // _sun.meshes[0].TryGetMaterial().ambient = lightColor.ToVector4();
-            ref Vector4 lightPos = ref _sceneRuntimeState.Light.Light_DontMutate;
+            ref Vector4 lightPos = ref _sceneRuntimeState.Light.LightPos_DontMutate;
             Vector3 newTranslation = new Vector3(lightPos.X,lightPos.Y,lightPos.Z);
             _sun.SetNewWorldTranslation(ref newTranslation, true);
 
             var sunRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormal>(_sun,"Phong","Phong",VertexTypes.VertexPositionNormal,PrimitiveTopology.TriangleList);
             sunRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPN;
             _modelPNDescriptorList.Add(sunRuntimeState);
+
+            var spotlight = new Model<VertexPositionNormal>(String.Empty,GeometryFactory.GenerateSphereNormal(100,100,1));
+            spotlight.meshes[0].TryGetMaterial().ambient = _sceneRuntimeState.SpotLight.Color_DontMutate;
+            // spotlight.meshes[0].TryGetMaterial().ambient = new Vector4(1.0f,1.0f,1.0f,1.0f);
+            // _sun.meshes[0].TryGetMaterial().ambient = lightColor.ToVector4();
+            ref Vector4 lightPosSpot = ref _sceneRuntimeState.SpotLight.LightPos_DontMutate;
+            Vector3 newTranslationSpot = new Vector3(lightPosSpot.X,lightPosSpot.Y,lightPosSpot.Z);
+            spotlight.SetNewWorldTranslation(ref newTranslationSpot, true);
+
+            var spotLightRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormal>(spotlight,"Phong","Phong",VertexTypes.VertexPositionNormal,PrimitiveTopology.TriangleList);
+            spotLightRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPN;
+            _modelPNDescriptorList.Add(spotLightRuntimeState);
 
             // Colored Quad
             // var offsets = new Vector3[] {new Vector3(-1.0f,0.0f,0f),new Vector3(1.0f,0.0f,0.0f)};
@@ -140,7 +152,7 @@ namespace Henzai.Examples
             floorRuntimeState.CallVertexInstanceLayoutGeneration+=ResourceGenerator.GenerateVertexInstanceLayoutForPositionOffset;
             floorRuntimeState.CallTextureResourceLayoutGeneration+=ResourceGenerator.GenerateTextureResourceLayoutForNormalMapping;
             floorRuntimeState.CallTextureResourceSetGeneration+=ResourceGenerator.GenerateTextureResourceSetForNormalMapping;
-            floorRuntimeState.CallSamplerGeneration+=ResourceGenerator.GenerateLinearSampler;
+            floorRuntimeState.CallSamplerGeneration+=ResourceGenerator.GenerateTriLinearSampler;
             _modelPNTTBDescriptorList.Add(floorRuntimeState);
 
             /// Uniform 1 - Camera
@@ -186,18 +198,18 @@ namespace Henzai.Examples
                     new BindableResource[]{_sceneRuntimeState.LightBuffer});
 
             // Uniform 3 - PointLight
-            _sceneRuntimeState.PointLightBuffer = _factory.CreateBuffer(new BufferDescription(4*4*4,BufferUsage.UniformBuffer));
-            _sceneRuntimeState.PointLightResourceLayout 
+            _sceneRuntimeState.SpotLightBuffer = _factory.CreateBuffer(new BufferDescription(4*4*4,BufferUsage.UniformBuffer));
+            _sceneRuntimeState.SpotLightResourceLayout 
                 = ResourceGenerator.GenerateResourceLayout(
                     _factory,
-                    "pointlight",
+                    "spotlight",
                     ResourceKind.UniformBuffer,
                     ShaderStages.Fragment);
-            _sceneRuntimeState.PointLightResourceSet 
+            _sceneRuntimeState.SpotLightResourceSet 
                 = ResourceGenerator.GenrateResourceSet(
                     _factory,
-                    _sceneRuntimeState.PointLightResourceLayout,
-                    new BindableResource[]{_sceneRuntimeState.PointLightBuffer});
+                    _sceneRuntimeState.SpotLightResourceLayout,
+                    new BindableResource[]{_sceneRuntimeState.SpotLightBuffer});
 
             // TODO: Make this part of renderable?
             foreach(var modelDescriptor in _modelPCDescriptorList){

@@ -18,7 +18,7 @@ struct Light {
     float4 Attenuation;
 };
 
-struct PointLight {
+struct SpotLight {
     float4 Position;
     float4 Color;
     float4 Direction;
@@ -35,7 +35,7 @@ struct Material
 
 fragment float4 FS(PixelInput input[[stage_in]],
                    constant Light &light [[buffer(1)]],
-                   constant PointLight &pointlight [[buffer(2)]],
+                   constant SpotLight &spotlight [[buffer(2)]],
                    constant Material &material [[buffer(3)]],
                    texture2d<float> diffuseTexture [[texture(0)]],
                    texture2d<float> normalTexture [[texture(1)]],
@@ -62,7 +62,7 @@ fragment float4 FS(PixelInput input[[stage_in]],
     float3 L; 
     float attenuation;
     if(light.Position.w ==1.0){
-        L = normalize(light.Position.xyz-input.FragWorld);
+        L = light.Position.xyz-input.FragWorld;
         float distance = length(L);
         attenuation = 1.0 / (light.Attenuation.x + distance*light.Attenuation.y + distance*distance*light.Attenuation.z);
     }
@@ -72,17 +72,17 @@ fragment float4 FS(PixelInput input[[stage_in]],
     }
 
     float4 pl_color = float4(0.0f);
-    if(pointlight.Parameters.w == 1.0f){
-        float3 lightDir = input.FragWorld-pointlight.Position.xyz;
+    if(spotlight.Parameters.w == 1.0f){
+        float3 lightDir = input.FragWorld-spotlight.Position.xyz;
         float distance = length(lightDir);
-        float theta = dot(normalize(lightDir),normalize(pointlight.Direction.xyz));
-        float epsilon = pointlight.Parameters.y - pointlight.Parameters.x;
-        float intensity = clamp((theta - pointlight.Parameters.x) / epsilon, 0.0, 1.0);
-        float pl_attenuation = 1.0 / (1.0 +pointlight.Direction.w *distance );
-        pl_color = pointlight.Color*pl_attenuation*intensity;
+        float theta = dot(normalize(lightDir),normalize(spotlight.Direction.xyz));
+        float epsilon = spotlight.Parameters.y - spotlight.Parameters.x;
+        float intensity = clamp((theta - spotlight.Parameters.x) / epsilon, 0.0, 1.0);
+        float pl_attenuation = 1.0 / (1.0 +spotlight.Direction.w *distance );
+        pl_color = spotlight.Color*pl_attenuation*intensity;
     }
 
-
+    L = normalize(L);
     float l_dot_n = fmax(dot(L,normal_sample),0.0);
     float4 diffuse = l_dot_n*material.Diffuse*diffuseTextureSample;
 

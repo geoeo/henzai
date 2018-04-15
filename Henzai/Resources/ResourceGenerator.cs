@@ -44,7 +44,7 @@ namespace Henzai
 
         }
 
-        public static Sampler GenerateLinearSampler(DisposeCollectorResourceFactory factory){
+        public static Sampler GenerateTriLinearSampler(DisposeCollectorResourceFactory factory){
             return factory.CreateSampler(new SamplerDescription
                 {
                     AddressModeU = SamplerAddressMode.Wrap,
@@ -217,7 +217,7 @@ namespace Henzai
                     ResourceLayouts = new ResourceLayout[] {
                         sceneRuntimeState.CameraResourceLayout,
                         sceneRuntimeState.LightResourceLayout,
-                        sceneRuntimeState.PointLightResourceLayout,
+                        sceneRuntimeState.SpotLightResourceLayout,
                         sceneRuntimeState.MaterialResourceLayout,
                         modelRuntimeState.TextureResourceLayout},
                     ShaderSet = new ShaderSetDescription(

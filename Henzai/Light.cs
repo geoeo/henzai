@@ -10,7 +10,7 @@ namespace Henzai
         public static Light NO_POINTLIGHT = new Light(Vector4.Zero,RgbaFloat.Black,0.0f,Vector4.Zero,Vector4.Zero);
         public static Vector4 DEFAULT_POSITION = new Vector4(0,20,15,1);
         public static Vector4 DEFAULT_COLOR = Vector4.One;
-        public static Vector4 DEFAULT_ATTENTUATION = new Vector4(1.0f,0.06f,0.025f,0.0f);
+        public static Vector4 DEFAULT_ATTENTUATION = new Vector4(1.0f,0.0014f,0.0005f,0.0f);
         // W channel is 1 for point and 0 for directional
         /// <summary>
         /// Postion, Color and Attenuation are passed to shaders. 3xVector4
@@ -29,7 +29,7 @@ namespace Henzai
         /// <summary>
         /// W channel is 1 for point and 0 for directional
         /// </summary>
-        public ref Vector4 Light_DontMutate => ref _light;
+        public ref Vector4 LightPos_DontMutate => ref _light;
         /// <summary>
         /// W channel used for intensity
         /// </summary>

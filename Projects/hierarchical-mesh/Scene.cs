@@ -86,7 +86,7 @@ namespace Henzai.Examples
             RgbaFloat lightColor = RgbaFloat.LightGrey;
             _sceneRuntimeState.Light = new Light(lightColor);
             _sceneRuntimeState.Camera = Camera;
-            _sceneRuntimeState.PointLight = Light.NO_POINTLIGHT;
+            _sceneRuntimeState.SpotLight = Light.NO_POINTLIGHT;
 
             // string filePath = Path.Combine(AppContext.BaseDirectory, "armor/armor.dae"); 
             // string filePath = Path.Combine(AppContext.BaseDirectory, "nanosuit/nanosuit.obj"); 
@@ -101,13 +101,13 @@ namespace Henzai.Examples
             _sun.meshes[0].TryGetMaterial().textureNormal = "WaterNorm.jpg";
             _sun.meshes[0].TryGetMaterial().ambient = new Vector4(1.0f,1.0f,1.0f,1.0f);
             // _sun.meshes[0].TryGetMaterial().ambient = lightColor.ToVector4();
-            ref Vector4 lightPos = ref _sceneRuntimeState.Light.Light_DontMutate;
+            ref Vector4 lightPos = ref _sceneRuntimeState.Light.LightPos_DontMutate;
             Vector3 newTranslation = new Vector3(lightPos.X,lightPos.Y,lightPos.Z);
             _sun.SetNewWorldTranslation(ref newTranslation, true);
 
             var nanoSuitRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>(_nanosuit,"PhongBitangentTexture","PhongBitangentTexture", VertexTypes.VertexPositionNormalTextureTangentBitangent,PrimitiveTopology.TriangleList);
             nanoSuitRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPNTTB;
-            nanoSuitRuntimeState.CallSamplerGeneration+=ResourceGenerator.GenerateLinearSampler;
+            nanoSuitRuntimeState.CallSamplerGeneration+=ResourceGenerator.GenerateTriLinearSampler;
             nanoSuitRuntimeState.CallTextureResourceLayoutGeneration+=ResourceGenerator.GenerateTextureResourceLayoutForNormalMapping;
             nanoSuitRuntimeState.CallTextureResourceSetGeneration+=ResourceGenerator.GenerateTextureResourceSetForNormalMapping;
 
@@ -167,18 +167,18 @@ namespace Henzai.Examples
                     new BindableResource[]{_sceneRuntimeState.LightBuffer});
 
                 // Uniform 4 - PointLight
-            _sceneRuntimeState.PointLightBuffer = _factory.CreateBuffer(new BufferDescription(4*4*4,BufferUsage.UniformBuffer));
-            _sceneRuntimeState.PointLightResourceLayout 
+            _sceneRuntimeState.SpotLightBuffer = _factory.CreateBuffer(new BufferDescription(4*4*4,BufferUsage.UniformBuffer));
+            _sceneRuntimeState.SpotLightResourceLayout 
                 = ResourceGenerator.GenerateResourceLayout(
                     _factory,
                     "pointlight",
                     ResourceKind.UniformBuffer,
                     ShaderStages.Fragment);
-            _sceneRuntimeState.PointLightResourceSet 
+            _sceneRuntimeState.SpotLightResourceSet 
                 = ResourceGenerator.GenrateResourceSet(
                     _factory,
-                    _sceneRuntimeState.PointLightResourceLayout,
-                    new BindableResource[]{_sceneRuntimeState.PointLightBuffer});
+                    _sceneRuntimeState.SpotLightResourceLayout,
+                    new BindableResource[]{_sceneRuntimeState.SpotLightBuffer});
 
             foreach(var modelDescriptor in _modelPNTTBDescriptorList){
                 FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,InstancingData.NO_DATA); 

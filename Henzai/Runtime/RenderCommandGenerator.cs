@@ -7,7 +7,7 @@ using Henzai.Geometry;
 
 namespace Henzai.Runtime
 {
-    //TODO: Refactor this class
+    //TODO: Refactor this class by vertex type
     public static class RenderCommandGenerator
     {
 
@@ -31,7 +31,7 @@ namespace Henzai.Runtime
 
                 commandList.UpdateBuffer(cameraProjViewBuffer,0,camera.ViewMatrix);
                 commandList.UpdateBuffer(cameraProjViewBuffer,64,camera.ProjectionMatrix);
-                commandList.UpdateBuffer(lightBuffer,0,ref light.Light_DontMutate);
+                commandList.UpdateBuffer(lightBuffer,0,ref light.LightPos_DontMutate);
                 commandList.UpdateBuffer(lightBuffer,16,ref light.Color_DontMutate);
                 commandList.UpdateBuffer(lightBuffer,32,ref light.Attentuation_DontMutate);
 
@@ -59,10 +59,10 @@ namespace Henzai.Runtime
 
                 commandList.UpdateBuffer(cameraProjViewBuffer,0,camera.ViewMatrix);
                 commandList.UpdateBuffer(cameraProjViewBuffer,64,camera.ProjectionMatrix);
-                commandList.UpdateBuffer(lightBuffer,0,ref light.Light_DontMutate);
+                commandList.UpdateBuffer(lightBuffer,0,ref light.LightPos_DontMutate);
                 commandList.UpdateBuffer(lightBuffer,16,ref light.Color_DontMutate);
                 commandList.UpdateBuffer(lightBuffer,32,ref light.Attentuation_DontMutate);
-                commandList.UpdateBuffer(pointLightBuffer,0,ref pointLight.Light_DontMutate);
+                commandList.UpdateBuffer(pointLightBuffer,0,ref pointLight.LightPos_DontMutate);
                 commandList.UpdateBuffer(pointLightBuffer,16,ref pointLight.Color_DontMutate);
                 commandList.UpdateBuffer(pointLightBuffer,32,ref pointLight.Direction_DontMutate);
                 commandList.UpdateBuffer(pointLightBuffer,48,ref pointLight.Parameters_DontMutate);
@@ -406,10 +406,10 @@ namespace Henzai.Runtime
                     modelState.Pipeline,
                     sceneRuntimeDescriptor.CameraProjViewBuffer,
                     sceneRuntimeDescriptor.LightBuffer,
-                    sceneRuntimeDescriptor.PointLightBuffer,
+                    sceneRuntimeDescriptor.SpotLightBuffer,
                     sceneRuntimeDescriptor.Camera,
                     sceneRuntimeDescriptor.Light,
-                    sceneRuntimeDescriptor.PointLight,
+                    sceneRuntimeDescriptor.SpotLight,
                     model);
                 for(int i = 0; i<modelState.InstanceBuffers.Length; i++)
                     commandList.SetVertexBuffer(i.ToUnsigned()+1,modelState.InstanceBuffers[i]);
@@ -423,7 +423,7 @@ namespace Henzai.Runtime
                         sceneRuntimeDescriptor.MaterialBuffer,
                         sceneRuntimeDescriptor.CameraResourceSet,
                         sceneRuntimeDescriptor.LightResourceSet,
-                        sceneRuntimeDescriptor.PointLightResourceSet,
+                        sceneRuntimeDescriptor.SpotLightResourceSet,
                         sceneRuntimeDescriptor.MaterialResourceSet,
                         modelState.TextureResourceSets[i],
                         mesh,
@@ -445,10 +445,10 @@ namespace Henzai.Runtime
                     modelState.Pipeline,
                     sceneRuntimeDescriptor.CameraProjViewBuffer,
                     sceneRuntimeDescriptor.LightBuffer,
-                    sceneRuntimeDescriptor.PointLightBuffer,
+                    sceneRuntimeDescriptor.SpotLightBuffer,
                     sceneRuntimeDescriptor.Camera,
                     sceneRuntimeDescriptor.Light,
-                    sceneRuntimeDescriptor.PointLight,
+                    sceneRuntimeDescriptor.SpotLight,
                     model);
                 for(int i = 0; i < model.meshCount; i++){
                     var mesh = model.meshes[i];
@@ -460,7 +460,7 @@ namespace Henzai.Runtime
                         sceneRuntimeDescriptor.MaterialBuffer,
                         sceneRuntimeDescriptor.CameraResourceSet,
                         sceneRuntimeDescriptor.LightResourceSet,
-                        sceneRuntimeDescriptor.PointLightResourceSet,
+                        sceneRuntimeDescriptor.SpotLightResourceSet,
                         sceneRuntimeDescriptor.MaterialResourceSet,
                         modelState.TextureResourceSets[i],
                         mesh,
