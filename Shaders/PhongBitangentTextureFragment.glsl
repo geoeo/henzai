@@ -90,9 +90,9 @@ void main()
 
     vec4 color_out = vec4(0.0);
     color_out += Ambient;
-    color_out += diffuse;
-    color_out += specular;
-    color_out *= attenuation*lightColor;
+    color_out += attenuation*diffuse;
+    color_out += attenuation*specular;
+    color_out += attenuation*lightColor;
     color_out += pl_color;
     fsout_Color = color_out;
     // fsout_Color = color_out;

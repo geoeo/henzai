@@ -94,9 +94,9 @@ fragment float4 FS(PixelInput input[[stage_in]],
 
     float4 color_out = float4(0.0,0.0,0.0,0.0);
     color_out += material.Ambient;
-    color_out += diffuse;
-    color_out += specular;
-    color_out *= (attenuation*lightColor);
+    color_out += attenuation*diffuse;
+    color_out += attenuation*specular;
+    color_out += attenuation*lightColor;
     color_out += pl_color;
     //color_out = float4(input.NormalWorld,1.0);
     //color_out = float4(normal_sample,1.0);

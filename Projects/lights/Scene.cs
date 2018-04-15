@@ -70,9 +70,10 @@ namespace Henzai.Examples
         override protected void CreateResources(){
 
             // RgbaFloat lightColor = RgbaFloat.Orange;
+            // RgbaFloat lightColor = RgbaFloat.Blue;
             RgbaFloat lightColor = RgbaFloat.LightGrey;
             // RgbaFloat lightColor = new RgbaFloat(1.0f,0.36f,0.0f,0.2f);
-            _sceneRuntimeState.Light = new Light(lightColor);
+            _sceneRuntimeState.Light = new Light(lightColor,0.1f);
             _sceneRuntimeState.Camera = Camera;
             _sceneRuntimeState.SpotLight 
                 = new Light(
@@ -82,10 +83,10 @@ namespace Henzai.Examples
                     new Vector4(0,-1,0,0.02f),
                     new Vector4(Math.Cos(17.5f.ToRadians()).ToFloat(),Math.Cos(12.5f.ToRadians()).ToFloat(),0.0f,1.0f));
 
-            // Sun
+            // Sun //TODO: Make this VertexPositionNormalColor
             _sun = new Model<VertexPositionNormal>(String.Empty,GeometryFactory.GenerateSphereNormal(100,100,1));
-            _sun.meshes[0].TryGetMaterial().ambient = new Vector4(1.0f,1.0f,1.0f,1.0f);
-            // _sun.meshes[0].TryGetMaterial().ambient = lightColor.ToVector4();
+            // _sun.meshes[0].TryGetMaterial().ambient = new Vector4(0.0f,0.0f,0.0f,0.0f);
+            _sun.meshes[0].TryGetMaterial().ambient = lightColor.ToVector4();
             ref Vector4 lightPos = ref _sceneRuntimeState.Light.LightPos_DontMutate;
             Vector3 newTranslation = new Vector3(lightPos.X,lightPos.Y,lightPos.Z);
             _sun.SetNewWorldTranslation(ref newTranslation, true);

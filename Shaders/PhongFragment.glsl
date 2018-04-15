@@ -40,9 +40,10 @@ void main()
     vec4 specular = Specular*spec;
 
     vec4 color_out = Ambient;
-    color_out += diffuse;
-    color_out += specular;
-    fsout_Color = attenuation*lightColor*color_out;
+    color_out += attenuation*diffuse;
+    color_out += attenuation*specular;
+    color_out += attenuation*lightColor;
+    fsout_Color = color_out;
     // fsout_Color= color_out;
     // fsout_Color= lightColor*color_out;
     //fsout_Color = vec4(LightColor.rgb,1.0);

@@ -42,10 +42,11 @@ fragment float4 FS(PixelInput input[[stage_in]],constant Light &light [[buffer(1
     float4 specular = material.Specular*spec;
 
     float4 color_out = material.Ambient;
-    color_out += diffuse;
-    color_out += specular;
+    color_out += attenuation*diffuse;
+    color_out += attenuation*specular;
+    color_out += attenuation*lightColor;
     //color_out = float4(input.NormalWorld,1.0);
     //color_out = float4(input.LightWorld,1.0);
 
-    return attenuation*lightColor*color_out;
+    return color_out;
 }
