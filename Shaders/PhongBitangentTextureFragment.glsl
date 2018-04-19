@@ -65,7 +65,6 @@ void main()
         L = -LightPosition.xyz;
         attenuation = 1.0;
     }
-
     L = normalize(L);
     vec4 pl_color = vec4(0.0f);
     if(SpotLightParameters.w == 1.0f){
@@ -108,4 +107,6 @@ void main()
     // fsout_Color = vec4(L,1.0);
     // fsout_Color = vec4(l_dot_n,l_dot_n,l_dot_n,1.0);
     // fsout_Color = vec4(attenuation,attenuation,attenuation,1.0);
+    // fsout_Color = vec4(attenuation,attenuation,attenuation,1.0);
+    // fsout_Color = vec4(LightColor.a,LightColor.a,LightColor.a,1.0);
 }

@@ -31,7 +31,7 @@ struct ProjViewWorld
 
 
 
-vertex PixelInput VS(VertexInput input[[stage_in]],constant ProjViewWorld &pjw [[ buffer(2) ]])
+vertex PixelInput VS(VertexInput input[[stage_in]],constant ProjViewWorld &pjw [[ buffer(0) ]])
 {
     PixelInput output;
     float3 position = input.Position;

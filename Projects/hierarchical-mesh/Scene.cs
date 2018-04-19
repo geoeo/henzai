@@ -49,11 +49,11 @@ namespace Henzai.Examples
 
             // Rotate around Sun without rotation around oneself
             Vector3 pos  = _nanosuit.GetWorld_DontMutate.Translation;
-            Vector3 sunToSuit = _sun.GetWorld_DontMutate.Translation;
+            Vector3 sunPos = _sun.GetWorld_DontMutate.Translation;
             Quaternion rotationAroundY = Quaternion.CreateFromAxisAngle(Vector3.UnitY,radian_slow);
-            pos -= sunToSuit;
+            pos -= sunPos;
             pos = Vector3.Transform(pos,rotationAroundY);
-            pos += sunToSuit;
+            pos += sunPos;
 
             // add the translating rotation to the orientation defining rotation
             newWorld.Translation = pos;
@@ -84,14 +84,14 @@ namespace Henzai.Examples
 
             // RgbaFloat lightColor = RgbaFloat.Orange;
             RgbaFloat lightColor = RgbaFloat.LightGrey;
-            _sceneRuntimeState.Light = new Light(lightColor);
+            _sceneRuntimeState.Light = new Light(lightColor,0.1f);
             _sceneRuntimeState.Camera = Camera;
             _sceneRuntimeState.SpotLight = Light.NO_POINTLIGHT;
 
             // string filePath = Path.Combine(AppContext.BaseDirectory, "armor/armor.dae"); 
             // string filePath = Path.Combine(AppContext.BaseDirectory, "nanosuit/nanosuit.obj"); 
             _nanosuit = AssimpLoader.LoadFromFile<VertexPositionNormalTextureTangentBitangent>(AppContext.BaseDirectory,"nanosuit/nanosuit.obj",VertexPositionNormalTextureTangentBitangent.HenzaiType);
-            _nanosuit.SetAmbientForAllMeshes(new Vector4(0.1f,0.1f,0.1f,1.0f));
+            // _nanosuit.SetAmbientForAllMeshes(new Vector4(0.1f,0.1f,0.1f,1.0f));
             // _model = AssimpLoader.LoadFromFile<VertexPositionNormalTextureTangentBitangent>(AppContext.BaseDirectory,"sponza/sponza.obj",VertexPositionNormalTextureTangentBitangent.HenzaiType);
             GeometryUtils.GenerateTangentAndBitagentSpaceFor(_nanosuit);
             // GeometryUtils.CheckTBN(_model);
@@ -99,7 +99,7 @@ namespace Henzai.Examples
             _sun = new Model<VertexPositionNormal>(String.Empty,GeometryFactory.GenerateSphereNormal(100,100,1));
             _sun.meshes[0].TryGetMaterial().textureDiffuse = "Water.jpg";
             _sun.meshes[0].TryGetMaterial().textureNormal = "WaterNorm.jpg";
-            _sun.meshes[0].TryGetMaterial().ambient = new Vector4(1.0f,1.0f,1.0f,1.0f);
+            _sun.meshes[0].TryGetMaterial().ambient = lightColor.ToVector4();
             // _sun.meshes[0].TryGetMaterial().ambient = lightColor.ToVector4();
             ref Vector4 lightPos = ref _sceneRuntimeState.Light.LightPos_DontMutate;
             Vector3 newTranslation = new Vector3(lightPos.X,lightPos.Y,lightPos.Z);
@@ -171,7 +171,7 @@ namespace Henzai.Examples
             _sceneRuntimeState.SpotLightResourceLayout 
                 = ResourceGenerator.GenerateResourceLayout(
                     _factory,
-                    "pointlight",
+                    "spotlight",
                     ResourceKind.UniformBuffer,
                     ShaderStages.Fragment);
             _sceneRuntimeState.SpotLightResourceSet 
