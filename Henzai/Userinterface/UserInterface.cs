@@ -40,8 +40,10 @@ namespace Henzai.UserInterface
 
 
         public void SetOverlayFor(Renderable scene){
+            // Needs to be called before building command lists
             scene.PreDraw += UpdateImGui;
-            AddThisAsPostTo(scene);
+            scene.UI = this;
+            _isChild = true;
         }
 
         public void UpdateImGui(float deltaSeconds){

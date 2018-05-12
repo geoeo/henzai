@@ -24,7 +24,7 @@ namespace Henzai.Runtime
         /// <summary>
         /// Flag indicated if this is a child to another renderable
         /// </summary>
-        private bool _isChild = false;
+        protected bool _isChild = false;
         //TODO: Investigate Switching to Array
         /// <summary>
         /// Renderable objects which should be drawn before this.Draw()
@@ -36,6 +36,7 @@ namespace Henzai.Runtime
         /// </summary>
         private List<Renderable> _childrenPost = new List<Renderable>();
         public List<Renderable> ChildrenPost => _childrenPost;
+        private List<Renderable> _allChildren = new List<Renderable>();
         private Sdl2Window _contextWindow;
         public Sdl2Window contextWindow => _contextWindow;
         private GraphicsDevice _graphicsDevice;
@@ -59,13 +60,14 @@ namespace Henzai.Runtime
         /// <summary>
         /// Bind Actions that have to be executed after every draw call
         /// </summary>
-        public event Action PostDraw;
+        public event Action<float> PostDraw;
         /// <summary>
         /// Includes this.BuildCommandList()
         /// </summary>
         private Task[] buildCommandListTasks;
         private Task[] drawTasksPre;
         private Task[] drawTasksPost;
+        public Renderable UI {set; private get;}
 
         public Renderable(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions){
             WindowCreateInfo windowCI = new WindowCreateInfo()
@@ -110,19 +112,20 @@ namespace Henzai.Runtime
 
             _camera = new Camera(renderResolution.Horizontal,renderResolution.Vertical);
             // Tick every millisecond
-            _frameTimer = new FrameTimer(1.0);
+            _frameTimer = new FrameTimer(1.0);      
+
+            _allChildren.AddRange(_childrenPre);
+            _allChildren.AddRange(_childrenPost);
+            if(UI!=null)
+                _allChildren.Add(UI);
 
             CreateResources();
-            foreach(var child in _childrenPre)
+            foreach(var child in _allChildren)
                 child.CreateResources();
-            foreach(var child in _childrenPost)
-                child.CreateResources();           
 
-            List<Renderable> allChildren = new List<Renderable>();
-            allChildren.AddRange(_childrenPre);
-            allChildren.AddRange(_childrenPost);
+            // includes itself in the build command list process
+            buildCommandListTasks = new Task[_allChildren.Count+1];
 
-            buildCommandListTasks = new Task[allChildren.Count+1];
             drawTasksPre = new Task[_childrenPre.Count];
             drawTasksPost = new Task[_childrenPost.Count];
 
@@ -139,9 +142,9 @@ namespace Henzai.Runtime
                     PreDraw?.Invoke(_frameTimer.prevFrameTicksInSeconds);
 
                     buildCommandListTasks[0] = Task.Run(() => this.BuildCommandList());
-                    for(int i = 0; i < allChildren.Count; i++){
-                        var child = allChildren[i];
-                        buildCommandListTasks[i+1] = Task.Run(() => child.BuildCommandList());
+                    for(int i = 0; i < _allChildren.Count; i++){
+                        var child = _allChildren[i];
+                            buildCommandListTasks[i+1] = Task.Run(() => child.BuildCommandList());
                     } 
 
                     // Wait untill every command list has been built
@@ -157,6 +160,8 @@ namespace Henzai.Runtime
 
                     Draw();
 
+                    PostDraw?.Invoke(_frameTimer.prevFrameTicksInSeconds);
+
                     // Perform draw tasks which should be after after "main" draw e.g. UI updates
                     for(int i = 0; i < _childrenPost.Count; i++){
                         var child = _childrenPost[i];
@@ -164,12 +169,17 @@ namespace Henzai.Runtime
                     } 
 
                     Task.WaitAll(drawTasksPost);
-                    PostDraw?.Invoke();
+
+                    // TODO investigate a special class for "main" render object
+                    if(UI != null)
+                        DrawUI();
 
                     if(_renderOptions.LimitFrames)
                         limitFrameRate_Blocking();
 
-                    GraphicsDevice.SwapBuffers();
+                    // Wait for submitted UI Tasks
+                    _graphicsDevice.WaitForIdle();
+                    _graphicsDevice.SwapBuffers();
                 }
 
                 _camera.Update(_frameTimer.prevFrameTicksInSeconds);
@@ -258,6 +268,11 @@ namespace Henzai.Runtime
             parent._childrenPost.Add(this);
             _isChild = true;
         }
+
+        // TODO: Profile this in VS against being a Post Draw Task (without frame cap)
+        public async void DrawUI(){
+            await Task.Run(() => UI.Draw()).ConfigureAwait(false);
+        }
       
         /// <summary>
         /// Executes the defined command list(s)
@@ -285,10 +300,8 @@ namespace Henzai.Runtime
          public void Dispose(){
 
             _factory.DisposeCollector.DisposeAll();
-            foreach(var child in _childrenPre)
+            foreach(var child in _allChildren)
                 child.Dispose();
-            foreach(var child in _childrenPost)
-                child.Dispose();  
             if(!_isChild)
                 _graphicsDevice.Dispose();
         }
