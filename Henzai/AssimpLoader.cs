@@ -40,7 +40,7 @@ namespace Henzai
         }
     }
 
-    //TODO: investigate non-static for multithreading
+    //TODO: investigate non-static for multithreading, add option to split model on child model name
     public static class AssimpLoader
     {
         private static Vector3D Zero3D = new Vector3D(0.0f, 0.0f, 0.0f);

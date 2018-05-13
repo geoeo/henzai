@@ -94,6 +94,16 @@
             "problemMatcher": "$msCompile"
         },
         {
+            "label": "build sponza",
+            "command": "dotnet build Projects/sponza/sponza.csproj",
+            "type": "shell",
+            "group": "build",
+            "presentation": {
+                "reveal": "silent"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
             "label": "compile metal shaders (Henzai)",
             "type": "shell",
             "group": "build",
@@ -167,6 +177,13 @@
             "type": "shell",
             "group": "build",
             "command": "dotnet run --project Projects/lights/",
+            "problemMatcher":"$msCompile"
+        },
+        {
+            "label": "run sponza",
+            "type": "shell",
+            "group": "build",
+            "command": "dotnet run --project Projects/sponza/",
             "problemMatcher":"$msCompile"
         }
     ]

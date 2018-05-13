@@ -1,0 +1,74 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../Henzai/Henzai.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+
+  
+    <Content Include="../../Assets/sponza/*.*">
+      <Link>sponza/%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+
+      
+    <Content Include="../../Assets/sponza/textures/*.*">
+      <Link>sponza/textures/%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+
+
+
+    <Content Include="../../Dependencies/libassimp.dylib">
+      <Link>libassimp.dylib</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <GLSL Include="../../Shaders/*.glsl"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <METAL Include="../../Shaders/*.metallib"/>
+  </ItemGroup>
+
+  <Target Name="CopyFiles" BeforeTargets="Build">
+  
+    <Copy SourceFiles="@(GLSL)" 
+
+          DestinationFolder="$(OutputPath)/Shaders/" 
+
+          SkipUnchangedFiles='true' 
+
+          OverwriteReadOnlyFiles='true' 
+    />
+
+      <Copy SourceFiles="@(METAL)" 
+
+          DestinationFolder="$(OutputPath)/Shaders/" 
+
+          SkipUnchangedFiles='true' 
+
+          OverwriteReadOnlyFiles='true' 
+    />
+
+  </Target>
+
+    <Target Name="DeleteFiles" AfterTargets="Clean">
+  
+    <RemoveDir Directories="$(OutputPath)/Shaders/" />
+
+    <!-- TODO: Enforce this -->
+    <RemoveDir Directories="$(OutputPath)/Models/" />
+
+    <RemoveDir Directories="$(OutputPath)/sponza/" />
+  </Target>
+
+</Project>

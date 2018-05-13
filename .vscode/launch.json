@@ -101,6 +101,18 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
+            "name": ".NET Core Launch (sponza)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build sponza",
+            "program": "${workspaceFolder}/Projects/sponza/bin/Debug/netcoreapp2.0/sponza.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Projects/sponza",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
             "name": ".NET Core Attach",
             "type": "coreclr",
             "request": "attach",
