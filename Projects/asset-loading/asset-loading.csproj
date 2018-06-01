@@ -16,20 +16,17 @@
 
   <ItemGroup>
 
-    <Content Include="$(MSBuildThisFileDirectory)/../../Assets/Models/sphere.obj">
+<!--     <Content Include="$(MSBuildThisFileDirectory)/../../Assets/Models/sphere.obj">
       <Link>Models/sphere.obj</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </Content> -->
 
-    <Content Include="$(MSBuildThisFileDirectory)/../../Assets/Models/sphere_centered.obj">
-      <Link>Models/sphere_centered.obj</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+<!-- s -->
 
-    <Content Include="../../Assets/Models/chinesedragon.dae">
+<!--     <Content Include="../../Assets/Models/chinesedragon.dae">
       <Link>Models/chinesedragon.dae</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </Content> -->
 
     <Content Include="../../Dependencies/libassimp.dylib">
       <Link>libassimp.dylib</Link>

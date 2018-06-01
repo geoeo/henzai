@@ -19,25 +19,25 @@
   
   
 
-    <Content Include="../../Assets/armor/color_astc_8x8_unorm.png">
+<!--     <Content Include="../../Assets/armor/color_astc_8x8_unorm.png">
       <Link>armor/diffuse.png</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </Content> -->
 
-    <Content Include="../../Assets/armor/normal_astc_8x8_unorm.png">
+<!--     <Content Include="../../Assets/armor/normal_astc_8x8_unorm.png">
       <Link>armor/normal.png</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </Content> -->
 
-    <Content Include="../../Assets/armor/armor.dae">
+<!--     <Content Include="../../Assets/armor/armor.dae">
       <Link>armor/armor.dae</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </Content> -->
   
-    <Content Include="../../Assets/nanosuit/**/*.*">
+<!--     <Content Include="../../Assets/nanosuit/**/*.*">
       <Link>nanosuit/%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </Content> -->
 
     <Content Include="../../Assets/Textures/Water_001_COLOR.jpg">
       <Link>water/Water.jpg</Link>
