@@ -12,11 +12,11 @@ layout(std140) uniform light
 {
     vec4 LightPosition;
     vec4 LightColor;
+    vec4 LightAttenuation;
 };
 
 in vec3 fsin_NormalWorld;
 in vec3 fsin_FragWorld;
-in vec3 fsin_LightWorld;
 in vec3 fsin_CamPosWorld;
 
 out vec4 fsout_Color;
@@ -25,8 +25,12 @@ void main()
 {
     vec4 lightColor = LightColor.a*vec4(LightColor.rgb,1.0);
 
-    vec3 L = normalize(fsin_LightWorld-fsin_FragWorld);
-    float l_dot_n = max(dot(L,fsin_NormalWorld),0.0);
+    vec3 L = LightPosition.xyz-fsin_FragWorld;
+    float distance = length(L);
+    L = normalize(L);
+    float attenuation = 1.0 / (LightAttenuation.x + distance*LightAttenuation.y + distance*distance*LightAttenuation.z);
+
+    float l_dot_n = max(dot(L,normalize(fsin_NormalWorld)),0.0);
     vec4 diffuse = l_dot_n*Diffuse;
 
     vec3 R = reflect(-L,fsin_NormalWorld);
@@ -36,9 +40,12 @@ void main()
     vec4 specular = Specular*spec;
 
     vec4 color_out = Ambient;
-    color_out += diffuse;
-    color_out += specular;
-    fsout_Color = lightColor*color_out;
+    color_out += attenuation*diffuse;
+    color_out += attenuation*specular;
+    color_out += attenuation*lightColor;
+    fsout_Color = color_out;
+    // fsout_Color= color_out;
+    // fsout_Color= lightColor*color_out;
     //fsout_Color = vec4(LightColor.rgb,1.0);
     //fsout_Color = vec4(fsin_NormalWorld,1.0);
     // fsout_Color = vec4(fsin_FragWorld,1.0);

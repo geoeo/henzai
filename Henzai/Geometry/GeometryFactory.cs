@@ -9,7 +9,12 @@ namespace Henzai.Geometry
 {
     public static class GeometryFactory
     {
-        public static Mesh<VertexPositionTexture> generateTexturedCube()
+
+        public static readonly int QUAD_WIDTH = 2;
+        public static readonly int QUAD_HEIGHT = 2;
+
+
+        public static Mesh<VertexPositionTexture> GenerateTexturedCube()
         {
             VertexPositionTexture[] cubeVerticies =
                 new VertexPositionTexture[]
@@ -61,7 +66,7 @@ namespace Henzai.Geometry
             };
         }
 
-        public static Mesh<VertexPositionNDCColor> generatecoloredQuad(params RgbaFloat[] colors)
+        public static Mesh<VertexPositionNDCColor> GenerateColorQuadNDC_XY(params RgbaFloat[] colors)
         {
             if(colors.Length < 4)
                 throw new ArgumentException("At least 4 color values are needed for a Quad");
@@ -76,7 +81,7 @@ namespace Henzai.Geometry
             return new Mesh<VertexPositionNDCColor>(quadVerticies);
         }
 
-        public static Mesh<VertexPositionTexture> generateTexturedQuad()
+        public static Mesh<VertexPositionTexture> GenerateQuadPT_XY()
         {
 
             VertexPositionTexture[] quadVerticies = {
@@ -86,10 +91,51 @@ namespace Henzai.Geometry
                 new VertexPositionTexture(new Vector3(1.0f,-1.0f,1.0f),new Vector2(1,1))
             };
 
-            return new Mesh<VertexPositionTexture>(quadVerticies);
+            return new Mesh<VertexPositionTexture>(quadVerticies,GenerateQuadIndicies_TriangleStrip_CW());
         }
 
-        public static ushort[] generateQuadIndicies_TriangleStrip_CW()
+
+        public static Mesh<VertexPositionNormalTextureTangentBitangent> GenerateQuadPNTTB_XY()
+        {
+
+            VertexPositionNormalTextureTangentBitangent[] quadVerticies = {
+                new VertexPositionNormalTextureTangentBitangent(new Vector3(-1.0f,1.0f,1.0f),Vector3.UnitZ,new Vector2(0,0),Vector3.UnitX,-Vector3.UnitY),
+                new VertexPositionNormalTextureTangentBitangent(new Vector3(1.0f,1.0f,1.0f),Vector3.UnitZ,new Vector2(1,0),Vector3.UnitX,-Vector3.UnitY),
+                new VertexPositionNormalTextureTangentBitangent(new Vector3(-1.0f,-1.0f,1.0f),Vector3.UnitZ,new Vector2(0,1),Vector3.UnitX,-Vector3.UnitY),
+                new VertexPositionNormalTextureTangentBitangent(new Vector3(1.0f,-1.0f,1.0f),Vector3.UnitZ,new Vector2(1,1),Vector3.UnitX,-Vector3.UnitY)
+            };
+
+            return new Mesh<VertexPositionNormalTextureTangentBitangent>(quadVerticies,GenerateQuadIndicies_TriangleStrip_CW());
+        }
+        public static Mesh<VertexPositionNormalTextureTangentBitangent> GenerateQuadPNTTB_XZ()
+        {
+
+            VertexPositionNormalTextureTangentBitangent[] quadVerticies = {
+                new VertexPositionNormalTextureTangentBitangent(new Vector3(-1.0f,0.0f,-1.0f),Vector3.UnitY,new Vector2(0,0),Vector3.UnitX,Vector3.UnitZ),
+                new VertexPositionNormalTextureTangentBitangent(new Vector3(1.0f,0.0f,-1.0f),Vector3.UnitY,new Vector2(1,0),Vector3.UnitX,Vector3.UnitZ),
+                new VertexPositionNormalTextureTangentBitangent(new Vector3(-1.0f,0.0f,1.0f),Vector3.UnitY,new Vector2(0,1),Vector3.UnitX,Vector3.UnitZ),
+                new VertexPositionNormalTextureTangentBitangent(new Vector3(1.0f,0.0f,1.0f),Vector3.UnitY,new Vector2(1,1),Vector3.UnitX,Vector3.UnitZ)
+            };
+
+            return new Mesh<VertexPositionNormalTextureTangentBitangent>(quadVerticies,GenerateQuadIndicies_TriangleStrip_CW());
+        }
+
+        public static Mesh<VertexPositionColor> GenerateColorQuad(params RgbaFloat[] colors)
+        {
+            if(colors.Length < 4)
+                throw new ArgumentException("At least 4 color values are needed for a Quad");
+
+            VertexPositionColor[] quadVerticies = {
+                new VertexPositionColor(new Vector3(-1.0f,1.0f,0.0f),colors[0]),
+                new VertexPositionColor(new Vector3(1.0f,1.0f,0.0f),colors[1]),
+                new VertexPositionColor(new Vector3(-1.0f,-1.0f,0.0f),colors[2]),
+                new VertexPositionColor(new Vector3(1.0f,-1.0f,0.0f),colors[3])
+            };
+
+            return new Mesh<VertexPositionColor>(quadVerticies,GenerateQuadIndicies_TriangleStrip_CW());
+        }
+
+        public static ushort[] GenerateQuadIndicies_TriangleStrip_CW()
         {
             return new ushort[]{ 0, 1, 2, 3 };
         }
@@ -100,14 +146,14 @@ namespace Henzai.Geometry
         /// Returns a Sphere Mesh with the corresponing vertex struct
         /// Extremely inefficient in OpenGL und MacOS
         /// </summary>
-        public static Mesh<VertexPositionNormalTextureTangent> generateSphereTangent(int numLatitudeLines, int numLongitudeLines, float radius){
+        public static Mesh<VertexPositionNormalTextureTangent> GenerateSphereTangent(int numLatitudeLines, int numLongitudeLines, float radius){
             // One vertex at every latitude-longitude intersection,
             // plus one for the north pole and one for the south.
             // One meridian serves as a UV seam, so we double the vertices there.
             int numVertices = numLatitudeLines * (numLongitudeLines + 1) + 2;
 
             VertexPositionNormalTextureTangent[] vertices = new VertexPositionNormalTextureTangent[numVertices];
-            List<uint> indices = new List<uint>();
+            List<ushort> indices = new List<ushort>();
 
             // North pole.
             vertices[0].Position = new Vector3(0, radius, 0);
@@ -154,13 +200,13 @@ namespace Henzai.Geometry
                 vertices[v].Normal = Vector3.Normalize(vertices[v].Position);
 
                 if(latitude < numLatitudeLines -1){
-                                        indices.Add(v.ToUnsigned());
-                    indices.Add(v.ToUnsigned()+1.ToUnsigned());
-                    indices.Add(v.ToUnsigned()+1.ToUnsigned()+numLongitudeLines.ToUnsigned());
+                    indices.Add(v.ToUnsignedShort());
+                    indices.Add((v+1).ToUnsignedShort());
+                    indices.Add((v+1+numLongitudeLines).ToUnsignedShort());
                     
-                    indices.Add(v.ToUnsigned()+1.ToUnsigned());
-                    indices.Add(v.ToUnsigned()+2.ToUnsigned()+numLongitudeLines.ToUnsigned());
-                    indices.Add(v.ToUnsigned()+numLongitudeLines.ToUnsigned()+1.ToUnsigned());
+                    indices.Add((v+1).ToUnsignedShort());
+                    indices.Add((v+2+numLongitudeLines).ToUnsignedShort());
+                    indices.Add((v+numLongitudeLines+1).ToUnsignedShort());
                 }
 
 
@@ -186,37 +232,37 @@ namespace Henzai.Geometry
             // North pole indices
             for(int longitude = 1; longitude < numLongitudeLines; longitude++) {
                 indices.Add(0);
-                indices.Add(longitude.ToUnsigned()+1.ToUnsigned());
-                indices.Add(longitude.ToUnsigned());
+                indices.Add((longitude+1).ToUnsignedShort());
+                indices.Add(longitude.ToUnsignedShort());
             }
              indices.Add(0);
              indices.Add(1);
-             indices.Add(numLongitudeLines.ToUnsigned());
+             indices.Add(numLongitudeLines.ToUnsignedShort());
 
             v-= numLongitudeLines+1;
             // southpole
             for(int longitude = 0; longitude <= numLongitudeLines; longitude++) {
-                indices.Add(v.ToUnsigned() + longitude.ToUnsigned());
-                indices.Add(v.ToUnsigned()+ longitude.ToUnsigned() +1.ToUnsigned());
-                indices.Add(numVertices.ToUnsigned()-1.ToUnsigned());
+                indices.Add((v + longitude).ToUnsignedShort());
+                indices.Add((v+ longitude +1).ToUnsignedShort());
+                indices.Add((numVertices-1).ToUnsignedShort());
             }
-            indices.Add(numVertices.ToUnsigned()-2.ToUnsigned());
-            indices.Add(v.ToUnsigned()+1.ToUnsigned());
-            indices.Add(numVertices.ToUnsigned()-1.ToUnsigned());
+            indices.Add((numVertices-2).ToUnsignedShort());
+            indices.Add((v+1).ToUnsignedShort());
+            indices.Add((numVertices-1).ToUnsignedShort());
             return new Mesh<VertexPositionNormalTextureTangent>(vertices,indices.ToArray());
         }
 
         /// <summary>
         /// Returns a Sphere Mesh with the corresponing vertex struct.
         /// </summary>
-        public static Mesh<VertexPositionNormalTextureTangentBitangent> generateSphereTangentBitangent(int numLatitudeLines, int numLongitudeLines, float radius){
+        public static Mesh<VertexPositionNormalTextureTangentBitangent> GenerateSphereTangentBitangent(int numLatitudeLines, int numLongitudeLines, float radius){
             // One vertex at every latitude-longitude intersection,
             // plus one for the north pole and one for the south.
             // One meridian serves as a UV seam, so we double the vertices there.
             int numVertices = numLatitudeLines * (numLongitudeLines + 1) + 2;
 
             VertexPositionNormalTextureTangentBitangent[] vertices = new VertexPositionNormalTextureTangentBitangent[numVertices];
-            List<uint> indices = new List<uint>();
+            List<ushort> indices = new List<ushort>();
 
             // North pole.
             vertices[0].Position = new Vector3(0, radius, 0);
@@ -263,13 +309,13 @@ namespace Henzai.Geometry
                 vertices[v].Normal = Vector3.Normalize(vertices[v].Position);
 
                 if(latitude < numLatitudeLines -1){
-                                        indices.Add(v.ToUnsigned());
-                    indices.Add(v.ToUnsigned()+1.ToUnsigned());
-                    indices.Add(v.ToUnsigned()+1.ToUnsigned()+numLongitudeLines.ToUnsigned());
+                    indices.Add(v.ToUnsignedShort());
+                    indices.Add((v+1).ToUnsignedShort());
+                    indices.Add((v+1+numLongitudeLines).ToUnsignedShort());
                     
-                    indices.Add(v.ToUnsigned()+1.ToUnsigned());
-                    indices.Add(v.ToUnsigned()+2.ToUnsigned()+numLongitudeLines.ToUnsigned());
-                    indices.Add(v.ToUnsigned()+numLongitudeLines.ToUnsigned()+1.ToUnsigned());
+                    indices.Add((v+1).ToUnsignedShort());
+                    indices.Add((v+2+numLongitudeLines).ToUnsignedShort());
+                    indices.Add((v+numLongitudeLines+1).ToUnsignedShort());
                 }
 
 
@@ -306,30 +352,30 @@ namespace Henzai.Geometry
             // North pole indices
             for(int longitude = 1; longitude < numLongitudeLines; longitude++) {
                 indices.Add(0);
-                indices.Add(longitude.ToUnsigned()+1.ToUnsigned());
-                indices.Add(longitude.ToUnsigned());
+                indices.Add((longitude+1).ToUnsignedShort());
+                indices.Add(longitude.ToUnsignedShort());
             }
              indices.Add(0);
              indices.Add(1);
-             indices.Add(numLongitudeLines.ToUnsigned());
+             indices.Add(numLongitudeLines.ToUnsignedShort());
 
             v-= numLongitudeLines+1;
             // southpole
             for(int longitude = 0; longitude <= numLongitudeLines; longitude++) {
-                indices.Add(v.ToUnsigned() + longitude.ToUnsigned());
-                indices.Add(v.ToUnsigned()+ longitude.ToUnsigned() +1.ToUnsigned());
-                indices.Add(numVertices.ToUnsigned()-1.ToUnsigned());
+                indices.Add((v + longitude).ToUnsignedShort());
+                indices.Add((v+ longitude +1).ToUnsignedShort());
+                indices.Add((numVertices-1).ToUnsignedShort());
             }
-            indices.Add(numVertices.ToUnsigned()-2.ToUnsigned());
-            indices.Add(v.ToUnsigned()+1.ToUnsigned());
-            indices.Add(numVertices.ToUnsigned()-1.ToUnsigned());
+            indices.Add((numVertices-2).ToUnsignedShort());
+            indices.Add((v+1).ToUnsignedShort());
+            indices.Add((numVertices-1).ToUnsignedShort());
             return new Mesh<VertexPositionNormalTextureTangentBitangent>(vertices,indices.ToArray());
         }
 
 /// <summary>
         /// Returns a Sphere Mesh with the corresponing vertex struct.
         /// </summary>
-        public static Mesh<VertexPositionNormal> generateSphereNormal(int numLatitudeLines, int numLongitudeLines, float radius){
+        public static Mesh<VertexPositionNormal> GenerateSphereNormal(int numLatitudeLines, int numLongitudeLines, float radius){
             // One vertex at every latitude-longitude intersection,
             // plus one for the north pole and one for the south.
             // One meridian serves as a UV seam, so we double the vertices there.
@@ -337,7 +383,7 @@ namespace Henzai.Geometry
 
             VertexPositionNormal[] vertices = new VertexPositionNormal[numVertices];
             Vector2[] SphereParamters = new Vector2[numVertices];
-            List<uint> indices = new List<uint>();
+            List<ushort> indices = new List<ushort>();
 
             // North pole.
             vertices[0].Position = new Vector3(0, radius, 0);
@@ -383,13 +429,13 @@ namespace Henzai.Geometry
                 vertices[v].Normal = Vector3.Normalize(vertices[v].Position);
 
                 if(latitude < numLatitudeLines -1){
-                    indices.Add(v.ToUnsigned());
-                    indices.Add(v.ToUnsigned()+1.ToUnsigned());
-                    indices.Add(v.ToUnsigned()+1.ToUnsigned()+numLongitudeLines.ToUnsigned());
+                    indices.Add(v.ToUnsignedShort());
+                    indices.Add((v+1).ToUnsignedShort());
+                    indices.Add((v+1+numLongitudeLines).ToUnsignedShort());
                     
-                    indices.Add(v.ToUnsigned()+1.ToUnsigned());
-                    indices.Add(v.ToUnsigned()+2.ToUnsigned()+numLongitudeLines.ToUnsigned());
-                    indices.Add(v.ToUnsigned()+numLongitudeLines.ToUnsigned()+1.ToUnsigned());
+                    indices.Add((v+1).ToUnsignedShort());
+                    indices.Add((v+2+numLongitudeLines).ToUnsignedShort());
+                    indices.Add((v+numLongitudeLines+1).ToUnsignedShort());
                 }
 
                 // Proceed to the next vertex.
@@ -400,23 +446,23 @@ namespace Henzai.Geometry
             // North pole indices
             for(int longitude = 1; longitude < numLongitudeLines; longitude++) {
                 indices.Add(0);
-                indices.Add(longitude.ToUnsigned()+1.ToUnsigned());
-                indices.Add(longitude.ToUnsigned());
+                indices.Add((longitude+1).ToUnsignedShort());
+                indices.Add(longitude.ToUnsignedShort());
             }
              indices.Add(0);
              indices.Add(1);
-             indices.Add(numLongitudeLines.ToUnsigned());
+             indices.Add(numLongitudeLines.ToUnsignedShort());
 
             v-= numLongitudeLines+1;
             // southpole
             for(int longitude = 0; longitude <= numLongitudeLines; longitude++) {
-                indices.Add(v.ToUnsigned() + longitude.ToUnsigned());
-                indices.Add(v.ToUnsigned()+ longitude.ToUnsigned() +1.ToUnsigned());
-                indices.Add(numVertices.ToUnsigned()-1.ToUnsigned());
+                indices.Add((v + longitude).ToUnsignedShort());
+                indices.Add((v+ longitude +1).ToUnsignedShort());
+                indices.Add((numVertices-1).ToUnsignedShort());
             }
-            indices.Add(numVertices.ToUnsigned()-2.ToUnsigned());
-            indices.Add(v.ToUnsigned()+1.ToUnsigned());
-            indices.Add(numVertices.ToUnsigned()-1.ToUnsigned());
+            indices.Add((numVertices-2).ToUnsignedShort());
+            indices.Add((v+1).ToUnsignedShort());
+            indices.Add((numVertices-1).ToUnsignedShort());
             return new Mesh<VertexPositionNormal>(vertices,indices.ToArray());
         }
     }

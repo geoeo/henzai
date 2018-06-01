@@ -7,6 +7,15 @@ layout(std140) uniform light
 {
     vec4 LightPosition;
     vec4 LightColor;
+    vec4 LightAttenuation;
+};
+
+layout(std140) uniform spotlight
+{
+    vec4 SpotLightPosition;
+    vec4 SpotLightColor;
+    vec4 SpotLightDirection;// xyz for direction, w for linear attenuation
+    vec4 SpotLightParameters; // cutoff,inner cutoff,epsilon,is Set
 };
 
 layout(std140) uniform material
@@ -42,10 +51,33 @@ void main()
     
     mat3 TBN = mat3(Tangent, Bitangent, Normal);
 
-    //normal_sample = Normal;
+    // vec3 normalWS = Normal;
     vec3 normalWS = normalize(TBN*normal_sample);
 
-    vec3 L = normalize(fsin_LightWorld-fsin_FragWorld);
+    vec3 L;
+    float attenuation;
+    if(LightPosition.w == 1.0){
+        L = LightPosition.xyz-fsin_FragWorld;
+        float distance = length(L);
+        attenuation = 1.0 / (LightAttenuation.x + distance*LightAttenuation.y + distance*distance*LightAttenuation.z);
+    }
+    else {
+        L = -LightPosition.xyz;
+        attenuation = 1.0;
+    }
+    L = normalize(L);
+    vec4 pl_color = vec4(0.0f);
+    if(SpotLightParameters.w == 1.0f){
+        vec3 lightDir = fsin_FragWorld-SpotLightPosition.xyz;
+        float distance = length(lightDir);
+        float theta = dot(normalize(lightDir),normalize(SpotLightDirection.xyz));
+        float epsilon = SpotLightParameters.y - SpotLightParameters.x;
+        float intensity = clamp((theta - SpotLightParameters.x) / epsilon, 0.0, 1.0);
+        float pl_attenuation = 1.0 / (1.0 +SpotLightDirection.w *distance );
+        pl_color = SpotLightColor*pl_attenuation*intensity;
+    }
+
+
     float l_dot_n = max(dot(L,normalWS),0.0);
     vec4 diffuse = l_dot_n*Diffuse*textureColor;
 
@@ -57,9 +89,11 @@ void main()
 
     vec4 color_out = vec4(0.0);
     color_out += Ambient;
-    color_out += diffuse;
-    color_out += specular;
-    fsout_Color = lightColor*color_out;
+    color_out += attenuation*diffuse;
+    color_out += attenuation*specular;
+    color_out += attenuation*lightColor;
+    color_out += pl_color;
+    fsout_Color = color_out;
     // fsout_Color = color_out;
     // fsout_Color = vec4(fsin_NormalWorld,1.0);
     // fsout_Color = vec4(fsin_TangentWorld,1.0);
@@ -72,4 +106,7 @@ void main()
     // fsout_Color = textureColor;
     // fsout_Color = vec4(L,1.0);
     // fsout_Color = vec4(l_dot_n,l_dot_n,l_dot_n,1.0);
+    // fsout_Color = vec4(attenuation,attenuation,attenuation,1.0);
+    // fsout_Color = vec4(attenuation,attenuation,attenuation,1.0);
+    // fsout_Color = vec4(LightColor.a,LightColor.a,LightColor.a,1.0);
 }

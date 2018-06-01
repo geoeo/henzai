@@ -10,7 +10,7 @@ namespace Henzai.Geometry
     public sealed class Mesh<T> where T : struct
     {
         public readonly T[] vertices;
-        public uint[] meshIndices {get; set;}
+        public ushort[] meshIndices {get; set;}
 
         private Matrix4x4 _world = Matrix4x4.Identity;
         public ref Matrix4x4 World => ref _world;
@@ -24,7 +24,7 @@ namespace Henzai.Geometry
             this.material = new Material();
         }
 
-        public Mesh(T[] meshDefinition, uint[] indices)
+        public Mesh(T[] meshDefinition, ushort[] indices)
         {
             vertices = meshDefinition;
             meshIndices = indices;

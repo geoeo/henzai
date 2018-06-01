@@ -44,7 +44,7 @@ namespace Henzai
 
         }
 
-        public static Sampler GenerateLinearSampler(DisposeCollectorResourceFactory factory){
+        public static Sampler GenerateTriLinearSampler(DisposeCollectorResourceFactory factory){
             return factory.CreateSampler(new SamplerDescription
                 {
                     AddressModeU = SamplerAddressMode.Wrap,
@@ -58,7 +58,7 @@ namespace Henzai
                 });
         }
 
-        public static ResourceSet GenerateTextureResourceSetForNormalMapping(ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent> modelRuntimeState,int meshIndex, DisposeCollectorResourceFactory factory, GraphicsDevice graphicsDevice){
+        public static ResourceSet GenerateTextureResourceSetForNormalMapping<T>(ModelRuntimeDescriptor<T> modelRuntimeState,int meshIndex, DisposeCollectorResourceFactory factory, GraphicsDevice graphicsDevice) where T : struct{
                 Material material = modelRuntimeState.Model.meshes[meshIndex].TryGetMaterial();
 
                 ImageSharpTexture diffuseTextureIS = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, modelRuntimeState.Model.BaseDir, material.textureDiffuse));
@@ -81,7 +81,7 @@ namespace Henzai
 
         }
 
-                public static ResourceSet GenerateTextureResourceSetForDiffuseMapping(ModelRuntimeDescriptor<VertexPositionNormalTexture> modelRuntimeState,int meshIndex, DisposeCollectorResourceFactory factory, GraphicsDevice graphicsDevice){
+                public static ResourceSet GenerateTextureResourceSetForDiffuseMapping<T>(ModelRuntimeDescriptor<T> modelRuntimeState,int meshIndex, DisposeCollectorResourceFactory factory, GraphicsDevice graphicsDevice) where T : struct{
                 Material material = modelRuntimeState.Model.meshes[meshIndex].TryGetMaterial();
 
                 ImageSharpTexture diffuseTextureIS = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, modelRuntimeState.Model.BaseDir, material.textureDiffuse));
@@ -141,6 +141,34 @@ namespace Henzai
                     new VertexElementDescription("Normal",VertexElementSemantic.Normal,VertexElementFormat.Float3)
                 );
         }
+        /// <summary>
+        /// <see cref="Henzai.Geometry.VertexPositionColor"/>
+        /// </summary>
+        public static VertexLayoutDescription GenerateVertexLayoutForPC(){
+                return new VertexLayoutDescription(
+                    new VertexElementDescription("Position",VertexElementSemantic.Position,VertexElementFormat.Float3),
+                    new VertexElementDescription("Color",VertexElementSemantic.Color,VertexElementFormat.Float4)
+                );
+        }
+        /// <summary>
+        /// <see cref="Henzai.Geometry.VertexPositionTexture"/>
+        /// </summary>
+        public static VertexLayoutDescription GenerateVertexLayoutForPT(){
+                return new VertexLayoutDescription(
+                    new VertexElementDescription("Position",VertexElementSemantic.Position,VertexElementFormat.Float3),
+                    new VertexElementDescription("Texture",VertexElementSemantic.TextureCoordinate,VertexElementFormat.Float2)
+                );
+        }
+        /// <summary>
+        /// Generates a <see cref="Veldrid.VertexLayoutDescription"/> for offsetting a 3D Position
+        /// </summary>
+        public static VertexLayoutDescription GenerateVertexInstanceLayoutForPositionOffset(){
+                return new VertexLayoutDescription(
+                    stride:12, // Size of Vector 3
+                    instanceStepRate:1,
+                    elements: new VertexElementDescription[] {  new VertexElementDescription("Offset",VertexElementSemantic.Position,VertexElementFormat.Float3)}
+                );
+        }
 
         public static GraphicsPipelineDescription GeneratePipelinePN<T>(
             ModelRuntimeDescriptor<T> modelRuntimeState, 
@@ -157,13 +185,13 @@ namespace Henzai
                         depthClipEnabled: true,
                         scissorTestEnabled: false
                     ),
-                    PrimitiveTopology = PrimitiveTopology.TriangleList,
+                    PrimitiveTopology = modelRuntimeState.PrimitiveTopology,
                     ResourceLayouts = new ResourceLayout[] {
                         sceneRuntimeState.CameraResourceLayout,
                         sceneRuntimeState.LightResourceLayout,
                         sceneRuntimeState.MaterialResourceLayout},
                     ShaderSet = new ShaderSetDescription(
-                        vertexLayouts: new VertexLayoutDescription[] {modelRuntimeState.VertexLayout},
+                        vertexLayouts: modelRuntimeState.VertexLayouts,
                         shaders: new Shader[] {modelRuntimeState.VertexShader,modelRuntimeState.FragmentShader}
                     ),
                     Outputs = graphicsDevice.SwapchainFramebuffer.OutputDescription
@@ -185,14 +213,67 @@ namespace Henzai
                         depthClipEnabled: true,
                         scissorTestEnabled: false
                     ),
-                    PrimitiveTopology = PrimitiveTopology.TriangleList,
+                    PrimitiveTopology = modelRuntimeState.PrimitiveTopology,
                     ResourceLayouts = new ResourceLayout[] {
                         sceneRuntimeState.CameraResourceLayout,
                         sceneRuntimeState.LightResourceLayout,
+                        sceneRuntimeState.SpotLightResourceLayout,
                         sceneRuntimeState.MaterialResourceLayout,
                         modelRuntimeState.TextureResourceLayout},
                     ShaderSet = new ShaderSetDescription(
-                        vertexLayouts: new VertexLayoutDescription[] {modelRuntimeState.VertexLayout},
+                        vertexLayouts: modelRuntimeState.VertexLayouts,
+                        shaders: new Shader[] {modelRuntimeState.VertexShader,modelRuntimeState.FragmentShader}
+                    ),
+                    Outputs = graphicsDevice.SwapchainFramebuffer.OutputDescription
+                };
+        }
+
+        public static GraphicsPipelineDescription GeneratePipelinePC<T>(
+            ModelRuntimeDescriptor<T> modelRuntimeState, 
+            SceneRuntimeDescriptor sceneRuntimeState, 
+            GraphicsDevice graphicsDevice) where T : struct {
+
+            return new GraphicsPipelineDescription(){
+                    BlendState = BlendStateDescription.SingleOverrideBlend,
+                    DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
+                    RasterizerState = new RasterizerStateDescription(
+                        cullMode: FaceCullMode.Back,
+                        fillMode: PolygonFillMode.Solid,
+                        frontFace: FrontFace.Clockwise,
+                        depthClipEnabled: true,
+                        scissorTestEnabled: false
+                    ),
+                    PrimitiveTopology = modelRuntimeState.PrimitiveTopology,
+                    ResourceLayouts = new ResourceLayout[] {
+                        sceneRuntimeState.CameraResourceLayout},
+                    ShaderSet = new ShaderSetDescription(
+                        vertexLayouts: modelRuntimeState.VertexLayouts,
+                        shaders: new Shader[] {modelRuntimeState.VertexShader,modelRuntimeState.FragmentShader}
+                    ),
+                    Outputs = graphicsDevice.SwapchainFramebuffer.OutputDescription
+                };
+        }
+        public static GraphicsPipelineDescription GeneratePipelinePT<T>(
+            ModelRuntimeDescriptor<T> modelRuntimeState, 
+            SceneRuntimeDescriptor sceneRuntimeState, 
+            GraphicsDevice graphicsDevice) where T : struct {
+
+            return new GraphicsPipelineDescription(){
+                    BlendState = BlendStateDescription.SingleOverrideBlend,
+                    DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
+                    RasterizerState = new RasterizerStateDescription(
+                        cullMode: FaceCullMode.Back,
+                        fillMode: PolygonFillMode.Solid,
+                        frontFace: FrontFace.Clockwise,
+                        depthClipEnabled: true,
+                        scissorTestEnabled: false
+                    ),
+                    PrimitiveTopology = modelRuntimeState.PrimitiveTopology,
+                    ResourceLayouts = new ResourceLayout[] {
+                        sceneRuntimeState.CameraResourceLayout,
+                        modelRuntimeState.TextureResourceLayout},
+                    ShaderSet = new ShaderSetDescription(
+                        vertexLayouts: modelRuntimeState.VertexLayouts,
                         shaders: new Shader[] {modelRuntimeState.VertexShader,modelRuntimeState.FragmentShader}
                     ),
                     Outputs = graphicsDevice.SwapchainFramebuffer.OutputDescription

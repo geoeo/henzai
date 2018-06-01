@@ -31,6 +31,14 @@ namespace Henzai.Extensions
         public static int ToInt32AwayFromZero(this double val){
             return Convert.ToInt32(Math.Round(val,MidpointRounding.AwayFromZero));
         }
+
+        public static float ToRadians(this float degrees){
+            return degrees*Math.PI.ToFloat()/180.0f;
+        }
+
+        public static float ToDegrees(this float rad){
+            return rad*180.0f/Math.PI.ToFloat();
+        }
     }
 
     public static class GenericExtensions
@@ -47,6 +55,16 @@ namespace Henzai.Extensions
                 throw new ArgumentException("Cannot cast a negative interger value");
 
             return (uint)val;
+
+        }
+
+        public static ushort ToUnsignedShort(this int val){
+            if(val < 0)
+                throw new ArgumentException("Cannot cast a negative interger value");
+            if(val > System.UInt16.MaxValue)
+                throw new ArgumentException("Cannot cast to ushort: Value too large");
+
+            return (ushort)val;
 
         }
 

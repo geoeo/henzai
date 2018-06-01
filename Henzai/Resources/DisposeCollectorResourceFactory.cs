@@ -13,6 +13,7 @@ namespace Henzai
         }
 
         public DisposeCollectorResourceFactory(ResourceFactory factory, DisposeCollector disposeCollector)
+            : base(factory.Features)
         {
             Factory = factory;
             DisposeCollector = disposeCollector;
@@ -41,7 +42,7 @@ namespace Henzai
             return buffer;
         }
 
-        public override Pipeline CreateGraphicsPipeline(ref GraphicsPipelineDescription description)
+        protected override Pipeline CreateGraphicsPipelineCore(ref GraphicsPipelineDescription description)
         {
             Pipeline pipeline = Factory.CreateGraphicsPipeline(ref description);
             DisposeCollector.Add(pipeline);
@@ -69,14 +70,14 @@ namespace Henzai
             return rs;
         }
 
-        public override Sampler CreateSampler(ref SamplerDescription description)
+        protected override Sampler CreateSamplerCore(ref SamplerDescription description)
         {
             Sampler sampler = Factory.CreateSampler(ref description);
             DisposeCollector.Add(sampler);
             return sampler;
         }
 
-        public override Shader CreateShader(ref ShaderDescription description)
+        protected override Shader CreateShaderCore(ref ShaderDescription description)
         {
             Shader shader = Factory.CreateShader(ref description);
             DisposeCollector.Add(shader);

@@ -47,9 +47,9 @@ namespace Henzai.Examples
             _resourceSet = _factory.CreateResourceSet(resourceSetDescription);
 
            Mesh<VertexPositionNDCColor> coloredQuad 
-                = GeometryFactory.generatecoloredQuad(RgbaFloat.Red,RgbaFloat.Green,RgbaFloat.Blue,RgbaFloat.Yellow);
+                = GeometryFactory.GenerateColorQuadNDC_XY(RgbaFloat.Red,RgbaFloat.Green,RgbaFloat.Blue,RgbaFloat.Yellow);
 
-            ushort[] quadIndicies = GeometryFactory.generateQuadIndicies_TriangleStrip_CW();
+            ushort[] quadIndicies = GeometryFactory.GenerateQuadIndicies_TriangleStrip_CW();
 
             float[] _xOffset = {-2f,2f};
 
@@ -71,7 +71,7 @@ namespace Henzai.Examples
             VertexLayoutDescription vertexLayout 
                 = new VertexLayoutDescription(
                     new VertexElementDescription("Position",VertexElementSemantic.Position,VertexElementFormat.Float2),
-                    new VertexElementDescription("color",VertexElementSemantic.Color,VertexElementFormat.Float4)
+                    new VertexElementDescription("Color",VertexElementSemantic.Color,VertexElementFormat.Float4)
                 );
             
             VertexElementDescription vertexElementPerInstance
@@ -84,8 +84,8 @@ namespace Henzai.Examples
                     elements: new VertexElementDescription[] {vertexElementPerInstance}
                 );
 
-            _vertexShader = IO.LoadShader("Offset",ShaderStages.Vertex,GraphicsDevice);
-            _fragmentShader = IO.LoadShader("color",ShaderStages.Fragment,GraphicsDevice);
+            _vertexShader = IO.LoadShader("OffsetXNDCColor",ShaderStages.Vertex,GraphicsDevice);
+            _fragmentShader = IO.LoadShader("Color",ShaderStages.Fragment,GraphicsDevice);
 
             GraphicsPipelineDescription pipelineDescription = new GraphicsPipelineDescription(){
                 BlendState = BlendStateDescription.SingleOverrideBlend,

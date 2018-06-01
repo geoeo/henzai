@@ -40,7 +40,7 @@ namespace Henzai
         }
     }
 
-    //TODO: investigate non-static for multithreading
+    //TODO: investigate non-static for multithreading, add option to split model on child model name
     public static class AssimpLoader
     {
         private static Vector3D Zero3D = new Vector3D(0.0f, 0.0f, 0.0f);
@@ -69,7 +69,7 @@ namespace Henzai
             int meshCount = pScene.MeshCount;
 
             Geometry.Mesh<T>[] meshes = new Geometry.Mesh<T>[meshCount];
-            uint[][] meshIndicies = new uint[meshCount][];
+            ushort[][] meshIndicies = new ushort[meshCount][];
 
             for(int i = 0; i < meshCount; i++){
 
@@ -139,7 +139,7 @@ namespace Henzai
                 meshes[i] = new Geometry.Mesh<T>(meshDefinition,material);
 
                 var faceCount = aiMesh.FaceCount;
-                meshIndicies[i] = new uint[3*faceCount];
+                meshIndicies[i] = new ushort[3*faceCount];
 
                 for(int j = 0; j < faceCount; j++){
                     var face = aiMesh.Faces[j];
@@ -150,9 +150,9 @@ namespace Henzai
 
                     }
 
-                    meshIndicies[i][3*j+0] = face.Indices[0].ToUnsigned();
-                    meshIndicies[i][3*j+1] = face.Indices[1].ToUnsigned();
-                    meshIndicies[i][3*j+2] = face.Indices[2].ToUnsigned();
+                    meshIndicies[i][3*j+0] = face.Indices[0].ToUnsignedShort();
+                    meshIndicies[i][3*j+1] = face.Indices[1].ToUnsignedShort();
+                    meshIndicies[i][3*j+2] = face.Indices[2].ToUnsignedShort();
 
                 }
             }

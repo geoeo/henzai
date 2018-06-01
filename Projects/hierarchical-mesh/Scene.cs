@@ -49,11 +49,11 @@ namespace Henzai.Examples
 
             // Rotate around Sun without rotation around oneself
             Vector3 pos  = _nanosuit.GetWorld_DontMutate.Translation;
-            Vector3 sunToSuit = _sun.GetWorld_DontMutate.Translation;
+            Vector3 sunPos = _sun.GetWorld_DontMutate.Translation;
             Quaternion rotationAroundY = Quaternion.CreateFromAxisAngle(Vector3.UnitY,radian_slow);
-            pos -= sunToSuit;
+            pos -= sunPos;
             pos = Vector3.Transform(pos,rotationAroundY);
-            pos += sunToSuit;
+            pos += sunPos;
 
             // add the translating rotation to the orientation defining rotation
             newWorld.Translation = pos;
@@ -84,29 +84,30 @@ namespace Henzai.Examples
 
             // RgbaFloat lightColor = RgbaFloat.Orange;
             RgbaFloat lightColor = RgbaFloat.LightGrey;
-            _sceneRuntimeState.Light = new Light(lightColor);
+            _sceneRuntimeState.Light = new Light(lightColor,0.1f);
             _sceneRuntimeState.Camera = Camera;
+            _sceneRuntimeState.SpotLight = Light.NO_POINTLIGHT;
 
             // string filePath = Path.Combine(AppContext.BaseDirectory, "armor/armor.dae"); 
             // string filePath = Path.Combine(AppContext.BaseDirectory, "nanosuit/nanosuit.obj"); 
             _nanosuit = AssimpLoader.LoadFromFile<VertexPositionNormalTextureTangentBitangent>(AppContext.BaseDirectory,"nanosuit/nanosuit.obj",VertexPositionNormalTextureTangentBitangent.HenzaiType);
-            _nanosuit.SetAmbientForAllMeshes(new Vector4(0.1f,0.1f,0.1f,1.0f));
+            // _nanosuit.SetAmbientForAllMeshes(new Vector4(0.1f,0.1f,0.1f,1.0f));
             // _model = AssimpLoader.LoadFromFile<VertexPositionNormalTextureTangentBitangent>(AppContext.BaseDirectory,"sponza/sponza.obj",VertexPositionNormalTextureTangentBitangent.HenzaiType);
             GeometryUtils.GenerateTangentAndBitagentSpaceFor(_nanosuit);
             // GeometryUtils.CheckTBN(_model);
             // var sun = new Model<VertexPositionNormalTextureTangentBitangent>("water",GeometryFactory.generateSphereTangentBitangent(100,100,1));
-            _sun = new Model<VertexPositionNormal>(String.Empty,GeometryFactory.generateSphereNormal(100,100,1));
+            _sun = new Model<VertexPositionNormal>(String.Empty,GeometryFactory.GenerateSphereNormal(100,100,1));
             _sun.meshes[0].TryGetMaterial().textureDiffuse = "Water.jpg";
             _sun.meshes[0].TryGetMaterial().textureNormal = "WaterNorm.jpg";
-            _sun.meshes[0].TryGetMaterial().ambient = new Vector4(1.0f,1.0f,1.0f,1.0f);
+            _sun.meshes[0].TryGetMaterial().ambient = lightColor.ToVector4();
             // _sun.meshes[0].TryGetMaterial().ambient = lightColor.ToVector4();
-            ref Vector4 lightPos = ref _sceneRuntimeState.Light.Light_DontMutate;
+            ref Vector4 lightPos = ref _sceneRuntimeState.Light.LightPos_DontMutate;
             Vector3 newTranslation = new Vector3(lightPos.X,lightPos.Y,lightPos.Z);
             _sun.SetNewWorldTranslation(ref newTranslation, true);
 
-            var nanoSuitRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>(_nanosuit,"PhongBitangentTexture","PhongBitangentTexture", VertexTypes.VertexPositionNormalTextureTangentBitangent);
+            var nanoSuitRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>(_nanosuit,"PhongBitangentTexture","PhongBitangentTexture", VertexTypes.VertexPositionNormalTextureTangentBitangent,PrimitiveTopology.TriangleList);
             nanoSuitRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPNTTB;
-            nanoSuitRuntimeState.CallSamplerGeneration+=ResourceGenerator.GenerateLinearSampler;
+            nanoSuitRuntimeState.CallSamplerGeneration+=ResourceGenerator.GenerateTriLinearSampler;
             nanoSuitRuntimeState.CallTextureResourceLayoutGeneration+=ResourceGenerator.GenerateTextureResourceLayoutForNormalMapping;
             nanoSuitRuntimeState.CallTextureResourceSetGeneration+=ResourceGenerator.GenerateTextureResourceSetForNormalMapping;
 
@@ -119,12 +120,12 @@ namespace Henzai.Examples
             _modelPNTTBDescriptorList.Add(nanoSuitRuntimeState);
             // _modelStatesList.Add(sunRuntimeState);
 
-            var sunRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormal>(_sun,"Phong","Phong",VertexTypes.VertexPositionNormal);
+            var sunRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormal>(_sun,"Phong","Phong",VertexTypes.VertexPositionNormal,PrimitiveTopology.TriangleList);
             sunRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPN;
             _modelPNDescriptorList.Add(sunRuntimeState);
 
             /// Uniform 1 - Camera
-            _sceneRuntimeState.CameraProjViewBuffer  = _factory.CreateBuffer(new BufferDescription(192,BufferUsage.UniformBuffer | BufferUsage.Dynamic));
+            _sceneRuntimeState.CameraProjViewBuffer  = _factory.CreateBuffer(new BufferDescription(Camera.SizeInBytes,BufferUsage.UniformBuffer | BufferUsage.Dynamic));
             _sceneRuntimeState.CameraResourceLayout 
                 = ResourceGenerator.GenerateResourceLayout(
                     _factory,
@@ -138,7 +139,7 @@ namespace Henzai.Examples
                     new BindableResource[]{_sceneRuntimeState.CameraProjViewBuffer});
 
             // Uniform 2 - Material
-            _sceneRuntimeState.MaterialBuffer = _factory.CreateBuffer(new BufferDescription(64,BufferUsage.UniformBuffer));
+            _sceneRuntimeState.MaterialBuffer = _factory.CreateBuffer(new BufferDescription(Material.SizeInBytes,BufferUsage.UniformBuffer));
             _sceneRuntimeState.MaterialResourceLayout 
                 = ResourceGenerator.GenerateResourceLayout(
                     _factory,
@@ -152,7 +153,7 @@ namespace Henzai.Examples
                     new BindableResource[]{_sceneRuntimeState.MaterialBuffer});
 
             // Uniform 3 - Light
-            _sceneRuntimeState.LightBuffer = _factory.CreateBuffer(new BufferDescription(32,BufferUsage.UniformBuffer));
+            _sceneRuntimeState.LightBuffer = _factory.CreateBuffer(new BufferDescription(Light.SizeInBytes,BufferUsage.UniformBuffer));
             _sceneRuntimeState.LightResourceLayout 
                 = ResourceGenerator.GenerateResourceLayout(
                     _factory,
@@ -165,12 +166,26 @@ namespace Henzai.Examples
                     _sceneRuntimeState.LightResourceLayout,
                     new BindableResource[]{_sceneRuntimeState.LightBuffer});
 
+                // Uniform 4 - PointLight
+            _sceneRuntimeState.SpotLightBuffer = _factory.CreateBuffer(new BufferDescription(4*4*4,BufferUsage.UniformBuffer));
+            _sceneRuntimeState.SpotLightResourceLayout 
+                = ResourceGenerator.GenerateResourceLayout(
+                    _factory,
+                    "spotlight",
+                    ResourceKind.UniformBuffer,
+                    ShaderStages.Fragment);
+            _sceneRuntimeState.SpotLightResourceSet 
+                = ResourceGenerator.GenrateResourceSet(
+                    _factory,
+                    _sceneRuntimeState.SpotLightResourceLayout,
+                    new BindableResource[]{_sceneRuntimeState.SpotLightBuffer});
+
             foreach(var modelDescriptor in _modelPNTTBDescriptorList){
-                FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState); 
+                FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,InstancingData.NO_DATA); 
             }
 
             foreach(var modelDescriptor in _modelPNDescriptorList){
-                FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState); 
+                FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,InstancingData.NO_DATA); 
             }
 
         }

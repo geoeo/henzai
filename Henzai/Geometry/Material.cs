@@ -32,6 +32,10 @@ namespace Henzai.Geometry
     ///</summary>
     public sealed class Material
     {
+        /// <summary>
+        /// Currently ambient,diffuse,specular and coefficients are passed to shaders
+        /// </summary>
+        public static uint SizeInBytes => 64;
         public Vector4 ambient = Vector4.Zero;
         public Vector4 diffuse = Vector4.Zero;
         public Vector4 specular = Vector4.Zero;

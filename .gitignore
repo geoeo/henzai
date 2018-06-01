@@ -270,8 +270,8 @@ getting_started/Shaders/*.metallib
 
 # Textures
 *.ktx
-*.png
-*.jpg
+Assets/**/*.png
+Assets/**/*.jpg
 *.tga
 *.tif
 

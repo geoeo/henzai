@@ -1,12 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Veldrid" Version="4.1.4" />
+    <PackageReference Include="NativeLibraryLoader" Version="1.0.8" />
+    <PackageReference Include="Veldrid" Version="4.2.0" />
+    <!-- <Reference Include="../../veldrid/bin/Debug/Veldrid/netstandard2.0/*.dll"/> -->
     <PackageReference Include="Veldrid.ImageSharp" Version="4.0.0" />
     <PackageReference Include="Veldrid.Sdl2" Version="4.0.0" />
     <PackageReference Include="Veldrid.ImGui" Version="4.0.0" />
@@ -43,5 +45,15 @@
     </Content>
 
   </ItemGroup>
+
+
+  <Target Name="DeleteFiles" AfterTargets="Clean">
+
+    <RemoveDir Directories="$(OutputPath)/Shaders/" />
+
+
+    <!-- TODO: Enforce this -->
+    <Delete Files="Veldrid*" />
+  </Target>
 
 </Project>

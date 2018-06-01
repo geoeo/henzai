@@ -12,7 +12,6 @@ struct PixelInput
     float4 Position[[position]];
     float3 FragWorld;
     float3 NormalWorld;
-    float3 LightWorld;
     float3 CamPosWorld;
 };
 
@@ -23,12 +22,7 @@ struct ProjViewWorld
     float4x4 World;
 };
 
-struct Light {
-    float4 Position;
-    float4 Color;
-};
-
-vertex PixelInput VS(VertexInput input[[stage_in]],constant ProjViewWorld &pjw [[ buffer(1) ]],constant Light &l [[ buffer(2) ]])
+vertex PixelInput VS(VertexInput input[[stage_in]],constant ProjViewWorld &pjw [[ buffer(0) ]])
 {
     PixelInput output;
     float4 positionWorld = pjw.World*float4(input.Position, 1);
@@ -38,8 +32,7 @@ vertex PixelInput VS(VertexInput input[[stage_in]],constant ProjViewWorld &pjw [
 
     output.Position = positionCS;
     output.FragWorld = positionWorld.xyz;
-    output.NormalWorld = float3x3(pjw.View[0].xyz,pjw.View[1].xyz,pjw.View[2].xyz)*normalMatrix*input.Normal;
-    output.LightWorld = l.Position.xyz;
+    output.NormalWorld = normalMatrix*input.Normal;
     output.CamPosWorld = pjw.View[3].xyz;
     return output;
 }

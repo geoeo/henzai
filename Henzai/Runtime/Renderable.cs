@@ -24,7 +24,7 @@ namespace Henzai.Runtime
         /// <summary>
         /// Flag indicated if this is a child to another renderable
         /// </summary>
-        private bool _isChild = false;
+        protected bool _isChild = false;
         //TODO: Investigate Switching to Array
         /// <summary>
         /// Renderable objects which should be drawn before this.Draw()
@@ -36,6 +36,7 @@ namespace Henzai.Runtime
         /// </summary>
         private List<Renderable> _childrenPost = new List<Renderable>();
         public List<Renderable> ChildrenPost => _childrenPost;
+        private List<Renderable> _allChildren = new List<Renderable>();
         private Sdl2Window _contextWindow;
         public Sdl2Window contextWindow => _contextWindow;
         private GraphicsDevice _graphicsDevice;
@@ -59,13 +60,14 @@ namespace Henzai.Runtime
         /// <summary>
         /// Bind Actions that have to be executed after every draw call
         /// </summary>
-        public event Action PostDraw;
+        public event Action<float> PostDraw;
         /// <summary>
         /// Includes this.BuildCommandList()
         /// </summary>
         private Task[] buildCommandListTasks;
         private Task[] drawTasksPre;
         private Task[] drawTasksPost;
+        public Renderable UI {set; private get;}
 
         public Renderable(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions){
             WindowCreateInfo windowCI = new WindowCreateInfo()
@@ -110,19 +112,20 @@ namespace Henzai.Runtime
 
             _camera = new Camera(renderResolution.Horizontal,renderResolution.Vertical);
             // Tick every millisecond
-            _frameTimer = new FrameTimer(1.0);
+            _frameTimer = new FrameTimer(1.0);      
+
+            _allChildren.AddRange(_childrenPre);
+            _allChildren.AddRange(_childrenPost);
+            if(UI!=null)
+                _allChildren.Add(UI);
 
             CreateResources();
-            foreach(var child in _childrenPre)
+            foreach(var child in _allChildren)
                 child.CreateResources();
-            foreach(var child in _childrenPost)
-                child.CreateResources();           
 
-            List<Renderable> allChildren = new List<Renderable>();
-            allChildren.AddRange(_childrenPre);
-            allChildren.AddRange(_childrenPost);
+            // includes itself in the build command list process
+            buildCommandListTasks = new Task[_allChildren.Count+1];
 
-            buildCommandListTasks = new Task[allChildren.Count+1];
             drawTasksPre = new Task[_childrenPre.Count];
             drawTasksPost = new Task[_childrenPost.Count];
 
@@ -139,9 +142,9 @@ namespace Henzai.Runtime
                     PreDraw?.Invoke(_frameTimer.prevFrameTicksInSeconds);
 
                     buildCommandListTasks[0] = Task.Run(() => this.BuildCommandList());
-                    for(int i = 0; i < allChildren.Count; i++){
-                        var child = allChildren[i];
-                        buildCommandListTasks[i+1] = Task.Run(() => child.BuildCommandList());
+                    for(int i = 0; i < _allChildren.Count; i++){
+                        var child = _allChildren[i];
+                            buildCommandListTasks[i+1] = Task.Run(() => child.BuildCommandList());
                     } 
 
                     // Wait untill every command list has been built
@@ -157,6 +160,8 @@ namespace Henzai.Runtime
 
                     Draw();
 
+                    PostDraw?.Invoke(_frameTimer.prevFrameTicksInSeconds);
+
                     // Perform draw tasks which should be after after "main" draw e.g. UI updates
                     for(int i = 0; i < _childrenPost.Count; i++){
                         var child = _childrenPost[i];
@@ -164,12 +169,17 @@ namespace Henzai.Runtime
                     } 
 
                     Task.WaitAll(drawTasksPost);
-                    PostDraw?.Invoke();
+
+                    // TODO investigate a special class for "main" render object
+                    if(UI != null)
+                        DrawUI();
 
                     if(_renderOptions.LimitFrames)
                         limitFrameRate_Blocking();
 
-                    GraphicsDevice.SwapBuffers();
+                    // Wait for submitted UI Tasks
+                    _graphicsDevice.WaitForIdle();
+                    _graphicsDevice.SwapBuffers();
                 }
 
                 _camera.Update(_frameTimer.prevFrameTicksInSeconds);
@@ -190,41 +200,59 @@ namespace Henzai.Runtime
                 Thread.Sleep(msDiffRounded);
         }
 
-        protected void FillRuntimeDescriptor<T>(ModelRuntimeDescriptor<T> modelDescriptor, SceneRuntimeDescriptor sceneRuntimeDescriptor) where T : struct, VertexRuntime{
+        protected void FillRuntimeDescriptor<T>(ModelRuntimeDescriptor<T> modelDescriptor, SceneRuntimeDescriptor sceneRuntimeDescriptor, InstancingData instancingData) where T : struct, VertexRuntime {
                 var model = modelDescriptor.Model;
 
                 modelDescriptor.TextureResourceLayout = modelDescriptor.InvokeTextureResourceLayoutGeneration(_factory);
                 modelDescriptor.TextureSampler = modelDescriptor.InvokeSamplerGeneration(_factory);
-                modelDescriptor.LoadShaders(GraphicsDevice);
+                modelDescriptor.LoadShaders(_graphicsDevice);
                 var vertexSizeInBytes = model.meshes[0].vertices[0].GetSizeInBytes();
 
                 for(int i = 0; i < model.meshCount; i++){
 
+                    //TODO: access this through DisposableResourceCollector properly
                     DeviceBuffer vertexBuffer 
                         =  _factory.CreateBuffer(new BufferDescription(model.meshes[i].vertices.LengthUnsigned() * vertexSizeInBytes, BufferUsage.VertexBuffer)); 
 
                     DeviceBuffer indexBuffer
-                        = _factory.CreateBuffer(new BufferDescription(model.meshes[i].meshIndices.LengthUnsigned()*sizeof(uint),BufferUsage.IndexBuffer));
+                        = _factory.CreateBuffer(new BufferDescription(model.meshes[i].meshIndices.LengthUnsigned()*sizeof(ushort),BufferUsage.IndexBuffer));
                         
 
-                    modelDescriptor.VertexBuffersList.Add(vertexBuffer);
-                    modelDescriptor.IndexBuffersList.Add(indexBuffer);
+                    modelDescriptor.VertexBufferList.Add(vertexBuffer);
+                    modelDescriptor.IndexBufferList.Add(indexBuffer);
 
-                    GraphicsDevice.UpdateBuffer(vertexBuffer,0,model.meshes[i].vertices);
-                    GraphicsDevice.UpdateBuffer(indexBuffer,0,model.meshes[i].meshIndices);
+                    //TODO: Make this more generic for more complex instancing behaviour
+                    if(instancingData != null){
+                        var instancingBuffer = _factory.CreateBuffer(new BufferDescription(instancingData.Positions.Length.ToUnsigned()*12,BufferUsage.VertexBuffer));
+                        modelDescriptor.InstanceBufferList.Add(instancingBuffer);
+                        _graphicsDevice.UpdateBuffer(instancingBuffer,0,instancingData.Positions);
+                    }
 
-                    modelDescriptor.TextureResourceSetsList.Add(
-                        modelDescriptor.InvokeTextureResourceSetGeneration(i,_factory,GraphicsDevice)
-                        );
+                    _graphicsDevice.UpdateBuffer(vertexBuffer,0,model.meshes[i].vertices);
+                    _graphicsDevice.UpdateBuffer(indexBuffer,0,model.meshes[i].meshIndices);
+
+                    var resourceSet = modelDescriptor.InvokeTextureResourceSetGeneration(i,_factory,_graphicsDevice);
+                    if(resourceSet != null)
+                        modelDescriptor.TextureResourceSetsList.Add(resourceSet);
                 }
-                modelDescriptor.VertexLayout = modelDescriptor.InvokeVertexLayoutGeneration();
+
+                modelDescriptor.InvokeVertexLayoutGeneration();
+                modelDescriptor.InvokeVertexInstanceLayoutGeneration();
+
+                modelDescriptor.FormatResourcesForPipelineGeneration();
 
                 switch(modelDescriptor.VertexType){
                     case VertexTypes.VertexPositionNormal:
-                        modelDescriptor.Pipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GeneratePipelinePN(modelDescriptor,sceneRuntimeDescriptor,GraphicsDevice));
+                        modelDescriptor.Pipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GeneratePipelinePN(modelDescriptor,sceneRuntimeDescriptor,_graphicsDevice));
                         break;
                     case VertexTypes.VertexPositionNormalTextureTangentBitangent:
-                        modelDescriptor.Pipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GeneratePipelinePNTTB(modelDescriptor,sceneRuntimeDescriptor,GraphicsDevice));
+                        modelDescriptor.Pipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GeneratePipelinePNTTB(modelDescriptor,sceneRuntimeDescriptor,_graphicsDevice));
+                        break;
+                    case VertexTypes.VertexPositionColor:
+                        modelDescriptor.Pipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GeneratePipelinePC(modelDescriptor,sceneRuntimeDescriptor,_graphicsDevice));
+                        break;
+                    case VertexTypes.VertexPositionTexture:
+                        modelDescriptor.Pipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GeneratePipelinePT(modelDescriptor,sceneRuntimeDescriptor,_graphicsDevice));
                         break;
                     default:
                         throw new NotImplementedException($"{modelDescriptor.VertexType.ToString("g")} not implemented");
@@ -239,6 +267,11 @@ namespace Henzai.Runtime
         public void AddThisAsPostTo(Renderable parent){
             parent._childrenPost.Add(this);
             _isChild = true;
+        }
+
+        // TODO: Profile this in VS against being a Post Draw Task (without frame cap)
+        public async void DrawUI(){
+            await Task.Run(() => UI.Draw()).ConfigureAwait(false);
         }
       
         /// <summary>
@@ -267,10 +300,8 @@ namespace Henzai.Runtime
          public void Dispose(){
 
             _factory.DisposeCollector.DisposeAll();
-            foreach(var child in _childrenPre)
+            foreach(var child in _allChildren)
                 child.Dispose();
-            foreach(var child in _childrenPost)
-                child.Dispose();  
             if(!_isChild)
                 _graphicsDevice.Dispose();
         }

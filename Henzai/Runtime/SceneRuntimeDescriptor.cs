@@ -21,6 +21,10 @@ namespace Henzai.Runtime
        /// </summary>
        public DeviceBuffer LightBuffer {get; set;}
        /// <summary>
+       /// Buffer Encapsulates CPU Memory for Point Light Information
+       /// </summary>
+       public DeviceBuffer SpotLightBuffer {get; set;}
+       /// <summary>
        /// Buffer Encapsulates CPU Memory for Material
        /// </summary>
        public DeviceBuffer MaterialBuffer {get; set;}
@@ -31,10 +35,15 @@ namespace Henzai.Runtime
        public ResourceLayout CameraResourceLayout {get; set;}
 
        /// <summary>
-         /// Encapsulates GPU Memory Layout. See:
+       /// Encapsulates GPU Memory Layout. See:
        /// <see cref="Veldrid.ResourceLayout"/>
        /// </summary>
        public ResourceLayout LightResourceLayout {get; set;}
+       /// <summary>
+       /// Encapsulates GPU Memory Layout. See:
+       /// <see cref="Veldrid.ResourceLayout"/>
+       /// </summary>
+       public ResourceLayout SpotLightResourceLayout {get; set;}
        /// <summary>
        /// Encapsulates GPU Memory Layout. See:
        /// <see cref="Veldrid.ResourceLayout"/>
@@ -58,11 +67,18 @@ namespace Henzai.Runtime
        /// <see cref="Veldrid.ResourceSet"/>
        /// <see cref="Veldrid.BindableResource"/>
        /// </summary>
+       public ResourceSet SpotLightResourceSet {get;set;}
+       /// <summary>
+       /// Encapsulates GPU Memory Layout and Resource. See:
+       /// <see cref="Veldrid.ResourceSet"/>
+       /// <see cref="Veldrid.BindableResource"/>
+       /// </summary>
        public ResourceSet MaterialResourceSet {get;set;}
        /// <summary>
        /// Encapsulates Lighting Layout.
        /// </summary>
        public Light Light {get;set;}
+       public Light SpotLight {get;set;}
        public Camera Camera {get;set;}
 
    } 

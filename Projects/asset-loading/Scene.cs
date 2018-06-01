@@ -54,7 +54,7 @@ namespace Henzai.Examples
             //GeometryUtils.GenerateSphericalTextureCoordinatesFor(_model.meshes[0]);
 
             /// Uniform 1 - Camera
-            _cameraProjViewBuffer = _factory.CreateBuffer(new BufferDescription(192,BufferUsage.UniformBuffer | BufferUsage.Dynamic));
+            _cameraProjViewBuffer = _factory.CreateBuffer(new BufferDescription(Camera.SizeInBytes,BufferUsage.UniformBuffer | BufferUsage.Dynamic));
 
             var resourceLayoutElementDescription = new ResourceLayoutElementDescription("projViewWorld",ResourceKind.UniformBuffer,ShaderStages.Vertex);
             ResourceLayoutElementDescription[] resourceLayoutElementDescriptions = {resourceLayoutElementDescription};
@@ -67,7 +67,7 @@ namespace Henzai.Examples
             _cameraResourceSet = _factory.CreateResourceSet(resourceSetDescription);
 
             // Uniform 2 - Material
-            _materialBuffer = _factory.CreateBuffer(new BufferDescription(64,BufferUsage.UniformBuffer));
+            _materialBuffer = _factory.CreateBuffer(new BufferDescription(Material.SizeInBytes,BufferUsage.UniformBuffer));
 
             var resourceLayoutElementDescriptionMaterial = new ResourceLayoutElementDescription("material",ResourceKind.UniformBuffer,ShaderStages.Fragment);
             ResourceLayoutElementDescription[] resourceLayoutElementDescriptionsMaterial = {resourceLayoutElementDescriptionMaterial};
@@ -80,9 +80,9 @@ namespace Henzai.Examples
             _materialResourceSet = _factory.CreateResourceSet(resourceSetDescriptionMaterial);
 
             // Uniform 3 - Light
-            _lightBuffer = _factory.CreateBuffer(new BufferDescription(16,BufferUsage.UniformBuffer));
+            _lightBuffer = _factory.CreateBuffer(new BufferDescription(Light.SizeInBytes,BufferUsage.UniformBuffer));
 
-            var resourceLayoutElementDescriptionLight = new ResourceLayoutElementDescription("light",ResourceKind.UniformBuffer,ShaderStages.Vertex);
+            var resourceLayoutElementDescriptionLight = new ResourceLayoutElementDescription("light",ResourceKind.UniformBuffer,ShaderStages.Fragment);
             ResourceLayoutElementDescription[] resourceLayoutElementDescriptionsLight = {resourceLayoutElementDescriptionLight};
             var resourceLayoutDescriptionLight = new ResourceLayoutDescription(resourceLayoutElementDescriptionsLight);
             BindableResource[] bindableResourcesLight = new BindableResource[]{_lightBuffer};
@@ -98,7 +98,7 @@ namespace Henzai.Examples
                     =  _factory.CreateBuffer(new BufferDescription(_model.meshes[i].vertices.LengthUnsigned() * VertexPositionNormal.SizeInBytes, BufferUsage.VertexBuffer)); 
 
                 DeviceBuffer indexBuffer
-                    = _factory.CreateBuffer(new BufferDescription(_model.meshes[i].meshIndices.LengthUnsigned()*sizeof(uint),BufferUsage.IndexBuffer));
+                    = _factory.CreateBuffer(new BufferDescription(_model.meshes[i].meshIndices.LengthUnsigned()*sizeof(ushort),BufferUsage.IndexBuffer));
                     
 
                 _vertexBuffers.Add(vertexBuffer);
@@ -153,12 +153,14 @@ namespace Henzai.Examples
                 Material material = _model.meshes[i].TryGetMaterial();
 
                 _commandList.SetVertexBuffer(0,_vertexBuffers[i]);
-                _commandList.SetIndexBuffer(_indexBuffers[i],IndexFormat.UInt32);
+                _commandList.SetIndexBuffer(_indexBuffers[i],IndexFormat.UInt16);
                 _commandList.UpdateBuffer(_cameraProjViewBuffer,0,Camera.ViewMatrix);
                 _commandList.UpdateBuffer(_cameraProjViewBuffer,64,Camera.ProjectionMatrix);
                 _commandList.UpdateBuffer(_cameraProjViewBuffer,128,_model.GetWorld_DontMutate);
                 _commandList.SetGraphicsResourceSet(0,_cameraResourceSet); // Always after SetPipeline
-                _commandList.UpdateBuffer(_lightBuffer,0,LIGHT_POS);
+                _commandList.UpdateBuffer(_lightBuffer,0,Light.DEFAULT_POSITION);
+                _commandList.UpdateBuffer(_lightBuffer,16,Light.DEFAULT_COLOR);
+                _commandList.UpdateBuffer(_lightBuffer,32,Light.DEFAULT_ATTENTUATION);
                 _commandList.SetGraphicsResourceSet(1,_lightResourceSet);
                 _commandList.UpdateBuffer(_materialBuffer,0,material.diffuse);
                 _commandList.UpdateBuffer(_materialBuffer,16,material.specular);

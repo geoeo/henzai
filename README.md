@@ -2,6 +2,9 @@
 
 Henzai (遍在) meaning ubiquitous, is a cross platform 3D rendering engine using .NetCore and [veldrid](https://github.com/mellinoe/veldrid).
 
+![Henzai Metal](/docs/Pictures/lights_v_01_metal.png)
+![Henzai Opengl](/docs/Pictures/lights_v_01_opengl.png)
+
 ## Resources
 
 ### Graphics
@@ -13,6 +16,8 @@ Henzai (遍在) meaning ubiquitous, is a cross platform 3D rendering engine usin
 * http://ksimek.github.io/2013/06/03/calibrated_cameras_in_opengl/
 * http://www.iquilezles.org/www/articles/patchedsphere/patchedsphere.htm
 * https://mynameismjp.wordpress.com
+* http://jamie-wong.com/2016/07/15/ray-marching-signed-distance-functions/#the-raymarching-algorithm
+* https://seblagarde.wordpress.com/2013/04/29/memo-on-fresnel-equations/
 
 ### OpenGL
 * https://learnopengl.com
@@ -51,3 +56,4 @@ Henzai (遍在) meaning ubiquitous, is a cross platform 3D rendering engine usin
 
 ### System Programming
 * https://www.developerfusion.com/article/84519/mastering-structs-in-c/
+* https://jacksondunstan.com/articles/3577

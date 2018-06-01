@@ -3,7 +3,7 @@ using Henzai.Runtime;
 
 namespace Henzai.Geometry
 {
-    public struct VertexPositionNormalTexture
+    public struct VertexPositionNormalTexture : VertexRuntime
     {
         public const byte SizeInBytes = 32;
         public const byte PositionOffset = 0;
@@ -21,6 +21,9 @@ namespace Henzai.Geometry
             Position = position;
             Normal = Vector3.Normalize(normal);
             TextureCoordinates = texCoords;
+        }
+        public byte GetSizeInBytes(){
+            return SizeInBytes;
         }
     }
 }

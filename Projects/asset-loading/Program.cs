@@ -15,7 +15,8 @@ namespace Henzai.Examples
             {
                 Debug = false,
                 SwapchainDepthFormat = PixelFormat.R16_UNorm,
-                SyncToVerticalBlank = false
+                SyncToVerticalBlank = false,
+                ResourceBindingModel = ResourceBindingModel.Improved
 
             };
 
