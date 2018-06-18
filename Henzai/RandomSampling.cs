@@ -33,11 +33,12 @@ namespace Henzai.Sampling
         {
             float ret;
             lock(lockState_2){
-                uint state = (uint)randState_2.Next();
-                ret = XorShift(ref state) * (1f / 4294967296f);
+                ret = (float)randState_2.NextDouble();
             }
             return ret;
         }
+
+        
 
         public static Vector3 RandomInUnitDisk(ref uint state)
         {
@@ -62,9 +63,6 @@ namespace Henzai.Sampling
         //http://corysimon.github.io/articles/uniformdistn-on-sphere/
         public static Vector3 RandomInUnitSphere_Sync()
         {
-            //var rand = new Random();
-            // float rand1 = RandomFloat(ref state);
-            // float rand2 = RandomFloat(ref state);
             double rand1;
             double rand2;
             lock(lockState){
@@ -78,6 +76,25 @@ namespace Henzai.Sampling
             float y = MathF.Sin(phi) * MathF.Sin((float)theta);
             float z = MathF.Cos(phi);
             return new Vector3(x,y,z);
+        }
+
+        //https://www.scratchapixel.com/lessons/3d-basic-rendering/global-illumination-path-tracing/global-illumination-path-tracing-practical-implementation
+        public static Vector3 RandomInUnitHemisphere_Sync()
+        {
+            double rand1;
+            double rand2;
+            lock(lockState){
+                rand1 = randState.NextDouble(); // theta
+                rand2 = randState.NextDouble(); // phi
+            }
+
+            
+            float cosTheta = 1.0f -(float)rand1; //TODO: check if this is really correct alt: cosTheta = rand1
+            float sinTheta = MathF.Sqrt(1.0f - cosTheta*cosTheta);
+            float phi = 2.0f * MathF.PI * (float)rand2;
+            float x = sinTheta * MathF.Cos(phi);
+            float z = sinTheta * MathF.Sin(phi);
+            return new Vector3(x,1.0f,z);
         }
     }
 }
