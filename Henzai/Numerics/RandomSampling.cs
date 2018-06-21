@@ -4,7 +4,7 @@ using System.Numerics;
 // Implementation from https://github.com/mellinoe/veldrid-raytracer/blob/master/src/raytracer/RandUtil.cs
 // Theory from Raytracing in a Weekend
 
-namespace Henzai.Sampling
+namespace Henzai.Numerics
 {
     public static class RandomSampling
     {
