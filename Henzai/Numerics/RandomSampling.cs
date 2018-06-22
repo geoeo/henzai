@@ -94,7 +94,7 @@ namespace Henzai.Numerics
             float phi = 2.0f * MathF.PI * (float)rand2;
             float x = sinTheta * MathF.Cos(phi);
             float z = sinTheta * MathF.Sin(phi);
-            return new Vector3(x,1.0f,z);
+            return new Vector3(x, cosTheta, z);
         }
     }
 }
