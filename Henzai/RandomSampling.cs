@@ -7,17 +7,25 @@ namespace Henzai.Sampling
 {
     public static class RandomSampling
     {
-        public static uint XorShift(ref uint state)
+        //TODO: For multithreading - under investigation
+        private static readonly System.Object _lock = new System.Object();
+
+        public static void XorShift(ref uint state)
         {
-            state ^= state << 13;
-            state ^= state >> 17;
-            state ^= state << 15;
-            return state;
+            lock (_lock)
+            {
+                state ^= state << 13;
+                state ^= state >> 17;
+                state ^= state << 15;
+            }
+
+            //return state;
         }
 
         public static float RandomFloat(ref uint state)
         {
-            return XorShift(ref state) * (1f / 4294967296f);
+            XorShift(ref state);
+            return state * (1f / 4294967296f);
         }
 
         public static Vector3 RandomInUnitDisk(ref uint state)
