@@ -89,7 +89,7 @@ namespace Henzai.Numerics
             }
 
             
-            float cosTheta = 1.0f -(float)rand1; //TODO: check if this is really correct alt: cosTheta = rand1
+            float cosTheta = 1.0f -(float)rand1;
             float sinTheta = MathF.Sqrt(1.0f - cosTheta*cosTheta);
             float phi = 2.0f * MathF.PI * (float)rand2;
             float x = sinTheta * MathF.Cos(phi);
