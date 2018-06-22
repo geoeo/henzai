@@ -89,12 +89,14 @@ namespace Henzai.Numerics
             }
 
             
-            float cosTheta = 1.0f -(float)rand1; //TODO: check if this is really correct alt: cosTheta = rand1
+            float cosTheta = 1.0f -(float)rand1;
             float sinTheta = MathF.Sqrt(1.0f - cosTheta*cosTheta);
             float phi = 2.0f * MathF.PI * (float)rand2;
             float x = sinTheta * MathF.Cos(phi);
             float z = sinTheta * MathF.Sin(phi);
-            return new Vector3(x,1.0f,z);
+            Vector3 sample = new Vector3(x,cosTheta,z);
+            //return Vector3.Normalize(sample);
+            return sample;
         }
     }
 }
