@@ -1,6 +1,7 @@
 ﻿using System;
 using Henzai.Runtime;
 using Veldrid;
+using Henzai.UserInterface;
 
 namespace Henzai.Examples
 {
@@ -14,7 +15,8 @@ namespace Henzai.Examples
             {
                 Debug = false,
                 SwapchainDepthFormat = PixelFormat.R16_UNorm,
-                SyncToVerticalBlank = false
+                SyncToVerticalBlank = false,
+                ResourceBindingModel = ResourceBindingModel.Improved //TODO
 
             };
 
@@ -33,6 +35,9 @@ namespace Henzai.Examples
                 gdOptions,
                 rdOptions
             );
+
+            SimpleGUIOverlay gui = new SimpleGUIOverlay(scene.GraphicsDevice,scene.contextWindow);
+            gui.SetOverlayFor(scene);
 
             scene.Run(renderResolution);
         }

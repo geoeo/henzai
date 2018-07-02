@@ -19,7 +19,7 @@ struct transformPipeline {
     float4x4 World;
 };
 
-vertex PixelInput VS(VertexInput input[[stage_in]],constant transformPipeline &pipeline [[ buffer(1) ]])
+vertex PixelInput VS(VertexInput input[[stage_in]],constant transformPipeline &pipeline [[ buffer(0) ]])
 {
     PixelInput output;
     float3 position = input.Position;

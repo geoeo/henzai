@@ -18,10 +18,10 @@
 
 <!-- s -->
 
-<!--     <Content Include="../../Assets/Models/chinesedragon.dae">
+    <Content Include="../../Assets/Models/chinesedragon.dae">
       <Link>Models/chinesedragon.dae</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content> -->
+    </Content> 
 
     <Content Include="../../Dependencies/libassimp.dylib">
       <Link>libassimp.dylib</Link>

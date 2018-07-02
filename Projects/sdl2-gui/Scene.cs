@@ -170,7 +170,7 @@ namespace Henzai.Examples
                     new VertexElementDescription("UV",VertexElementSemantic.TextureCoordinate,VertexElementFormat.Float2)
                 );
 
-            _worldTransCube = Matrix4x4.CreateWorld(new Vector3(0,0,0),-Vector3.UnitZ,Vector3.UnitY);
+            _worldTransCube = Matrix4x4.CreateWorld(new Vector3(0,0,2),-Vector3.UnitZ,Vector3.UnitY);
 
             _vertexShaderCube = IO.LoadShader("Texture",ShaderStages.Vertex,GraphicsDevice);
             _fragmentShaderCube = IO.LoadShader("Texture",ShaderStages.Fragment,GraphicsDevice);
@@ -361,39 +361,39 @@ namespace Henzai.Examples
 
             _commandList.Begin();
             
-            _commandList.SetFramebuffer(_offScreenFBO);
-            _commandList.SetFullViewports();
-            _commandList.ClearColorTarget(0,RgbaFloat.White);
-            _commandList.ClearDepthStencil(1f);
+            // _commandList.SetFramebuffer(_offScreenFBO);
+            // _commandList.SetFullViewports();
+            // _commandList.ClearColorTarget(0,RgbaFloat.White);
+            // _commandList.ClearDepthStencil(1f);
 
-            _commandList.SetPipeline(_pipelineCubeOffscreen);
-            _commandList.SetVertexBuffer(0,_vertexBufferCube);
-            _commandList.SetIndexBuffer(_indexBufferCube,IndexFormat.UInt16);
-            _commandList.UpdateBuffer(_transformationPipelineBuffer,0,_staticCamera.ViewMatrix);
-            _commandList.UpdateBuffer(_transformationPipelineBuffer,128,_worldTransCube);
-            _commandList.SetGraphicsResourceSet(0,_transformationPipelineResourceSet); // Always after SetPipeline
-            _commandList.SetGraphicsResourceSet(1,_textureNameResourceSet); // Always after SetPipeline
-            _commandList.DrawIndexed(
-                indexCount: 36,
-                instanceCount: 1,
-                indexStart: 0,
-                vertexOffset: 0,
-                instanceStart: 0
-            );
+            // _commandList.SetPipeline(_pipelineCubeOffscreen);
+            // _commandList.SetVertexBuffer(0,_vertexBufferCube);
+            // _commandList.SetIndexBuffer(_indexBufferCube,IndexFormat.UInt16);
+            // _commandList.UpdateBuffer(_transformationPipelineBuffer,0,_staticCamera.ViewMatrix);
+            // _commandList.UpdateBuffer(_transformationPipelineBuffer,128,_worldTransCube);
+            // _commandList.SetGraphicsResourceSet(0,_transformationPipelineResourceSet); // Always after SetPipeline
+            // _commandList.SetGraphicsResourceSet(1,_textureNameResourceSet); // Always after SetPipeline
+            // _commandList.DrawIndexed(
+            //     indexCount: 36,
+            //     instanceCount: 1,
+            //     indexStart: 0,
+            //     vertexOffset: 0,
+            //     instanceStart: 0
+            // );
 
-            _commandList.SetPipeline(_pipelinecoloredQuadOffscreen);
-            _commandList.SetVertexBuffer(0,_vertexBuffercoloredQuad);
-            _commandList.SetIndexBuffer(_indexBufferQuad,IndexFormat.UInt16);
-            _commandList.UpdateBuffer(_transformationPipelineBuffer,0,_staticCamera.ViewMatrix);
-            _commandList.UpdateBuffer(_transformationPipelineBuffer,128,_worldTranscoloredQuad);
-            _commandList.SetGraphicsResourceSet(0,_transformationPipelineResourceSet);
-            _commandList.DrawIndexed(
-                indexCount: 4,
-                instanceCount: 1,
-                indexStart: 0,
-                vertexOffset: 0,
-                instanceStart: 0
-            );
+            // _commandList.SetPipeline(_pipelinecoloredQuadOffscreen);
+            // _commandList.SetVertexBuffer(0,_vertexBuffercoloredQuad);
+            // _commandList.SetIndexBuffer(_indexBufferQuad,IndexFormat.UInt16);
+            // _commandList.UpdateBuffer(_transformationPipelineBuffer,0,_staticCamera.ViewMatrix);
+            // _commandList.UpdateBuffer(_transformationPipelineBuffer,128,_worldTranscoloredQuad);
+            // _commandList.SetGraphicsResourceSet(0,_transformationPipelineResourceSet);
+            // _commandList.DrawIndexed(
+            //     indexCount: 4,
+            //     instanceCount: 1,
+            //     indexStart: 0,
+            //     vertexOffset: 0,
+            //     instanceStart: 0
+            // );
 
             _commandList.SetFramebuffer(GraphicsDevice.SwapchainFramebuffer);
             _commandList.SetFullViewports();
@@ -429,20 +429,20 @@ namespace Henzai.Examples
                 instanceStart: 0
             );
 
-            _commandList.SetPipeline(_pipelineTexturedQuad);
-            _commandList.SetVertexBuffer(0,_vertexBufferTexturedQuad);
-            _commandList.SetIndexBuffer(_indexBufferQuad,IndexFormat.UInt16);
-            _commandList.UpdateBuffer(_transformationPipelineBuffer,0,Camera.ViewMatrix);
-            _commandList.UpdateBuffer(_transformationPipelineBuffer,128,_worldTransTexturedQuad);
-            _commandList.SetGraphicsResourceSet(0,_transformationPipelineResourceSet);
-            _commandList.SetGraphicsResourceSet(1,_textureOffscreenResourceSet); 
-            _commandList.DrawIndexed(
-                indexCount: 4,
-                instanceCount: 1,
-                indexStart: 0,
-                vertexOffset: 0,
-                instanceStart: 0
-            );
+            // _commandList.SetPipeline(_pipelineTexturedQuad);
+            // _commandList.SetVertexBuffer(0,_vertexBufferTexturedQuad);
+            // _commandList.SetIndexBuffer(_indexBufferQuad,IndexFormat.UInt16);
+            // _commandList.UpdateBuffer(_transformationPipelineBuffer,0,Camera.ViewMatrix);
+            // _commandList.UpdateBuffer(_transformationPipelineBuffer,128,_worldTransTexturedQuad);
+            // _commandList.SetGraphicsResourceSet(0,_transformationPipelineResourceSet);
+            // _commandList.SetGraphicsResourceSet(1,_textureOffscreenResourceSet); 
+            // _commandList.DrawIndexed(
+            //     indexCount: 4,
+            //     instanceCount: 1,
+            //     indexStart: 0,
+            //     vertexOffset: 0,
+            //     instanceStart: 0
+            // );
             
             _commandList.End();
 
@@ -461,10 +461,15 @@ namespace Henzai.Examples
         }
 
         private void RotateCube(float deltaSeconds){
+            // float radian = (float)Math.PI/180.0f;
+            // radian *= 10.0f*deltaSeconds;
+            // Matrix4x4 rotationAroundY = Matrix4x4.CreateRotationY(radian);
+            // _worldTransCube = rotationAroundY*_worldTransCube;
+
             float radian = (float)Math.PI/180.0f;
-            radian *= 100.0f*deltaSeconds;
+            radian *= 10.0f*deltaSeconds;
             Matrix4x4 rotationAroundY = Matrix4x4.CreateRotationY(radian);
-            _worldTransCube = rotationAroundY*_worldTransCube;
+            _worldTransCube = rotationAroundY*_worldTransCube; 
 
         }
     }

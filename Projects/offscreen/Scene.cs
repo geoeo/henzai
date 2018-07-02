@@ -110,7 +110,7 @@ namespace Henzai.Examples
 
             _transformationPipelineBuffer = _factory.CreateBuffer(new BufferDescription(192,BufferUsage.UniformBuffer | BufferUsage.Dynamic));
 
-            ResourceLayoutElementDescription resourceLayoutElementDescription = new ResourceLayoutElementDescription("transformPipeline",ResourceKind.UniformBuffer,ShaderStages.Vertex);
+            ResourceLayoutElementDescription resourceLayoutElementDescription = new ResourceLayoutElementDescription("projViewWorld",ResourceKind.UniformBuffer,ShaderStages.Vertex);
             ResourceLayoutElementDescription[] resourceLayoutElementDescriptions = {resourceLayoutElementDescription};
             ResourceLayoutDescription resourceLayoutDescription = new ResourceLayoutDescription(resourceLayoutElementDescriptions);
             BindableResource[] bindableResources = new BindableResource[]{_transformationPipelineBuffer};
