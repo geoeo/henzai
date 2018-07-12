@@ -156,7 +156,7 @@ namespace Henzai
         public static VertexLayoutDescription GenerateVertexLayoutForPT(){
                 return new VertexLayoutDescription(
                     new VertexElementDescription("Position",VertexElementSemantic.Position,VertexElementFormat.Float3),
-                    new VertexElementDescription("Texture",VertexElementSemantic.TextureCoordinate,VertexElementFormat.Float2)
+                    new VertexElementDescription("UV",VertexElementSemantic.TextureCoordinate,VertexElementFormat.Float2)
                 );
         }
         /// <summary>

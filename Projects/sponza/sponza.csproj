@@ -12,13 +12,13 @@
   <ItemGroup>
 
   
-    <Content Include="../../Assets/sponza/*.*">
+    <Content Include="../../Assets/sponza2/*.*">
       <Link>sponza/%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
 
       
-    <Content Include="../../Assets/sponza/textures/*.*">
+    <Content Include="../../Assets/sponza2/textures/*.*">
       <Link>sponza/textures/%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

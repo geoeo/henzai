@@ -364,6 +364,36 @@ namespace Henzai.Runtime
             }
         }
 
+
+     public static void GenerateRenderCommandsForModelDescriptor(CommandList commandList, 
+                                                                    ModelRuntimeDescriptor<VertexPositionTexture>[] descriptorArray,
+                                                                    SceneRuntimeDescriptor sceneRuntimeDescriptor){
+            for(int j = 0; j < descriptorArray.Length; j++){
+                var modelState = descriptorArray[j];
+                var model = modelState.Model;
+                RenderCommandGenerator.GenerateCommandsForModel_Inline(
+                    commandList,
+                    modelState.Pipeline,
+                    sceneRuntimeDescriptor.CameraProjViewBuffer,
+                    sceneRuntimeDescriptor.Camera,
+                    model);  
+                for(int i = 0; i < model.meshCount; i++){
+                    var mesh = model.meshes[i];
+                    RenderCommandGenerator.GenerateCommandsForMesh_Inline(
+                        commandList,
+                        modelState.VertexBuffers[i],
+                        modelState.IndexBuffers[i],
+                        sceneRuntimeDescriptor.CameraProjViewBuffer,
+                        sceneRuntimeDescriptor.CameraResourceSet,
+                        modelState.TextureResourceSets[i],
+                        mesh,
+                        modelState.TotalInstanceCount
+                    );
+                }
+            }
+        }
+
+
      public static void GenerateRenderCommandsForModelDescriptor_Instancing(CommandList commandList, 
                                                                     ModelRuntimeDescriptor<VertexPositionTexture>[] descriptorArray,
                                                                     SceneRuntimeDescriptor sceneRuntimeDescriptor){

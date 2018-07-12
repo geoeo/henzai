@@ -6,6 +6,7 @@ namespace Henzai.Geometry
     public struct VertexPositionTexture : VertexRuntime
     {
         public const byte SizeInBytes = 20;
+        public const byte PositionOffset = 0;
         public const byte TextureCoordinatesOffset = 12;
         public const byte ElementCount = 2;
         public const VertexTypes HenzaiType = VertexTypes.VertexPositionTexture;

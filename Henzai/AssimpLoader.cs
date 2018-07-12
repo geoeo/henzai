@@ -102,6 +102,11 @@ namespace Henzai
                     byte[] bitangentAsBytes = ByteMarshal.ToBytes(pBiTangent);
 
                     switch(vertexType){
+                        case VertexTypes.VertexPositionTexture:
+                            bytes = new byte[VertexPositionTexture.SizeInBytes];
+                            Array.Copy(posAsBytes,0,bytes,VertexPositionTexture.PositionOffset,posAsBytes.Length);
+                            Array.Copy(texCoordAsBytes,0,bytes,VertexPositionTexture.TextureCoordinatesOffset,texCoordAsBytes.Length);
+                            break;
                         case VertexTypes.VertexPositionNormalTexture:
                             bytes = new byte[VertexPositionNormalTexture.SizeInBytes];
                             Array.Copy(posAsBytes,0,bytes,VertexPositionNormalTexture.PositionOffset,posAsBytes.Length);
