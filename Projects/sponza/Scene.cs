@@ -71,6 +71,7 @@ namespace Henzai.Examples
 
             // string filePath = Path.Combine(AppContext.BaseDirectory, "armor/armor.dae"); 
             // string filePath = Path.Combine(AppContext.BaseDirectory, "nanosuit/nanosuit.obj"); 
+            
             //TODO: Write method to split Model into different vertex types if some textures are not available!
             // _sponza = AssimpLoader.LoadFromFile<VertexPositionNormalTextureTangentBitangent>(AppContext.BaseDirectory,"sponza/sponza.obj",VertexPositionNormalTextureTangentBitangent.HenzaiType);
             _sponzaTexOnly = AssimpLoader.LoadFromFile<VertexPositionTexture>(AppContext.BaseDirectory,"sponza/sponza.obj",VertexPositionTexture.HenzaiType);

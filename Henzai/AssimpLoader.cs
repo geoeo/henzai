@@ -38,6 +38,25 @@ namespace Henzai
                 material.TextureSpecular.FilePath);
 
         }
+
+        //TODO: Refine this
+        public static VertexTypes ToHenzaiVertexType(this Assimp.Mesh  aiMesh){
+            var hasColor = aiMesh.HasVertexColors(0);
+            var hasUVs = aiMesh.HasTextureCoords(0);
+            var hasNormals = aiMesh.HasNormals;
+            var hasTangent = aiMesh.HasTangentBasis;
+
+            if(hasTangent && hasNormals && hasUVs)
+                return VertexTypes.VertexPositionNormalTextureTangentBitangent;
+            else if(hasNormals && hasUVs)
+                return VertexTypes.VertexPositionNormalTexture;
+            else if(hasNormals && !hasColor)
+                return VertexTypes.VertexPositionNormal;
+            else if(hasColor)
+                return VertexTypes.VertexPositionColor;
+            else 
+                return VertexTypes.VertexPosition;
+        }
     }
 
     //TODO: investigate non-static for multithreading, add option to split model on child model name
@@ -52,7 +71,7 @@ namespace Henzai
             | PostProcessSteps.CalculateTangentSpace | PostProcessSteps.GenerateSmoothNormals | PostProcessSteps.JoinIdenticalVertices ;
 
 
-         public static Model<T> LoadFromFile<T>(string baseDirectory,string localPath, VertexTypes vertexType, PostProcessSteps flags = DefaultPostProcessSteps) where T : struct
+        public static Model<T> LoadFromFile<T>(string baseDirectory,string localPath, VertexTypes vertexType, PostProcessSteps flags = DefaultPostProcessSteps) where T : struct
         {
 
             if(!Verifier.verifyVertexStruct<T>(vertexType))
@@ -73,7 +92,7 @@ namespace Henzai
 
             for(int i = 0; i < meshCount; i++){
 
-                var aiMesh = pScene.Meshes[i];    
+                var aiMesh = pScene.Meshes[i];   
                 var vertexCount = aiMesh.VertexCount;
                 if(vertexCount == 0)
                     continue;
@@ -89,8 +108,6 @@ namespace Henzai
                     Vector3D pNormal = aiMesh.Normals[j];
                     Vector3D pTexCoord = aiMesh.HasTextureCoords(0) ? aiMesh.TextureCoordinateChannels[0][j] : Zero3D;
                     Color4D pcolor = aiMesh.HasVertexColors(0) ? aiMesh.VertexColorChannels[0][j] : Nocolor;
-                    // Vector3D pTangent = aiMesh.HasTangentBasis ? aiMesh.Tangents[j] : Zero3D;
-                    // Vector3D pBiTangent = aiMesh.HasTangentBasis ? aiMesh.BiTangents[j] : Zero3D;
                     Vector3D pTangent = Zero3D;
                     Vector3D pBiTangent = Zero3D;
                     
@@ -165,6 +182,117 @@ namespace Henzai
             return new Model<T>(modelDir,meshes,meshIndicies);
 
         }
+
+        public static LoadedModels LoadModelsFromFile(string baseDirectory,string localPath, PostProcessSteps flags = DefaultPostProcessSteps)
+        {
+
+            string filePath = Path.Combine(AppContext.BaseDirectory, localPath); 
+            
+            string[] directoryStructure = localPath.Split('/');
+            string modelDir = directoryStructure[0];
+
+            AssimpContext assimpContext = new AssimpContext();
+            Scene pScene = assimpContext.ImportFile(filePath, flags);
+
+            int meshCount = pScene.MeshCount;
+
+            ushort[][] meshIndicies = new ushort[meshCount][];
+
+            for(int i = 0; i < meshCount; i++){
+
+                var aiMesh = pScene.Meshes[i];   
+                var henzaiVertexType = aiMesh.ToHenzaiVertexType();
+                var vertexCount = aiMesh.VertexCount;
+                if(vertexCount == 0)
+                    continue;
+
+                Assimp.Material aiMaterial = pScene.Materials[aiMesh.MaterialIndex];
+                Geometry.Material material = aiMaterial.ToHenzaiMaterial();
+
+                T[] meshDefinition = new T[vertexCount];
+
+                for(int j = 0; j < vertexCount; j++){
+
+                    Vector3D pPos = aiMesh.Vertices[j];
+                    Vector3D pNormal = aiMesh.Normals[j];
+                    Vector3D pTexCoord = aiMesh.HasTextureCoords(0) ? aiMesh.TextureCoordinateChannels[0][j] : Zero3D;
+                    Color4D pcolor = aiMesh.HasVertexColors(0) ? aiMesh.VertexColorChannels[0][j] : Nocolor;
+                    Vector3D pTangent = Zero3D;
+                    Vector3D pBiTangent = Zero3D;
+                    
+                    byte[] bytes;
+                    byte[] posAsBytes = ByteMarshal.ToBytes(pPos);
+                    byte[] normalAsBytes = ByteMarshal.ToBytes(pNormal);
+                    byte[] texCoordAsBytes = ByteMarshal.ToBytes(pTexCoord.ToVector2());
+                    byte[] tangentAsBytes = ByteMarshal.ToBytes(pTangent);
+                    byte[] bitangentAsBytes = ByteMarshal.ToBytes(pBiTangent);
+
+                    switch(vertexType){
+                        case VertexTypes.VertexPositionTexture:
+                            bytes = new byte[VertexPositionTexture.SizeInBytes];
+                            Array.Copy(posAsBytes,0,bytes,VertexPositionTexture.PositionOffset,posAsBytes.Length);
+                            Array.Copy(texCoordAsBytes,0,bytes,VertexPositionTexture.TextureCoordinatesOffset,texCoordAsBytes.Length);
+                            break;
+                        case VertexTypes.VertexPositionNormalTexture:
+                            bytes = new byte[VertexPositionNormalTexture.SizeInBytes];
+                            Array.Copy(posAsBytes,0,bytes,VertexPositionNormalTexture.PositionOffset,posAsBytes.Length);
+                            Array.Copy(normalAsBytes,0,bytes,VertexPositionNormalTexture.NormalOffset,normalAsBytes.Length);
+                            Array.Copy(texCoordAsBytes,0,bytes,VertexPositionNormalTexture.TextureCoordinatesOffset,texCoordAsBytes.Length);
+                            break;
+                        case VertexTypes.VertexPositionNormal:
+                            bytes = new byte[VertexPositionNormal.SizeInBytes];
+                            Array.Copy(posAsBytes,0,bytes,VertexPositionNormal.PositionOffset,posAsBytes.Length);
+                            Array.Copy(normalAsBytes,0,bytes,VertexPositionNormal.NormalOffset,normalAsBytes.Length);
+                            break;
+                        case VertexTypes.VertexPositionNormalTextureTangent:
+                            bytes = new byte[VertexPositionNormalTextureTangent.SizeInBytes];
+                            Array.Copy(posAsBytes,0,bytes,VertexPositionNormalTextureTangent.PositionOffset,posAsBytes.Length);
+                            Array.Copy(normalAsBytes,0,bytes,VertexPositionNormalTextureTangent.NormalOffset,normalAsBytes.Length);
+                            Array.Copy(texCoordAsBytes,0,bytes,VertexPositionNormalTextureTangent.TextureCoordinatesOffset,texCoordAsBytes.Length);
+                            Array.Copy(tangentAsBytes,0,bytes,VertexPositionNormalTextureTangent.TangentOffset,tangentAsBytes.Length);
+                            break;
+                        case VertexTypes.VertexPositionNormalTextureTangentBitangent:
+                            bytes = new byte[VertexPositionNormalTextureTangentBitangent.SizeInBytes];
+                            Array.Copy(posAsBytes,0,bytes,VertexPositionNormalTextureTangentBitangent.PositionOffset,posAsBytes.Length);
+                            Array.Copy(normalAsBytes,0,bytes,VertexPositionNormalTextureTangentBitangent.NormalOffset,normalAsBytes.Length);
+                            Array.Copy(texCoordAsBytes,0,bytes,VertexPositionNormalTextureTangentBitangent.TextureCoordinatesOffset,texCoordAsBytes.Length);
+                            Array.Copy(tangentAsBytes,0,bytes,VertexPositionNormalTextureTangentBitangent.TangentOffset,tangentAsBytes.Length);
+                            Array.Copy(bitangentAsBytes,0,bytes,VertexPositionNormalTextureTangentBitangent.BitangentOffset,bitangentAsBytes.Length);
+                            break;
+                        default:
+                            throw new NotImplementedException($"{vertexType.ToString("g")} not implemented");
+                    }
+
+                    meshDefinition[j] = ByteMarshal.ByteArrayToStructure<T>(bytes);
+
+                }
+                
+                Geometry.Mesh<T>[] meshes = new Geometry.Mesh<T>[meshCount];
+                meshes[i] = new Geometry.Mesh<T>(meshDefinition,material);
+
+                var faceCount = aiMesh.FaceCount;
+                meshIndicies[i] = new ushort[3*faceCount];
+
+                for(int j = 0; j < faceCount; j++){
+                    var face = aiMesh.Faces[j];
+
+                    if (face.IndexCount != 3){
+                        Console.Error.WriteLine("Loading Assimp: Face index count != 3!");
+                        continue;
+
+                    }
+
+                    meshIndicies[i][3*j+0] = face.Indices[0].ToUnsignedShort();
+                    meshIndicies[i][3*j+1] = face.Indices[1].ToUnsignedShort();
+                    meshIndicies[i][3*j+2] = face.Indices[2].ToUnsignedShort();
+
+                }
+            }
+
+            return new Model<T>(modelDir,meshes,meshIndicies);
+
+        }
+
         
     }
 }
