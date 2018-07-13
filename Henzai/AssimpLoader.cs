@@ -57,6 +57,14 @@ namespace Henzai
             else 
                 return VertexTypes.VertexPosition;
         }
+
+        //TODO:
+        public static LoadedMeshCounts GetHenzaiMeshCounts(this Assimp.Scene  aiScene){
+            LoadedMeshCounts loadedMeshCounts = new LoadedMeshCounts();
+
+            return loadedMeshCounts;
+
+        }
     }
 
     //TODO: investigate non-static for multithreading, add option to split model on child model name
@@ -194,9 +202,39 @@ namespace Henzai
             AssimpContext assimpContext = new AssimpContext();
             Scene pScene = assimpContext.ImportFile(filePath, flags);
 
+            //TODO: Identify meshcount for each vertex type. Have to preprocess
             int meshCount = pScene.MeshCount;
 
-            ushort[][] meshIndicies = new ushort[meshCount][];
+            var loadedMeshCounts = pScene.GetHenzaiMeshCounts();
+            int meshCountP = loadedMeshCounts.meshCountP;
+            int meshCountPC = loadedMeshCounts.meshCountPC;
+            int meshCountPN = loadedMeshCounts.meshCountPN;
+            int meshCountPT = loadedMeshCounts.meshCountPT;
+            int meshCountPNT = loadedMeshCounts.meshCountPNT;
+            int meshCountPNTTB = loadedMeshCounts.meshCountPNTTB;
+
+            Geometry.Mesh<VertexPosition>[] meshesP = new Geometry.Mesh<VertexPosition>[meshCountP];
+            Geometry.Mesh<VertexPositionColor>[] meshesPC = new Geometry.Mesh<VertexPositionColor>[meshCountPC];
+            Geometry.Mesh<VertexPositionNormal>[] meshesPN = new Geometry.Mesh<VertexPositionNormal>[meshCountPN];
+            Geometry.Mesh<VertexPositionTexture>[] meshesPT = new Geometry.Mesh<VertexPositionTexture>[meshCountPT];
+            Geometry.Mesh<VertexPositionNormalTexture>[] meshesPNT = new Geometry.Mesh<VertexPositionNormalTexture>[meshCountPNT];
+            Geometry.Mesh<VertexPositionNormalTextureTangentBitangent>[] meshesPNTTB = new Geometry.Mesh<VertexPositionNormalTextureTangentBitangent>[meshCountPNTTB];
+
+            ushort[][] meshIndiciesP = new ushort[meshCountP][];
+            ushort[][] meshIndiciesPC = new ushort[meshCountPC][];
+            ushort[][] meshIndiciesPN = new ushort[meshCountPN][];
+            ushort[][] meshIndiciesPT = new ushort[meshCountPT][];
+            ushort[][] meshIndiciesPNT = new ushort[meshCountPNT][];
+            ushort[][] meshIndiciesPNTTB = new ushort[meshCountPNTTB][];
+
+            var loadedModels = new LoadedModels();
+            
+            VertexPosition[] meshDefinitionP = new VertexPosition[0];
+            VertexPositionColor[] meshDefinitionPC = new VertexPositionColor[0];
+            VertexPositionNormal[] meshDefinitionPN = new VertexPositionNormal[0];
+            VertexPositionTexture[] meshDefinitionPT = new VertexPositionTexture[0];
+            VertexPositionNormalTexture[] meshDefinitionPNT = new VertexPositionNormalTexture[0];
+            VertexPositionNormalTextureTangentBitangent[] meshDefinitionPNTTB = new VertexPositionNormalTextureTangentBitangent[0];
 
             for(int i = 0; i < meshCount; i++){
 
@@ -208,8 +246,22 @@ namespace Henzai
 
                 Assimp.Material aiMaterial = pScene.Materials[aiMesh.MaterialIndex];
                 Geometry.Material material = aiMaterial.ToHenzaiMaterial();
-
-                T[] meshDefinition = new T[vertexCount];
+                switch(henzaiVertexType){
+                        case VertexTypes.VertexPositionTexture:
+                            meshDefinitionPT = new VertexPositionTexture[vertexCount]; 
+                            break;
+                        case VertexTypes.VertexPositionNormalTexture:
+                            meshDefinitionPNT = new VertexPositionNormalTexture[vertexCount];
+                            break;
+                        case VertexTypes.VertexPositionNormal:
+                            meshDefinitionPN = new VertexPositionNormal[vertexCount];
+                            break;
+                        case VertexTypes.VertexPositionNormalTextureTangentBitangent:
+                            meshDefinitionPNTTB = new VertexPositionNormalTextureTangentBitangent[vertexCount];
+                            break;
+                        default:
+                            throw new NotImplementedException($"{henzaiVertexType.ToString("g")} not implemented");
+                    }
 
                 for(int j = 0; j < vertexCount; j++){
 
@@ -227,7 +279,7 @@ namespace Henzai
                     byte[] tangentAsBytes = ByteMarshal.ToBytes(pTangent);
                     byte[] bitangentAsBytes = ByteMarshal.ToBytes(pBiTangent);
 
-                    switch(vertexType){
+                    switch(henzaiVertexType){
                         case VertexTypes.VertexPositionTexture:
                             bytes = new byte[VertexPositionTexture.SizeInBytes];
                             Array.Copy(posAsBytes,0,bytes,VertexPositionTexture.PositionOffset,posAsBytes.Length);
@@ -260,36 +312,124 @@ namespace Henzai
                             Array.Copy(bitangentAsBytes,0,bytes,VertexPositionNormalTextureTangentBitangent.BitangentOffset,bitangentAsBytes.Length);
                             break;
                         default:
-                            throw new NotImplementedException($"{vertexType.ToString("g")} not implemented");
+                            throw new NotImplementedException($"{henzaiVertexType.ToString("g")} not implemented");
                     }
 
-                    meshDefinition[j] = ByteMarshal.ByteArrayToStructure<T>(bytes);
+                    switch(henzaiVertexType){
+                        case VertexTypes.VertexPositionTexture:
+                            meshDefinitionPT[j] = ByteMarshal.ByteArrayToStructure<VertexPositionTexture>(bytes); 
+                            break;
+                        case VertexTypes.VertexPositionNormalTexture:
+                            meshDefinitionPNT[j] = ByteMarshal.ByteArrayToStructure<VertexPositionNormalTexture>(bytes); 
+                            break;
+                        case VertexTypes.VertexPositionNormal:
+                            meshDefinitionPN[j] = ByteMarshal.ByteArrayToStructure<VertexPositionNormal>(bytes);
+                            break;
+                        case VertexTypes.VertexPositionNormalTextureTangentBitangent:
+                            meshDefinitionPNTTB[j] = ByteMarshal.ByteArrayToStructure<VertexPositionNormalTextureTangentBitangent>(bytes); 
+                            break;
+                        default:
+                            throw new NotImplementedException($"{henzaiVertexType.ToString("g")} not implemented");
+                    }
 
                 }
-                
-                Geometry.Mesh<T>[] meshes = new Geometry.Mesh<T>[meshCount];
-                meshes[i] = new Geometry.Mesh<T>(meshDefinition,material);
 
                 var faceCount = aiMesh.FaceCount;
-                meshIndicies[i] = new ushort[3*faceCount];
+                switch(henzaiVertexType){
+                    case VertexTypes.VertexPositionTexture:
+                        meshesPT[i] = new Geometry.Mesh<VertexPositionTexture>(meshDefinitionPT,material);
+                        meshIndiciesPT[i] = new ushort[3*faceCount];
 
-                for(int j = 0; j < faceCount; j++){
-                    var face = aiMesh.Faces[j];
+                        for(int j = 0; j < faceCount; j++){
+                            var face = aiMesh.Faces[j];
 
-                    if (face.IndexCount != 3){
-                        Console.Error.WriteLine("Loading Assimp: Face index count != 3!");
-                        continue;
+                            if (face.IndexCount != 3){
+                                Console.Error.WriteLine("Loading Assimp: Face index count != 3!");
+                                continue;
 
-                    }
+                            }
 
-                    meshIndicies[i][3*j+0] = face.Indices[0].ToUnsignedShort();
-                    meshIndicies[i][3*j+1] = face.Indices[1].ToUnsignedShort();
-                    meshIndicies[i][3*j+2] = face.Indices[2].ToUnsignedShort();
+                            meshIndiciesPT[i][3*j+0] = face.Indices[0].ToUnsignedShort();
+                            meshIndiciesPT[i][3*j+1] = face.Indices[1].ToUnsignedShort();
+                            meshIndiciesPT[i][3*j+2] = face.Indices[2].ToUnsignedShort();
 
+                        }     
+                        break;
+                    case VertexTypes.VertexPositionNormalTexture:
+                        meshesPNT[i] = new Geometry.Mesh<VertexPositionNormalTexture>(meshDefinitionPNT,material);
+                        meshIndiciesPNT[i] = new ushort[3*faceCount];
+
+                        for(int j = 0; j < faceCount; j++){
+                            var face = aiMesh.Faces[j];
+
+                            if (face.IndexCount != 3){
+                                Console.Error.WriteLine("Loading Assimp: Face index count != 3!");
+                                continue;
+
+                            }
+
+                            meshIndiciesPNT[i][3*j+0] = face.Indices[0].ToUnsignedShort();
+                            meshIndiciesPNT[i][3*j+1] = face.Indices[1].ToUnsignedShort();
+                            meshIndiciesPNT[i][3*j+2] = face.Indices[2].ToUnsignedShort();
+
+                        }                           
+                        break;
+                    case VertexTypes.VertexPositionNormal:
+                        meshesPN[i] = new Geometry.Mesh<VertexPositionNormal>(meshDefinitionPN,material);
+                        meshIndiciesPN[i] = new ushort[3*faceCount];
+
+                        for(int j = 0; j < faceCount; j++){
+                            var face = aiMesh.Faces[j];
+
+                            if (face.IndexCount != 3){
+                                Console.Error.WriteLine("Loading Assimp: Face index count != 3!");
+                                continue;
+
+                            }
+
+                            meshIndiciesPN[i][3*j+0] = face.Indices[0].ToUnsignedShort();
+                            meshIndiciesPN[i][3*j+1] = face.Indices[1].ToUnsignedShort();
+                            meshIndiciesPN[i][3*j+2] = face.Indices[2].ToUnsignedShort();
+
+                        }                            
+                        break;
+                    case VertexTypes.VertexPositionNormalTextureTangentBitangent:
+                        meshesPNTTB[i] = new Geometry.Mesh<VertexPositionNormalTextureTangentBitangent>(meshDefinitionPNTTB,material);
+                        meshIndiciesPNTTB[i] = new ushort[3*faceCount];
+
+                        for(int j = 0; j < faceCount; j++){
+                            var face = aiMesh.Faces[j];
+
+                            if (face.IndexCount != 3){
+                                Console.Error.WriteLine("Loading Assimp: Face index count != 3!");
+                                continue;
+
+                            }
+
+                            meshIndiciesPNTTB[i][3*j+0] = face.Indices[0].ToUnsignedShort();
+                            meshIndiciesPNTTB[i][3*j+1] = face.Indices[1].ToUnsignedShort();
+                            meshIndiciesPNTTB[i][3*j+2] = face.Indices[2].ToUnsignedShort();
+
+                        }                            
+                        break;
+                    default:
+                        throw new NotImplementedException($"{henzaiVertexType.ToString("g")} not implemented");
                 }
+
             }
 
-            return new Model<T>(modelDir,meshes,meshIndicies);
+            if(meshCountP > 0)
+                loadedModels.modelP = new Model<VertexPosition>(modelDir,meshesP,meshIndiciesP);
+            if(meshCountPC > 0 )
+                loadedModels.modelPC = new Model<VertexPositionColor>(modelDir,meshesPC,meshIndiciesPC);
+            if(meshCountPN > 0)
+                loadedModels.modelPN = new Model<VertexPositionNormal>(modelDir,meshesPN,meshIndiciesPN);
+            if(meshCountPNT > 0)
+                loadedModels.modelPNT = new Model<VertexPositionNormalTexture>(modelDir,meshesPNT,meshIndiciesPNT);
+            if(meshCountPNTTB > 0) 
+                loadedModels.modelPNTTB = new Model<VertexPositionNormalTextureTangentBitangent>(modelDir,meshesPNTTB,meshIndiciesP);
+
+            return loadedModels;
 
         }
 
