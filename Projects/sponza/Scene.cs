@@ -27,9 +27,10 @@ namespace Henzai.Examples
 
         private List<ModelRuntimeDescriptor<VertexPositionTexture>> _modelPTDescriptorList;
         private ModelRuntimeDescriptor<VertexPositionTexture> [] _modelPTDescriptorArray;
+        private List<ModelRuntimeDescriptor<VertexPositionColor>> _modelPCDescriptorList;
+        private ModelRuntimeDescriptor<VertexPositionColor> [] _modelPCDescriptorArray;
 
         Model<VertexPositionNormalTextureTangentBitangent> _sponza;
-        Model<VertexPositionTexture> _sponzaTexOnly;
         Model<VertexPositionNormal> _sun;
 
         public Scene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
@@ -39,6 +40,7 @@ namespace Henzai.Examples
                 _modelPNTTBDescriptorList = new List<ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>>();
                 _modelPNDescriptorList = new List<ModelRuntimeDescriptor<VertexPositionNormal>>();
                 _modelPTDescriptorList = new List<ModelRuntimeDescriptor<VertexPositionTexture>>();
+                _modelPCDescriptorList = new List<ModelRuntimeDescriptor<VertexPositionColor>>();
 
 
                 PreRenderLoop+=FormatResourcesForRuntime;
@@ -54,18 +56,21 @@ namespace Henzai.Examples
                 modelState.FormatResourcesForRuntime();
             foreach(var modelState in _modelPTDescriptorList)
                 modelState.FormatResourcesForRuntime();
+            foreach(var modelState in _modelPCDescriptorList)
+                modelState.FormatResourcesForRuntime();
 
 
             _modelPNTTBDescriptorArray = _modelPNTTBDescriptorList.ToArray();
             _modelPNDescriptorArray = _modelPNDescriptorList.ToArray();
             _modelPTDescriptorArray = _modelPTDescriptorList.ToArray();
+            _modelPCDescriptorArray = _modelPCDescriptorList.ToArray();
         }
 
         override protected void CreateResources(){
 
             // RgbaFloat lightColor = RgbaFloat.Orange;
             RgbaFloat lightColor = RgbaFloat.LightGrey;
-            _sceneRuntimeState.Light = new Light(lightColor,0.1f);
+            _sceneRuntimeState.Light = new Light(new Vector4(0,200,0,1),lightColor,0.1f);
             _sceneRuntimeState.Camera = Camera;
             _sceneRuntimeState.SpotLight = Light.NO_POINTLIGHT;
 
@@ -75,7 +80,8 @@ namespace Henzai.Examples
             //TODO: Write method to split Model into different vertex types if some textures are not available!
             var sponzaModels = AssimpLoader.LoadModelsFromFile(AppContext.BaseDirectory,"sponza/sponza.obj");
              _sponza = sponzaModels.modelPNTTB;
-            //_sponzaTexOnly = sponzaModels.modelPTT;
+            var sponzaTexOnly = sponzaModels.modelPT;
+            var sponzaColorOnly = sponzaModels.modelPC;
             // _nanosuit.SetAmbientForAllMeshes(new Vector4(0.1f,0.1f,0.1f,1.0f));
             // _model = AssimpLoader.LoadFromFile<VertexPositionNormalTextureTangentBitangent>(AppContext.BaseDirectory,"sponza/sponza.obj",VertexPositionNormalTextureTangentBitangent.HenzaiType);
         
@@ -96,11 +102,14 @@ namespace Henzai.Examples
             sponzaRuntimeState.CallTextureResourceLayoutGeneration+=ResourceGenerator.GenerateTextureResourceLayoutForNormalMapping;
             sponzaRuntimeState.CallTextureResourceSetGeneration+=ResourceGenerator.GenerateTextureResourceSetForNormalMapping;
 
-            var sponzaRuntimeStateTexOnly = new ModelRuntimeDescriptor<VertexPositionTexture>(_sponzaTexOnly,"Texture","Texture", VertexTypes.VertexPositionTexture,PrimitiveTopology.TriangleList);
+            var sponzaRuntimeStateTexOnly = new ModelRuntimeDescriptor<VertexPositionTexture>(sponzaTexOnly,"Texture","Texture", VertexTypes.VertexPositionTexture,PrimitiveTopology.TriangleList);
             sponzaRuntimeStateTexOnly.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPT;
             sponzaRuntimeStateTexOnly.CallSamplerGeneration+=ResourceGenerator.GenerateTriLinearSampler;
             sponzaRuntimeStateTexOnly.CallTextureResourceLayoutGeneration+=ResourceGenerator.GenerateTextureResourceLayoutForDiffuseMapping;
             sponzaRuntimeStateTexOnly.CallTextureResourceSetGeneration+=ResourceGenerator.GenerateTextureResourceSetForDiffuseMapping;
+
+            var sponzaRuntimeStateColorOnly = new ModelRuntimeDescriptor<VertexPositionColor>(sponzaColorOnly,"Color","Color", VertexTypes.VertexPositionColor,PrimitiveTopology.TriangleList);
+            sponzaRuntimeStateColorOnly.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPC;
 
             // var sunRuntimeState = new ModelRuntimeState<VertexPositionNormalTextureTangentBitangent>(sun,"PhongBitangentTexture","PhongBitangentTexture");
             // sunRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPNTTB;
@@ -109,6 +118,7 @@ namespace Henzai.Examples
             // sunRuntimeState.CallTextureResourceSetGeneration+=ResourceGenerator.GenerateTextureResourceSetForNormalMapping;
 
             _modelPNTTBDescriptorList.Add(sponzaRuntimeState);
+            _modelPCDescriptorList.Add(sponzaRuntimeStateColorOnly);
             // _modelPTDescriptorList.Add(sponzaRuntimeStateTexOnly);
             // _modelStatesList.Add(sunRuntimeState);
 
@@ -185,6 +195,10 @@ namespace Henzai.Examples
                 FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,InstancingData.NO_DATA); 
             }
 
+            foreach(var modelDescriptor in _modelPCDescriptorList){
+                FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,InstancingData.NO_DATA); 
+            }
+
         }
 
         override protected void BuildCommandList(){
@@ -198,6 +212,7 @@ namespace Henzai.Examples
             RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPNTTBDescriptorArray,_sceneRuntimeState);
             RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPNDescriptorArray,_sceneRuntimeState);
             RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPTDescriptorArray,_sceneRuntimeState);
+            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPCDescriptorArray,_sceneRuntimeState);
             
             _commandList.End();
         }
