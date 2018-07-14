@@ -73,8 +73,9 @@ namespace Henzai.Examples
             // string filePath = Path.Combine(AppContext.BaseDirectory, "nanosuit/nanosuit.obj"); 
             
             //TODO: Write method to split Model into different vertex types if some textures are not available!
-            // _sponza = AssimpLoader.LoadFromFile<VertexPositionNormalTextureTangentBitangent>(AppContext.BaseDirectory,"sponza/sponza.obj",VertexPositionNormalTextureTangentBitangent.HenzaiType);
-            _sponzaTexOnly = AssimpLoader.LoadFromFile<VertexPositionTexture>(AppContext.BaseDirectory,"sponza/sponza.obj",VertexPositionTexture.HenzaiType);
+            var sponzaModels = AssimpLoader.LoadModelsFromFile(AppContext.BaseDirectory,"sponza/sponza.obj");
+             _sponza = sponzaModels.modelPNTTB;
+            //_sponzaTexOnly = sponzaModels.modelPTT;
             // _nanosuit.SetAmbientForAllMeshes(new Vector4(0.1f,0.1f,0.1f,1.0f));
             // _model = AssimpLoader.LoadFromFile<VertexPositionNormalTextureTangentBitangent>(AppContext.BaseDirectory,"sponza/sponza.obj",VertexPositionNormalTextureTangentBitangent.HenzaiType);
         
@@ -107,8 +108,8 @@ namespace Henzai.Examples
             // sunRuntimeState.CallTextureResourceLayoutGeneration+=ResourceGenerator.GenerateTextureResourceLayoutForNormalMapping;
             // sunRuntimeState.CallTextureResourceSetGeneration+=ResourceGenerator.GenerateTextureResourceSetForNormalMapping;
 
-            //_modelPNTTBDescriptorList.Add(sponzaRuntimeState);
-            _modelPTDescriptorList.Add(sponzaRuntimeStateTexOnly);
+            _modelPNTTBDescriptorList.Add(sponzaRuntimeState);
+            // _modelPTDescriptorList.Add(sponzaRuntimeStateTexOnly);
             // _modelStatesList.Add(sunRuntimeState);
 
             var sunRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormal>(_sun,"Phong","Phong",VertexTypes.VertexPositionNormal,PrimitiveTopology.TriangleList);

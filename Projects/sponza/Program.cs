@@ -24,7 +24,7 @@ namespace Henzai.Examples
             {
                 Resolution = renderResolution,
                 PreferredGraphicsBackend = GraphicsBackend.OpenGL,
-                UsePreferredGraphicsBackend = false,
+                UsePreferredGraphicsBackend = true,
                 LimitFrames = true,
                 FPSTarget = 60.0
             };
