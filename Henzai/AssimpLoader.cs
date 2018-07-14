@@ -107,6 +107,67 @@ namespace Henzai
             = PostProcessSteps.FlipWindingOrder | PostProcessSteps.Triangulate | PostProcessSteps.PreTransformVertices | PostProcessSteps.FlipUVs
             | PostProcessSteps.CalculateTangentSpace | PostProcessSteps.GenerateSmoothNormals | PostProcessSteps.JoinIdenticalVertices ;
 
+        public static byte[] GenerateBytesArrayFromAssimp(VertexTypes henzaiVertexType, Assimp.Mesh aiMesh, int index){
+
+            Vector3D pPos = aiMesh.Vertices[index];
+            Vector3D pNormal = aiMesh.Normals[index];
+            Vector3D pTexCoord = aiMesh.HasTextureCoords(0) ? aiMesh.TextureCoordinateChannels[0][index] : Zero3D;
+            Color4D pColor = aiMesh.HasVertexColors(0) ? aiMesh.VertexColorChannels[0][index] : Nocolor;
+            Vector3D pTangent =  aiMesh.HasTangentBasis ? aiMesh.Tangents[index] : Zero3D;
+            Vector3D pBiTangent = aiMesh.HasTangentBasis ? aiMesh.BiTangents[index] : Zero3D;
+
+            byte[] bytes;
+            byte[] posAsBytes = ByteMarshal.ToBytes(pPos);
+            byte[] colorAsBytes = ByteMarshal.ToBytes(pColor);
+            byte[] normalAsBytes = ByteMarshal.ToBytes(pNormal);
+            byte[] texCoordAsBytes = ByteMarshal.ToBytes(pTexCoord.ToVector2());
+            byte[] tangentAsBytes = ByteMarshal.ToBytes(pTangent);
+            byte[] bitangentAsBytes = ByteMarshal.ToBytes(pBiTangent);
+
+            switch(henzaiVertexType){
+                case VertexTypes.VertexPositionColor:
+                    bytes = new byte[VertexPositionColor.SizeInBytes];
+                    Array.Copy(posAsBytes,0,bytes,VertexPositionColor.PositionOffset,posAsBytes.Length);
+                    Array.Copy(colorAsBytes,0,bytes,VertexPositionColor.ColorOffset,colorAsBytes.Length);
+                    break;
+                case VertexTypes.VertexPositionTexture:
+                    bytes = new byte[VertexPositionTexture.SizeInBytes];
+                    Array.Copy(posAsBytes,0,bytes,VertexPositionTexture.PositionOffset,posAsBytes.Length);
+                    Array.Copy(texCoordAsBytes,0,bytes,VertexPositionTexture.TextureCoordinatesOffset,texCoordAsBytes.Length);
+                    break;
+                case VertexTypes.VertexPositionNormalTexture:
+                    bytes = new byte[VertexPositionNormalTexture.SizeInBytes];
+                    Array.Copy(posAsBytes,0,bytes,VertexPositionNormalTexture.PositionOffset,posAsBytes.Length);
+                    Array.Copy(normalAsBytes,0,bytes,VertexPositionNormalTexture.NormalOffset,normalAsBytes.Length);
+                    Array.Copy(texCoordAsBytes,0,bytes,VertexPositionNormalTexture.TextureCoordinatesOffset,texCoordAsBytes.Length);
+                    break;
+                case VertexTypes.VertexPositionNormal:
+                    bytes = new byte[VertexPositionNormal.SizeInBytes];
+                    Array.Copy(posAsBytes,0,bytes,VertexPositionNormal.PositionOffset,posAsBytes.Length);
+                    Array.Copy(normalAsBytes,0,bytes,VertexPositionNormal.NormalOffset,normalAsBytes.Length);
+                    break;
+                case VertexTypes.VertexPositionNormalTextureTangent:
+                    bytes = new byte[VertexPositionNormalTextureTangent.SizeInBytes];
+                    Array.Copy(posAsBytes,0,bytes,VertexPositionNormalTextureTangent.PositionOffset,posAsBytes.Length);
+                    Array.Copy(normalAsBytes,0,bytes,VertexPositionNormalTextureTangent.NormalOffset,normalAsBytes.Length);
+                    Array.Copy(texCoordAsBytes,0,bytes,VertexPositionNormalTextureTangent.TextureCoordinatesOffset,texCoordAsBytes.Length);
+                    Array.Copy(tangentAsBytes,0,bytes,VertexPositionNormalTextureTangent.TangentOffset,tangentAsBytes.Length);
+                    break;
+                case VertexTypes.VertexPositionNormalTextureTangentBitangent:
+                    bytes = new byte[VertexPositionNormalTextureTangentBitangent.SizeInBytes];
+                    Array.Copy(posAsBytes,0,bytes,VertexPositionNormalTextureTangentBitangent.PositionOffset,posAsBytes.Length);
+                    Array.Copy(normalAsBytes,0,bytes,VertexPositionNormalTextureTangentBitangent.NormalOffset,normalAsBytes.Length);
+                    Array.Copy(texCoordAsBytes,0,bytes,VertexPositionNormalTextureTangentBitangent.TextureCoordinatesOffset,texCoordAsBytes.Length);
+                    Array.Copy(tangentAsBytes,0,bytes,VertexPositionNormalTextureTangentBitangent.TangentOffset,tangentAsBytes.Length);
+                    Array.Copy(bitangentAsBytes,0,bytes,VertexPositionNormalTextureTangentBitangent.BitangentOffset,bitangentAsBytes.Length);
+                    break;
+                default:
+                    throw new NotImplementedException($"{henzaiVertexType.ToString("g")} not implemented");
+            }
+
+            return bytes;
+
+        }
 
         public static Model<T> LoadFromFile<T>(string baseDirectory,string localPath, VertexTypes vertexType, PostProcessSteps flags = DefaultPostProcessSteps) where T : struct
         {
@@ -141,55 +202,7 @@ namespace Henzai
 
                 for(int j = 0; j < vertexCount; j++){
 
-                    Vector3D pPos = aiMesh.Vertices[j];
-                    Vector3D pNormal = aiMesh.Normals[j];
-                    Vector3D pTexCoord = aiMesh.HasTextureCoords(0) ? aiMesh.TextureCoordinateChannels[0][j] : Zero3D;
-                    Color4D pcolor = aiMesh.HasVertexColors(0) ? aiMesh.VertexColorChannels[0][j] : Nocolor;
-                    Vector3D pTangent = Zero3D;
-                    Vector3D pBiTangent = Zero3D;
-                    
-                    byte[] bytes;
-                    byte[] posAsBytes = ByteMarshal.ToBytes(pPos);
-                    byte[] normalAsBytes = ByteMarshal.ToBytes(pNormal);
-                    byte[] texCoordAsBytes = ByteMarshal.ToBytes(pTexCoord.ToVector2());
-                    byte[] tangentAsBytes = ByteMarshal.ToBytes(pTangent);
-                    byte[] bitangentAsBytes = ByteMarshal.ToBytes(pBiTangent);
-
-                    switch(vertexType){
-                        case VertexTypes.VertexPositionTexture:
-                            bytes = new byte[VertexPositionTexture.SizeInBytes];
-                            Array.Copy(posAsBytes,0,bytes,VertexPositionTexture.PositionOffset,posAsBytes.Length);
-                            Array.Copy(texCoordAsBytes,0,bytes,VertexPositionTexture.TextureCoordinatesOffset,texCoordAsBytes.Length);
-                            break;
-                        case VertexTypes.VertexPositionNormalTexture:
-                            bytes = new byte[VertexPositionNormalTexture.SizeInBytes];
-                            Array.Copy(posAsBytes,0,bytes,VertexPositionNormalTexture.PositionOffset,posAsBytes.Length);
-                            Array.Copy(normalAsBytes,0,bytes,VertexPositionNormalTexture.NormalOffset,normalAsBytes.Length);
-                            Array.Copy(texCoordAsBytes,0,bytes,VertexPositionNormalTexture.TextureCoordinatesOffset,texCoordAsBytes.Length);
-                            break;
-                        case VertexTypes.VertexPositionNormal:
-                            bytes = new byte[VertexPositionNormal.SizeInBytes];
-                            Array.Copy(posAsBytes,0,bytes,VertexPositionNormal.PositionOffset,posAsBytes.Length);
-                            Array.Copy(normalAsBytes,0,bytes,VertexPositionNormal.NormalOffset,normalAsBytes.Length);
-                            break;
-                        case VertexTypes.VertexPositionNormalTextureTangent:
-                            bytes = new byte[VertexPositionNormalTextureTangent.SizeInBytes];
-                            Array.Copy(posAsBytes,0,bytes,VertexPositionNormalTextureTangent.PositionOffset,posAsBytes.Length);
-                            Array.Copy(normalAsBytes,0,bytes,VertexPositionNormalTextureTangent.NormalOffset,normalAsBytes.Length);
-                            Array.Copy(texCoordAsBytes,0,bytes,VertexPositionNormalTextureTangent.TextureCoordinatesOffset,texCoordAsBytes.Length);
-                            Array.Copy(tangentAsBytes,0,bytes,VertexPositionNormalTextureTangent.TangentOffset,tangentAsBytes.Length);
-                            break;
-                        case VertexTypes.VertexPositionNormalTextureTangentBitangent:
-                            bytes = new byte[VertexPositionNormalTextureTangentBitangent.SizeInBytes];
-                            Array.Copy(posAsBytes,0,bytes,VertexPositionNormalTextureTangentBitangent.PositionOffset,posAsBytes.Length);
-                            Array.Copy(normalAsBytes,0,bytes,VertexPositionNormalTextureTangentBitangent.NormalOffset,normalAsBytes.Length);
-                            Array.Copy(texCoordAsBytes,0,bytes,VertexPositionNormalTextureTangentBitangent.TextureCoordinatesOffset,texCoordAsBytes.Length);
-                            Array.Copy(tangentAsBytes,0,bytes,VertexPositionNormalTextureTangentBitangent.TangentOffset,tangentAsBytes.Length);
-                            Array.Copy(bitangentAsBytes,0,bytes,VertexPositionNormalTextureTangentBitangent.BitangentOffset,bitangentAsBytes.Length);
-                            break;
-                        default:
-                            throw new NotImplementedException($"{vertexType.ToString("g")} not implemented");
-                    }
+                    byte[] bytes = GenerateBytesArrayFromAssimp(vertexType,aiMesh,j);
 
                     meshDefinition[j] = ByteMarshal.ByteArrayToStructure<T>(bytes);
 
@@ -306,61 +319,7 @@ namespace Henzai
 
                 for(int j = 0; j < vertexCount; j++){
 
-                    Vector3D pPos = aiMesh.Vertices[j];
-                    Vector3D pNormal = aiMesh.Normals[j];
-                    Vector3D pTexCoord = aiMesh.HasTextureCoords(0) ? aiMesh.TextureCoordinateChannels[0][j] : Zero3D;
-                    Color4D pcolor = aiMesh.HasVertexColors(0) ? aiMesh.VertexColorChannels[0][j] : Nocolor;
-                    Vector3D pTangent = Zero3D;
-                    Vector3D pBiTangent = Zero3D;
-                    
-                    byte[] bytes;
-                    byte[] posAsBytes = ByteMarshal.ToBytes(pPos);
-                    byte[] colorAsBytes = ByteMarshal.ToBytes(pcolor);
-                    byte[] normalAsBytes = ByteMarshal.ToBytes(pNormal);
-                    byte[] texCoordAsBytes = ByteMarshal.ToBytes(pTexCoord.ToVector2());
-                    byte[] tangentAsBytes = ByteMarshal.ToBytes(pTangent);
-                    byte[] bitangentAsBytes = ByteMarshal.ToBytes(pBiTangent);
-
-                    switch(henzaiVertexType){
-                        case VertexTypes.VertexPositionColor:
-                            bytes = new byte[VertexPositionColor.SizeInBytes];
-                            Array.Copy(posAsBytes,0,bytes,VertexPositionColor.PositionOffset,posAsBytes.Length);
-                            Array.Copy(colorAsBytes,0,bytes,VertexPositionColor.ColorOffset,colorAsBytes.Length);
-                            break;
-                        case VertexTypes.VertexPositionTexture:
-                            bytes = new byte[VertexPositionTexture.SizeInBytes];
-                            Array.Copy(posAsBytes,0,bytes,VertexPositionTexture.PositionOffset,posAsBytes.Length);
-                            Array.Copy(texCoordAsBytes,0,bytes,VertexPositionTexture.TextureCoordinatesOffset,texCoordAsBytes.Length);
-                            break;
-                        case VertexTypes.VertexPositionNormalTexture:
-                            bytes = new byte[VertexPositionNormalTexture.SizeInBytes];
-                            Array.Copy(posAsBytes,0,bytes,VertexPositionNormalTexture.PositionOffset,posAsBytes.Length);
-                            Array.Copy(normalAsBytes,0,bytes,VertexPositionNormalTexture.NormalOffset,normalAsBytes.Length);
-                            Array.Copy(texCoordAsBytes,0,bytes,VertexPositionNormalTexture.TextureCoordinatesOffset,texCoordAsBytes.Length);
-                            break;
-                        case VertexTypes.VertexPositionNormal:
-                            bytes = new byte[VertexPositionNormal.SizeInBytes];
-                            Array.Copy(posAsBytes,0,bytes,VertexPositionNormal.PositionOffset,posAsBytes.Length);
-                            Array.Copy(normalAsBytes,0,bytes,VertexPositionNormal.NormalOffset,normalAsBytes.Length);
-                            break;
-                        case VertexTypes.VertexPositionNormalTextureTangent:
-                            bytes = new byte[VertexPositionNormalTextureTangent.SizeInBytes];
-                            Array.Copy(posAsBytes,0,bytes,VertexPositionNormalTextureTangent.PositionOffset,posAsBytes.Length);
-                            Array.Copy(normalAsBytes,0,bytes,VertexPositionNormalTextureTangent.NormalOffset,normalAsBytes.Length);
-                            Array.Copy(texCoordAsBytes,0,bytes,VertexPositionNormalTextureTangent.TextureCoordinatesOffset,texCoordAsBytes.Length);
-                            Array.Copy(tangentAsBytes,0,bytes,VertexPositionNormalTextureTangent.TangentOffset,tangentAsBytes.Length);
-                            break;
-                        case VertexTypes.VertexPositionNormalTextureTangentBitangent:
-                            bytes = new byte[VertexPositionNormalTextureTangentBitangent.SizeInBytes];
-                            Array.Copy(posAsBytes,0,bytes,VertexPositionNormalTextureTangentBitangent.PositionOffset,posAsBytes.Length);
-                            Array.Copy(normalAsBytes,0,bytes,VertexPositionNormalTextureTangentBitangent.NormalOffset,normalAsBytes.Length);
-                            Array.Copy(texCoordAsBytes,0,bytes,VertexPositionNormalTextureTangentBitangent.TextureCoordinatesOffset,texCoordAsBytes.Length);
-                            Array.Copy(tangentAsBytes,0,bytes,VertexPositionNormalTextureTangentBitangent.TangentOffset,tangentAsBytes.Length);
-                            Array.Copy(bitangentAsBytes,0,bytes,VertexPositionNormalTextureTangentBitangent.BitangentOffset,bitangentAsBytes.Length);
-                            break;
-                        default:
-                            throw new NotImplementedException($"{henzaiVertexType.ToString("g")} not implemented");
-                    }
+                    byte[] bytes = GenerateBytesArrayFromAssimp(henzaiVertexType,aiMesh,j);
 
                     switch(henzaiVertexType){
                         case VertexTypes.VertexPositionColor:
