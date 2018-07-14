@@ -58,9 +58,30 @@ namespace Henzai
                 return VertexTypes.VertexPosition;
         }
 
-        //TODO:
         public static LoadedMeshCounts GetHenzaiMeshCounts(this Assimp.Scene  aiScene){
             LoadedMeshCounts loadedMeshCounts = new LoadedMeshCounts();
+
+            foreach(var mesh in aiScene.Meshes){
+                var henzaiVertexType = mesh.ToHenzaiVertexType();
+
+                switch(henzaiVertexType){
+                    case VertexTypes.VertexPositionTexture:
+                        loadedMeshCounts.meshCountPT++; 
+                        break;
+                    case VertexTypes.VertexPositionNormalTexture:
+                        loadedMeshCounts.meshCountPNT++;
+                        break;
+                    case VertexTypes.VertexPositionNormal:
+                        loadedMeshCounts.meshCountPN++;
+                        break;
+                    case VertexTypes.VertexPositionNormalTextureTangentBitangent:
+                        loadedMeshCounts.meshCountPNTTB++;
+                        break;
+                    default:
+                        throw new NotImplementedException($"{henzaiVertexType.ToString("g")} not implemented");
+                }
+
+            }
 
             return loadedMeshCounts;
 
