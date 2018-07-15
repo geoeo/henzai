@@ -24,7 +24,6 @@ namespace Henzai.Examples
             : base(title,windowSize,graphicsDeviceOptions,renderOptions){
 
                 PreDraw+=RotateModel;
-                // PreRenderLoop+=FormatResourcesForRuntime;
         }
 
         private void RotateModel(float delta){
@@ -53,19 +52,6 @@ namespace Henzai.Examples
             // Vector3 newPos_2 = Vector3.Transform(suitToSun,rotationAroundY_2);
             // _sun.SetNewWorldTranslation(ref newPos_2,true);
         }
-
-        // TODO: Investigate putting this in renderable
-        // override protected void FormatResourcesForRuntime(){
-
-        //     foreach(var modelState in _modelPNTTBDescriptorList)
-        //         modelState.FormatResourcesForRuntime();
-        //     foreach(var modelState in _modelPNDescriptorList)
-        //         modelState.FormatResourcesForRuntime();
-
-
-        //     _modelPNTTBDescriptorArray = _modelPNTTBDescriptorList.ToArray();
-        //     _modelPNDescriptorArray = _modelPNDescriptorList.ToArray();
-        // }
 
         override protected void CreateResources(){
 
@@ -111,61 +97,6 @@ namespace Henzai.Examples
             sunRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPN;
             _modelPNDescriptorList.Add(sunRuntimeState);
 
-            // /// Uniform 1 - Camera
-            // _sceneRuntimeState.CameraProjViewBuffer  = _factory.CreateBuffer(new BufferDescription(Camera.SizeInBytes,BufferUsage.UniformBuffer | BufferUsage.Dynamic));
-            // _sceneRuntimeState.CameraResourceLayout 
-            //     = ResourceGenerator.GenerateResourceLayout(
-            //         _factory,
-            //         "projViewWorld",
-            //         ResourceKind.UniformBuffer,
-            //         ShaderStages.Vertex);
-            // _sceneRuntimeState.CameraResourceSet 
-            //     = ResourceGenerator.GenrateResourceSet(
-            //         _factory,
-            //         _sceneRuntimeState.CameraResourceLayout,
-            //         new BindableResource[]{_sceneRuntimeState.CameraProjViewBuffer});
-
-            // // Uniform 2 - Material
-            // _sceneRuntimeState.MaterialBuffer = _factory.CreateBuffer(new BufferDescription(Material.SizeInBytes,BufferUsage.UniformBuffer));
-            // _sceneRuntimeState.MaterialResourceLayout 
-            //     = ResourceGenerator.GenerateResourceLayout(
-            //         _factory,
-            //         "material",
-            //         ResourceKind.UniformBuffer,
-            //         ShaderStages.Fragment);
-            // _sceneRuntimeState.MaterialResourceSet 
-            //     = ResourceGenerator.GenrateResourceSet(
-            //         _factory,
-            //         _sceneRuntimeState.MaterialResourceLayout,
-            //         new BindableResource[]{_sceneRuntimeState.MaterialBuffer});
-
-            // // Uniform 3 - Light
-            // _sceneRuntimeState.LightBuffer = _factory.CreateBuffer(new BufferDescription(Light.SizeInBytes,BufferUsage.UniformBuffer));
-            // _sceneRuntimeState.LightResourceLayout 
-            //     = ResourceGenerator.GenerateResourceLayout(
-            //         _factory,
-            //         "light",
-            //         ResourceKind.UniformBuffer,
-            //         ShaderStages.Vertex | ShaderStages.Fragment);
-            // _sceneRuntimeState.LightResourceSet 
-            //     = ResourceGenerator.GenrateResourceSet(
-            //         _factory,
-            //         _sceneRuntimeState.LightResourceLayout,
-            //         new BindableResource[]{_sceneRuntimeState.LightBuffer});
-
-            //     // Uniform 4 - PointLight
-            // _sceneRuntimeState.SpotLightBuffer = _factory.CreateBuffer(new BufferDescription(4*4*4,BufferUsage.UniformBuffer));
-            // _sceneRuntimeState.SpotLightResourceLayout 
-            //     = ResourceGenerator.GenerateResourceLayout(
-            //         _factory,
-            //         "spotlight",
-            //         ResourceKind.UniformBuffer,
-            //         ShaderStages.Fragment);
-            // _sceneRuntimeState.SpotLightResourceSet 
-            //     = ResourceGenerator.GenrateResourceSet(
-            //         _factory,
-            //         _sceneRuntimeState.SpotLightResourceLayout,
-            //         new BindableResource[]{_sceneRuntimeState.SpotLightBuffer});
 
             foreach(var modelDescriptor in _modelPNTTBDescriptorList){
                 FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,InstancingData.NO_DATA); 

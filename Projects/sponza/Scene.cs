@@ -16,16 +16,6 @@ namespace Henzai.Examples
 {
     sealed class Scene : Renderable
     {
-        // private List<ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>> _modelPNTTBDescriptorList;
-        // private ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent> [] _modelPNTTBDescriptorArray;
-
-        // private List<ModelRuntimeDescriptor<VertexPositionNormal>> _modelPNDescriptorList;
-        // private ModelRuntimeDescriptor<VertexPositionNormal> [] _modelPNDescriptorArray;
-
-        // private List<ModelRuntimeDescriptor<VertexPositionTexture>> _modelPTDescriptorList;
-        // private ModelRuntimeDescriptor<VertexPositionTexture> [] _modelPTDescriptorArray;
-        // private List<ModelRuntimeDescriptor<VertexPositionColor>> _modelPCDescriptorList;
-        // private ModelRuntimeDescriptor<VertexPositionColor> [] _modelPCDescriptorArray;
 
         Model<VertexPositionNormalTextureTangentBitangent> _sponza;
         Model<VertexPositionNormal> _sun;
