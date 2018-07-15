@@ -54,8 +54,6 @@ namespace Henzai.Examples
             _model.SetNewWorldTransformation(ref newWorld,true); 
         }
 
-        override protected void FormatResourcesForRuntime(){}
-
         // TODO: Abstract Resource Crreation for Uniforms, Vertex Layouts, Disposing
         override protected void CreateResources(){
 

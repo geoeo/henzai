@@ -43,8 +43,6 @@ namespace Henzai.Examples
             Camera.LookDirection = -Vector3.Normalize(cubeToCamera); // not interpolating, might be choppy
         }
 
-        override protected void FormatResourcesForRuntime(){}
-
         override protected void CreateResources()
         {
 

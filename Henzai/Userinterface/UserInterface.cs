@@ -62,7 +62,7 @@ namespace Henzai.UserInterface
 
         abstract protected unsafe void SubmitImGUILayout(float secondsPerFrame);
 
-        override protected void FormatResourcesForRuntime(){}
+        // override protected void FormatResourcesForRuntime(){}
 
         override protected void CreateResources(){
 

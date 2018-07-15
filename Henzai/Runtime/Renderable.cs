@@ -6,6 +6,7 @@ using Veldrid;
 using Veldrid.StartupUtilities;
 using Veldrid.Sdl2;
 using Henzai.UserInterface;
+using Henzai.Geometry;
 using Henzai.Extensions;
 
 namespace Henzai.Runtime
@@ -43,6 +44,7 @@ namespace Henzai.Runtime
         public GraphicsDevice GraphicsDevice => _graphicsDevice;
         private RenderOptions _renderOptions;
         protected DisposeCollectorResourceFactory _factory;
+        protected SceneRuntimeDescriptor _sceneRuntimeState;
         protected CommandList _commandList;
         protected Resolution _renderResolution;
         /// <summary>
@@ -69,6 +71,18 @@ namespace Henzai.Runtime
         private Task[] drawTasksPost;
         public Renderable UI {set; private get;}
 
+
+        protected List<ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>> _modelPNTTBDescriptorList;
+        protected ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent> [] _modelPNTTBDescriptorArray;
+
+        protected List<ModelRuntimeDescriptor<VertexPositionNormal>> _modelPNDescriptorList;
+        protected ModelRuntimeDescriptor<VertexPositionNormal> [] _modelPNDescriptorArray;
+
+        protected List<ModelRuntimeDescriptor<VertexPositionTexture>> _modelPTDescriptorList;
+        protected ModelRuntimeDescriptor<VertexPositionTexture> [] _modelPTDescriptorArray;
+        protected List<ModelRuntimeDescriptor<VertexPositionColor>> _modelPCDescriptorList;
+        protected ModelRuntimeDescriptor<VertexPositionColor> [] _modelPCDescriptorArray;
+
         public Renderable(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions){
             WindowCreateInfo windowCI = new WindowCreateInfo()
             {
@@ -90,6 +104,13 @@ namespace Henzai.Runtime
             _factory = new DisposeCollectorResourceFactory(_graphicsDevice.ResourceFactory);
             _commandList = _factory.CreateCommandList();
 
+            _sceneRuntimeState = new SceneRuntimeDescriptor();
+
+            _modelPNTTBDescriptorList = new List<ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>>();
+            _modelPNDescriptorList = new List<ModelRuntimeDescriptor<VertexPositionNormal>>();
+            _modelPTDescriptorList = new List<ModelRuntimeDescriptor<VertexPositionTexture>>();
+            _modelPCDescriptorList = new List<ModelRuntimeDescriptor<VertexPositionColor>>();
+
         }
 
         public Renderable(GraphicsDevice graphicsDevice, Sdl2Window contextWindow){
@@ -98,6 +119,14 @@ namespace Henzai.Runtime
 
             _factory = new DisposeCollectorResourceFactory(_graphicsDevice.ResourceFactory);
             _commandList = _factory.CreateCommandList();
+
+            _sceneRuntimeState = new SceneRuntimeDescriptor();
+
+            _modelPNTTBDescriptorList = new List<ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>>();
+            _modelPNDescriptorList = new List<ModelRuntimeDescriptor<VertexPositionNormal>>();
+            _modelPTDescriptorList = new List<ModelRuntimeDescriptor<VertexPositionTexture>>();
+            _modelPCDescriptorList = new List<ModelRuntimeDescriptor<VertexPositionColor>>();
+
         }
 
         //TODO: Investigate passing Render options
@@ -119,10 +148,13 @@ namespace Henzai.Runtime
             if(UI!=null)
                 _allChildren.Add(UI);
 
+            CreateUniforms();
+
             CreateResources();
             foreach(var child in _allChildren)
                 child.CreateResources();
 
+            FormatResourcesForRuntime();
             // includes itself in the build command list process
             buildCommandListTasks = new Task[_allChildren.Count+1];
 
@@ -273,6 +305,64 @@ namespace Henzai.Runtime
         public async void DrawUI(){
             await Task.Run(() => UI.Draw()).ConfigureAwait(false);
         }
+
+        private void CreateUniforms(){
+            // Uniform 1 - Camera
+            _sceneRuntimeState.CameraProjViewBuffer  = _factory.CreateBuffer(new BufferDescription(Camera.SizeInBytes,BufferUsage.UniformBuffer | BufferUsage.Dynamic));
+            _sceneRuntimeState.CameraResourceLayout 
+                = ResourceGenerator.GenerateResourceLayout(
+                    _factory,
+                    "projViewWorld",
+                    ResourceKind.UniformBuffer,
+                    ShaderStages.Vertex);
+            _sceneRuntimeState.CameraResourceSet 
+                = ResourceGenerator.GenrateResourceSet(
+                    _factory,
+                    _sceneRuntimeState.CameraResourceLayout,
+                    new BindableResource[]{_sceneRuntimeState.CameraProjViewBuffer});
+
+            // Uniform 2 - Material
+            _sceneRuntimeState.MaterialBuffer = _factory.CreateBuffer(new BufferDescription(Material.SizeInBytes,BufferUsage.UniformBuffer));
+            _sceneRuntimeState.MaterialResourceLayout 
+                = ResourceGenerator.GenerateResourceLayout(
+                    _factory,
+                    "material",
+                    ResourceKind.UniformBuffer,
+                    ShaderStages.Fragment);
+            _sceneRuntimeState.MaterialResourceSet 
+                = ResourceGenerator.GenrateResourceSet(
+                    _factory,
+                    _sceneRuntimeState.MaterialResourceLayout,
+                    new BindableResource[]{_sceneRuntimeState.MaterialBuffer});
+
+            // Uniform 3 - Light
+            _sceneRuntimeState.LightBuffer = _factory.CreateBuffer(new BufferDescription(Light.SizeInBytes,BufferUsage.UniformBuffer));
+            _sceneRuntimeState.LightResourceLayout 
+                = ResourceGenerator.GenerateResourceLayout(
+                    _factory,
+                    "light",
+                    ResourceKind.UniformBuffer,
+                    ShaderStages.Vertex | ShaderStages.Fragment);
+            _sceneRuntimeState.LightResourceSet 
+                = ResourceGenerator.GenrateResourceSet(
+                    _factory,
+                    _sceneRuntimeState.LightResourceLayout,
+                    new BindableResource[]{_sceneRuntimeState.LightBuffer});
+
+                // Uniform 4 - PointLight
+            _sceneRuntimeState.SpotLightBuffer = _factory.CreateBuffer(new BufferDescription(4*4*4,BufferUsage.UniformBuffer));
+            _sceneRuntimeState.SpotLightResourceLayout 
+                = ResourceGenerator.GenerateResourceLayout(
+                    _factory,
+                    "spotlight",
+                    ResourceKind.UniformBuffer,
+                    ShaderStages.Fragment);
+            _sceneRuntimeState.SpotLightResourceSet 
+                = ResourceGenerator.GenrateResourceSet(
+                    _factory,
+                    _sceneRuntimeState.SpotLightResourceLayout,
+                    new BindableResource[]{_sceneRuntimeState.SpotLightBuffer});
+        }
       
         /// <summary>
         /// Executes the defined command list(s)
@@ -292,7 +382,37 @@ namespace Henzai.Runtime
         /// <summary>
         /// Convertes vertex list aggregation to arrays for runtime
         /// </summary>
-        abstract protected void FormatResourcesForRuntime();
+        private void FormatResourcesForRuntime(){
+
+            //TODO: Think of a way to incorporate instancing data better
+            // foreach(var modelDescriptor in _modelPNTTBDescriptorList)
+            //     FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,InstancingData.NO_DATA); 
+            
+            // foreach(var modelDescriptor in _modelPNDescriptorList)
+            //     FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,InstancingData.NO_DATA); 
+            
+            // foreach(var modelDescriptor in _modelPTDescriptorList)
+            //     FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,InstancingData.NO_DATA); 
+            
+            // foreach(var modelDescriptor in _modelPCDescriptorList)
+            //     FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,InstancingData.NO_DATA); 
+            
+
+            foreach(var modelState in _modelPNTTBDescriptorList)
+                modelState.FormatResourcesForRuntime();
+            foreach(var modelState in _modelPNDescriptorList)
+                modelState.FormatResourcesForRuntime();
+            foreach(var modelState in _modelPTDescriptorList)
+                modelState.FormatResourcesForRuntime();
+            foreach(var modelState in _modelPCDescriptorList)
+                modelState.FormatResourcesForRuntime();
+
+
+            _modelPNTTBDescriptorArray = _modelPNTTBDescriptorList.ToArray();
+            _modelPNDescriptorArray = _modelPNDescriptorList.ToArray();
+            _modelPTDescriptorArray = _modelPTDescriptorList.ToArray();
+            _modelPCDescriptorArray = _modelPCDescriptorList.ToArray();
+        }
 
         /// <summary>
         /// Disposes of all elements in _sceneResources

@@ -29,8 +29,6 @@ namespace Henzai.Examples
             : base(title,windowSize,graphicsDeviceOptions,renderOptions){
         }
 
-        override protected void FormatResourcesForRuntime(){}
-
         override protected void CreateResources()
         {
 

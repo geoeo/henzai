@@ -56,8 +56,6 @@ namespace Henzai.Examples
             PreDraw += this.RotateCube;
         }
 
-        override protected void FormatResourcesForRuntime(){}
-
         override protected void CreateResources(){
 
             _staticCamera = new Camera(_renderResolution.Horizontal,_renderResolution.Vertical);

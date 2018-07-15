@@ -73,8 +73,6 @@ namespace Henzai.Examples
 
         }
 
-        override protected void FormatResourcesForRuntime(){}
-
         private List<IDisposable> createOffscreenFBO(){
             Texture offscreenTexture = _factory.CreateTexture(TextureDescription.Texture2D(
                     _renderResolution.Horizontal.ToUnsigned(),

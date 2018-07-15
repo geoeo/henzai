@@ -16,54 +16,22 @@ namespace Henzai.Examples
 {
     sealed class Scene : Renderable
     {
+        // private List<ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>> _modelPNTTBDescriptorList;
+        // private ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent> [] _modelPNTTBDescriptorArray;
 
-        private SceneRuntimeDescriptor _sceneRuntimeState;
+        // private List<ModelRuntimeDescriptor<VertexPositionNormal>> _modelPNDescriptorList;
+        // private ModelRuntimeDescriptor<VertexPositionNormal> [] _modelPNDescriptorArray;
 
-        private List<ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>> _modelPNTTBDescriptorList;
-        private ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent> [] _modelPNTTBDescriptorArray;
-
-        private List<ModelRuntimeDescriptor<VertexPositionNormal>> _modelPNDescriptorList;
-        private ModelRuntimeDescriptor<VertexPositionNormal> [] _modelPNDescriptorArray;
-
-        private List<ModelRuntimeDescriptor<VertexPositionTexture>> _modelPTDescriptorList;
-        private ModelRuntimeDescriptor<VertexPositionTexture> [] _modelPTDescriptorArray;
-        private List<ModelRuntimeDescriptor<VertexPositionColor>> _modelPCDescriptorList;
-        private ModelRuntimeDescriptor<VertexPositionColor> [] _modelPCDescriptorArray;
+        // private List<ModelRuntimeDescriptor<VertexPositionTexture>> _modelPTDescriptorList;
+        // private ModelRuntimeDescriptor<VertexPositionTexture> [] _modelPTDescriptorArray;
+        // private List<ModelRuntimeDescriptor<VertexPositionColor>> _modelPCDescriptorList;
+        // private ModelRuntimeDescriptor<VertexPositionColor> [] _modelPCDescriptorArray;
 
         Model<VertexPositionNormalTextureTangentBitangent> _sponza;
         Model<VertexPositionNormal> _sun;
 
         public Scene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
             : base(title,windowSize,graphicsDeviceOptions,renderOptions){
-                _sceneRuntimeState = new SceneRuntimeDescriptor();
-
-                _modelPNTTBDescriptorList = new List<ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>>();
-                _modelPNDescriptorList = new List<ModelRuntimeDescriptor<VertexPositionNormal>>();
-                _modelPTDescriptorList = new List<ModelRuntimeDescriptor<VertexPositionTexture>>();
-                _modelPCDescriptorList = new List<ModelRuntimeDescriptor<VertexPositionColor>>();
-
-
-                PreRenderLoop+=FormatResourcesForRuntime;
-        }
-
-
-        // TODO: Investigate putting this in renderable
-        override protected void FormatResourcesForRuntime(){
-
-            foreach(var modelState in _modelPNTTBDescriptorList)
-                modelState.FormatResourcesForRuntime();
-            foreach(var modelState in _modelPNDescriptorList)
-                modelState.FormatResourcesForRuntime();
-            foreach(var modelState in _modelPTDescriptorList)
-                modelState.FormatResourcesForRuntime();
-            foreach(var modelState in _modelPCDescriptorList)
-                modelState.FormatResourcesForRuntime();
-
-
-            _modelPNTTBDescriptorArray = _modelPNTTBDescriptorList.ToArray();
-            _modelPNDescriptorArray = _modelPNDescriptorList.ToArray();
-            _modelPTDescriptorArray = _modelPTDescriptorList.ToArray();
-            _modelPCDescriptorArray = _modelPCDescriptorList.ToArray();
         }
 
         override protected void CreateResources(){
@@ -124,63 +92,7 @@ namespace Henzai.Examples
 
             var sunRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormal>(_sun,"Phong","Phong",VertexTypes.VertexPositionNormal,PrimitiveTopology.TriangleList);
             sunRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPN;
-            _modelPNDescriptorList.Add(sunRuntimeState);
-
-            /// Uniform 1 - Camera
-            _sceneRuntimeState.CameraProjViewBuffer  = _factory.CreateBuffer(new BufferDescription(Camera.SizeInBytes,BufferUsage.UniformBuffer | BufferUsage.Dynamic));
-            _sceneRuntimeState.CameraResourceLayout 
-                = ResourceGenerator.GenerateResourceLayout(
-                    _factory,
-                    "projViewWorld",
-                    ResourceKind.UniformBuffer,
-                    ShaderStages.Vertex);
-            _sceneRuntimeState.CameraResourceSet 
-                = ResourceGenerator.GenrateResourceSet(
-                    _factory,
-                    _sceneRuntimeState.CameraResourceLayout,
-                    new BindableResource[]{_sceneRuntimeState.CameraProjViewBuffer});
-
-            // Uniform 2 - Material
-            _sceneRuntimeState.MaterialBuffer = _factory.CreateBuffer(new BufferDescription(Material.SizeInBytes,BufferUsage.UniformBuffer));
-            _sceneRuntimeState.MaterialResourceLayout 
-                = ResourceGenerator.GenerateResourceLayout(
-                    _factory,
-                    "material",
-                    ResourceKind.UniformBuffer,
-                    ShaderStages.Fragment);
-            _sceneRuntimeState.MaterialResourceSet 
-                = ResourceGenerator.GenrateResourceSet(
-                    _factory,
-                    _sceneRuntimeState.MaterialResourceLayout,
-                    new BindableResource[]{_sceneRuntimeState.MaterialBuffer});
-
-            // Uniform 3 - Light
-            _sceneRuntimeState.LightBuffer = _factory.CreateBuffer(new BufferDescription(Light.SizeInBytes,BufferUsage.UniformBuffer));
-            _sceneRuntimeState.LightResourceLayout 
-                = ResourceGenerator.GenerateResourceLayout(
-                    _factory,
-                    "light",
-                    ResourceKind.UniformBuffer,
-                    ShaderStages.Vertex | ShaderStages.Fragment);
-            _sceneRuntimeState.LightResourceSet 
-                = ResourceGenerator.GenrateResourceSet(
-                    _factory,
-                    _sceneRuntimeState.LightResourceLayout,
-                    new BindableResource[]{_sceneRuntimeState.LightBuffer});
-
-                // Uniform 4 - PointLight
-            _sceneRuntimeState.SpotLightBuffer = _factory.CreateBuffer(new BufferDescription(4*4*4,BufferUsage.UniformBuffer));
-            _sceneRuntimeState.SpotLightResourceLayout 
-                = ResourceGenerator.GenerateResourceLayout(
-                    _factory,
-                    "spotlight",
-                    ResourceKind.UniformBuffer,
-                    ShaderStages.Fragment);
-            _sceneRuntimeState.SpotLightResourceSet 
-                = ResourceGenerator.GenrateResourceSet(
-                    _factory,
-                    _sceneRuntimeState.SpotLightResourceLayout,
-                    new BindableResource[]{_sceneRuntimeState.SpotLightBuffer});
+            // _modelPNDescriptorList.Add(sunRuntimeState);
 
             //TODO: Abstrct this
             foreach(var modelDescriptor in _modelPNTTBDescriptorList){

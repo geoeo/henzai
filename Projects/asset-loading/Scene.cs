@@ -41,8 +41,6 @@ namespace Henzai.Examples
                 _indexBuffers = new List<DeviceBuffer>();
         }
 
-        override protected void FormatResourcesForRuntime(){}
-
         // TODO: Abstract Resource Crreation for Uniforms, Vertex Layouts, Disposing
         override protected void CreateResources(){
 

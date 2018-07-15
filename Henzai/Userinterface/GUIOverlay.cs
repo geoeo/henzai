@@ -56,7 +56,7 @@ namespace Henzai.UserInterface
 
         }
 
-        override protected void FormatResourcesForRuntime(){}
+        // override protected void FormatResourcesForRuntime(){}
 
         override protected void CreateResources(){
 
