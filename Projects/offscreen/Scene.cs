@@ -58,7 +58,7 @@ namespace Henzai.Examples
 
         override protected void CreateResources(){
 
-            _staticCamera = new Camera(_renderResolution.Horizontal,_renderResolution.Vertical);
+            _staticCamera = new Camera(RenderResoultion.Horizontal,RenderResoultion.Vertical);
 
             createOffscreenFBO();
 
@@ -74,13 +74,13 @@ namespace Henzai.Examples
 
         private List<IDisposable> createOffscreenFBO(){
             Texture offscreenTexture = _factory.CreateTexture(TextureDescription.Texture2D(
-                    _renderResolution.Horizontal.ToUnsigned(),
-                    _renderResolution.Vertical.ToUnsigned(),1,1,
+                    RenderResoultion.Horizontal.ToUnsigned(),
+                    RenderResoultion.Vertical.ToUnsigned(),1,1,
                     PixelFormat.B8_G8_R8_A8_UNorm,
                     TextureUsage.RenderTarget | TextureUsage.Sampled));
             Texture offscreenDepth = _factory.CreateTexture(TextureDescription.Texture2D(
-                _renderResolution.Horizontal.ToUnsigned(),
-                _renderResolution.Vertical.ToUnsigned(),
+                RenderResoultion.Horizontal.ToUnsigned(),
+                RenderResoultion.Vertical.ToUnsigned(),
                 1,1,
                 PixelFormat.R16_UNorm,TextureUsage.DepthStencil));
 
@@ -454,7 +454,7 @@ namespace Henzai.Examples
         }
 
         private void ScaleTextureQuadToMatchResolution(){
-            float horizontal = _renderResolution.Horizontal.ToFloat()/_renderResolution.Vertical.ToFloat();
+            float horizontal = RenderResoultion.Horizontal.ToFloat()/RenderResoultion.Vertical.ToFloat();
             float vertical = 1;
             Matrix4x4 scale = Matrix4x4.CreateScale(horizontal,vertical,1f,new Vector3(-1,0,0));
             _worldTransTexturedQuad= scale*_worldTransTexturedQuad;

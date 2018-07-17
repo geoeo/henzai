@@ -48,14 +48,14 @@ namespace Henzai
         public float Yaw { get => _yaw; set { _yaw = value; UpdateViewMatrix(); } }
         public float Pitch { get => _pitch; set { _pitch = value; UpdateViewMatrix(); } }
 
-        public Camera(float width, float height)
+        public Camera(float width, float height, float far = 1000f, float moveSpeed = 10f)
         {
             _fov = (float)Math.PI/4;
             _near = 0.1f;
-            _far = 1000f;
+            _far = far;
             _position = DEFAULT_POSITION;
             _lookDirection = DEFAULT_LOOK_DIRECTION;
-            _moveSpeed = 10f;
+            _moveSpeed = moveSpeed;
 
             _windowWidth = width;
             _windowHeight = height;

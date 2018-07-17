@@ -12,5 +12,6 @@ namespace Henzai
         public double MillisecondsPerFrame => 1000.0/FPSTarget;
         public GraphicsBackend PreferredGraphicsBackend { get ;set; }
         public bool UsePreferredGraphicsBackend {get; set;}
+        public float FarPlane {get; set;}
     }
 }

@@ -26,7 +26,8 @@ namespace Henzai.Examples
                 PreferredGraphicsBackend = GraphicsBackend.OpenGL,
                 UsePreferredGraphicsBackend = true,
                 LimitFrames = true,
-                FPSTarget = 60.0
+                FPSTarget = 60.0,
+                FarPlane = 5000f
             };
 
             Scene scene = new Scene(

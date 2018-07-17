@@ -46,7 +46,8 @@ namespace Henzai.Runtime
         protected DisposeCollectorResourceFactory _factory;
         protected SceneRuntimeDescriptor _sceneRuntimeState;
         protected CommandList _commandList;
-        protected Resolution _renderResolution;
+        private Resolution _renderResolution;
+        public Resolution RenderResoultion => _renderResolution;
         /// <summary>
         /// Holds all created resources which implement IDisposable
         /// </summary>
@@ -139,7 +140,11 @@ namespace Henzai.Runtime
         {
             _renderResolution = renderResolution;
 
-            _camera = new Camera(renderResolution.Horizontal,renderResolution.Vertical);
+            if(_renderOptions.FarPlane > 0)
+            _camera = new Camera(renderResolution.Horizontal,renderResolution.Vertical,_renderOptions.FarPlane);
+            else
+                _camera = new Camera(renderResolution.Horizontal,renderResolution.Vertical);
+
             // Tick every millisecond
             _frameTimer = new FrameTimer(1.0);      
 
