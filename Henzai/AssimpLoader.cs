@@ -56,6 +56,8 @@ namespace Henzai
             //     return VertexTypes.VertexPositionNormalTexture;
             else if(hasNormals && !hasColor)
                 return VertexTypes.VertexPositionNormal;
+            else if(hasUVs)
+                return VertexTypes.VertexPositionTexture;
             else if(hasColor)
                 return VertexTypes.VertexPositionColor;
             else 
@@ -452,6 +454,8 @@ namespace Henzai
                 loadedModels.modelPC = new Model<VertexPositionColor>(modelDir,meshesPC,meshIndiciesPC);
             if(meshCountPN > 0)
                 loadedModels.modelPN = new Model<VertexPositionNormal>(modelDir,meshesPN,meshIndiciesPN);
+            if(meshCountPT > 0)
+                loadedModels.modelPT = new Model<VertexPositionTexture>(modelDir,meshesPT,meshIndiciesPT);                
             if(meshCountPNT > 0)
                 loadedModels.modelPNT = new Model<VertexPositionNormalTexture>(modelDir,meshesPNT,meshIndiciesPNT);
             if(meshCountPNTTB > 0) 
