@@ -17,10 +17,13 @@ namespace Henzai
         /// </summary>
         public static uint SizeInBytes => 48;
         private Vector4 _light; 
+
         // W channel used for intensity
         private Vector4 _color;
+
         // Constant,Linear,Quadratic,Unsused
         private Vector4 _attenuation = DEFAULT_ATTENTUATION;
+
         // Pointlight - xyz are direction, w is linear attenuation
         private Vector4 _direction;
         // outer cutoff, inner cutoff, epsilon
@@ -76,6 +79,17 @@ namespace Henzai
         public Light(Vector4 light, RgbaFloat color, float intensity){
             _color = color.ToVector4();
             _color.W = intensity;
+            _light = light;
+        }
+
+        public Light(Vector4 light, RgbaFloat color){
+            _color = color.ToVector4();
+            _light = light;
+        }
+
+        public Light(Vector4 light, RgbaFloat color, Vector4 attenuation){
+            _color = color.ToVector4();
+            _attenuation = attenuation;
             _light = light;
         }
 
