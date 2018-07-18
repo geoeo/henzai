@@ -250,28 +250,28 @@ namespace Henzai
             int meshCount = pScene.MeshCount;
 
             var loadedMeshCounts = pScene.GetHenzaiMeshCounts();
-            int meshCountP = loadedMeshCounts.meshCountP;
+            // int meshCountP = loadedMeshCounts.meshCountP;
             int meshCountPC = loadedMeshCounts.meshCountPC;
             int meshCountPN = loadedMeshCounts.meshCountPN;
             int meshCountPT = loadedMeshCounts.meshCountPT;
             int meshCountPNT = loadedMeshCounts.meshCountPNT;
             int meshCountPNTTB = loadedMeshCounts.meshCountPNTTB;
 
-            Geometry.Mesh<VertexPosition>[] meshesP = new Geometry.Mesh<VertexPosition>[meshCountP];
+            // Geometry.Mesh<VertexPosition>[] meshesP = new Geometry.Mesh<VertexPosition>[meshCountP];
             Geometry.Mesh<VertexPositionColor>[] meshesPC = new Geometry.Mesh<VertexPositionColor>[meshCountPC];
             Geometry.Mesh<VertexPositionNormal>[] meshesPN = new Geometry.Mesh<VertexPositionNormal>[meshCountPN];
             Geometry.Mesh<VertexPositionTexture>[] meshesPT = new Geometry.Mesh<VertexPositionTexture>[meshCountPT];
             Geometry.Mesh<VertexPositionNormalTexture>[] meshesPNT = new Geometry.Mesh<VertexPositionNormalTexture>[meshCountPNT];
             Geometry.Mesh<VertexPositionNormalTextureTangentBitangent>[] meshesPNTTB = new Geometry.Mesh<VertexPositionNormalTextureTangentBitangent>[meshCountPNTTB];
 
-            ushort[][] meshIndiciesP = new ushort[meshCountP][];
+            // ushort[][] meshIndiciesP = new ushort[meshCountP][];
             ushort[][] meshIndiciesPC = new ushort[meshCountPC][];
             ushort[][] meshIndiciesPN = new ushort[meshCountPN][];
             ushort[][] meshIndiciesPT = new ushort[meshCountPT][];
             ushort[][] meshIndiciesPNT = new ushort[meshCountPNT][];
             ushort[][] meshIndiciesPNTTB = new ushort[meshCountPNTTB][];
 
-            int meshIndiciesP_Counter = 0;
+            // int meshIndiciesP_Counter = 0;
             int meshIndiciesPC_Counter = 0;
             int meshIndiciesPN_Counter = 0;
             int meshIndiciesPT_Counter = 0;
@@ -448,8 +448,8 @@ namespace Henzai
 
             }
 
-            if(meshCountP > 0)
-                loadedModels.modelP = new Model<VertexPosition>(modelDir,meshesP,meshIndiciesP);
+            // if(meshCountP > 0)
+                // loadedModels.modelP = new Model<VertexPosition>(modelDir,meshesP,meshIndiciesP);
             if(meshCountPC > 0 )
                 loadedModels.modelPC = new Model<VertexPositionColor>(modelDir,meshesPC,meshIndiciesPC);
             if(meshCountPN > 0)
