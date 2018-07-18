@@ -25,24 +25,22 @@ namespace Henzai.Examples
 
         override protected void CreateResources(){
 
-            // RgbaFloat lightColor = RgbaFloat.Orange;
-            RgbaFloat lightColor = RgbaFloat.LightGrey;
-            _sceneRuntimeState.Light = new Light(new Vector4(0,200,0,1),lightColor,0.001f);
+            RgbaFloat lightColor = RgbaFloat.White;
+            // RgbaFloat lightColor = RgbaFloat.LightGrey;
+            _sceneRuntimeState.Light = new Light(new Vector4(0,50,0,1),lightColor);
             _sceneRuntimeState.Camera = Camera;
             _sceneRuntimeState.SpotLight = Light.NO_POINTLIGHT;
 
             // string filePath = Path.Combine(AppContext.BaseDirectory, "armor/armor.dae"); 
             // string filePath = Path.Combine(AppContext.BaseDirectory, "nanosuit/nanosuit.obj"); 
             
-            //TODO: Write method to split Model into different vertex types if some textures are not available!
+            //TODO: Write method to remove ambient terms
             var sponzaModels = AssimpLoader.LoadModelsFromFile(AppContext.BaseDirectory,"sponza/sponza.obj");
             var sponzaPNTTB = sponzaModels.modelPNTTB;
             var sponzaPT = sponzaModels.modelPT;
             var sponzaPC = sponzaModels.modelPC;
 
             _sun = new Model<VertexPositionNormal>(String.Empty,GeometryFactory.GenerateSphereNormal(100,100,1));
-            _sun.meshes[0].TryGetMaterial().textureDiffuse = "Water.jpg";
-            _sun.meshes[0].TryGetMaterial().textureNormal = "WaterNorm.jpg";
             _sun.meshes[0].TryGetMaterial().ambient = lightColor.ToVector4();
             // _sun.meshes[0].TryGetMaterial().ambient = lightColor.ToVector4();
             ref Vector4 lightPos = ref _sceneRuntimeState.Light.LightPos_DontMutate;
@@ -70,14 +68,15 @@ namespace Henzai.Examples
             // sunRuntimeState.CallTextureResourceLayoutGeneration+=ResourceGenerator.GenerateTextureResourceLayoutForNormalMapping;
             // sunRuntimeState.CallTextureResourceSetGeneration+=ResourceGenerator.GenerateTextureResourceSetForNormalMapping;
 
+            //TODO: Automate this
             _modelPNTTBDescriptorList.Add(sponzaRuntimeState);
             _modelPCDescriptorList.Add(sponzaRuntimeStateColorOnly);
-            _modelPTDescriptorList.Add(sponzaRuntimeStateTexOnly);
+            // _modelPTDescriptorList.Add(sponzaRuntimeStateTexOnly);
             // _modelStatesList.Add(sunRuntimeState);
 
             var sunRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormal>(_sun,"Phong","Phong",VertexTypes.VertexPositionNormal,PrimitiveTopology.TriangleList);
             sunRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPN;
-            // _modelPNDescriptorList.Add(sunRuntimeState);
+            _modelPNDescriptorList.Add(sunRuntimeState);
 
             //TODO: Abstrct this
             foreach(var modelDescriptor in _modelPNTTBDescriptorList){
