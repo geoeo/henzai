@@ -35,13 +35,16 @@ namespace Henzai.UserInterface
         private bool _shiftDown;
         private bool _altDown;
 
+        protected bool backendCallback = false;
+        protected GraphicsBackend newGraphicsBackend = GraphicsBackend.OpenGL;
+        public event Action<GraphicsBackend> changeBackendAction;
+
 
         public UserInterface(GraphicsDevice graphicsDevice, Sdl2Window contextWindow) : base(graphicsDevice,contextWindow){
             _assembly = typeof(UserInterface).GetTypeInfo().Assembly;
 
             ImGui.GetIO().FontAtlas.AddDefaultFont();
         }
-
 
         public void SetOverlayFor(Renderable scene){
             // Needs to be called before building command lists
@@ -63,6 +66,10 @@ namespace Henzai.UserInterface
             UpdateImGuiInput(inputSnapshot);
             SubmitImGUILayout(deltaSeconds);
             ImGui.Render();
+
+            if(backendCallback)
+                changeBackendAction?.Invoke(newGraphicsBackend); 
+
 
         }
 

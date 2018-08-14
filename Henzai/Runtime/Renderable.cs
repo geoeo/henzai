@@ -226,7 +226,6 @@ namespace Henzai.Runtime
 
             }
 
-            _graphicsDevice.WaitForIdle();
             Dispose();
 
         }
@@ -424,13 +423,17 @@ namespace Henzai.Runtime
         /// <summary>
         /// Disposes of all elements in _sceneResources
         /// </summary>
-         public void Dispose(){
+        public void Dispose(){
 
+            _graphicsDevice.WaitForIdle();
             _factory.DisposeCollector.DisposeAll();
             foreach(var child in _allChildren)
                 child.Dispose();
-            if(!_isChild)
+            if(!_isChild){
                 _graphicsDevice.Dispose();
+                _contextWindow.Close();
+            }
+
         }
     }
 }

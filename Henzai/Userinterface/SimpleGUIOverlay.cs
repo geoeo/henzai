@@ -8,7 +8,6 @@ namespace Henzai.UserInterface
 {
     public class SimpleGUIOverlay : UserInterface
    {
-        public event Action changeBackend;
 
         public SimpleGUIOverlay(GraphicsDevice graphicsDevice, Sdl2Window contextWindow) 
         : base(graphicsDevice,contextWindow){}
@@ -21,19 +20,23 @@ namespace Henzai.UserInterface
 
             if (ImGui.BeginMainMenuBar())
             {
+
                 ImGui.Text(performance);
                 ImGui.Text("||");
                 if (ImGui.BeginMenu("Backend"))
                 {
                     if (ImGui.MenuItem("OpenGL",GraphicsDevice.IsBackendSupported(GraphicsBackend.OpenGL))) {
-                        changeBackend?.Invoke(); 
+                        backendCallback = true;
+                        newGraphicsBackend = GraphicsBackend.OpenGL;
                     }
                     if (ImGui.MenuItem("Metal",GraphicsDevice.IsBackendSupported(GraphicsBackend.Metal))){ 
-                        changeBackend?.Invoke();
+                        backendCallback = true;
+                        newGraphicsBackend = GraphicsBackend.Metal;
                     }
                     ImGui.EndMenu();
                 }
                 ImGui.EndMainMenuBar(); 
+
             }
 
         }

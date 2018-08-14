@@ -7,8 +7,16 @@ namespace Henzai.Examples
 {
     internal class Program
     {
+        private static Scene _scene;
+        private static SimpleGUIOverlay  _gui;
+
         static void Main(string[] args)
         {
+            createScene(GraphicsBackend.OpenGL);
+        }
+
+        public static void createScene(GraphicsBackend graphicsBackend){
+
             Resolution renderResolution = new Resolution(960,540);
             Resolution windowSize = new Resolution(960,540);
             GraphicsDeviceOptions gdOptions = new GraphicsDeviceOptions()
@@ -23,29 +31,30 @@ namespace Henzai.Examples
             RenderOptions rdOptions = new RenderOptions()
             {
                 Resolution = renderResolution,
-                PreferredGraphicsBackend = GraphicsBackend.OpenGL,
+                PreferredGraphicsBackend = graphicsBackend,
                 UsePreferredGraphicsBackend = true,
                 LimitFrames = true,
                 FPSTarget = 60.0,
                 FarPlane = 2000f
             };
 
-            Scene scene = new Scene(
+            _scene = new Scene(
                 "Sponza",
                 windowSize,
                 gdOptions,
                 rdOptions
             );
 
-            SimpleGUIOverlay gui = new SimpleGUIOverlay(scene.GraphicsDevice,scene.contextWindow);
-            gui.SetOverlayFor(scene);
-            gui.changeBackend += Program.ChangeBackend;
+            _gui = new SimpleGUIOverlay(_scene.GraphicsDevice,_scene.contextWindow);
+            _gui.SetOverlayFor(_scene);
+            _gui.changeBackendAction += Program.ChangeBackend;
 
-            scene.Run(renderResolution);
+            _scene.Run(renderResolution);
         }
 
-        public static void ChangeBackend(){
-            Console.WriteLine("Change backend");
+        public static void ChangeBackend(GraphicsBackend graphicsBackend){
+            _scene.Dispose();
+            createScene(graphicsBackend);
         }
     }
 }
