@@ -39,8 +39,13 @@ namespace Henzai.Examples
 
             SimpleGUIOverlay gui = new SimpleGUIOverlay(scene.GraphicsDevice,scene.contextWindow);
             gui.SetOverlayFor(scene);
+            gui.changeBackend += Program.ChangeBackend;
 
             scene.Run(renderResolution);
+        }
+
+        public static void ChangeBackend(){
+            Console.WriteLine("Change backend");
         }
     }
 }

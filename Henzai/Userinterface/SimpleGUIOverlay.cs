@@ -8,6 +8,8 @@ namespace Henzai.UserInterface
 {
     public class SimpleGUIOverlay : UserInterface
    {
+        public event Action changeBackend;
+
         public SimpleGUIOverlay(GraphicsDevice graphicsDevice, Sdl2Window contextWindow) 
         : base(graphicsDevice,contextWindow){}
 
@@ -23,8 +25,12 @@ namespace Henzai.UserInterface
                 ImGui.Text("||");
                 if (ImGui.BeginMenu("Backend"))
                 {
-                    if (ImGui.MenuItem("OpenGL",true)) { Console.WriteLine("OpenGL"); }
-                    if (ImGui.MenuItem("Metal",true))  { Console.WriteLine("Metal"); }
+                    if (ImGui.MenuItem("OpenGL",GraphicsDevice.IsBackendSupported(GraphicsBackend.OpenGL))) {
+                        changeBackend?.Invoke(); 
+                    }
+                    if (ImGui.MenuItem("Metal",GraphicsDevice.IsBackendSupported(GraphicsBackend.Metal))){ 
+                        changeBackend?.Invoke();
+                    }
                     ImGui.EndMenu();
                 }
                 ImGui.EndMainMenuBar(); 

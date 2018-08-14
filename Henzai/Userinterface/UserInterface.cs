@@ -48,6 +48,7 @@ namespace Henzai.UserInterface
             scene.PreDraw_Float_Input += UpdateImGui;
             scene.UI = this;
             _isChild = true;
+
         }
 
         public void UpdateImGui(float deltaSeconds, InputSnapshot inputSnapshot){
@@ -127,9 +128,7 @@ namespace Henzai.UserInterface
         }
 
         override protected void Draw(){
-
             GraphicsDevice.SubmitCommands(_commandList);
-
         }
 
         private unsafe void RenderImGuiDrawData(DrawData* drawData,GraphicsDevice graphicsDevice, CommandList commandList){
@@ -137,10 +136,8 @@ namespace Henzai.UserInterface
             uint indexOffsetInElements = 0;
 
             if (drawData->CmdListsCount == 0)
-            {
                 return;
-            }
-
+            
             uint totalVBSize = (uint)(drawData->TotalVtxCount * sizeof(DrawVert));
             if (totalVBSize > _vertexBuffer.SizeInBytes)
             {
