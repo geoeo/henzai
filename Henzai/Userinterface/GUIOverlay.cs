@@ -56,8 +56,6 @@ namespace Henzai.UserInterface
 
         }
 
-        // override protected void FormatResourcesForRuntime(){}
-
         override protected void CreateResources(){
 
             _vertexBuffer = _factory.CreateBuffer(new BufferDescription(10000, BufferUsage.VertexBuffer | BufferUsage.Dynamic));

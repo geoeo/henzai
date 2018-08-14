@@ -31,6 +31,10 @@ namespace Henzai.UserInterface
         private ResourceSet _fontTextureResourceSet;
         private IntPtr _fontAtlasID = (IntPtr)1;
 
+        private bool _controlDown;
+        private bool _shiftDown;
+        private bool _altDown;
+
 
         public UserInterface(GraphicsDevice graphicsDevice, Sdl2Window contextWindow) : base(graphicsDevice,contextWindow){
             _assembly = typeof(UserInterface).GetTypeInfo().Assembly;
@@ -41,12 +45,12 @@ namespace Henzai.UserInterface
 
         public void SetOverlayFor(Renderable scene){
             // Needs to be called before building command lists
-            scene.PreDraw += UpdateImGui;
+            scene.PreDraw_Float_Input += UpdateImGui;
             scene.UI = this;
             _isChild = true;
         }
 
-        public void UpdateImGui(float deltaSeconds){
+        public void UpdateImGui(float deltaSeconds, InputSnapshot inputSnapshot){
 
             ImGuiNET.IO io = ImGui.GetIO();
             io.DeltaTime = deltaSeconds;
@@ -55,14 +59,13 @@ namespace Henzai.UserInterface
             
 
             ImGui.NewFrame();
+            UpdateImGuiInput(inputSnapshot);
             SubmitImGUILayout(deltaSeconds);
             ImGui.Render();
 
         }
 
         abstract protected unsafe void SubmitImGUILayout(float secondsPerFrame);
-
-        // override protected void FormatResourcesForRuntime(){}
 
         override protected void CreateResources(){
 
@@ -275,6 +278,53 @@ namespace Henzai.UserInterface
             _fontTextureView = gd.ResourceFactory.CreateTextureView(_fontTexture);
 
             io.FontAtlas.ClearTexData();
+        }
+
+        private unsafe void UpdateImGuiInput(InputSnapshot snapshot)
+        {
+            ImGuiNET.IO io = ImGui.GetIO();
+
+            Vector2 mousePosition = snapshot.MousePosition;
+
+            io.MousePosition = mousePosition;
+            io.MouseDown[0] = snapshot.IsMouseDown(MouseButton.Left);
+            io.MouseDown[1] = snapshot.IsMouseDown(MouseButton.Right);
+            io.MouseDown[2] = snapshot.IsMouseDown(MouseButton.Middle);
+
+            float delta = snapshot.WheelDelta;
+            io.MouseWheel = delta;
+
+            ImGui.GetIO().MouseWheel = delta;
+
+            IReadOnlyList<char> keyCharPresses = snapshot.KeyCharPresses;
+            for (int i = 0; i < keyCharPresses.Count; i++)
+            {
+                char c = keyCharPresses[i];
+                ImGui.AddInputCharacter(c);
+            }
+
+            IReadOnlyList<KeyEvent> keyEvents = snapshot.KeyEvents;
+            for (int i = 0; i < keyEvents.Count; i++)
+            {
+                KeyEvent keyEvent = keyEvents[i];
+                io.KeysDown[(int)keyEvent.Key] = keyEvent.Down;
+                if (keyEvent.Key == Key.ControlLeft)
+                {
+                    _controlDown = keyEvent.Down;
+                }
+                if (keyEvent.Key == Key.ShiftLeft)
+                {
+                    _shiftDown = keyEvent.Down;
+                }
+                if (keyEvent.Key == Key.AltLeft)
+                {
+                    _altDown = keyEvent.Down;
+                }
+            }
+
+            io.CtrlPressed = _controlDown;
+            io.AltPressed = _altDown;
+            io.ShiftPressed = _shiftDown;
         }
 
         private byte[] LoadEmbeddedShaderCode(ResourceFactory factory, string name)

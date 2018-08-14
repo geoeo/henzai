@@ -60,6 +60,7 @@ namespace Henzai.Runtime
         /// Bind Actions that have to be executed prior to every draw call
         /// </summary>
         public event Action<float> PreDraw;
+        public event Action<float,InputSnapshot> PreDraw_Float_Input;
         /// <summary>
         /// Bind Actions that have to be executed after every draw call
         /// </summary>
@@ -177,6 +178,7 @@ namespace Henzai.Runtime
                 if(_contextWindow.Exists){
 
                     PreDraw?.Invoke(_frameTimer.prevFrameTicksInSeconds);
+                    PreDraw_Float_Input?.Invoke(_frameTimer.prevFrameTicksInSeconds,inputSnapshot);
 
                     buildCommandListTasks[0] = Task.Run(() => this.BuildCommandList());
                     for(int i = 0; i < _allChildren.Count; i++){

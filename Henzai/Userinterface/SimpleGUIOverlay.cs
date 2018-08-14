@@ -2,6 +2,7 @@ using System.Numerics;
 using ImGuiNET;
 using Veldrid;
 using Veldrid.Sdl2;
+using System;
 
 namespace Henzai.UserInterface
 {
@@ -19,7 +20,13 @@ namespace Henzai.UserInterface
             if (ImGui.BeginMainMenuBar())
             {
                 ImGui.Text(performance);
-                //ImGui.Text(performance_2);
+                ImGui.Text("||");
+                if (ImGui.BeginMenu("Backend"))
+                {
+                    if (ImGui.MenuItem("OpenGL",true)) { Console.WriteLine("OpenGL"); }
+                    if (ImGui.MenuItem("Metal",true))  { Console.WriteLine("Metal"); }
+                    ImGui.EndMenu();
+                }
                 ImGui.EndMainMenuBar(); 
             }
 
