@@ -23,6 +23,10 @@ namespace Henzai.Examples
             : base(title,windowSize,graphicsDeviceOptions,renderOptions){
         }
 
+        public Scene(string title, Sdl2Window contextWindow, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
+            : base(title,contextWindow,graphicsDeviceOptions,renderOptions){
+        }
+
         override protected void CreateResources(){
 
             RgbaFloat lightColor = RgbaFloat.White;

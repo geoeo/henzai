@@ -39,7 +39,7 @@ namespace Henzai.Runtime
         public List<Renderable> ChildrenPost => _childrenPost;
         private List<Renderable> _allChildren = new List<Renderable>();
         private Sdl2Window _contextWindow;
-        public Sdl2Window contextWindow => _contextWindow;
+        public Sdl2Window ContextWindow => _contextWindow;
         private GraphicsDevice _graphicsDevice;
         public GraphicsDevice GraphicsDevice => _graphicsDevice;
         private RenderOptions _renderOptions;
@@ -84,6 +84,28 @@ namespace Henzai.Runtime
         protected ModelRuntimeDescriptor<VertexPositionTexture> [] _modelPTDescriptorArray;
         protected List<ModelRuntimeDescriptor<VertexPositionColor>> _modelPCDescriptorList;
         protected ModelRuntimeDescriptor<VertexPositionColor> [] _modelPCDescriptorArray;
+
+        public Renderable(string title, Sdl2Window contextWindow, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions){
+            _contextWindow = contextWindow;
+
+            if(renderOptions.UsePreferredGraphicsBackend)
+                _graphicsDevice = VeldridStartup.CreateGraphicsDevice(_contextWindow,graphicsDeviceOptions,renderOptions.PreferredGraphicsBackend);
+            else
+                _graphicsDevice = VeldridStartup.CreateGraphicsDevice(_contextWindow,graphicsDeviceOptions);
+
+            _contextWindow.Title = $"{title} / {_graphicsDevice.BackendType.ToString()}";
+            _renderOptions = renderOptions;
+            _factory = new DisposeCollectorResourceFactory(_graphicsDevice.ResourceFactory);
+            _commandList = _factory.CreateCommandList();
+
+            _sceneRuntimeState = new SceneRuntimeDescriptor();
+
+            _modelPNTTBDescriptorList = new List<ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>>();
+            _modelPNDescriptorList = new List<ModelRuntimeDescriptor<VertexPositionNormal>>();
+            _modelPTDescriptorList = new List<ModelRuntimeDescriptor<VertexPositionTexture>>();
+            _modelPCDescriptorList = new List<ModelRuntimeDescriptor<VertexPositionColor>>();
+
+        }
 
         public Renderable(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions){
             WindowCreateInfo windowCI = new WindowCreateInfo()
@@ -418,6 +440,23 @@ namespace Henzai.Runtime
             _modelPNDescriptorArray = _modelPNDescriptorList.ToArray();
             _modelPTDescriptorArray = _modelPTDescriptorList.ToArray();
             _modelPCDescriptorArray = _modelPCDescriptorList.ToArray();
+        }
+
+        /// <summary>
+        /// Disposes of all elements in _sceneResources
+        /// </summary>
+        public void Dispose(bool disposeContextWindow = true){
+
+            _graphicsDevice.WaitForIdle();
+            _factory.DisposeCollector.DisposeAll();
+            foreach(var child in _allChildren)
+                child.Dispose();
+            if(!_isChild){
+                _graphicsDevice.Dispose();
+                if(disposeContextWindow)
+                    _contextWindow.Close();
+            }
+
         }
 
         /// <summary>

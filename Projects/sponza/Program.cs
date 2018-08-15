@@ -1,6 +1,7 @@
 ﻿using System;
 using Henzai;
 using Veldrid;
+using Veldrid.Sdl2;
 using Henzai.UserInterface;
 
 namespace Henzai.Examples
@@ -15,7 +16,7 @@ namespace Henzai.Examples
             createScene(GraphicsBackend.OpenGL);
         }
 
-        public static void createScene(GraphicsBackend graphicsBackend){
+        public static void createScene(GraphicsBackend graphicsBackend, Sdl2Window contextWindow = null){
 
             Resolution renderResolution = new Resolution(960,540);
             Resolution windowSize = new Resolution(960,540);
@@ -38,23 +39,36 @@ namespace Henzai.Examples
                 FarPlane = 2000f
             };
 
-            _scene = new Scene(
-                "Sponza",
-                windowSize,
-                gdOptions,
-                rdOptions
-            );
+            if(contextWindow == null){
+                _scene = new Scene(
+                    "Sponza",
+                    windowSize,
+                    gdOptions,
+                    rdOptions
+                );
+            }
+            else{
+                _scene = new Scene(
+                    "Sponza",
+                    contextWindow,
+                    gdOptions,
+                    rdOptions
+                );
+            }
 
-            _gui = new SimpleGUIOverlay(_scene.GraphicsDevice,_scene.contextWindow);
+
+            _gui = new SimpleGUIOverlay(_scene.GraphicsDevice,_scene.ContextWindow);
             _gui.SetOverlayFor(_scene);
             _gui.changeBackendAction += Program.ChangeBackend;
 
             _scene.Run(renderResolution);
         }
 
+        //TODO: Abstract this so that all examples have access to this
         public static void ChangeBackend(GraphicsBackend graphicsBackend){
-            _scene.Dispose();
-            createScene(graphicsBackend);
+            Sdl2Window contextWindow = _scene.ContextWindow;
+            _scene.Dispose(false);
+            createScene(graphicsBackend,contextWindow);
         }
     }
 }

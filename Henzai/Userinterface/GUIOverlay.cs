@@ -46,8 +46,8 @@ namespace Henzai.UserInterface
 
             ImGuiNET.IO io = ImGui.GetIO();
             io.DeltaTime = deltaSeconds;
-            io.DisplaySize = new System.Numerics.Vector2(contextWindow.Width, contextWindow.Height);
-            io.DisplayFramebufferScale = new System.Numerics.Vector2(contextWindow.Width / contextWindow.Height);
+            io.DisplaySize = new System.Numerics.Vector2(ContextWindow.Width, ContextWindow.Height);
+            io.DisplayFramebufferScale = new System.Numerics.Vector2(ContextWindow.Width / ContextWindow.Height);
             
 
             ImGui.NewFrame();
