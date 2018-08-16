@@ -1,14 +1,21 @@
 ﻿using System;
 using Henzai;
 using Veldrid;
+using Veldrid.Sdl2;
 using Henzai.UI;
 
 namespace Henzai.Examples
 {
-    internal class Program
+    internal class Program : SceneContainer
     {
         static void Main(string[] args)
         {
+            Program programm = new Program();
+            programm.createScene(GraphicsBackend.OpenGL);
+        }
+
+        public override void createScene(GraphicsBackend graphicsBackend, Sdl2Window contextWindow = null){
+
             Resolution renderResolution = new Resolution(960,540);
             Resolution windowSize = new Resolution(960,540);
             GraphicsDeviceOptions gdOptions = new GraphicsDeviceOptions()
@@ -23,23 +30,35 @@ namespace Henzai.Examples
             RenderOptions rdOptions = new RenderOptions()
             {
                 Resolution = renderResolution,
-                PreferredGraphicsBackend = GraphicsBackend.OpenGL,
-                UsePreferredGraphicsBackend = false,
+                PreferredGraphicsBackend = graphicsBackend,
+                UsePreferredGraphicsBackend = true,
                 LimitFrames = true,
                 FPSTarget = 60.0
             };
 
-            Scene scene = new Scene(
-                "Lights",
-                windowSize,
-                gdOptions,
-                rdOptions
-            );
 
-            SimpleGUIOverlay gui = new SimpleGUIOverlay(scene.GraphicsDevice,scene.ContextWindow);
-            gui.SetOverlayFor(scene);
+            if(contextWindow == null){
+                _scene = new Scene(
+                    "Lights",
+                    windowSize,
+                    gdOptions,
+                    rdOptions
+                );
+            }
+            else{
+                _scene = new Scene(
+                    "Lights",
+                    contextWindow,
+                    gdOptions,
+                    rdOptions
+                );
+            }
 
-            scene.Run(renderResolution);
+            _gui = new SimpleGUIOverlay(_scene.GraphicsDevice,_scene.ContextWindow);
+            _gui.SetOverlayFor(_scene);
+            _gui.changeBackendAction += ChangeBackend;
+
+            _scene.Run(renderResolution);
         }
     }
 }

@@ -2,13 +2,20 @@
 using Henzai;
 using Veldrid;
 using Henzai.UI;
+using Veldrid.Sdl2;
 
 namespace Henzai.Examples
 {
-    internal class Program
+    internal class Program : SceneContainer
     {
         static void Main(string[] args)
         {
+            Program programm = new Program();
+            programm.createScene(GraphicsBackend.OpenGL);
+        }
+
+
+        public override void createScene(GraphicsBackend graphicsBackend, Sdl2Window contextWindow = null){    
             Resolution renderResolution = new Resolution(960,540);
             Resolution windowSize = new Resolution(960,540);
             GraphicsDeviceOptions gdOptions = new GraphicsDeviceOptions()
@@ -22,23 +29,34 @@ namespace Henzai.Examples
 
             RenderOptions rdOptions = new RenderOptions()
             {
-                PreferredGraphicsBackend = GraphicsBackend.OpenGL,
+                PreferredGraphicsBackend = graphicsBackend,
                 UsePreferredGraphicsBackend = true,
                 LimitFrames = true,
                 FPSTarget = 60.0
             };
 
-            Scene scene = new Scene(
-                "Asset Loading",
-                windowSize,
-                gdOptions,
-                rdOptions
-            );
+            if(contextWindow == null){
+                _scene = new Scene(
+                    "Asset Loading",
+                    windowSize,
+                    gdOptions,
+                    rdOptions
+                );
+            }
+            else{
+                _scene = new Scene(
+                    "Asset Loading",
+                    contextWindow,
+                    gdOptions,
+                    rdOptions
+                );
+            }
 
-            SimpleGUIOverlay gui = new SimpleGUIOverlay(scene.GraphicsDevice,scene.ContextWindow);
-            gui.SetOverlayFor(scene);
+            _gui = new SimpleGUIOverlay(_scene.GraphicsDevice,_scene.ContextWindow);
+            _gui.SetOverlayFor(_scene);
+            _gui.changeBackendAction += ChangeBackend;
 
-            scene.Run(renderResolution);
+            _scene.Run(renderResolution);
         }
     }
 }

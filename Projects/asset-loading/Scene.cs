@@ -41,6 +41,13 @@ namespace Henzai.Examples
                 _indexBuffers = new List<DeviceBuffer>();
         }
 
+        //TODO: Abstract this
+        public Scene(string title, Sdl2Window contextWindow, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
+            : base(title,contextWindow,graphicsDeviceOptions,renderOptions){
+                _vertexBuffers = new List<DeviceBuffer>();
+                _indexBuffers = new List<DeviceBuffer>();
+        }
+
         // TODO: Abstract Resource Crreation for Uniforms, Vertex Layouts, Disposing
         override protected void CreateResources(){
 
