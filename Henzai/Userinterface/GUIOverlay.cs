@@ -9,7 +9,7 @@ using Veldrid.Sdl2;
 using Henzai.Runtime;
 
 
-namespace Henzai.UserInterface
+namespace Henzai.UI
 {
     /// See Veldrid.ImGuiRenderer
     public class GUIOverlay : Renderable

@@ -4,7 +4,7 @@ using Veldrid;
 using Veldrid.Sdl2;
 using System;
 
-namespace Henzai.UserInterface
+namespace Henzai.UI
 {
     public class SimpleGUIOverlay : UserInterface
    {

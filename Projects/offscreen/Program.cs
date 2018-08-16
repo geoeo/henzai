@@ -1,7 +1,7 @@
 ﻿using System;
 using Henzai.Runtime;
 using Veldrid;
-using Henzai.UserInterface;
+using Henzai.UI;
 
 namespace Henzai.Examples
 {

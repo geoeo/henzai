@@ -9,7 +9,7 @@ using Veldrid.Sdl2;
 using Henzai.Runtime;
 
 
-namespace Henzai.UserInterface
+namespace Henzai.UI
 {
     // TODO: Refactor into explicity UI Renderable
     /// See Veldrid.ImGuiRenderer
