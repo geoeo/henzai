@@ -36,7 +36,7 @@ namespace Henzai.Examples
             };
 
             if(contextWindow == null){
-                _scene = new AssetLoadingScene(
+                scene = new AssetLoadingScene(
                     "Asset Loading",
                     windowSize,
                     gdOptions,
@@ -44,7 +44,7 @@ namespace Henzai.Examples
                 );
             }
             else{
-                _scene = new AssetLoadingScene(
+                scene = new AssetLoadingScene(
                     "Asset Loading",
                     contextWindow,
                     gdOptions,
@@ -52,11 +52,11 @@ namespace Henzai.Examples
                 );
             }
 
-            _gui = new SimpleGUIOverlay(_scene.GraphicsDevice,_scene.ContextWindow);
-            _gui.SetOverlayFor(_scene);
-            _gui.changeBackendAction += ChangeBackend;
+            gui = new SimpleGUIOverlay(scene.GraphicsDevice,scene.ContextWindow);
+            gui.SetOverlayFor(scene);
+            gui.changeBackendAction += ChangeBackend;
 
-            _scene.Run(renderResolution);
+            scene.Run(renderResolution);
         }
     }
 }

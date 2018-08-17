@@ -39,7 +39,7 @@ namespace Henzai.Examples
             };
 
             if(contextWindow == null){
-                _scene = new SponzaScene(
+                scene = new SponzaScene(
                     "Sponza",
                     windowSize,
                     gdOptions,
@@ -47,7 +47,7 @@ namespace Henzai.Examples
                 );
             }
             else{
-                _scene = new SponzaScene(
+                scene = new SponzaScene(
                     "Sponza",
                     contextWindow,
                     gdOptions,
@@ -55,11 +55,11 @@ namespace Henzai.Examples
                 );
             }
 
-            _gui = new SimpleGUIOverlay(_scene.GraphicsDevice,_scene.ContextWindow);
-            _gui.SetOverlayFor(_scene);
-            _gui.changeBackendAction += ChangeBackend;
+            gui = new SimpleGUIOverlay(scene.GraphicsDevice,scene.ContextWindow);
+            gui.SetOverlayFor(scene);
+            gui.changeBackendAction += ChangeBackend;
 
-            _scene.Run(renderResolution);
+            scene.Run(renderResolution);
         }
     }
 }

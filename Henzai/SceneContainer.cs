@@ -9,14 +9,14 @@ namespace Henzai
 {
     public abstract class SceneContainer
     {
-        protected static Renderable _scene;
-        protected static UserInterface  _gui;
+        protected static Renderable scene;
+        protected static UserInterface  gui;
 
         public abstract void createScene(GraphicsBackend graphicsBackend, Sdl2Window contextWindow = null);
 
         public void ChangeBackend(GraphicsBackend graphicsBackend){
-            Sdl2Window contextWindow = _scene.ContextWindow;
-            _scene.Dispose(false);
+            Sdl2Window contextWindow = scene.ContextWindow;
+            scene.Dispose(false);
             createScene(graphicsBackend,contextWindow);
         }
 

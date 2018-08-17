@@ -183,7 +183,7 @@ namespace Henzai
             string modelDir = directoryStructure[0];
 
             AssimpContext assimpContext = new AssimpContext();
-            Scene pScene = assimpContext.ImportFile(filePath, flags);
+            Assimp.Scene pScene = assimpContext.ImportFile(filePath, flags);
 
             int meshCount = pScene.MeshCount;
 
@@ -244,7 +244,7 @@ namespace Henzai
             string modelDir = directoryStructure[0];
 
             AssimpContext assimpContext = new AssimpContext();
-            Scene pScene = assimpContext.ImportFile(filePath, flags);
+            Assimp.Scene pScene = assimpContext.ImportFile(filePath, flags);
 
             //TODO: Identify meshcount for each vertex type. Have to preprocess
             int meshCount = pScene.MeshCount;
