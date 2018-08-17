@@ -443,9 +443,9 @@ namespace Henzai.Runtime
         }
 
         /// <summary>
-        /// Disposes of all elements in _sceneResources
+        /// Disposes of all elements in _sceneResources except the contexst window
         /// </summary>
-        public void Dispose(bool disposeContextWindow = true){
+        public void DisposeKeepContextWindow(){
 
             _graphicsDevice.WaitForIdle();
             _factory.DisposeCollector.DisposeAll();
@@ -453,8 +453,6 @@ namespace Henzai.Runtime
                 child.Dispose();
             if(!_isChild){
                 _graphicsDevice.Dispose();
-                if(disposeContextWindow)
-                    _contextWindow.Close();
             }
 
         }

@@ -16,7 +16,7 @@ namespace Henzai
 
         public void ChangeBackend(GraphicsBackend graphicsBackend){
             Sdl2Window contextWindow = scene.ContextWindow;
-            scene.Dispose(false);
+            scene.DisposeKeepContextWindow();
             createScene(graphicsBackend,contextWindow);
         }
 
