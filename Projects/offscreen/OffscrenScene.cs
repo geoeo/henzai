@@ -13,7 +13,7 @@ using Henzai.Runtime;
 
 namespace Henzai.Examples
 {
-    internal class Scene : Renderable
+    internal class OffscreenScene : Renderable
     {
         private Camera _staticCamera;
         private Framebuffer _offScreenFBO;
@@ -50,7 +50,7 @@ namespace Henzai.Examples
         private ResourceSet _transformationPipelineResourceSet;
         private ResourceLayout _transformationPipelineResourceLayout;
 
-        public Scene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
+        public OffscreenScene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
             : base(title,windowSize,graphicsDeviceOptions,renderOptions){
             PreRenderLoop += ScaleTextureQuadToMatchResolution;
             PreDraw += this.RotateCube;

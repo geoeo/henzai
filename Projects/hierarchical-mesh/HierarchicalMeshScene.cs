@@ -14,13 +14,13 @@ using Henzai.Runtime;
 
 namespace Henzai.Examples
 {
-    sealed class Scene : Renderable
+    sealed class HierarchicalMeshScene : Renderable
     {
 
         Model<VertexPositionNormalTextureTangentBitangent> _nanosuit;
         Model<VertexPositionNormal> _sun;
 
-        public Scene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
+        public HierarchicalMeshScene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
             : base(title,windowSize,graphicsDeviceOptions,renderOptions){
 
                 PreDraw+=RotateModel;

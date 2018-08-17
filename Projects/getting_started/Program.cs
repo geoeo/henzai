@@ -20,7 +20,7 @@ namespace Henzai.Examples
                 FPSTarget = 60.0
             };
 
-            Scene scene = new Scene(
+            GettingStartedScene scene = new GettingStartedScene(
                 "Getting Started",
                 windowSize,
                 gdOptions,

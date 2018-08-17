@@ -29,7 +29,7 @@ namespace Henzai.Examples
                 FPSTarget = 60.0
             };
 
-            Scene scene = new Scene(
+            HierarchicalMeshScene scene = new HierarchicalMeshScene(
                 "Hierarchical Mesh",
                 windowSize,
                 gdOptions,

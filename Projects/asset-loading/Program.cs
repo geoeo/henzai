@@ -36,7 +36,7 @@ namespace Henzai.Examples
             };
 
             if(contextWindow == null){
-                _scene = new Scene(
+                _scene = new AssetLoadingScene(
                     "Asset Loading",
                     windowSize,
                     gdOptions,
@@ -44,7 +44,7 @@ namespace Henzai.Examples
                 );
             }
             else{
-                _scene = new Scene(
+                _scene = new AssetLoadingScene(
                     "Asset Loading",
                     contextWindow,
                     gdOptions,

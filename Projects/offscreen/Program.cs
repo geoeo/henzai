@@ -29,7 +29,7 @@ namespace Henzai.Examples
             };
 
 
-            Scene scene = new Scene(
+            OffscreenScene scene = new OffscreenScene(
                 "Offscreen",
                 windowSize,
                 gdOptions,

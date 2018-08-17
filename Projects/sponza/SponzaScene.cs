@@ -14,16 +14,16 @@ using Henzai.Runtime;
 
 namespace Henzai.Examples
 {
-    sealed class Scene : Renderable
+    sealed class SponzaScene : Renderable
     {
 
         Model<VertexPositionNormal> _sun;
 
-        public Scene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
+        public SponzaScene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
             : base(title,windowSize,graphicsDeviceOptions,renderOptions){
         }
 
-        public Scene(string title, Sdl2Window contextWindow, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
+        public SponzaScene(string title, Sdl2Window contextWindow, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
             : base(title,contextWindow,graphicsDeviceOptions,renderOptions){
         }
 

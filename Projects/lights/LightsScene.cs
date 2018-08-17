@@ -14,18 +14,18 @@ using Henzai.Runtime;
 
 namespace Henzai.Examples
 {
-    sealed class Scene : Renderable
+    sealed class LightsScene : Renderable
     {
 
         Model<VertexPositionNormal> _sun;
         // Model<VertexPositionColor> _floor;
 
-        public Scene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
+        public LightsScene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
             : base(title,windowSize,graphicsDeviceOptions,renderOptions){
         }
 
         //TODO: Abstract this
-        public Scene(string title, Sdl2Window contextWindow, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
+        public LightsScene(string title, Sdl2Window contextWindow, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
             : base(title,contextWindow,graphicsDeviceOptions,renderOptions){
         }
 

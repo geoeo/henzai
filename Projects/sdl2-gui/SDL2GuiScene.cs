@@ -13,7 +13,7 @@ using Henzai.Runtime;
 
 namespace Henzai.Examples
 {
-    internal class Scene : Renderable
+    internal class SDL2GUIScene : Renderable
     {
         private Camera _staticCamera;
 
@@ -51,7 +51,7 @@ namespace Henzai.Examples
         private ResourceSet _transformationPipelineResourceSet;
         private ResourceLayout _transformationPipelineResourceLayout;
 
-        public Scene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
+        public SDL2GUIScene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
             : base(title,windowSize,graphicsDeviceOptions,renderOptions){
             PreRenderLoop += ScaleTextureQuadToMatchResolution;
             PreDraw += this.RotateCube;

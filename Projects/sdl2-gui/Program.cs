@@ -28,7 +28,7 @@ namespace Henzai.Examples
                 FPSTarget = 60.0
             };
 
-            Scene scene = new Scene(
+            SDL2GUIScene scene = new SDL2GUIScene(
                 "GUI",
                 windowSize,
                 gdOptions,

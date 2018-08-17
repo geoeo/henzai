@@ -13,7 +13,7 @@ using Henzai.Runtime;
 namespace Henzai.Examples
 {
     // https://mellinoe.github.io/veldrid-docs/articles/getting-started/getting-started-part1.html
-    internal class Scene : Renderable
+    internal class GettingStartedScene : Renderable
     {
         private DeviceBuffer _vertexBuffer;
         private DeviceBuffer _indexBuffer;
@@ -25,7 +25,7 @@ namespace Henzai.Examples
         private ResourceSet _resourceSet;
         private ResourceLayout _resourceLayout;
 
-        public Scene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
+        public GettingStartedScene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
             : base(title,windowSize,graphicsDeviceOptions,renderOptions){
         }
 

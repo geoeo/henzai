@@ -26,7 +26,7 @@ namespace Henzai.Examples
                 FPSTarget = 60.0
             };
 
-            Scene scene = new Scene(
+            TexturedCubeScene scene = new TexturedCubeScene(
                 "Textured Cube",
                 windowSize,
                 gdOptions,

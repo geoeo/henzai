@@ -6,6 +6,7 @@ using Veldrid;
 using Veldrid.StartupUtilities;
 using Veldrid.Sdl2;
 using Veldrid.OpenGL;
+using Veldrid.ImageSharp;
 using Henzai;
 using Henzai.Extensions;
 using Henzai.Geometry;
@@ -13,9 +14,8 @@ using Henzai.Runtime;
 
 namespace Henzai.Examples
 {
-    internal class Scene : Renderable
+    internal class NormalMappingScene : Renderable
     {
-
         private List<DeviceBuffer> _vertexBuffers;
         private List<DeviceBuffer> _indexBuffers;
         private Shader _vertexShader;
@@ -27,52 +27,58 @@ namespace Henzai.Examples
         private ResourceSet _cameraResourceSet;
         private ResourceSet _materialResourceSet;
         private ResourceSet _lightResourceSet;
+        private ResourceSet _textureResourceSet;
         private ResourceLayout _cameraResourceLayout;
         private ResourceLayout _materialResourceLayout;
         private ResourceLayout _lightResourceLayout;
         // TODO: Refactor this into a class with color
-        private Vector4 LIGHT_POS = new Vector4(0,10,15,0);
+        private Vector4 LIGHT_POS = new Vector4(0,30,30,0);
 
-        Model<VertexPositionNormal> _model;
+        Model<VertexPositionNormalTextureTangent> _model;
 
-        public Scene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
+        public NormalMappingScene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
             : base(title,windowSize,graphicsDeviceOptions,renderOptions){
                 _vertexBuffers = new List<DeviceBuffer>();
                 _indexBuffers = new List<DeviceBuffer>();
+
+                PreDraw+=RotateSphereModel;
         }
 
-        //TODO: Abstract this
-        public Scene(string title, Sdl2Window contextWindow, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
-            : base(title,contextWindow,graphicsDeviceOptions,renderOptions){
-                _vertexBuffers = new List<DeviceBuffer>();
-                _indexBuffers = new List<DeviceBuffer>();
+        private void RotateSphereModel(){
+            var newWorld = _model.GetWorld_DontMutate*Matrix4x4.CreateRotationY(Math.PI.ToFloat());
+            _model.SetNewWorldTransformation(ref newWorld,true);
+        }
+
+        private void RotateSphereModel(float delta){
+            var newWorld = _model.GetWorld_DontMutate*Matrix4x4.CreateRotationY(Math.PI.ToFloat()*delta/10.0f);
+            _model.SetNewWorldTransformation(ref newWorld,true); 
         }
 
         // TODO: Abstract Resource Crreation for Uniforms, Vertex Layouts, Disposing
         override protected void CreateResources(){
 
-            // string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere.obj");
-            //string filePath = Path.Combine(AppContext.BaseDirectory, "Models/300_polygon_sphere_100mm.STL");
-            // string filePath =  "Models/sphere_centered.obj";
-            string filePath = "Models/chinesedragon.dae";
-            _model = AssimpLoader.LoadFromFile<VertexPositionNormal>(AppContext.BaseDirectory,filePath,VertexPositionNormal.HenzaiType);
-            //GeometryUtils.GenerateSphericalTextureCoordinatesFor(_model.meshes[0]);
+            //string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere.obj"); // huge 
+            //string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere_centered.obj"); // no texture coordiantes
+            string filePath = "armor/armor.dae"; 
+            _model = AssimpLoader.LoadFromFile<VertexPositionNormalTextureTangent>(AppContext.BaseDirectory,filePath,VertexPositionNormalTextureTangent.HenzaiType);
+            //GeometryUtils.GenerateSphericalTextureCoordinatesFor(_model.meshes[0], UVMappingTypes.Spherical_Coordinates,true);
+            GeometryUtils.GenerateTangentSpaceFor(_model);
+            // _model = new Model<VertexPositionNormalTextureTangent>(GeometryFactory.generateSphere(100,100,1.0f));
 
             /// Uniform 1 - Camera
-            _cameraProjViewBuffer = _factory.CreateBuffer(new BufferDescription(Camera.SizeInBytes,BufferUsage.UniformBuffer | BufferUsage.Dynamic));
+            _cameraProjViewBuffer = _factory.CreateBuffer(new BufferDescription(192,BufferUsage.UniformBuffer | BufferUsage.Dynamic));
 
             var resourceLayoutElementDescription = new ResourceLayoutElementDescription("projViewWorld",ResourceKind.UniformBuffer,ShaderStages.Vertex);
             ResourceLayoutElementDescription[] resourceLayoutElementDescriptions = {resourceLayoutElementDescription};
             var resourceLayoutDescription = new ResourceLayoutDescription(resourceLayoutElementDescriptions);
             BindableResource[] bindableResources = new BindableResource[]{_cameraProjViewBuffer};
-
             _cameraResourceLayout = _factory.CreateResourceLayout(resourceLayoutDescription);
             var resourceSetDescription = new ResourceSetDescription(_cameraResourceLayout,bindableResources);
             
             _cameraResourceSet = _factory.CreateResourceSet(resourceSetDescription);
 
             // Uniform 2 - Material
-            _materialBuffer = _factory.CreateBuffer(new BufferDescription(Material.SizeInBytes,BufferUsage.UniformBuffer));
+            _materialBuffer = _factory.CreateBuffer(new BufferDescription(64,BufferUsage.UniformBuffer));
 
             var resourceLayoutElementDescriptionMaterial = new ResourceLayoutElementDescription("material",ResourceKind.UniformBuffer,ShaderStages.Fragment);
             ResourceLayoutElementDescription[] resourceLayoutElementDescriptionsMaterial = {resourceLayoutElementDescriptionMaterial};
@@ -85,9 +91,9 @@ namespace Henzai.Examples
             _materialResourceSet = _factory.CreateResourceSet(resourceSetDescriptionMaterial);
 
             // Uniform 3 - Light
-            _lightBuffer = _factory.CreateBuffer(new BufferDescription(Light.SizeInBytes,BufferUsage.UniformBuffer));
+            _lightBuffer = _factory.CreateBuffer(new BufferDescription(16,BufferUsage.UniformBuffer));
 
-            var resourceLayoutElementDescriptionLight = new ResourceLayoutElementDescription("light",ResourceKind.UniformBuffer,ShaderStages.Fragment);
+            var resourceLayoutElementDescriptionLight = new ResourceLayoutElementDescription("light",ResourceKind.UniformBuffer,ShaderStages.Vertex);
             ResourceLayoutElementDescription[] resourceLayoutElementDescriptionsLight = {resourceLayoutElementDescriptionLight};
             var resourceLayoutDescriptionLight = new ResourceLayoutDescription(resourceLayoutElementDescriptionsLight);
             BindableResource[] bindableResourcesLight = new BindableResource[]{_lightBuffer};
@@ -100,7 +106,7 @@ namespace Henzai.Examples
             for(int i = 0; i < _model.meshCount; i++){
 
                 DeviceBuffer vertexBuffer 
-                    =  _factory.CreateBuffer(new BufferDescription(_model.meshes[i].vertices.LengthUnsigned() * VertexPositionNormal.SizeInBytes, BufferUsage.VertexBuffer)); 
+                    =  _factory.CreateBuffer(new BufferDescription(_model.meshes[i].vertices.LengthUnsigned() * VertexPositionNormalTextureTangent.SizeInBytes, BufferUsage.VertexBuffer)); 
 
                 DeviceBuffer indexBuffer
                     = _factory.CreateBuffer(new BufferDescription(_model.meshes[i].meshIndices.LengthUnsigned()*sizeof(ushort),BufferUsage.IndexBuffer));
@@ -113,29 +119,69 @@ namespace Henzai.Examples
                 GraphicsDevice.UpdateBuffer(indexBuffer,0,_model.meshes[i].meshIndices);
             }
 
+            //Texture Samper
+            // ImageSharpTexture diffuseTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "Textures", "earth.jpg"));
+            // ImageSharpTexture diffuseTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "Textures", "Water.jpg"));
+            ImageSharpTexture diffuseTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "armor", "diffuse.png"));
+            Texture sphereDiffuseTexture = diffuseTexture.CreateDeviceTexture(GraphicsDevice, _factory);
+            TextureView sphereDiffuseTextureView = _factory.CreateTextureView(sphereDiffuseTexture);
+
+            // ImageSharpTexture normalTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "Textures", "WaterNorm.jpg"));
+            ImageSharpTexture normalTexture = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, "armor", "normal.png"));
+            Texture sphereNormalTexture = normalTexture.CreateDeviceTexture(GraphicsDevice, _factory);
+            TextureView sphereNormalTextureView = _factory.CreateTextureView(sphereNormalTexture);
+
+            ResourceLayout textureLayout = _factory.CreateResourceLayout(
+                new ResourceLayoutDescription(
+                    new ResourceLayoutElementDescription("DiffuseTexture", ResourceKind.TextureReadOnly, ShaderStages.Fragment),
+                    new ResourceLayoutElementDescription("DiffuseSampler", ResourceKind.Sampler, ShaderStages.Fragment),
+                    new ResourceLayoutElementDescription("NormTexture", ResourceKind.TextureReadOnly, ShaderStages.Fragment),
+                    new ResourceLayoutElementDescription("NormSampler", ResourceKind.Sampler, ShaderStages.Fragment)
+                    ));
+
+            var sampler = _factory.CreateSampler(new SamplerDescription
+            {
+                AddressModeU = SamplerAddressMode.Wrap,
+                AddressModeV = SamplerAddressMode.Wrap,
+                AddressModeW = SamplerAddressMode.Wrap,
+                Filter = SamplerFilter.MinLinear_MagLinear_MipLinear,
+                LodBias = 0,
+                MinimumLod = 0,
+                MaximumLod = uint.MaxValue,
+                MaximumAnisotropy = 0,
+            });
+
+            _textureResourceSet = _factory.CreateResourceSet(new ResourceSetDescription(
+                textureLayout,
+                sphereDiffuseTextureView,
+                GraphicsDevice.LinearSampler,
+                sphereNormalTextureView,
+                sampler
+                ));
+
             VertexLayoutDescription vertexLayout 
                 = new VertexLayoutDescription(
                     new VertexElementDescription("Position",VertexElementSemantic.Position,VertexElementFormat.Float3),
-                    new VertexElementDescription("Normal",VertexElementSemantic.Normal,VertexElementFormat.Float3)
-                    //new VertexElementDescription("UV",VertexElementSemantic.TextureCoordinate,VertexElementFormat.Float2)
+                    new VertexElementDescription("Normal",VertexElementSemantic.Normal,VertexElementFormat.Float3),
+                    new VertexElementDescription("UV",VertexElementSemantic.TextureCoordinate,VertexElementFormat.Float2),
+                    new VertexElementDescription("Tangent",VertexElementSemantic.Normal,VertexElementFormat.Float3)
                 );
 
-            _vertexShader = IO.LoadShader("Phong",ShaderStages.Vertex,GraphicsDevice);
-            _fragmentShader = IO.LoadShader("Phong",ShaderStages.Fragment,GraphicsDevice);
+            _vertexShader = IO.LoadShader("PhongTexture",ShaderStages.Vertex,GraphicsDevice);
+            _fragmentShader = IO.LoadShader("PhongTexture",ShaderStages.Fragment,GraphicsDevice);
 
             GraphicsPipelineDescription pipelineDescription = new GraphicsPipelineDescription(){
                 BlendState = BlendStateDescription.SingleOverrideBlend,
                 DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
                 RasterizerState = new RasterizerStateDescription(
                     cullMode: FaceCullMode.Back,
-                    fillMode: PolygonFillMode.Solid, // Wireframe doesnt seem to work with metal
+                    fillMode: PolygonFillMode.Solid,
                     frontFace: FrontFace.Clockwise,
                     depthClipEnabled: true,
                     scissorTestEnabled: false
                 ),
                 PrimitiveTopology = PrimitiveTopology.TriangleList,
-                //ResourceLayouts = new ResourceLayout[] {_cameraResourceLayout,_materialResourceLayout,_lightResourceLayout},
-                ResourceLayouts = new ResourceLayout[] {_cameraResourceLayout,_lightResourceLayout,_materialResourceLayout},
+                ResourceLayouts = new ResourceLayout[] {_cameraResourceLayout,_lightResourceLayout,_materialResourceLayout,textureLayout},
                 ShaderSet = new ShaderSetDescription(
                     vertexLayouts: new VertexLayoutDescription[] {vertexLayout},
                     shaders: new Shader[] {_vertexShader,_fragmentShader}
@@ -163,15 +209,14 @@ namespace Henzai.Examples
                 _commandList.UpdateBuffer(_cameraProjViewBuffer,64,Camera.ProjectionMatrix);
                 _commandList.UpdateBuffer(_cameraProjViewBuffer,128,_model.GetWorld_DontMutate);
                 _commandList.SetGraphicsResourceSet(0,_cameraResourceSet); // Always after SetPipeline
-                _commandList.UpdateBuffer(_lightBuffer,0,Light.DEFAULT_POSITION);
-                _commandList.UpdateBuffer(_lightBuffer,16,Light.DEFAULT_COLOR);
-                _commandList.UpdateBuffer(_lightBuffer,32,Light.DEFAULT_ATTENTUATION);
+                _commandList.UpdateBuffer(_lightBuffer,0,LIGHT_POS);
                 _commandList.SetGraphicsResourceSet(1,_lightResourceSet);
                 _commandList.UpdateBuffer(_materialBuffer,0,material.diffuse);
                 _commandList.UpdateBuffer(_materialBuffer,16,material.specular);
                 _commandList.UpdateBuffer(_materialBuffer,32,material.ambient);
                 _commandList.UpdateBuffer(_materialBuffer,48,material.coefficients);
                 _commandList.SetGraphicsResourceSet(2,_materialResourceSet);
+                _commandList.SetGraphicsResourceSet(3,_textureResourceSet);
                 _commandList.DrawIndexed(
                     indexCount: _model.meshes[i].meshIndices.Length.ToUnsigned(),
                     instanceCount: 1,

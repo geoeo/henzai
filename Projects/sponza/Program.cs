@@ -39,7 +39,7 @@ namespace Henzai.Examples
             };
 
             if(contextWindow == null){
-                _scene = new Scene(
+                _scene = new SponzaScene(
                     "Sponza",
                     windowSize,
                     gdOptions,
@@ -47,7 +47,7 @@ namespace Henzai.Examples
                 );
             }
             else{
-                _scene = new Scene(
+                _scene = new SponzaScene(
                     "Sponza",
                     contextWindow,
                     gdOptions,

@@ -38,7 +38,7 @@ namespace Henzai.Examples
 
 
             if(contextWindow == null){
-                _scene = new Scene(
+                _scene = new LightsScene(
                     "Lights",
                     windowSize,
                     gdOptions,
@@ -46,7 +46,7 @@ namespace Henzai.Examples
                 );
             }
             else{
-                _scene = new Scene(
+                _scene = new LightsScene(
                     "Lights",
                     contextWindow,
                     gdOptions,

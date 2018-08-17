@@ -27,7 +27,7 @@ namespace Henzai.Examples
                 FPSTarget = 60.0
             };
 
-            Scene scene = new Scene(
+            NormalMappingScene scene = new NormalMappingScene(
                 "Normal Mapping",
                 windowSize,
                 gdOptions,
