@@ -450,7 +450,7 @@ namespace Henzai.Runtime
             _graphicsDevice.WaitForIdle();
             _factory.DisposeCollector.DisposeAll();
             foreach(var child in _allChildren)
-                child.Dispose();
+                child.DisposeKeepContextWindow();
             if(!_isChild){
                 _graphicsDevice.Dispose();
             }
