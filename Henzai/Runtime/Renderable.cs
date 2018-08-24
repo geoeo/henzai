@@ -448,10 +448,11 @@ namespace Henzai.Runtime
         public void DisposeKeepContextWindow(){
 
             _graphicsDevice.WaitForIdle();
-            _factory.DisposeCollector.DisposeAll();
             foreach(var child in _allChildren)
                 child.DisposeKeepContextWindow();
+            _factory.DisposeCollector.DisposeAll();
             if(!_isChild){
+                _graphicsDevice.WaitForIdle();
                 _graphicsDevice.Dispose();
             }
 
@@ -463,10 +464,11 @@ namespace Henzai.Runtime
         public void Dispose(){
 
             _graphicsDevice.WaitForIdle();
-            _factory.DisposeCollector.DisposeAll();
             foreach(var child in _allChildren)
                 child.Dispose();
+            _factory.DisposeCollector.DisposeAll();
             if(!_isChild){
+                _graphicsDevice.WaitForIdle();
                 _graphicsDevice.Dispose();
                 _contextWindow.Close();
             }

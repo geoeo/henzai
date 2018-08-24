@@ -60,6 +60,11 @@ namespace Henzai.Geometry
                 mesh.TryGetMaterial().ambient = ambient;
         }
 
+        //TODO: Retrieve a subset of the meshes encapsulated by this model class
+        public Model<T> SplitByString(string id){
+            return null;
+        }
+
         
     }
 }

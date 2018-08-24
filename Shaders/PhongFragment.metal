@@ -52,5 +52,8 @@ fragment float4 FS(PixelInput input[[stage_in]],constant Light &light [[buffer(1
     //color_out = float4(light.Position.xyz,1.0);
     //color_out = float4(1.0,0.0,0.0,1.0);
 
+    float gamma = 2.2;
+    color_out.rgb = powr(color_out.rgb,float3(1.0/gamma));
+
     return color_out;
 }

@@ -98,6 +98,7 @@ fragment float4 FS(PixelInput input[[stage_in]],
     color_out += attenuation*specular;
     color_out += attenuation*lightColor;
     color_out += pl_color;
+
     //color_out = float4(input.NormalWorld,1.0);
     //color_out = float4(normal_sample,1.0);
     //color_out = float4(input.FragWorld,1.0);
@@ -106,6 +107,9 @@ fragment float4 FS(PixelInput input[[stage_in]],
     //color_out = float4(normalTextureSample,1.0);
     //color_out = float4(l_dot_n,l_dot_n,l_dot_n,1.0);
     //color_out = float4(L.z,0.0,0.0,1.0);
+
+    float gamma = 2.2;
+    color_out.rgb = powr(color_out.rgb,float3(1.0/gamma));
 
     return color_out;
 }

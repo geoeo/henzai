@@ -43,7 +43,9 @@ void main()
     color_out += attenuation*diffuse;
     color_out += attenuation*specular;
     color_out += attenuation*lightColor;
-    fsout_Color = color_out;
+
+    float gamma = 2.2;
+    fsout_Color = vec4(pow(color_out.rgb, vec3(1.0/gamma)),color_out.a);
     // fsout_Color= color_out;
     // fsout_Color= lightColor*color_out;
     //fsout_Color = vec4(LightColor.rgb,1.0);

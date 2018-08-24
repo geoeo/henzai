@@ -25,7 +25,7 @@
 
   <ItemGroup>
     <PackageReference Include="NativeLibraryLoader" Version="1.0.10" />
-    <PackageReference Include="Veldrid" Version="4.3.3" />
+    <PackageReference Include="Veldrid" Version="4.4.0" />
     <!-- <Reference Include="../../veldrid/bin/Debug/Veldrid/netstandard2.0/*.dll"/> -->
     <PackageReference Include="Veldrid.ImageSharp" Version="4.0.0" />
     <PackageReference Include="Veldrid.Sdl2" Version="4.1.0" />
