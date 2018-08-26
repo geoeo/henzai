@@ -14,6 +14,46 @@ namespace Henzai.Geometry
         public static readonly int QUAD_HEIGHT = 2;
 
 
+        public static Mesh<VertexPosition> GenerateCube()
+        {
+            VertexPosition[] cubeVerticies =
+                new VertexPosition[]
+                {
+                    // Top
+                    new VertexPosition(new Vector3(-1.0f, +1.0f, -1.0f)),
+                    new VertexPosition(new Vector3(+1.0f, +1.0f, -1.0f)),
+                    new VertexPosition(new Vector3(+1.0f, +1.0f, +1.0f)),
+                    new VertexPosition(new Vector3(-1.0f, +1.0f, +1.0f)),
+                    // Bottom                                                             
+                    new VertexPosition(new Vector3(-1.0f,-1.0f, +1.0f)),
+                    new VertexPosition(new Vector3(+1.0f,-1.0f, +1.0f)),
+                    new VertexPosition(new Vector3(+1.0f,-1.0f, -1.0f)),
+                    new VertexPosition(new Vector3(-1.0f,-1.0f, -1.0f)),
+                    // Left                                                               
+                    new VertexPosition(new Vector3(-1.0f, +1.0f, -1.0f)),
+                    new VertexPosition(new Vector3(-1.0f, +1.0f, +1.0f)),
+                    new VertexPosition(new Vector3(-1.0f, -1.0f, +1.0f)),
+                    new VertexPosition(new Vector3(-1.0f, -1.0f, -1.0f)),
+                    // Right                                                              
+                    new VertexPosition(new Vector3(+1.0f, +1.0f, +1.0f)),
+                    new VertexPosition(new Vector3(+1.0f, +1.0f, -1.0f)),
+                    new VertexPosition(new Vector3(+1.0f, -1.0f, -1.0f)),
+                    new VertexPosition(new Vector3(+1.0f, -1.0f, +1.0f)),
+                    // Back                                                               
+                    new VertexPosition(new Vector3(+1.0f, +1.0f, -1.0f)),
+                    new VertexPosition(new Vector3(-1.0f, +1.0f, -1.0f)),
+                    new VertexPosition(new Vector3(-1.0f, -1.0f, -1.0f)),
+                    new VertexPosition(new Vector3(+1.0f, -1.0f, -1.0f)),
+                    // Front                                                              
+                    new VertexPosition(new Vector3(-1.0f, +1.0f, +1.0f)),
+                    new VertexPosition(new Vector3(+1.0f, +1.0f, +1.0f)),
+                    new VertexPosition(new Vector3(+1.0f, -1.0f, +1.0f)),
+                    new VertexPosition(new Vector3(-1.0f, -1.0f, +1.0f)),
+                };
+
+            return new Mesh<VertexPosition>(cubeVerticies);
+        }
+
         public static Mesh<VertexPositionTexture> GenerateTexturedCube()
         {
             VertexPositionTexture[] cubeVerticies =

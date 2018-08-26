@@ -47,6 +47,14 @@ namespace Henzai.Geometry
         public string textureBump = string.Empty;
         public string textureSpecular = string.Empty;
 
+        public string cubeMapFront = string.Empty;
+        public string cubeMapBack = string.Empty;
+        public string cubeMapLeft = string.Empty;
+        public string cubeMapRight = string.Empty;
+        public string cubeMapTop = string.Empty;
+        public string cubeMapBottom = string.Empty;
+        
+
         public Material(){
             diffuse = new Vector4(1.0f,1.0f,1.0f,1.0f);
         }
