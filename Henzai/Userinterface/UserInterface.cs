@@ -77,9 +77,9 @@ namespace Henzai.UI
 
         override protected void CreateResources(){
 
-            _vertexBuffer = _factory.CreateBuffer(new BufferDescription(10000, BufferUsage.VertexBuffer | BufferUsage.Dynamic));
+            _vertexBuffer = GraphicsDevice.ResourceFactory.CreateBuffer(new BufferDescription(10000, BufferUsage.VertexBuffer | BufferUsage.Dynamic));
             _vertexBuffer.Name = "ImGui.NET Vertex Buffer";
-            _indexBuffer = _factory.CreateBuffer(new BufferDescription(2000, BufferUsage.IndexBuffer | BufferUsage.Dynamic));
+            _indexBuffer = GraphicsDevice.ResourceFactory.CreateBuffer(new BufferDescription(2000, BufferUsage.IndexBuffer | BufferUsage.Dynamic));
             _indexBuffer.Name = "ImGui.NET Index Buffer";
     
             RecreateFontDeviceTexture(GraphicsDevice);
@@ -259,7 +259,7 @@ namespace Henzai.UI
             // Store our identifier
             io.FontAtlas.SetTexID(_fontAtlasID);
 
-            _fontTexture = gd.ResourceFactory.CreateTexture(TextureDescription.Texture2D(
+            _fontTexture = _factory.CreateTexture(TextureDescription.Texture2D(
                 (uint)textureData.Width,
                 (uint)textureData.Height,
                 1,
@@ -279,7 +279,7 @@ namespace Henzai.UI
                 1,
                 0,
                 0);
-            _fontTextureView = gd.ResourceFactory.CreateTextureView(_fontTexture);
+            _fontTextureView = _factory.CreateTextureView(_fontTexture);
 
             io.FontAtlas.ClearTexData();
         }
@@ -358,6 +358,19 @@ namespace Henzai.UI
                 default:
                     throw new NotImplementedException();
             }
+        }
+
+        /// <summary>
+        /// Frees all graphics resources used by the renderer.
+        /// </summary>
+        public override void Dispose()
+        {
+
+            _vertexBuffer.Dispose();
+            _indexBuffer.Dispose();
+
+            base.Dispose();
+
         }
 
     }
