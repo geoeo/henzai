@@ -38,22 +38,17 @@ namespace Henzai.Examples
                 FarPlane = 2000f
             };
 
-            if(contextWindow == null){
-                scene = new SponzaScene(
+            scene = contextWindow == null ? new SponzaScene(
+                    "Sponza",
+                    windowSize,
+                    gdOptions,
+                    rdOptions
+                ) : new SponzaScene(
                     "Sponza",
                     windowSize,
                     gdOptions,
                     rdOptions
                 );
-            }
-            else{
-                scene = new SponzaScene(
-                    "Sponza",
-                    contextWindow,
-                    gdOptions,
-                    rdOptions
-                );
-            }
 
             gui = new SimpleGUIOverlay(scene.GraphicsDevice,scene.ContextWindow);
             gui.SetOverlayFor(scene);

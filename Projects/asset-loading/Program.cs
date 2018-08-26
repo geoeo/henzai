@@ -35,22 +35,17 @@ namespace Henzai.Examples
                 FPSTarget = 60.0
             };
 
-            if(contextWindow == null){
-                scene = new AssetLoadingScene(
+            scene = contextWindow == null ? new AssetLoadingScene(
+                    "Asset Loading",
+                    windowSize,
+                    gdOptions,
+                    rdOptions
+                ) : new AssetLoadingScene(
                     "Asset Loading",
                     windowSize,
                     gdOptions,
                     rdOptions
                 );
-            }
-            else{
-                scene = new AssetLoadingScene(
-                    "Asset Loading",
-                    contextWindow,
-                    gdOptions,
-                    rdOptions
-                );
-            }
 
             gui = new SimpleGUIOverlay(scene.GraphicsDevice,scene.ContextWindow);
             gui.SetOverlayFor(scene);
