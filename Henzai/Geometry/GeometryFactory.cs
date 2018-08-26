@@ -14,7 +14,7 @@ namespace Henzai.Geometry
         public static readonly int QUAD_HEIGHT = 2;
 
 
-        public static Mesh<VertexPosition> GenerateCube()
+        public static Mesh<VertexPosition> GenerateCube(bool indexed)
         {
             VertexPosition[] cubeVerticies =
                 new VertexPosition[]
@@ -51,10 +51,10 @@ namespace Henzai.Geometry
                     new VertexPosition(new Vector3(-1.0f, -1.0f, +1.0f)),
                 };
 
-            return new Mesh<VertexPosition>(cubeVerticies);
+                return indexed? new Mesh<VertexPosition>(cubeVerticies,generateCubeIndicies_TriangleList_CW()) : new Mesh<VertexPosition>(cubeVerticies) ;
         }
 
-        public static Mesh<VertexPositionTexture> GenerateTexturedCube()
+        public static Mesh<VertexPositionTexture> GenerateTexturedCube(bool indexed)
         {
             VertexPositionTexture[] cubeVerticies =
                 new VertexPositionTexture[]
@@ -91,7 +91,7 @@ namespace Henzai.Geometry
                     new VertexPositionTexture(new Vector3(-1.0f, -1.0f, +1.0f), new Vector2(0, 1)),
                 };
 
-            return new Mesh<VertexPositionTexture>(cubeVerticies);
+            return indexed? new Mesh<VertexPositionTexture>(cubeVerticies,generateCubeIndicies_TriangleList_CW()) : new Mesh<VertexPositionTexture>(cubeVerticies) ;
         }
         public static ushort[] generateCubeIndicies_TriangleList_CW()
         {

@@ -17,7 +17,8 @@ namespace Henzai.Examples
     sealed class SponzaScene : Renderable
     {
 
-        Model<VertexPositionNormal> _sun;
+        private Model<VertexPositionNormal> _sun;
+        private Model<VertexPosition> _skybox;
 
         public SponzaScene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
             : base(title,windowSize,graphicsDeviceOptions,renderOptions){
@@ -65,13 +66,20 @@ namespace Henzai.Examples
             // sponzaRuntimeStateTexOnly.CallTextureResourceSetGeneration+=ResourceGenerator.GenerateTextureResourceSetForDiffuseMapping;
 
             var sponzaRuntimeStateColorOnly = new ModelRuntimeDescriptor<VertexPositionColor>(sponzaPC,"Color","Color", VertexTypes.VertexPositionColor,PrimitiveTopology.TriangleList);
-            sponzaRuntimeStateColorOnly.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPC;
+            sponzaRuntimeStateColorOnly.CallVertexLayoutGeneration+= ResourceGenerator.GenerateVertexLayoutForPC;
 
             // var sunRuntimeState = new ModelRuntimeState<VertexPositionNormalTextureTangentBitangent>(sun,"PhongBitangentTexture","PhongBitangentTexture");
             // sunRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPNTTB;
             // sunRuntimeState.CallSamplerGeneration+=ResourceGenerator.GenerateLinearSampler;
             // sunRuntimeState.CallTextureResourceLayoutGeneration+=ResourceGenerator.GenerateTextureResourceLayoutForNormalMapping;
             // sunRuntimeState.CallTextureResourceSetGeneration+=ResourceGenerator.GenerateTextureResourceSetForNormalMapping;
+
+            _skybox = new Model<VertexPosition>("cloudtop", GeometryFactory.GenerateCube(true));
+            var skyBoxRuntimeState = new ModelRuntimeDescriptor<VertexPosition>(_skybox,"Skybox","Skybox",VertexTypes.VertexPosition,PrimitiveTopology.TriangleList);
+            skyBoxRuntimeState.CallVertexLayoutGeneration += ResourceGenerator.GenerateVertexLayoutForP;
+            skyBoxRuntimeState.CallSamplerGeneration += ResourceGenerator.GenerateBiLinearSampler;
+            skyBoxRuntimeState.CallTextureResourceLayoutGeneration +=ResourceGenerator.GenerateTextureResourceLayoutForCubeMapping;
+            skyBoxRuntimeState.CallTextureResourceSetGeneration += ResourceGenerator.GenerateTextureResourceSetForCubeMapping;
 
             //TODO: Automate this
             _modelPNTTBDescriptorList.Add(sponzaRuntimeState);

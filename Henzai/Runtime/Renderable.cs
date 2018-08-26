@@ -83,6 +83,7 @@ namespace Henzai.Runtime
 
         protected List<ModelRuntimeDescriptor<VertexPositionTexture>> _modelPTDescriptorList;
         protected ModelRuntimeDescriptor<VertexPositionTexture> [] _modelPTDescriptorArray;
+
         protected List<ModelRuntimeDescriptor<VertexPositionColor>> _modelPCDescriptorList;
         protected ModelRuntimeDescriptor<VertexPositionColor> [] _modelPCDescriptorArray;
 
@@ -320,6 +321,9 @@ namespace Henzai.Runtime
                 modelDescriptor.FormatResourcesForPipelineGeneration();
 
                 switch(modelDescriptor.VertexType){
+                    case VertexTypes.VertexPosition:
+                        modelDescriptor.Pipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GeneratePipelineP(modelDescriptor,sceneRuntimeDescriptor,_graphicsDevice));
+                        break;
                     case VertexTypes.VertexPositionNormal:
                         modelDescriptor.Pipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GeneratePipelinePN(modelDescriptor,sceneRuntimeDescriptor,_graphicsDevice));
                         break;
@@ -460,6 +464,7 @@ namespace Henzai.Runtime
             _modelPCDescriptorArray = _modelPCDescriptorList.ToArray();
         }
 
+        //TODO: Unused
         /// <summary>
         /// Disposes of all elements in _sceneResources except the contexst window
         /// </summary>

@@ -49,6 +49,15 @@ namespace Henzai
 
         }
 
+        public static ResourceLayout GenerateTextureResourceLayoutForCubeMapping(DisposeCollectorResourceFactory factory){
+            return factory.CreateResourceLayout(
+                    new ResourceLayoutDescription(
+                        new ResourceLayoutElementDescription("CubeTexture", ResourceKind.TextureReadOnly, ShaderStages.Fragment),
+                        new ResourceLayoutElementDescription("CubeSampler", ResourceKind.Sampler, ShaderStages.Fragment)
+                        ));
+
+        }
+
         public static Sampler GenerateTriLinearSampler(DisposeCollectorResourceFactory factory){
             return factory.CreateSampler(new SamplerDescription
                 {
@@ -56,6 +65,35 @@ namespace Henzai
                     AddressModeV = SamplerAddressMode.Wrap,
                     AddressModeW = SamplerAddressMode.Wrap,
                     Filter = SamplerFilter.MinLinear_MagLinear_MipLinear,
+                    LodBias = 0,
+                    MinimumLod = 0,
+                    MaximumLod = uint.MaxValue,
+                    MaximumAnisotropy = 0,
+                });
+        }
+
+        public static Sampler GeneratePointSampler(DisposeCollectorResourceFactory factory){
+            return factory.CreateSampler(new SamplerDescription
+                {
+                    AddressModeU = SamplerAddressMode.Wrap,
+                    AddressModeV = SamplerAddressMode.Wrap,
+                    AddressModeW = SamplerAddressMode.Wrap,
+                    Filter = SamplerFilter.MinPoint_MagPoint_MipPoint,
+                    LodBias = 0,
+                    MinimumLod = 0,
+                    MaximumLod = uint.MaxValue,
+                    MaximumAnisotropy = 0,
+                });
+        }
+
+
+        public static Sampler GenerateBiLinearSampler(DisposeCollectorResourceFactory factory){
+            return factory.CreateSampler(new SamplerDescription
+                {
+                    AddressModeU = SamplerAddressMode.Wrap,
+                    AddressModeV = SamplerAddressMode.Wrap,
+                    AddressModeW = SamplerAddressMode.Wrap,
+                    Filter = SamplerFilter.MinLinear_MagLinear_MipPoint,
                     LodBias = 0,
                     MinimumLod = 0,
                     MaximumLod = uint.MaxValue,
@@ -256,6 +294,31 @@ namespace Henzai
                 instanceStepRate:1,
                 elements: new VertexElementDescription[] {  new VertexElementDescription("Offset",VertexElementSemantic.Position,VertexElementFormat.Float3)}
             );
+        }
+
+        public static GraphicsPipelineDescription GeneratePipelineP<T>(
+            ModelRuntimeDescriptor<T> modelRuntimeState, 
+            SceneRuntimeDescriptor sceneRuntimeState, 
+            GraphicsDevice graphicsDevice) where T : struct{
+
+            return new GraphicsPipelineDescription(){
+                BlendState = BlendStateDescription.SingleAlphaBlend,
+                DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
+                RasterizerState = new RasterizerStateDescription(
+                    cullMode: FaceCullMode.Back,
+                    fillMode: PolygonFillMode.Solid,
+                    frontFace: FrontFace.Clockwise,
+                    depthClipEnabled: true,
+                    scissorTestEnabled: false
+                ),
+                PrimitiveTopology = modelRuntimeState.PrimitiveTopology,
+                ResourceLayouts = new ResourceLayout[] {sceneRuntimeState.CameraResourceLayout},
+                ShaderSet = new ShaderSetDescription(
+                    vertexLayouts: modelRuntimeState.VertexLayouts,
+                    shaders: new Shader[] {modelRuntimeState.VertexShader,modelRuntimeState.FragmentShader}
+                ),
+                Outputs = graphicsDevice.SwapchainFramebuffer.OutputDescription
+            };
         }
 
         public static GraphicsPipelineDescription GeneratePipelinePN<T>(
