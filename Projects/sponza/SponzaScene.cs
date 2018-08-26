@@ -18,7 +18,7 @@ namespace Henzai.Examples
     {
 
         private Model<VertexPositionNormal> _sun;
-        private Model<VertexPosition> _skybox;
+        private Model<VertexPosition> _skyBox;
 
         public SponzaScene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
             : base(title,windowSize,graphicsDeviceOptions,renderOptions){
@@ -74,8 +74,16 @@ namespace Henzai.Examples
             // sunRuntimeState.CallTextureResourceLayoutGeneration+=ResourceGenerator.GenerateTextureResourceLayoutForNormalMapping;
             // sunRuntimeState.CallTextureResourceSetGeneration+=ResourceGenerator.GenerateTextureResourceSetForNormalMapping;
 
-            _skybox = new Model<VertexPosition>("cloudtop", GeometryFactory.GenerateCube(true));
-            var skyBoxRuntimeState = new ModelRuntimeDescriptor<VertexPosition>(_skybox,"Skybox","Skybox",VertexTypes.VertexPosition,PrimitiveTopology.TriangleList);
+            _skyBox = new Model<VertexPosition>("cloudtop", GeometryFactory.GenerateCube(true));
+            var skyBoxMaterial = _skyBox.meshes[0].TryGetMaterial();
+            skyBoxMaterial.cubeMapFront = "cloudtop_ft.png";
+            skyBoxMaterial.cubeMapBack = "cloudtop_bk.png";
+            skyBoxMaterial.cubeMapLeft = "cloudtop_lf.png";
+            skyBoxMaterial.cubeMapRight = "cloudtop_rt.png";
+            skyBoxMaterial.cubeMapTop = "cloudtop_up.png";
+            skyBoxMaterial.cubeMapBottom = "cloudtop_dn.png";
+            
+            var skyBoxRuntimeState = new ModelRuntimeDescriptor<VertexPosition>(_skyBox,"Skybox","Skybox",VertexTypes.VertexPosition,PrimitiveTopology.TriangleList);
             skyBoxRuntimeState.CallVertexLayoutGeneration += ResourceGenerator.GenerateVertexLayoutForP;
             skyBoxRuntimeState.CallSamplerGeneration += ResourceGenerator.GenerateBiLinearSampler;
             skyBoxRuntimeState.CallTextureResourceLayoutGeneration +=ResourceGenerator.GenerateTextureResourceLayoutForCubeMapping;
