@@ -18,7 +18,7 @@ namespace Henzai.Examples
     {
 
         private Model<VertexPositionNormal> _sun;
-        private Model<VertexPosition> _skyBox;
+        private ModelRuntimeDescriptor<VertexPosition> _skyBoxRuntimeState;
 
         public SponzaScene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
             : base(title,windowSize,graphicsDeviceOptions,renderOptions){
@@ -46,13 +46,6 @@ namespace Henzai.Examples
 
             sponzaPNTTB.SetAmbientForAllMeshes(Vector4.Zero);
 
-            _sun = new Model<VertexPositionNormal>(String.Empty,GeometryFactory.GenerateSphereNormal(100,100,1));
-            _sun.meshes[0].TryGetMaterial().ambient = lightColor.ToVector4();
-            // _sun.meshes[0].TryGetMaterial().ambient = lightColor.ToVector4();
-            ref Vector4 lightPos = ref _sceneRuntimeState.Light.LightPos_DontMutate;
-            Vector3 newTranslation = new Vector3(lightPos.X,lightPos.Y,lightPos.Z);
-            _sun.SetNewWorldTranslation(ref newTranslation, true);
-
             var sponzaRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>(sponzaPNTTB,"PhongBitangentTexture","PhongBitangentTexture", VertexTypes.VertexPositionNormalTextureTangentBitangent,PrimitiveTopology.TriangleList);
             sponzaRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPNTTB;
             sponzaRuntimeState.CallSamplerGeneration+=ResourceGenerator.GenerateTriLinearSampler;
@@ -74,8 +67,8 @@ namespace Henzai.Examples
             // sunRuntimeState.CallTextureResourceLayoutGeneration+=ResourceGenerator.GenerateTextureResourceLayoutForNormalMapping;
             // sunRuntimeState.CallTextureResourceSetGeneration+=ResourceGenerator.GenerateTextureResourceSetForNormalMapping;
 
-            _skyBox = new Model<VertexPosition>("cloudtop", GeometryFactory.GenerateCube(true));
-            var skyBoxMaterial = _skyBox.meshes[0].TryGetMaterial();
+            var skyBox = new Model<VertexPosition>("cloudtop", GeometryFactory.GenerateCube(true));
+            var skyBoxMaterial = skyBox.meshes[0].TryGetMaterial();
             skyBoxMaterial.cubeMapFront = "cloudtop_ft.png";
             skyBoxMaterial.cubeMapBack = "cloudtop_bk.png";
             skyBoxMaterial.cubeMapLeft = "cloudtop_lf.png";
@@ -83,20 +76,28 @@ namespace Henzai.Examples
             skyBoxMaterial.cubeMapTop = "cloudtop_up.png";
             skyBoxMaterial.cubeMapBottom = "cloudtop_dn.png";
             
-            var skyBoxRuntimeState = new ModelRuntimeDescriptor<VertexPosition>(_skyBox,"Skybox","Skybox",VertexTypes.VertexPosition,PrimitiveTopology.TriangleList);
-            skyBoxRuntimeState.CallVertexLayoutGeneration += ResourceGenerator.GenerateVertexLayoutForP;
-            skyBoxRuntimeState.CallSamplerGeneration += ResourceGenerator.GenerateBiLinearSampler;
-            skyBoxRuntimeState.CallTextureResourceLayoutGeneration +=ResourceGenerator.GenerateTextureResourceLayoutForCubeMapping;
-            skyBoxRuntimeState.CallTextureResourceSetGeneration += ResourceGenerator.GenerateTextureResourceSetForCubeMapping;
+            _skyBoxRuntimeState = new ModelRuntimeDescriptor<VertexPosition>(skyBox,"Skybox","Skybox",VertexTypes.VertexPosition,PrimitiveTopology.TriangleList);
+            _skyBoxRuntimeState.CallVertexLayoutGeneration += ResourceGenerator.GenerateVertexLayoutForP;
+            _skyBoxRuntimeState.CallSamplerGeneration += ResourceGenerator.GenerateBiLinearSampler;
+            _skyBoxRuntimeState.CallTextureResourceLayoutGeneration += ResourceGenerator.GenerateTextureResourceLayoutForCubeMapping;
+            _skyBoxRuntimeState.CallTextureResourceSetGeneration += ResourceGenerator.GenerateTextureResourceSetForCubeMapping;
+
+            _sun = new Model<VertexPositionNormal>(String.Empty,GeometryFactory.GenerateSphereNormal(100,100,1));
+            _sun.meshes[0].TryGetMaterial().ambient = lightColor.ToVector4();
+            // _sun.meshes[0].TryGetMaterial().ambient = lightColor.ToVector4();
+            ref Vector4 lightPos = ref _sceneRuntimeState.Light.LightPos_DontMutate;
+            Vector3 newTranslation = new Vector3(lightPos.X,lightPos.Y,lightPos.Z);
+            _sun.SetNewWorldTranslation(ref newTranslation, true);
+
+            var sunRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormal>(_sun,"Phong","Phong",VertexTypes.VertexPositionNormal,PrimitiveTopology.TriangleList);
+            sunRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPN;
 
             //TODO: Automate this
             _modelPNTTBDescriptorList.Add(sponzaRuntimeState);
             _modelPCDescriptorList.Add(sponzaRuntimeStateColorOnly);
+            _modelPDescriptorList.Add(_skyBoxRuntimeState);
             // _modelPTDescriptorList.Add(sponzaRuntimeStateTexOnly);
             // _modelStatesList.Add(sunRuntimeState);
-
-            var sunRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormal>(_sun,"Phong","Phong",VertexTypes.VertexPositionNormal,PrimitiveTopology.TriangleList);
-            sunRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPN;
             _modelPNDescriptorList.Add(sunRuntimeState);
 
             //TODO: Abstrct this
@@ -116,6 +117,10 @@ namespace Henzai.Examples
                 FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,InstancingData.NO_DATA); 
             }
 
+            foreach(var modelDescriptor in _modelPDescriptorList){
+                FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,InstancingData.NO_DATA); 
+            }
+
         }
 
         override protected void BuildCommandList(){
@@ -130,6 +135,7 @@ namespace Henzai.Examples
             RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPNDescriptorArray,_sceneRuntimeState);
             RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPTDescriptorArray,_sceneRuntimeState);
             RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPCDescriptorArray,_sceneRuntimeState);
+            RenderCommandGenerator.GenerateRenderCommandsForCubeMapModelDescriptor(_commandList,_skyBoxRuntimeState,_sceneRuntimeState);
             
             _commandList.End();
         }

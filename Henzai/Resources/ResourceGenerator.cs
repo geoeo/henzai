@@ -96,7 +96,7 @@ namespace Henzai
                     Filter = SamplerFilter.MinLinear_MagLinear_MipPoint,
                     LodBias = 0,
                     MinimumLod = 0,
-                    MaximumLod = uint.MaxValue,
+                    MaximumLod = 0,
                     MaximumAnisotropy = 0,
                 });
         }
@@ -142,6 +142,8 @@ namespace Henzai
         public static ResourceSet GenerateTextureResourceSetForCubeMapping<T>(ModelRuntimeDescriptor<T> modelRuntimeState,int meshIndex, DisposeCollectorResourceFactory factory, GraphicsDevice graphicsDevice) where T : struct {
 
             Material material = modelRuntimeState.Model.meshes[meshIndex].TryGetMaterial();
+
+            var t = Path.Combine(AppContext.BaseDirectory, modelRuntimeState.Model.BaseDir, material.cubeMapFront);
 
             Image<Rgba32> front = Image.Load(Path.Combine(AppContext.BaseDirectory, modelRuntimeState.Model.BaseDir, material.cubeMapFront));
             Image<Rgba32> back = Image.Load(Path.Combine(AppContext.BaseDirectory, modelRuntimeState.Model.BaseDir, material.cubeMapBack));
@@ -296,23 +298,28 @@ namespace Henzai
             );
         }
 
+        /// <summary>
+        /// For now this is only used with cube maps!
+        /// </summary>
         public static GraphicsPipelineDescription GeneratePipelineP<T>(
             ModelRuntimeDescriptor<T> modelRuntimeState, 
             SceneRuntimeDescriptor sceneRuntimeState, 
             GraphicsDevice graphicsDevice) where T : struct{
 
             return new GraphicsPipelineDescription(){
-                BlendState = BlendStateDescription.SingleAlphaBlend,
+                BlendState = BlendStateDescription.SingleOverrideBlend,
                 DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
                 RasterizerState = new RasterizerStateDescription(
-                    cullMode: FaceCullMode.Back,
+                    cullMode: FaceCullMode.Front,
                     fillMode: PolygonFillMode.Solid,
                     frontFace: FrontFace.Clockwise,
                     depthClipEnabled: true,
                     scissorTestEnabled: false
                 ),
                 PrimitiveTopology = modelRuntimeState.PrimitiveTopology,
-                ResourceLayouts = new ResourceLayout[] {sceneRuntimeState.CameraResourceLayout},
+                ResourceLayouts = new ResourceLayout[] {
+                    sceneRuntimeState.CameraResourceLayout,
+                    modelRuntimeState.TextureResourceLayout},
                 ShaderSet = new ShaderSetDescription(
                     vertexLayouts: modelRuntimeState.VertexLayouts,
                     shaders: new Shader[] {modelRuntimeState.VertexShader,modelRuntimeState.FragmentShader}

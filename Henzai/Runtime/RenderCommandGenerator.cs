@@ -244,6 +244,41 @@ namespace Henzai.Runtime
         }
 
         /// <summary>
+        // Only used for cube maps for now!
+        /// Render Commands for Mesh of Type:
+        /// <see cref="Henzai.Geometry.VertexPosition"/> 
+        ///</summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void GenerateCommandsForMesh_Inline(
+                                                    CommandList commandList, 
+                                                    DeviceBuffer vertexBuffer, 
+                                                    DeviceBuffer indexBuffer,
+                                                    DeviceBuffer cameraProjViewBuffer,
+                                                    ResourceSet cameraResourceSet,
+                                                    ResourceSet textureResourceSet,
+                                                    Mesh<VertexPosition> mesh,
+                                                    uint modelInstanceCount)
+                                                    {
+
+
+            Material material = mesh.GetMaterialRuntime();
+
+            commandList.SetVertexBuffer(0,vertexBuffer);
+            commandList.SetIndexBuffer(indexBuffer,IndexFormat.UInt16);
+            commandList.UpdateBuffer(cameraProjViewBuffer,128,mesh.World);
+            commandList.SetGraphicsResourceSet(0,cameraResourceSet); // Always after SetPipeline
+            commandList.SetGraphicsResourceSet(1,textureResourceSet); 
+            commandList.DrawIndexed(
+                indexCount: mesh.meshIndices.Length.ToUnsigned(),
+                instanceCount: modelInstanceCount,
+                indexStart: 0,
+                vertexOffset: 0,
+                instanceStart: 0
+            );
+
+        }
+
+        /// <summary>
         /// Render Commands for Mesh of Type:
         /// <see cref="Henzai.Geometry.VertexPositionColor"/> 
         ///</summary>
@@ -274,6 +309,32 @@ namespace Henzai.Runtime
                 instanceStart: 0
             );
 
+        }
+
+        public static void GenerateRenderCommandsForCubeMapModelDescriptor(CommandList commandList, 
+                                                                    ModelRuntimeDescriptor<VertexPosition> cubeMapRuntimeDescriptor,
+                                                                    SceneRuntimeDescriptor sceneRuntimeDescriptor){
+            var model = cubeMapRuntimeDescriptor.Model;
+            RenderCommandGenerator.GenerateCommandsForModel_Inline(
+                commandList,
+                cubeMapRuntimeDescriptor.Pipeline,
+                sceneRuntimeDescriptor.CameraProjViewBuffer,
+                sceneRuntimeDescriptor.Camera,
+                model);  
+            for(int i = 0; i < model.meshCount; i++){
+                var mesh = model.meshes[i];
+                RenderCommandGenerator.GenerateCommandsForMesh_Inline(
+                    commandList,
+                    cubeMapRuntimeDescriptor.VertexBuffers[i],
+                    cubeMapRuntimeDescriptor.IndexBuffers[i],
+                    sceneRuntimeDescriptor.CameraProjViewBuffer,
+                    sceneRuntimeDescriptor.CameraResourceSet,
+                    cubeMapRuntimeDescriptor.TextureResourceSets[i],
+                    mesh,
+                    cubeMapRuntimeDescriptor.TotalInstanceCount
+                );
+            }
+            
         }
 
         public static void GenerateRenderCommandsForModelDescriptor(CommandList commandList, 

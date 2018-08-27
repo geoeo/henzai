@@ -87,6 +87,9 @@ namespace Henzai.Runtime
         protected List<ModelRuntimeDescriptor<VertexPositionColor>> _modelPCDescriptorList;
         protected ModelRuntimeDescriptor<VertexPositionColor> [] _modelPCDescriptorArray;
 
+        protected List<ModelRuntimeDescriptor<VertexPosition>> _modelPDescriptorList;
+        protected ModelRuntimeDescriptor<VertexPosition> [] _modelPDescriptorArray;
+
         public Renderable(string title, Sdl2Window contextWindow, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions){
             _contextWindow = contextWindow;
 
@@ -106,6 +109,7 @@ namespace Henzai.Runtime
             _modelPNDescriptorList = new List<ModelRuntimeDescriptor<VertexPositionNormal>>();
             _modelPTDescriptorList = new List<ModelRuntimeDescriptor<VertexPositionTexture>>();
             _modelPCDescriptorList = new List<ModelRuntimeDescriptor<VertexPositionColor>>();
+            _modelPDescriptorList = new List<ModelRuntimeDescriptor<VertexPosition>>();
 
             // Tick every millisecond
             _frameTimer = new FrameTimer(1.0); 
@@ -142,6 +146,7 @@ namespace Henzai.Runtime
             _modelPNDescriptorList = new List<ModelRuntimeDescriptor<VertexPositionNormal>>();
             _modelPTDescriptorList = new List<ModelRuntimeDescriptor<VertexPositionTexture>>();
             _modelPCDescriptorList = new List<ModelRuntimeDescriptor<VertexPositionColor>>();
+            _modelPDescriptorList = new List<ModelRuntimeDescriptor<VertexPosition>>();
 
             // Tick every millisecond
             _frameTimer = new FrameTimer(1.0); 
@@ -164,6 +169,7 @@ namespace Henzai.Runtime
             _modelPNDescriptorList = new List<ModelRuntimeDescriptor<VertexPositionNormal>>();
             _modelPTDescriptorList = new List<ModelRuntimeDescriptor<VertexPositionTexture>>();
             _modelPCDescriptorList = new List<ModelRuntimeDescriptor<VertexPositionColor>>();
+            _modelPDescriptorList = new List<ModelRuntimeDescriptor<VertexPosition>>();
 
             // Tick every millisecond
             _frameTimer = new FrameTimer(1.0); 
@@ -456,12 +462,15 @@ namespace Henzai.Runtime
                 modelState.FormatResourcesForRuntime();
             foreach(var modelState in _modelPCDescriptorList)
                 modelState.FormatResourcesForRuntime();
+            foreach(var modelState in _modelPDescriptorList)
+                modelState.FormatResourcesForRuntime();
 
 
             _modelPNTTBDescriptorArray = _modelPNTTBDescriptorList.ToArray();
             _modelPNDescriptorArray = _modelPNDescriptorList.ToArray();
             _modelPTDescriptorArray = _modelPTDescriptorList.ToArray();
             _modelPCDescriptorArray = _modelPCDescriptorList.ToArray();
+            _modelPDescriptorArray = _modelPDescriptorList.ToArray();
         }
 
         //TODO: Unused
