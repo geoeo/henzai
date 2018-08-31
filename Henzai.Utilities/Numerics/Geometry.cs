@@ -1,7 +1,7 @@
 using System;
 using System.Numerics;
 
-namespace Henzai.Numerics
+namespace Henzai.Utilities.Numerics
 {
     //TODO: Make a GramSchmidt Method for a sample
     // let mutable nb = Vector3.Normalize(rand_norm - normal*Vector3.Dot(rand_norm,normal))
