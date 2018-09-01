@@ -1,4 +1,3 @@
-using Veldrid;
 
 namespace Henzai.Geometry{
     public class LoadedMeshCounts{

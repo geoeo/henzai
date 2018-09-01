@@ -34,9 +34,11 @@ namespace Henzai
 
         private Matrix4x4 _viewMatrix;
         private Matrix4x4 _projectionMatrix;
+        private Matrix4x4 _viewProjectionMatrix;
 
         public ref Matrix4x4 ViewMatrix => ref _viewMatrix;
         public ref Matrix4x4 ProjectionMatrix => ref _projectionMatrix;
+        public ref Matrix4x4 ViewProjectionMatirx => ref _viewProjectionMatrix;
         public Vector3 Position { get => _position; set { _position = value; UpdateViewMatrix(); } }
         public Vector3 LookDirection { get => _lookDirection; set { _lookDirection = value; UpdateViewMatrix();} }
         public float FarDistance { get => _far; set { _far = value; UpdateViewMatrix();} }
@@ -66,6 +68,7 @@ namespace Henzai
         private void UpdatePerspectiveMatrix(float width, float height)
         {
             _projectionMatrix = Matrix4x4.CreatePerspectiveFieldOfView(_fov, width / height, _near, _far);
+            _viewProjectionMatrix = _viewMatrix*_projectionMatrix;
         }
 
         private void UpdateViewMatrix(bool defaultLookDir = false)
@@ -79,6 +82,7 @@ namespace Henzai
             
             _lookDirection = Vector3.Normalize(lookDir);
             _viewMatrix = Matrix4x4.CreateLookAt(_position, _position + _lookDirection, Vector3.UnitY);
+            _viewProjectionMatrix = _viewMatrix*_projectionMatrix;
         }
 
         public void Update(float deltaSeconds)

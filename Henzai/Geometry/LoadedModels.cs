@@ -1,5 +1,3 @@
-using Veldrid;
-
 namespace Henzai.Geometry{
     public class LoadedModels{
         public Model<VertexPosition> modelP {
