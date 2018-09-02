@@ -23,10 +23,10 @@ namespace Henzai.Core.Acceleration
         }
 
         private static bool IsVertexWithinLeftHalfSpace(ref Matrix4x4 viewProjectionMatrix) {
-            frustumRowVector.X = -(viewProjectionMatrix.M31 + viewProjectionMatrix.M11);
-            frustumRowVector.Y = -(viewProjectionMatrix.M32 + viewProjectionMatrix.M12);
-            frustumRowVector.Z = -(viewProjectionMatrix.M33 + viewProjectionMatrix.M13);
-            frustumRowVector.W = -(viewProjectionMatrix.M34 + viewProjectionMatrix.M14);
+            frustumRowVector.X = -(viewProjectionMatrix.M41 + viewProjectionMatrix.M11);
+            frustumRowVector.Y = -(viewProjectionMatrix.M42 + viewProjectionMatrix.M12);
+            frustumRowVector.Z = -(viewProjectionMatrix.M43 + viewProjectionMatrix.M13);
+            frustumRowVector.W = -(viewProjectionMatrix.M44 + viewProjectionMatrix.M14);
 
             return GeometryUtils.InMemoryDotProduct(ref frustumRowVector, ref vertexHomogeneous) >= 0;
         }
