@@ -314,8 +314,8 @@ namespace Henzai.Runtime
                         _graphicsDevice.UpdateBuffer(instancingBuffer,0,instancingData.Positions);
                     }
 
-                    _graphicsDevice.UpdateBuffer(vertexBuffer,0,model.meshes[i].Vertices);
-                    _graphicsDevice.UpdateBuffer(indexBuffer,0,model.meshes[i].MeshIndices);
+                    _graphicsDevice.UpdateBuffer(vertexBuffer,0,model.meshes[i].Vertices, model.meshes[i].GetNumberOfValidVertices);
+                    _graphicsDevice.UpdateBuffer(indexBuffer,0,model.meshes[i].MeshIndices, model.meshes[i].GetNumberOfValidIndices);
 
                     var resourceSet = modelDescriptor.InvokeTextureResourceSetGeneration(i,_factory,_graphicsDevice);
                     if(resourceSet != null)

@@ -24,6 +24,8 @@ namespace Henzai.Geometry
             }
         }
 
+        public int GetNumberOfValidVertices => _geometryDefinition.GetNumberOfValidVertices;
+        public int GetNumberOfValidIndices => _geometryDefinition.GetNumberOfValidIndices;
         private Matrix4x4 _world = Matrix4x4.Identity;
         public ref Matrix4x4 World => ref _world;
 
