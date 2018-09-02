@@ -9,7 +9,7 @@ namespace Henzai.Geometry
     public static class GeometryUtils
     {
         public static void GenerateSphericalTextureCoordinatesFor(Mesh<VertexPositionNormalTexture> mesh, UVMappingTypes mapping){
-            var vertices = mesh.Verticies;
+            var vertices = mesh.Vertices;
 
             for(int i = 0; i < vertices.Length; i++){
                 vertices[i].TextureCoordinates = GenerateSphericalCoordiantesfor(vertices[i].Position, mapping);
@@ -18,7 +18,7 @@ namespace Henzai.Geometry
         }
 
         public static void GenerateSphericalTextureCoordinatesFor(Mesh<VertexPositionNormalTextureTangent> mesh, UVMappingTypes mapping){
-            var vertices = mesh.Verticies;
+            var vertices = mesh.Vertices;
 
             for(int i = 0; i < vertices.Length; i++){
                 vertices[i].TextureCoordinates = GenerateSphericalCoordiantesfor(vertices[i].Position, mapping);
@@ -75,7 +75,7 @@ namespace Henzai.Geometry
 
             int numberOfMeshes = model.meshes.Length;
             for(int j = 0; j < numberOfMeshes; j++){
-                var vertices = model.meshes[j].Verticies;
+                var vertices = model.meshes[j].Vertices;
                 var indicies = model.meshes[j].MeshIndices;
                 var numberOfIndicies = indicies.Length;
                 var numberOfVertices = vertices.Length;
@@ -149,7 +149,7 @@ namespace Henzai.Geometry
 
             int numberOfMeshes = model.meshes.Length;
             for(int j = 0; j < numberOfMeshes; j++){
-                var vertices = model.meshes[j].Verticies;
+                var vertices = model.meshes[j].Vertices;
                 var indicies = model.meshes[j].MeshIndices;
                 var numberOfIndicies = indicies.Length;
                 var numberOfVerticies = vertices.Length;
@@ -260,7 +260,7 @@ namespace Henzai.Geometry
 
             int numberOfMeshes = model.meshes.Length;
             for(int j = 0; j < numberOfMeshes; j++){
-                var vertices = model.meshes[j].Verticies;
+                var vertices = model.meshes[j].Vertices;
                                 
                 for(uint i = 0; i < vertices.Length; i++){
                     if(Vector3.Dot(Vector3.Cross(vertices[i].Tangent,vertices[i].Bitangent),vertices[i].Normal) < 0.0f){
