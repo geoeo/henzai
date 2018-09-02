@@ -9,28 +9,41 @@ namespace Henzai.Geometry
     /// </summary>
     public sealed class Mesh<T> where T : struct, VertexLocateable
     {
-        public readonly T[] vertices;
+        private T[] vertices;
         /// <summary>
         /// Holds a continuous list of verticies which pass the frustum test.
         /// The array may be larger than actual vertex count.
         /// </summary>
-        public T[] culledVerticies;
+        private T[] culledVerticies;
         /// <summary>
         /// The number of verticies that passed the frustum test.
         /// Gives the blit range of <see cref="culledVerticies"/>
         /// </summary>
-        public int numberOfValidVerticies {get; set;}
-        public ushort[] meshIndices {get; set;}
+        private int numberOfValidVerticies {get; set;}
+        private ushort[] meshIndices {get; set;}
         /// <summary>
         /// Holds a continuous list of indices which pass the frustum test.
         /// The array may be larger than actual index count.
         /// </summary>
-        public ushort[] culledMeshIndices {get; set;}
+        private ushort[] culledMeshIndices {get; set;}
         /// <summary>
         /// The number of indices that passed the frustum test.
         /// Gives the blit range of <see cref="culledMeshIndices"/>
         /// </summary>
-        public int numberOfValidIndicies {get; set;}
+        private int numberOfValidIndicies {get; set;}
+
+        public T[] Vertices => vertices;
+        public ushort[] MeshIndices {
+            get
+            {
+                return meshIndices;
+            }
+
+            set
+            {
+                meshIndices = value;
+            }
+        }
 
         private Matrix4x4 _world = Matrix4x4.Identity;
         public ref Matrix4x4 World => ref _world;

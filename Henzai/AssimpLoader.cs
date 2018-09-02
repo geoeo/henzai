@@ -10,7 +10,6 @@ using Henzai.Runtime;
 
 namespace Henzai
 {   
-
     public static class AssimpExtensions
     {
         public static Vector3 ToVector3(this Vector3D vector){
@@ -233,7 +232,6 @@ namespace Henzai
             }
 
             return new Model<T>(modelDir,meshes,meshIndicies);
-
         }
 
         public static LoadedModels LoadModelsFromFile(string baseDirectory,string localPath, PostProcessSteps flags = DefaultPostProcessSteps)
@@ -463,7 +461,6 @@ namespace Henzai
                 loadedModels.modelPNTTB = new Model<VertexPositionNormalTextureTangentBitangent>(modelDir,meshesPNTTB,meshIndiciesPNTTB);
 
             return loadedModels;
-
         }
 
         

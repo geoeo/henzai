@@ -106,17 +106,17 @@ namespace Henzai.Examples
             for(int i = 0; i < _model.meshCount; i++){
 
                 DeviceBuffer vertexBuffer 
-                    =  _factory.CreateBuffer(new BufferDescription(_model.meshes[i].vertices.LengthUnsigned() * VertexPositionNormalTextureTangent.SizeInBytes, BufferUsage.VertexBuffer)); 
+                    =  _factory.CreateBuffer(new BufferDescription(_model.meshes[i].Vertices.LengthUnsigned() * VertexPositionNormalTextureTangent.SizeInBytes, BufferUsage.VertexBuffer)); 
 
                 DeviceBuffer indexBuffer
-                    = _factory.CreateBuffer(new BufferDescription(_model.meshes[i].meshIndices.LengthUnsigned()*sizeof(ushort),BufferUsage.IndexBuffer));
+                    = _factory.CreateBuffer(new BufferDescription(_model.meshes[i].MeshIndices.LengthUnsigned()*sizeof(ushort),BufferUsage.IndexBuffer));
                     
 
                 _vertexBuffers.Add(vertexBuffer);
                 _indexBuffers.Add(indexBuffer);
 
-                GraphicsDevice.UpdateBuffer(vertexBuffer,0,_model.meshes[i].vertices);
-                GraphicsDevice.UpdateBuffer(indexBuffer,0,_model.meshes[i].meshIndices);
+                GraphicsDevice.UpdateBuffer(vertexBuffer,0,_model.meshes[i].Vertices);
+                GraphicsDevice.UpdateBuffer(indexBuffer,0,_model.meshes[i].MeshIndices);
             }
 
             //Texture Samper
@@ -218,7 +218,7 @@ namespace Henzai.Examples
                 _commandList.SetGraphicsResourceSet(2,_materialResourceSet);
                 _commandList.SetGraphicsResourceSet(3,_textureResourceSet);
                 _commandList.DrawIndexed(
-                    indexCount: _model.meshes[i].meshIndices.Length.ToUnsigned(),
+                    indexCount: _model.meshes[i].MeshIndices.Length.ToUnsigned(),
                     instanceCount: 1,
                     indexStart: 0,
                     vertexOffset: 0,

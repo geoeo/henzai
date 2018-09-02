@@ -9,7 +9,7 @@ namespace Henzai.Geometry
     public static class GeometryUtils
     {
         public static void GenerateSphericalTextureCoordinatesFor(Mesh<VertexPositionNormalTexture> mesh, UVMappingTypes mapping){
-            var vertices = mesh.vertices;
+            var vertices = mesh.Verticies;
 
             for(int i = 0; i < vertices.Length; i++){
                 vertices[i].TextureCoordinates = GenerateSphericalCoordiantesfor(vertices[i].Position, mapping);
@@ -18,7 +18,7 @@ namespace Henzai.Geometry
         }
 
         public static void GenerateSphericalTextureCoordinatesFor(Mesh<VertexPositionNormalTextureTangent> mesh, UVMappingTypes mapping){
-            var vertices = mesh.vertices;
+            var vertices = mesh.Verticies;
 
             for(int i = 0; i < vertices.Length; i++){
                 vertices[i].TextureCoordinates = GenerateSphericalCoordiantesfor(vertices[i].Position, mapping);
@@ -75,8 +75,8 @@ namespace Henzai.Geometry
 
             int numberOfMeshes = model.meshes.Length;
             for(int j = 0; j < numberOfMeshes; j++){
-                var vertices = model.meshes[j].vertices;
-                var indicies = model.meshes[j].meshIndices;
+                var vertices = model.meshes[j].Verticies;
+                var indicies = model.meshes[j].MeshIndices;
                 var numberOfIndicies = indicies.Length;
                 var numberOfVertices = vertices.Length;
                 var tangentCountPerVertex = new uint[numberOfVertices];
@@ -149,8 +149,8 @@ namespace Henzai.Geometry
 
             int numberOfMeshes = model.meshes.Length;
             for(int j = 0; j < numberOfMeshes; j++){
-                var vertices = model.meshes[j].vertices;
-                var indicies = model.meshes[j].meshIndices;
+                var vertices = model.meshes[j].Verticies;
+                var indicies = model.meshes[j].MeshIndices;
                 var numberOfIndicies = indicies.Length;
                 var numberOfVerticies = vertices.Length;
                 var tangentCountPerVertex = new uint[numberOfVerticies];
@@ -260,7 +260,7 @@ namespace Henzai.Geometry
 
             int numberOfMeshes = model.meshes.Length;
             for(int j = 0; j < numberOfMeshes; j++){
-                var vertices = model.meshes[j].vertices;
+                var vertices = model.meshes[j].Verticies;
                                 
                 for(uint i = 0; i < vertices.Length; i++){
                     if(Vector3.Dot(Vector3.Cross(vertices[i].Tangent,vertices[i].Bitangent),vertices[i].Normal) < 0.0f){

@@ -79,12 +79,12 @@ namespace Henzai.Examples
 
             // declare (VBO) buffers
             _vertexBuffer 
-                = _factory.CreateBuffer(new BufferDescription(texturedCube.vertices.LengthUnsigned() * VertexPositionTexture.SizeInBytes, BufferUsage.VertexBuffer));
+                = _factory.CreateBuffer(new BufferDescription(texturedCube.Vertices.LengthUnsigned() * VertexPositionTexture.SizeInBytes, BufferUsage.VertexBuffer));
             _indexBuffer 
                 = _factory.CreateBuffer(new BufferDescription(cubeIndicies.LengthUnsigned()*sizeof(ushort),BufferUsage.IndexBuffer));
 
             // fill buffers with data
-            GraphicsDevice.UpdateBuffer(_vertexBuffer,0,texturedCube.vertices);
+            GraphicsDevice.UpdateBuffer(_vertexBuffer,0,texturedCube.Vertices);
             GraphicsDevice.UpdateBuffer(_indexBuffer,0,cubeIndicies);
             //graphicsDevice.UpdateBuffer(_cameraProjViewBuffer,0,camera.ViewMatrix);
             //graphicsDevice.UpdateBuffer(_cameraProjViewBuffer,64,camera.ProjectionMatrix);

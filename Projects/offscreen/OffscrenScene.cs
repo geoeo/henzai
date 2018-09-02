@@ -153,12 +153,12 @@ namespace Henzai.Examples
 
             // declare (VBO) buffers
             _vertexBufferCube 
-                = _factory.CreateBuffer(new BufferDescription(texturedCube.vertices.LengthUnsigned() * VertexPositionTexture.SizeInBytes, BufferUsage.VertexBuffer));
+                = _factory.CreateBuffer(new BufferDescription(texturedCube.Vertices.LengthUnsigned() * VertexPositionTexture.SizeInBytes, BufferUsage.VertexBuffer));
             _indexBufferCube 
                 = _factory.CreateBuffer(new BufferDescription(cubeIndicies.LengthUnsigned()*sizeof(ushort),BufferUsage.IndexBuffer));
 
             // fill buffers with data
-            GraphicsDevice.UpdateBuffer(_vertexBufferCube,0,texturedCube.vertices);
+            GraphicsDevice.UpdateBuffer(_vertexBufferCube,0,texturedCube.Vertices);
             GraphicsDevice.UpdateBuffer(_indexBufferCube,0,cubeIndicies);
 
             VertexLayoutDescription vertexLayout 
@@ -230,10 +230,10 @@ namespace Henzai.Examples
             Mesh<VertexPositionNDCColor> quad = GeometryFactory.GenerateColorQuadNDC_XY(RgbaFloat.Red, RgbaFloat.Blue,RgbaFloat.Green,RgbaFloat.Orange);
             ushort[] quadIndicies = GeometryFactory.GenerateQuadIndicies_TriangleStrip_CW();
 
-            _vertexBuffercoloredQuad = _factory.CreateBuffer(new BufferDescription(quad.vertices.LengthUnsigned()* VertexPositionNDCColor.SizeInBytes, BufferUsage.VertexBuffer));
+            _vertexBuffercoloredQuad = _factory.CreateBuffer(new BufferDescription(quad.Vertices.LengthUnsigned()* VertexPositionNDCColor.SizeInBytes, BufferUsage.VertexBuffer));
             _indexBufferQuad = _factory.CreateBuffer(new BufferDescription(quadIndicies.LengthUnsigned()* sizeof(ushort), BufferUsage.IndexBuffer));
 
-            GraphicsDevice.UpdateBuffer(_vertexBuffercoloredQuad,0,quad.vertices);
+            GraphicsDevice.UpdateBuffer(_vertexBuffercoloredQuad,0,quad.Vertices);
             GraphicsDevice.UpdateBuffer(_indexBufferQuad,0,quadIndicies);
 
             VertexLayoutDescription vertexLayout 
@@ -306,8 +306,8 @@ namespace Henzai.Examples
             if(_indexBufferQuad == null)
                 throw new ApplicationException("_indexBufferQuad should have been created");
 
-            _vertexBufferTexturedQuad = _factory.CreateBuffer(new BufferDescription(quad.vertices.LengthUnsigned() * VertexPositionTexture.SizeInBytes,BufferUsage.VertexBuffer));
-            GraphicsDevice.UpdateBuffer(_vertexBufferTexturedQuad,0,quad.vertices);
+            _vertexBufferTexturedQuad = _factory.CreateBuffer(new BufferDescription(quad.Vertices.LengthUnsigned() * VertexPositionTexture.SizeInBytes,BufferUsage.VertexBuffer));
+            GraphicsDevice.UpdateBuffer(_vertexBufferTexturedQuad,0,quad.Vertices);
 
             VertexLayoutDescription vertexLayout 
                 = new VertexLayoutDescription(

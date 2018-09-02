@@ -292,16 +292,16 @@ namespace Henzai.Runtime
                 modelDescriptor.TextureResourceLayout = modelDescriptor.InvokeTextureResourceLayoutGeneration(_factory);
                 modelDescriptor.TextureSampler = modelDescriptor.InvokeSamplerGeneration(_factory);
                 modelDescriptor.LoadShaders(_graphicsDevice);
-                var vertexSizeInBytes = model.meshes[0].vertices[0].GetSizeInBytes();
+                var vertexSizeInBytes = model.meshes[0].Vertices[0].GetSizeInBytes();
 
                 for(int i = 0; i < model.meshCount; i++){
 
                     //TODO: access this through DisposableResourceCollector properly
                     DeviceBuffer vertexBuffer 
-                        =  _factory.CreateBuffer(new BufferDescription(model.meshes[i].vertices.LengthUnsigned() * vertexSizeInBytes, BufferUsage.VertexBuffer)); 
+                        =  _factory.CreateBuffer(new BufferDescription(model.meshes[i].Vertices.LengthUnsigned() * vertexSizeInBytes, BufferUsage.VertexBuffer)); 
 
                     DeviceBuffer indexBuffer
-                        = _factory.CreateBuffer(new BufferDescription(model.meshes[i].meshIndices.LengthUnsigned()*sizeof(ushort),BufferUsage.IndexBuffer));
+                        = _factory.CreateBuffer(new BufferDescription(model.meshes[i].MeshIndices.LengthUnsigned()*sizeof(ushort),BufferUsage.IndexBuffer));
                         
 
                     modelDescriptor.VertexBufferList.Add(vertexBuffer);
@@ -314,8 +314,8 @@ namespace Henzai.Runtime
                         _graphicsDevice.UpdateBuffer(instancingBuffer,0,instancingData.Positions);
                     }
 
-                    _graphicsDevice.UpdateBuffer(vertexBuffer,0,model.meshes[i].vertices);
-                    _graphicsDevice.UpdateBuffer(indexBuffer,0,model.meshes[i].meshIndices);
+                    _graphicsDevice.UpdateBuffer(vertexBuffer,0,model.meshes[i].Vertices);
+                    _graphicsDevice.UpdateBuffer(indexBuffer,0,model.meshes[i].MeshIndices);
 
                     var resourceSet = modelDescriptor.InvokeTextureResourceSetGeneration(i,_factory,_graphicsDevice);
                     if(resourceSet != null)

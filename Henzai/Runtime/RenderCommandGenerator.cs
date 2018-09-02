@@ -128,7 +128,7 @@ namespace Henzai.Runtime
             commandList.SetGraphicsResourceSet(3,materialResourceSet);
             commandList.SetGraphicsResourceSet(4,textureResourceSet);
             commandList.DrawIndexed(
-                indexCount: mesh.meshIndices.Length.ToUnsigned(),
+                indexCount: mesh.MeshIndices.Length.ToUnsigned(),
                 instanceCount: modelInstanceCount,
                 indexStart: 0,
                 vertexOffset: 0,
@@ -169,7 +169,7 @@ namespace Henzai.Runtime
             commandList.UpdateBuffer(materialBuffer,48,material.coefficients);
             commandList.SetGraphicsResourceSet(2,materialResourceSet);
             commandList.DrawIndexed(
-                indexCount: mesh.meshIndices.Length.ToUnsigned(),
+                indexCount: mesh.MeshIndices.Length.ToUnsigned(),
                 instanceCount: modelInstanceCount,
                 indexStart: 0,
                 vertexOffset: 0,
@@ -203,7 +203,7 @@ namespace Henzai.Runtime
             commandList.SetGraphicsResourceSet(0,cameraResourceSet); // Always after SetPipeline
             commandList.SetGraphicsResourceSet(1,textureResourceSet);
             commandList.DrawIndexed(
-                indexCount: mesh.meshIndices.Length.ToUnsigned(),
+                indexCount: mesh.MeshIndices.Length.ToUnsigned(),
                 instanceCount: modelInstanceCount,
                 indexStart: 0,
                 vertexOffset: 0,
@@ -235,7 +235,7 @@ namespace Henzai.Runtime
             commandList.UpdateBuffer(cameraProjViewBuffer,128,mesh.World);
             commandList.SetGraphicsResourceSet(0,cameraResourceSet); // Always after SetPipeline
             commandList.DrawIndexed(
-                indexCount: mesh.meshIndices.Length.ToUnsigned(),
+                indexCount: mesh.MeshIndices.Length.ToUnsigned(),
                 instanceCount: modelInstanceCount,
                 indexStart: 0,
                 vertexOffset: 0,
@@ -270,7 +270,7 @@ namespace Henzai.Runtime
             commandList.SetGraphicsResourceSet(0,cameraResourceSet); // Always after SetPipeline
             commandList.SetGraphicsResourceSet(1,textureResourceSet); 
             commandList.DrawIndexed(
-                indexCount: mesh.meshIndices.Length.ToUnsigned(),
+                indexCount: mesh.MeshIndices.Length.ToUnsigned(),
                 instanceCount: modelInstanceCount,
                 indexStart: 0,
                 vertexOffset: 0,
@@ -303,7 +303,7 @@ namespace Henzai.Runtime
             commandList.UpdateBuffer(cameraProjViewBuffer,128,mesh.World);
             commandList.SetGraphicsResourceSet(0,cameraResourceSet); // Always after SetPipeline
             commandList.DrawIndexed(
-                indexCount: mesh.meshIndices.Length.ToUnsigned(),
+                indexCount: mesh.MeshIndices.Length.ToUnsigned(),
                 instanceCount: modelInstanceCount,
                 indexStart: 0,
                 vertexOffset: 0,

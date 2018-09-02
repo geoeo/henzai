@@ -24,7 +24,7 @@ namespace Henzai.Geometry
             BaseDir = directory;
             this.meshes = meshes;
             for(int i = 0; i < meshCount; i++){
-                this.meshes[i].meshIndices = indicies[i];
+                this.meshes[i].MeshIndices = indicies[i];
             }
         }
 
