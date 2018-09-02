@@ -9,7 +9,7 @@ using Henzai.Geometry;
 
 namespace Henzai.Runtime
 {
-    public sealed class ModelRuntimeDescriptor<T> where T : struct
+    public sealed class ModelRuntimeDescriptor<T> where T : struct, VertexLocateable
     {
 
         /// <summary>

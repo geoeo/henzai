@@ -1,5 +1,6 @@
 using System;
 using System.Numerics;
+using Henzai.Runtime;
 
 namespace Henzai.Geometry
 {
@@ -7,7 +8,7 @@ namespace Henzai.Geometry
     /// Usually used with loaded Meshes/Models
     /// Such as with Assimp
     /// </summary>
-    public sealed class Model<T> where T : struct
+    public sealed class Model<T> where T : struct, VertexLocateable
     {
         public Mesh<T>[] meshes;
         private Matrix4x4 _world = Matrix4x4.Identity;

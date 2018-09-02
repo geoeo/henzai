@@ -101,7 +101,7 @@ namespace Henzai
                 });
         }
 
-        public static ResourceSet GenerateTextureResourceSetForNormalMapping<T>(ModelRuntimeDescriptor<T> modelRuntimeState,int meshIndex, DisposeCollectorResourceFactory factory, GraphicsDevice graphicsDevice) where T : struct{
+        public static ResourceSet GenerateTextureResourceSetForNormalMapping<T>(ModelRuntimeDescriptor<T> modelRuntimeState,int meshIndex, DisposeCollectorResourceFactory factory, GraphicsDevice graphicsDevice) where T : struct , VertexLocateable{
             Material material = modelRuntimeState.Model.meshes[meshIndex].TryGetMaterial();
 
             ImageSharpTexture diffuseTextureIS = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, modelRuntimeState.Model.BaseDir, material.textureDiffuse));
@@ -124,7 +124,7 @@ namespace Henzai
 
         }
 
-        public static ResourceSet GenerateTextureResourceSetForDiffuseMapping<T>(ModelRuntimeDescriptor<T> modelRuntimeState,int meshIndex, DisposeCollectorResourceFactory factory, GraphicsDevice graphicsDevice) where T : struct{
+        public static ResourceSet GenerateTextureResourceSetForDiffuseMapping<T>(ModelRuntimeDescriptor<T> modelRuntimeState,int meshIndex, DisposeCollectorResourceFactory factory, GraphicsDevice graphicsDevice) where T : struct, VertexLocateable {
             Material material = modelRuntimeState.Model.meshes[meshIndex].TryGetMaterial();
 
             ImageSharpTexture diffuseTextureIS = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, modelRuntimeState.Model.BaseDir, material.textureDiffuse));
@@ -139,7 +139,7 @@ namespace Henzai
 
         }
 
-        public static ResourceSet GenerateTextureResourceSetForCubeMapping<T>(ModelRuntimeDescriptor<T> modelRuntimeState,int meshIndex, DisposeCollectorResourceFactory factory, GraphicsDevice graphicsDevice) where T : struct {
+        public static ResourceSet GenerateTextureResourceSetForCubeMapping<T>(ModelRuntimeDescriptor<T> modelRuntimeState,int meshIndex, DisposeCollectorResourceFactory factory, GraphicsDevice graphicsDevice) where T : struct, VertexLocateable {
 
             Material material = modelRuntimeState.Model.meshes[meshIndex].TryGetMaterial();
 
@@ -304,7 +304,7 @@ namespace Henzai
         public static GraphicsPipelineDescription GeneratePipelineP<T>(
             ModelRuntimeDescriptor<T> modelRuntimeState, 
             SceneRuntimeDescriptor sceneRuntimeState, 
-            GraphicsDevice graphicsDevice) where T : struct{
+            GraphicsDevice graphicsDevice) where T : struct, VertexLocateable {
 
             return new GraphicsPipelineDescription(){
                 BlendState = BlendStateDescription.SingleOverrideBlend,
@@ -331,7 +331,7 @@ namespace Henzai
         public static GraphicsPipelineDescription GeneratePipelinePN<T>(
             ModelRuntimeDescriptor<T> modelRuntimeState, 
             SceneRuntimeDescriptor sceneRuntimeState, 
-            GraphicsDevice graphicsDevice) where T : struct{
+            GraphicsDevice graphicsDevice) where T : struct, VertexLocateable {
 
             return new GraphicsPipelineDescription(){
                 BlendState = BlendStateDescription.SingleOverrideBlend,
@@ -359,7 +359,7 @@ namespace Henzai
         public static GraphicsPipelineDescription GeneratePipelinePNTTB<T>(
             ModelRuntimeDescriptor<T> modelRuntimeState, 
             SceneRuntimeDescriptor sceneRuntimeState, 
-            GraphicsDevice graphicsDevice) where T : struct{
+            GraphicsDevice graphicsDevice) where T : struct, VertexLocateable {
 
             return new GraphicsPipelineDescription(){
                     BlendState = BlendStateDescription.SingleOverrideBlend,
@@ -389,7 +389,7 @@ namespace Henzai
         public static GraphicsPipelineDescription GeneratePipelinePC<T>(
             ModelRuntimeDescriptor<T> modelRuntimeState, 
             SceneRuntimeDescriptor sceneRuntimeState, 
-            GraphicsDevice graphicsDevice) where T : struct {
+            GraphicsDevice graphicsDevice) where T : struct, VertexLocateable {
 
             return new GraphicsPipelineDescription(){
                     BlendState = BlendStateDescription.SingleOverrideBlend,
@@ -414,7 +414,7 @@ namespace Henzai
         public static GraphicsPipelineDescription GeneratePipelinePT<T>(
             ModelRuntimeDescriptor<T> modelRuntimeState, 
             SceneRuntimeDescriptor sceneRuntimeState, 
-            GraphicsDevice graphicsDevice) where T : struct {
+            GraphicsDevice graphicsDevice) where T : struct, VertexLocateable {
 
             return new GraphicsPipelineDescription(){
                     BlendState = BlendStateDescription.SingleOverrideBlend,

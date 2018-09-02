@@ -1,12 +1,13 @@
 using System;
 using System.Numerics;
+using Henzai.Runtime;
 
 namespace Henzai.Geometry
 {
     /// <summary>
     /// Mesh holds Vertex and Texture/Color information
     /// </summary>
-    public sealed class Mesh<T> where T : struct
+    public sealed class Mesh<T> where T : struct, VertexLocateable
     {
         public readonly T[] vertices;
         /// <summary>

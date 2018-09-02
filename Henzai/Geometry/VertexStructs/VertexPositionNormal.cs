@@ -3,7 +3,7 @@ using Henzai.Runtime;
 
 namespace Henzai.Geometry
 {
-    public struct VertexPositionNormal : VertexRuntime
+    public struct VertexPositionNormal : VertexRuntime, VertexLocateable
     {
         public const byte SizeInBytes = 24;
         public const byte PositionOffset = 0;
@@ -22,6 +22,10 @@ namespace Henzai.Geometry
 
         public byte GetSizeInBytes(){
             return SizeInBytes;
+        }
+
+        public Vector3 GetPosition(){
+            return Position;
         }
     }
 }

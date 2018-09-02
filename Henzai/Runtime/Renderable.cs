@@ -285,7 +285,7 @@ namespace Henzai.Runtime
                 Thread.Sleep(msDiffRounded);
         }
 
-        protected void FillRuntimeDescriptor<T>(ModelRuntimeDescriptor<T> modelDescriptor, SceneRuntimeDescriptor sceneRuntimeDescriptor, InstancingData instancingData) where T : struct, VertexRuntime {
+        protected void FillRuntimeDescriptor<T>(ModelRuntimeDescriptor<T> modelDescriptor, SceneRuntimeDescriptor sceneRuntimeDescriptor, InstancingData instancingData) where T : struct, VertexRuntime, VertexLocateable {
                 var model = modelDescriptor.Model;
 
                 modelDescriptor.TextureResourceLayout = modelDescriptor.InvokeTextureResourceLayoutGeneration(_factory);

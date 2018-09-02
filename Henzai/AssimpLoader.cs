@@ -171,7 +171,7 @@ namespace Henzai
 
         }
 
-        public static Model<T> LoadFromFile<T>(string baseDirectory,string localPath, VertexTypes vertexType, PostProcessSteps flags = DefaultPostProcessSteps) where T : struct
+        public static Model<T> LoadFromFile<T>(string baseDirectory,string localPath, VertexTypes vertexType, PostProcessSteps flags = DefaultPostProcessSteps) where T : struct, VertexLocateable
         {
 
             if(!Verifier.verifyVertexStruct<T>(vertexType))

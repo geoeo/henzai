@@ -6,7 +6,7 @@ using Veldrid;
 namespace Henzai.Geometry
 {
 
-    public struct VertexPositionNDCColor : VertexRuntime
+    public struct VertexPositionNDCColor : VertexRuntime, VertexLocateable
     {
         // 8 Bytes for Position + 16 Bytes for color
         public const byte SizeInBytes = 24;
@@ -26,7 +26,10 @@ namespace Henzai.Geometry
         }
         public byte GetSizeInBytes(){
             return SizeInBytes;
-        }
-        
+        }  
+
+        public Vector3 GetPosition() {
+            return new Vector3(Position, 0.0f);
+        }    
     }
 }
