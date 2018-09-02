@@ -1,5 +1,6 @@
 using System.Numerics;
 using Henzai.Runtime;
+using Henzai.Core.Geometry;
 
 namespace Henzai.Geometry
 {
@@ -19,7 +20,7 @@ namespace Henzai.Geometry
             Position = position;
             TextureCoordinates = texCoords;
         }
-        
+
         public byte GetSizeInBytes(){
             return SizeInBytes;
         }

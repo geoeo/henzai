@@ -32,6 +32,7 @@
     <PackageReference Include="Veldrid.ImGui" Version="4.4.0" />
     <PackageReference Include="Veldrid.StartupUtilities" Version="4.4.0" />
     <PackageReference Include="AssimpNet-netstandard" Version="3.3.1" />
+    <ProjectReference Include="../Henzai.Core/Henzai.Core.csproj" />
   </ItemGroup>
 
     <ItemGroup>

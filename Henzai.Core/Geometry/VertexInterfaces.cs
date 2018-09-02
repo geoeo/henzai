@@ -1,6 +1,6 @@
 using System.Numerics;   
 
-    namespace Henzai.Runtime
+    namespace Henzai.Core.Geometry
     {
         public interface VertexRuntime {
             byte GetSizeInBytes();

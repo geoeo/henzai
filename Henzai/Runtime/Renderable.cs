@@ -7,6 +7,7 @@ using Veldrid.StartupUtilities;
 using Veldrid.Sdl2;
 using Henzai.UI;
 using Henzai.Geometry;
+using Henzai.Core.Geometry;
 using Henzai.Extensions;
 
 namespace Henzai.Runtime

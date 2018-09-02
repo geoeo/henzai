@@ -4,6 +4,7 @@ using System.Numerics;
 using Veldrid;
 using Henzai.Extensions;
 using Henzai.Geometry;
+using Henzai.Core.Geometry;
 
 namespace Henzai.Runtime
 {
