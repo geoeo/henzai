@@ -9,39 +9,18 @@ namespace Henzai.Geometry
     /// </summary>
     public sealed class Mesh<T> where T : struct, VertexLocateable
     {
-        private T[] vertices;
-        /// <summary>
-        /// Holds a continuous list of verticies which pass the frustum test.
-        /// The array may be larger than actual vertex count.
-        /// </summary>
-        private T[] culledVerticies;
-        /// <summary>
-        /// The number of verticies that passed the frustum test.
-        /// Gives the blit range of <see cref="culledVerticies"/>
-        /// </summary>
-        private int numberOfValidVerticies {get; set;}
-        private ushort[] meshIndices {get; set;}
-        /// <summary>
-        /// Holds a continuous list of indices which pass the frustum test.
-        /// The array may be larger than actual index count.
-        /// </summary>
-        private ushort[] culledMeshIndices {get; set;}
-        /// <summary>
-        /// The number of indices that passed the frustum test.
-        /// Gives the blit range of <see cref="culledMeshIndices"/>
-        /// </summary>
-        private int numberOfValidIndicies {get; set;}
+        private GeometryDefinition<T> _geometryDefinition;
 
-        public T[] Vertices => vertices;
+        public T[] Vertices => _geometryDefinition.GetValidVertices();
         public ushort[] MeshIndices {
             get
             {
-                return meshIndices;
+                return _geometryDefinition.GetValidIndices();
             }
 
             set
             {
-                meshIndices = value;
+                _geometryDefinition.SetMeshIndices(value);
             }
         }
 
@@ -52,28 +31,20 @@ namespace Henzai.Geometry
 
         public Mesh(T[] meshDefinition)
         {
-            vertices = meshDefinition;
-            culledVerticies = new T[vertices.Length];
-            meshIndices = null;
-            culledMeshIndices = null;
+            _geometryDefinition = new GeometryDefinition<T>(meshDefinition);
             this.material = new Material();
         }
 
         public Mesh(T[] meshDefinition, ushort[] indices)
         {
-            vertices = meshDefinition;
-            culledVerticies = new T[vertices.Length];
-            meshIndices = indices;
-            culledMeshIndices = new ushort[meshIndices.Length];
+            _geometryDefinition = new GeometryDefinition<T>(meshDefinition,indices);
             this.material = new Material();
         }
 
         public Mesh(T[] meshDefinition, Material material)
         {
-            vertices = meshDefinition;
-            culledVerticies = new T[vertices.Length];
-            meshIndices = null;
-            culledMeshIndices = null;
+
+            _geometryDefinition = new GeometryDefinition<T>(meshDefinition);
             this.material = material;
         }
 
