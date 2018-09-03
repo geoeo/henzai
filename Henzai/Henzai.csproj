@@ -27,7 +27,8 @@
     <PackageReference Include="NativeLibraryLoader" Version="1.0.10" />
     <!-- <PackageReference Include="Veldrid" Version="4.5.0-beta1-0008-g978e9591d5" /> -->
     <!-- <Reference Include="../../veldrid_fork/bin/Debug/Veldrid/netstandard2.0/*.dll"/> -->
-    <ProjectReference Include="../../veldrid_fork/src/Veldrid/Veldrid.csproj" />
+    <!-- <ProjectReference Include="../../veldrid_fork/src/Veldrid/Veldrid.csproj" /> -->
+    <ProjectReference Include="../../veldrid/src/Veldrid/Veldrid.csproj" />
     <PackageReference Include="Veldrid.ImageSharp" Version="4.5.0-beta1-0008-g978e9591d5" />
     <PackageReference Include="Veldrid.Sdl2" Version="4.4.0" />
     <PackageReference Include="Veldrid.ImGui" Version="4.4.0" />
