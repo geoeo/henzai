@@ -11,11 +11,11 @@ namespace Henzai.Geometry
     {
         private GeometryDefinition<T> _geometryDefinition;
 
-        public T[] Vertices => _geometryDefinition.GetValidVertices();
+        public T[] Vertices => _geometryDefinition.GetValidVertices;
         public ushort[] MeshIndices {
             get
             {
-                return _geometryDefinition.GetValidIndices();
+                return _geometryDefinition.GetValidIndices;
             }
 
             set

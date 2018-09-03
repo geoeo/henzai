@@ -18,7 +18,7 @@ namespace Henzai.Core.Geometry
         /// The number of verticies that passed the frustum test.
         /// Gives the blit range of <see cref="culledVerticies"/>
         /// </summary>
-        private int _numberOfValidVertices;
+        public int NumberOfValidVertices {get; set;}
         private ushort[] _meshIndices;
         /// <summary>
         /// Holds a continuous list of indices which pass the frustum test.
@@ -29,7 +29,7 @@ namespace Henzai.Core.Geometry
         /// The number of indices that passed the frustum test.
         /// Gives the blit range of <see cref="culledMeshIndices"/>
         /// </summary>
-        private int _numberOfValidIndicies;
+        public int NumberOfValidIndicies {get; set;}
 
         public GeometryDefinition(T[] vertices, ushort[] meshIndices){
             Debug.Assert(vertices != null);
@@ -38,12 +38,12 @@ namespace Henzai.Core.Geometry
             _vertices = vertices;
             _culledVertices = new T[vertices.Length];
             CopyArrayOfStructs(_vertices, _culledVertices);
-            _numberOfValidVertices = vertices.Length;
+            NumberOfValidVertices = vertices.Length;
 
             _meshIndices = meshIndices;
             _culledMeshIndices = new ushort[meshIndices.Length];
             Buffer.BlockCopy(meshIndices,0,_culledMeshIndices,0,meshIndices.Length * sizeof(ushort));
-            _numberOfValidIndicies = meshIndices.Length;
+            NumberOfValidIndicies = meshIndices.Length;
         }
 
         public GeometryDefinition(T[] vertices){
@@ -52,33 +52,28 @@ namespace Henzai.Core.Geometry
             _vertices = vertices;
             _culledVertices = new T[vertices.Length];
             CopyArrayOfStructs(_vertices, _culledVertices);
-            _numberOfValidVertices = vertices.Length;
+            NumberOfValidVertices = vertices.Length;
 
             _meshIndices = null;
-            _numberOfValidIndicies = 0;
+            NumberOfValidIndicies = 0;
             _culledMeshIndices = null;
         }
+        public T[] GetVertices => _vertices;
+        public ushort[] GetIndices => _meshIndices;
+        public T[] GetValidVertices => _culledVertices;
+        public ushort[] GetValidIndices => _culledMeshIndices;
 
-        public T[] GetValidVertices(){
-            return _culledVertices; 
-        }
-
-        public ushort[] GetValidIndices(){
-            return _culledMeshIndices; 
-        }
-
-        public int GetNumberOfValidVertices => _numberOfValidVertices;
-        public int GetNumberOfValidIndices => _numberOfValidIndicies;
+        public int GetNumberOfValidVertices => NumberOfValidVertices;
+        public int GetNumberOfValidIndices => NumberOfValidIndicies;
 
         public void SetMeshIndices(ushort[] meshIndices){
             Debug.Assert(meshIndices != null);
 
-            if(_culledMeshIndices == null){
+            if(_culledMeshIndices == null)
                 _culledMeshIndices = new ushort[meshIndices.Length];
-            }
 
             _meshIndices = meshIndices;
-            _numberOfValidIndicies = meshIndices.Length;
+            NumberOfValidIndicies = meshIndices.Length;
             Buffer.BlockCopy(meshIndices,0,_culledMeshIndices,0,meshIndices.Length * sizeof(ushort));
         }
 
@@ -86,9 +81,9 @@ namespace Henzai.Core.Geometry
         private void CopyArrayOfStructs(T[] source, T[] target) {
             Debug.Assert(source.Length == target.Length);
             
-            for(int i = 0; i < source.Length; i++){
+            for(int i = 0; i < source.Length; i++)
                 target[i] = source[i];
-            }
+            
         }
     
     }
