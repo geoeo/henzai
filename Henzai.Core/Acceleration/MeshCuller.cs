@@ -7,7 +7,7 @@ using Henzai.Core.Geometry;
 namespace Henzai.Core.Acceleration
 {
     // https://www.gamedevs.org/uploads/fast-extraction-viewing-frustum-planes-from-world-view-projection-matrix.pdf
-    public static class SceneCuller {
+    public static class MeshCuller {
 
         private static Vector4 _frustumRowVector = new Vector4();
         private static Vector4 _vertexHomogeneous = new Vector4(0,0,0,1);
@@ -61,8 +61,7 @@ namespace Henzai.Core.Acceleration
             }
 
             geometryDefinition.NumberOfValidIndicies = validIndicesCounter;
-            geometryDefinition.NumberOfValidVertices = validVertexCounter;
-            
+            geometryDefinition.NumberOfValidVertices = validVertexCounter;   
         }
 
         private static bool IsVertexWithinFrustum(ref Matrix4x4 viewProjectionMatrix, ref Vector3 vertex){
