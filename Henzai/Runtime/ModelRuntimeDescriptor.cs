@@ -67,6 +67,7 @@ namespace Henzai.Runtime
         public VertexTypes VertexType {get; private set;}
         public PrimitiveTopology PrimitiveTopology {get; private set;}
         public uint TotalInstanceCount{get;set;}
+        public bool IsCulled {get; set;}
 
         public event Func<VertexLayoutDescription> CallVertexLayoutGeneration;
         public event Func<VertexLayoutDescription> CallVertexInstanceLayoutGeneration;
@@ -89,6 +90,8 @@ namespace Henzai.Runtime
 
             VertexType = vertexType;
             PrimitiveTopology = primitiveTopology;
+
+            IsCulled = false;
 
             VertexBufferList = new List<DeviceBuffer>();
             IndexBufferList = new List<DeviceBuffer>();

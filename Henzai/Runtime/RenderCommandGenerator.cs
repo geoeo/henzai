@@ -324,6 +324,8 @@ namespace Henzai.Runtime
                 model);  
             for(int i = 0; i < model.meshCount; i++){
                 var mesh = model.meshes[i];
+                if(mesh.IsCulled)
+                    continue;
                 RenderCommandGenerator.GenerateCommandsForMesh_Inline(
                     commandList,
                     cubeMapRuntimeDescriptor.VertexBuffers[i],
@@ -343,6 +345,8 @@ namespace Henzai.Runtime
                                                                     SceneRuntimeDescriptor sceneRuntimeDescriptor){
             for(int j = 0; j < descriptorArray.Length; j++){
                 var modelState = descriptorArray[j];
+                if(modelState.IsCulled)
+                    continue;
                 var model = modelState.Model;
                 RenderCommandGenerator.GenerateCommandsForModel_Inline(
                     commandList,
@@ -354,6 +358,8 @@ namespace Henzai.Runtime
                     model);
                 for(int i = 0; i < model.meshCount; i++){
                     var mesh = model.meshes[i];
+                    if(mesh.IsCulled)
+                        continue;
                     RenderCommandGenerator.GenerateCommandsForMesh_Inline(
                         commandList,
                         modelState.VertexBuffers[i],
@@ -374,6 +380,8 @@ namespace Henzai.Runtime
                                                                     SceneRuntimeDescriptor sceneRuntimeDescriptor){
             for(int j = 0; j < descriptorArray.Length; j++){
                 var modelState = descriptorArray[j];
+                if(modelState.IsCulled)
+                    continue;
                 var model = modelState.Model;
                 RenderCommandGenerator.GenerateCommandsForModel_Inline(
                     commandList,
@@ -383,6 +391,8 @@ namespace Henzai.Runtime
                     model);  
                 for(int i = 0; i < model.meshCount; i++){
                     var mesh = model.meshes[i];
+                    if(mesh.IsCulled)
+                        continue;
                     RenderCommandGenerator.GenerateCommandsForMesh_Inline(
                         commandList,
                         modelState.VertexBuffers[i],
@@ -401,6 +411,8 @@ namespace Henzai.Runtime
                                                                     SceneRuntimeDescriptor sceneRuntimeDescriptor){
             for(int j = 0; j < descriptorArray.Length; j++){
                 var modelState = descriptorArray[j];
+                if(modelState.IsCulled)
+                    continue;
                 var model = modelState.Model;
                 RenderCommandGenerator.GenerateCommandsForModel_Inline(
                     commandList,
@@ -413,6 +425,8 @@ namespace Henzai.Runtime
                     commandList.SetVertexBuffer(i.ToUnsigned()+1,modelState.InstanceBuffers[i]);
                 for(int i = 0; i < model.meshCount; i++){
                     var mesh = model.meshes[i];
+                    if(mesh.IsCulled)
+                        continue;
                     RenderCommandGenerator.GenerateCommandsForMesh_Inline(
                         commandList,
                         modelState.VertexBuffers[i],
@@ -432,6 +446,8 @@ namespace Henzai.Runtime
                                                                     SceneRuntimeDescriptor sceneRuntimeDescriptor){
             for(int j = 0; j < descriptorArray.Length; j++){
                 var modelState = descriptorArray[j];
+                if(modelState.IsCulled)
+                    continue;
                 var model = modelState.Model;
                 RenderCommandGenerator.GenerateCommandsForModel_Inline(
                     commandList,
@@ -441,6 +457,8 @@ namespace Henzai.Runtime
                     model);  
                 for(int i = 0; i < model.meshCount; i++){
                     var mesh = model.meshes[i];
+                    if(mesh.IsCulled)
+                        continue;
                     RenderCommandGenerator.GenerateCommandsForMesh_Inline(
                         commandList,
                         modelState.VertexBuffers[i],
@@ -461,6 +479,8 @@ namespace Henzai.Runtime
                                                                     SceneRuntimeDescriptor sceneRuntimeDescriptor){
             for(int j = 0; j < descriptorArray.Length; j++){
                 var modelState = descriptorArray[j];
+                if(modelState.IsCulled)
+                    continue;
                 var model = modelState.Model;
                 RenderCommandGenerator.GenerateCommandsForModel_Inline(
                     commandList,
@@ -473,6 +493,8 @@ namespace Henzai.Runtime
                     commandList.SetVertexBuffer(i.ToUnsigned()+1,modelState.InstanceBuffers[i]);
                 for(int i = 0; i < model.meshCount; i++){
                     var mesh = model.meshes[i];
+                    if(mesh.IsCulled)
+                        continue;
                     RenderCommandGenerator.GenerateCommandsForMesh_Inline(
                         commandList,
                         modelState.VertexBuffers[i],
@@ -492,6 +514,8 @@ namespace Henzai.Runtime
                                                                     SceneRuntimeDescriptor sceneRuntimeDescriptor){
             for(int j = 0; j < descriptorArray.Length; j++){
                 var modelState = descriptorArray[j];
+                if(modelState.IsCulled)
+                    continue;
                 var model = modelState.Model;
                 RenderCommandGenerator.GenerateCommandsForModel_Inline(
                     commandList,
@@ -507,6 +531,8 @@ namespace Henzai.Runtime
                     commandList.SetVertexBuffer(i.ToUnsigned()+1,modelState.InstanceBuffers[i]);
                 for(int i = 0; i < model.meshCount; i++){
                     var mesh = model.meshes[i];
+                    if(mesh.IsCulled)
+                        continue;
                     RenderCommandGenerator.GenerateCommandsForMesh_Inline(
                         commandList,
                         modelState.VertexBuffers[i],
@@ -531,6 +557,8 @@ namespace Henzai.Runtime
                                                                     SceneRuntimeDescriptor sceneRuntimeDescriptor){
             for(int j = 0; j < descriptorArray.Length; j++){
                 var modelState = descriptorArray[j];
+                if(modelState.IsCulled)
+                    continue;
                 var model = modelState.Model;
                 RenderCommandGenerator.GenerateCommandsForModel_Inline(
                     commandList,
@@ -544,6 +572,8 @@ namespace Henzai.Runtime
                     model);
                 for(int i = 0; i < model.meshCount; i++){
                     var mesh = model.meshes[i];
+                    if(mesh.IsCulled)
+                        continue;
                     RenderCommandGenerator.GenerateCommandsForMesh_Inline(
                         commandList,
                         modelState.VertexBuffers[i],

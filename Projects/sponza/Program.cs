@@ -12,7 +12,7 @@ namespace Henzai.Examples
         static void Main(string[] args)
         {
             Program programm = new Program();
-            programm.createScene(GraphicsBackend.Metal);
+            programm.createScene(GraphicsBackend.OpenGL);
         }
 
         public override void createScene(GraphicsBackend graphicsBackend, Sdl2Window contextWindow = null){
@@ -54,7 +54,8 @@ namespace Henzai.Examples
             gui.SetOverlayFor(scene);
             gui.changeBackendAction += ChangeBackend;
 
-            scene.PreDraw_Time_GraphicsDevice_Camera_Models += EnableCulling;
+            // scene.PreDraw_Time_GraphicsDevice_CommandList_Camera_Models += EnableCulling;
+            // scene.PreDraw_Time_Camera_Models += EnableCulling;
 
             scene.Run(renderResolution);
         }

@@ -64,6 +64,33 @@ namespace Henzai.Core.Acceleration
             geometryDefinition.NumberOfValidVertices = validVertexCounter;   
         }
 
+        public static bool IsGeometryDefinitionCulled<T>(ref Matrix4x4 viewProjectionMatrix, GeometryDefinition<T> geometryDefinition) where T: struct, VertexLocateable {
+            T[] vertices = geometryDefinition.GetVertices;
+            ushort[] indices = geometryDefinition.GetIndices;
+
+            bool isCulled = true;
+
+            for(int i = 0; i < indices.Length; i+=3){
+                ushort i1 = indices[i];
+                ushort i2 = indices[i+1];
+                ushort i3 = indices[i+2];
+
+                Vector3 v1 = vertices[i1].GetPosition();
+                Vector3 v2 = vertices[i2].GetPosition();
+                Vector3 v3 = vertices[i3].GetPosition();
+
+                // If at least one vertex is within the frustum, the triangle is not culled.
+                if(IsVertexWithinFrustum(ref viewProjectionMatrix,ref v1) 
+                || IsVertexWithinFrustum(ref viewProjectionMatrix,ref v2)
+                || IsVertexWithinFrustum(ref viewProjectionMatrix,ref v3)){
+                    isCulled = false;
+                    break;
+                }
+            }
+
+            return isCulled; 
+        }
+
         private static bool IsVertexWithinFrustum(ref Matrix4x4 viewProjectionMatrix, ref Vector3 vertex){
             _vertexHomogeneous.X = vertex.X;
             _vertexHomogeneous.Y = vertex.Y;
@@ -72,9 +99,9 @@ namespace Henzai.Core.Acceleration
             return LeftHalfSpaceCheck(ref viewProjectionMatrix) &&
                 RightHalfSpaceCheck(ref viewProjectionMatrix) &&
                 TopHalfSpaceCheck(ref viewProjectionMatrix) &&
-                BottomHalfSpaceCheck(ref viewProjectionMatrix) &&
-                NearHalfSpaceCheck(ref viewProjectionMatrix) &&
-                FarHalfSpaceCheck(ref viewProjectionMatrix);
+                BottomHalfSpaceCheck(ref viewProjectionMatrix);
+                // NearHalfSpaceCheck(ref viewProjectionMatrix) &&
+                // FarHalfSpaceCheck(ref viewProjectionMatrix);
         }
 
         private static bool LeftHalfSpaceCheck(ref Matrix4x4 viewProjectionMatrix) {

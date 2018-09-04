@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Diagnostics;
 using Veldrid;
 using Veldrid.StartupUtilities;
 using Veldrid.Sdl2;
@@ -62,7 +63,8 @@ namespace Henzai.Runtime
         /// </summary>
         public event Action<float> PreDraw;
         public event Action<float,InputSnapshot> PreDraw_Time_Input;
-        public event Action<float, CommandList, Camera, ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[],ModelRuntimeDescriptor<VertexPositionNormal>[],ModelRuntimeDescriptor<VertexPositionTexture>[],ModelRuntimeDescriptor<VertexPositionColor>[],ModelRuntimeDescriptor<VertexPosition>[]> PreDraw_Time_GraphicsDevice_Camera_Models;
+        public event Action<float, GraphicsDevice, CommandList, Camera, ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[],ModelRuntimeDescriptor<VertexPositionNormal>[],ModelRuntimeDescriptor<VertexPositionTexture>[],ModelRuntimeDescriptor<VertexPositionColor>[],ModelRuntimeDescriptor<VertexPosition>[]> PreDraw_Time_GraphicsDevice_CommandList_Camera_Models;
+        public event Action<float, Camera, ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[],ModelRuntimeDescriptor<VertexPositionNormal>[],ModelRuntimeDescriptor<VertexPositionTexture>[],ModelRuntimeDescriptor<VertexPositionColor>[],ModelRuntimeDescriptor<VertexPosition>[]> PreDraw_Time_Camera_Models;
         /// <summary>
         /// Bind Actions that have to be executed after every draw call
         /// </summary>
@@ -190,6 +192,10 @@ namespace Henzai.Runtime
         /// </summary>
         public void Run(Resolution renderResolution)
         {
+            Debug.Assert(_commandList != null);
+            Debug.Assert(_graphicsDevice != null);
+            Debug.Assert(_factory != null); 
+            
             _renderResolution = renderResolution;
 
             if(_renderOptions.FarPlane > 0)
@@ -227,9 +233,17 @@ namespace Henzai.Runtime
 
                     PreDraw?.Invoke(_frameTimer.prevFrameTicksInSeconds);
                     PreDraw_Time_Input?.Invoke(_frameTimer.prevFrameTicksInSeconds,inputSnapshot);
-                    PreDraw_Time_GraphicsDevice_Camera_Models?.Invoke(
+                    PreDraw_Time_GraphicsDevice_CommandList_Camera_Models?.Invoke(
                         _frameTimer.prevFrameTicksInSeconds,
+                        _graphicsDevice,
                         _commandList,
+                        _camera,
+                        _modelPNTTBDescriptorArray,_modelPNDescriptorArray,
+                        _modelPTDescriptorArray,
+                        _modelPCDescriptorArray,
+                        _modelPDescriptorArray);
+                    PreDraw_Time_Camera_Models?.Invoke(
+                        _frameTimer.prevFrameTicksInSeconds,
                         _camera,
                         _modelPNTTBDescriptorArray,_modelPNDescriptorArray,
                         _modelPTDescriptorArray,
