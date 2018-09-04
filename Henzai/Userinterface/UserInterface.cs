@@ -48,7 +48,7 @@ namespace Henzai.UI
 
         public void SetOverlayFor(Renderable scene){
             // Needs to be called before building command lists
-            scene.PreDraw_Float_Input += UpdateImGui;
+            scene.PreDraw_Time_Input += UpdateImGui;
             scene.UI = this;
             _isChild = true;
 

@@ -41,22 +41,22 @@ namespace Henzai.Core.Acceleration
                 || IsVertexWithinFrustum(ref viewProjectionMatrix,ref v3)){
 
                     if(!_processedIndicesMap.ContainsKey(i1)){
-                        validIndices[validIndicesCounter++] = i1;
+                        validVertices[validVertexCounter++] = vertices[i1];
                         _processedIndicesMap.Add(i1,true);
                     }
-                    validVertices[validVertexCounter++] = vertices[i1];
+                        validIndices[validIndicesCounter++] = i1;
 
                     if(!_processedIndicesMap.ContainsKey(i2)){
-                        validIndices[validIndicesCounter++] = i2;
+                        validVertices[validVertexCounter++] = vertices[i2];
                         _processedIndicesMap.Add(i2,true);
                     }
-                    validVertices[validVertexCounter++] = vertices[i2];
+                        validIndices[validIndicesCounter++] = i2;
 
                     if(!_processedIndicesMap.ContainsKey(i3)){
-                        validIndices[validIndicesCounter++] = i3;
+                        validVertices[validVertexCounter++] = vertices[i3];
                         _processedIndicesMap.Add(i3,true);
                     }
-                    validVertices[validVertexCounter++] = vertices[i3];
+                        validIndices[validIndicesCounter++] = i3;
                 }
             }
 

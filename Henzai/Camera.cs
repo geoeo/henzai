@@ -68,7 +68,7 @@ namespace Henzai
         private void UpdatePerspectiveMatrix(float width, float height)
         {
             _projectionMatrix = Matrix4x4.CreatePerspectiveFieldOfView(_fov, width / height, _near, _far);
-            _viewProjectionMatrix = _viewMatrix*_projectionMatrix;
+            //_viewProjectionMatrix = _viewMatrix*_projectionMatrix;
         }
 
         private void UpdateViewMatrix(bool defaultLookDir = false)

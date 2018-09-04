@@ -10,7 +10,7 @@ namespace Henzai.Geometry
     public sealed class Mesh<T> where T : struct, VertexLocateable
     {
         private GeometryDefinition<T> _geometryDefinition;
-
+        public GeometryDefinition<T> GeometryDefinition => _geometryDefinition;
         public T[] Vertices => _geometryDefinition.GetValidVertices;
         public ushort[] MeshIndices {
             get
@@ -24,8 +24,8 @@ namespace Henzai.Geometry
             }
         }
 
-        public int GetNumberOfValidVertices => _geometryDefinition.GetNumberOfValidVertices;
-        public int GetNumberOfValidIndices => _geometryDefinition.GetNumberOfValidIndices;
+        public int NumberOfValidVertices => _geometryDefinition.GetNumberOfValidVertices;
+        public int NumberOfValidIndices => _geometryDefinition.GetNumberOfValidIndices;
         private Matrix4x4 _world = Matrix4x4.Identity;
         public ref Matrix4x4 World => ref _world;
 

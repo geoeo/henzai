@@ -82,9 +82,7 @@ namespace Henzai.Core.Geometry
             Debug.Assert(source.Length == target.Length);
             
             for(int i = 0; i < source.Length; i++)
-                target[i] = source[i];
-            
-        }
-    
+                target[i] = source[i];        
+        }    
     }
 }

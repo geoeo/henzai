@@ -61,7 +61,8 @@ namespace Henzai.Runtime
         /// Bind Actions that have to be executed prior to every draw call
         /// </summary>
         public event Action<float> PreDraw;
-        public event Action<float,InputSnapshot> PreDraw_Float_Input;
+        public event Action<float,InputSnapshot> PreDraw_Time_Input;
+        public event Action<float, CommandList, Camera, ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[],ModelRuntimeDescriptor<VertexPositionNormal>[],ModelRuntimeDescriptor<VertexPositionTexture>[],ModelRuntimeDescriptor<VertexPositionColor>[],ModelRuntimeDescriptor<VertexPosition>[]> PreDraw_Time_GraphicsDevice_Camera_Models;
         /// <summary>
         /// Bind Actions that have to be executed after every draw call
         /// </summary>
@@ -74,7 +75,6 @@ namespace Henzai.Runtime
         private Task[] drawTasksPost;
         public Renderable UI {set; private get;}
         private CancellationTokenSource _uiCancellationTokenSource;
-
 
         protected List<ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>> _modelPNTTBDescriptorList;
         protected ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent> [] _modelPNTTBDescriptorArray;
@@ -226,7 +226,15 @@ namespace Henzai.Runtime
                 if(_contextWindow.Exists){
 
                     PreDraw?.Invoke(_frameTimer.prevFrameTicksInSeconds);
-                    PreDraw_Float_Input?.Invoke(_frameTimer.prevFrameTicksInSeconds,inputSnapshot);
+                    PreDraw_Time_Input?.Invoke(_frameTimer.prevFrameTicksInSeconds,inputSnapshot);
+                    PreDraw_Time_GraphicsDevice_Camera_Models?.Invoke(
+                        _frameTimer.prevFrameTicksInSeconds,
+                        _commandList,
+                        _camera,
+                        _modelPNTTBDescriptorArray,_modelPNDescriptorArray,
+                        _modelPTDescriptorArray,
+                        _modelPCDescriptorArray,
+                        _modelPDescriptorArray);
 
                     buildCommandListTasks[0] = Task.Run(() => this.BuildCommandList());
                     for(int i = 0; i < _allChildren.Count; i++){
@@ -292,7 +300,7 @@ namespace Henzai.Runtime
                 modelDescriptor.TextureResourceLayout = modelDescriptor.InvokeTextureResourceLayoutGeneration(_factory);
                 modelDescriptor.TextureSampler = modelDescriptor.InvokeSamplerGeneration(_factory);
                 modelDescriptor.LoadShaders(_graphicsDevice);
-                var vertexSizeInBytes = model.meshes[0].Vertices[0].GetSizeInBytes();
+                byte vertexSizeInBytes = model.meshes[0].Vertices[0].GetSizeInBytes();
 
                 for(int i = 0; i < model.meshCount; i++){
 
@@ -315,8 +323,8 @@ namespace Henzai.Runtime
                     }
 
                     Geometry.Mesh<T> mesh = model.meshes[i];
-                    _graphicsDevice.UpdateBuffer<T>(vertexBuffer,0,ref mesh.Vertices[0], (vertexSizeInBytes* mesh.GetNumberOfValidVertices).ToUnsigned());
-                    _graphicsDevice.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.MeshIndices[0], (sizeof(ushort)*mesh.GetNumberOfValidIndices).ToUnsigned());
+                    _graphicsDevice.UpdateBuffer<T>(vertexBuffer,0,ref mesh.Vertices[0], (vertexSizeInBytes* mesh.NumberOfValidVertices).ToUnsigned());
+                    _graphicsDevice.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.MeshIndices[0], (sizeof(ushort)*mesh.NumberOfValidIndices).ToUnsigned());
 
                     var resourceSet = modelDescriptor.InvokeTextureResourceSetGeneration(i,_factory,_graphicsDevice);
                     if(resourceSet != null)
