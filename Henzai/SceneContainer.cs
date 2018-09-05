@@ -23,8 +23,8 @@ namespace Henzai
             createScene(graphicsBackend,contextWindow);
         }
 
-        //TODO: Way too slow and buggy - Doesnt work with commandList on Metal
-        protected void EnableCulling(float deltaTime, GraphicsDevice graphicsDevice, CommandList commandList, Camera camera, ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] modelPNTTBDescriptorArray,ModelRuntimeDescriptor<VertexPositionNormal>[] modelPNDescriptorArray,ModelRuntimeDescriptor<VertexPositionTexture>[] modelPTDescriptorArray, ModelRuntimeDescriptor<VertexPositionColor>[] modelPCDescriptorArray, ModelRuntimeDescriptor<VertexPosition>[] modelPDescriptorArray){
+        //TODO: Way too slow
+            protected void EnableCulling(float deltaTime, GraphicsDevice graphicsDevice, CommandList commandList, Camera camera, ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] modelPNTTBDescriptorArray,ModelRuntimeDescriptor<VertexPositionNormal>[] modelPNDescriptorArray,ModelRuntimeDescriptor<VertexPositionTexture>[] modelPTDescriptorArray, ModelRuntimeDescriptor<VertexPositionColor>[] modelPCDescriptorArray, ModelRuntimeDescriptor<VertexPosition>[] modelPDescriptorArray){
 
             foreach(var modelDescriptor in modelPNTTBDescriptorArray){
                 var model = modelDescriptor.Model;
@@ -32,15 +32,17 @@ namespace Henzai
                 var indexBuffer = modelDescriptor.IndexBuffers[0];
                 byte vertexSizeInBytes = model.meshes[0].Vertices[0].GetSizeInBytes();
 
-                // commandList.Begin();
+                commandList.Begin();
 
                 foreach(var mesh in model.meshes){
                     var worldMatrix = mesh.World;
                     var MVP = worldMatrix*camera.ViewProjectionMatirx;
-                    // var MVP = camera.ViewProjectionMatirx*worldMatrix;
-                    // MeshCuller.FrustumCullGeometryDefinition(ref MVP, mesh.GeometryDefinition);
-                    // commandList.UpdateBuffer<VertexPositionNormalTextureTangentBitangent>(vertexBuffer,0,ref mesh.Vertices[0], (vertexSizeInBytes* mesh.NumberOfValidVertices).ToUnsigned());     
-                    // commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.MeshIndices[0], (sizeof(ushort)*mesh.NumberOfValidIndices).ToUnsigned());
+                    MeshCuller.FrustumCullGeometryDefinition(ref MVP, mesh.GeometryDefinition);
+                    uint bytesToCopy = (vertexSizeInBytes* mesh.NumberOfValidVertices).ToUnsigned();
+                    if(bytesToCopy == 0) 
+                        continue;
+                    commandList.UpdateBuffer<VertexPositionNormalTextureTangentBitangent>(vertexBuffer,0,ref mesh.Vertices[0], bytesToCopy);     
+                    commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.MeshIndices[0], (sizeof(ushort)*mesh.NumberOfValidIndices).ToUnsigned());
 
                     // graphicsDevice.UpdateBuffer<VertexPositionNormalTextureTangentBitangent>(vertexBuffer,0,ref mesh.Vertices[0], (vertexSizeInBytes* mesh.NumberOfValidVertices).ToUnsigned());     
                     // graphicsDevice.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.MeshIndices[0], (sizeof(ushort)*mesh.NumberOfValidIndices).ToUnsigned());
@@ -56,10 +58,12 @@ namespace Henzai
                 foreach(var mesh in model.meshes){
                     var worldMatrix = mesh.World;
                     var MVP = worldMatrix*camera.ViewProjectionMatirx;
-                    // var MVP = camera.ViewProjectionMatirx*worldMatrix;
-                    // MeshCuller.FrustumCullGeometryDefinition(ref MVP, mesh.GeometryDefinition); 
-                    // commandList.UpdateBuffer<VertexPositionNormal>(vertexBuffer,0,ref mesh.Vertices[0], (vertexSizeInBytes* mesh.NumberOfValidVertices).ToUnsigned());     
-                    // commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.MeshIndices[0], (sizeof(ushort)*mesh.NumberOfValidIndices).ToUnsigned());
+                    MeshCuller.FrustumCullGeometryDefinition(ref MVP, mesh.GeometryDefinition); 
+                    uint bytesToCopy = (vertexSizeInBytes* mesh.NumberOfValidVertices).ToUnsigned();
+                    if(bytesToCopy == 0) 
+                        continue;
+                    commandList.UpdateBuffer<VertexPositionNormal>(vertexBuffer,0,ref mesh.Vertices[0], bytesToCopy);     
+                    commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.MeshIndices[0], bytesToCopy);
 
                     // graphicsDevice.UpdateBuffer<VertexPositionNormal>(vertexBuffer,0,ref mesh.Vertices[0], (vertexSizeInBytes* mesh.NumberOfValidVertices).ToUnsigned());     
                     // graphicsDevice.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.MeshIndices[0], (sizeof(ushort)*mesh.NumberOfValidIndices).ToUnsigned());
@@ -74,11 +78,13 @@ namespace Henzai
 
                 foreach(var mesh in model.meshes){
                     var worldMatrix = mesh.World;
-                    var MVP = worldMatrix*camera.ViewProjectionMatirx;  
-                    // var MVP = camera.ViewProjectionMatirx*worldMatrix;                 
-                    // MeshCuller.FrustumCullGeometryDefinition(ref MVP, mesh.GeometryDefinition); 
-                    // commandList.UpdateBuffer<VertexPositionTexture>(vertexBuffer,0,ref mesh.Vertices[0], (vertexSizeInBytes* mesh.NumberOfValidVertices).ToUnsigned());     
-                    // commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.MeshIndices[0], (sizeof(ushort)*mesh.NumberOfValidIndices).ToUnsigned());
+                    var MVP = worldMatrix*camera.ViewProjectionMatirx;               
+                    MeshCuller.FrustumCullGeometryDefinition(ref MVP, mesh.GeometryDefinition); 
+                    uint bytesToCopy = (vertexSizeInBytes* mesh.NumberOfValidVertices).ToUnsigned();
+                    if(bytesToCopy == 0) 
+                        continue;
+                    commandList.UpdateBuffer<VertexPositionTexture>(vertexBuffer,0,ref mesh.Vertices[0], bytesToCopy);     
+                    commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.MeshIndices[0], (sizeof(ushort)*mesh.NumberOfValidIndices).ToUnsigned());
 
                     // graphicsDevice.UpdateBuffer<VertexPositionTexture>(vertexBuffer,0,ref mesh.Vertices[0], (vertexSizeInBytes* mesh.NumberOfValidVertices).ToUnsigned());     
                     // graphicsDevice.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.MeshIndices[0], (sizeof(ushort)*mesh.NumberOfValidIndices).ToUnsigned());
@@ -94,10 +100,12 @@ namespace Henzai
                 foreach(var mesh in model.meshes){
                     var worldMatrix = mesh.World;
                     var MVP = worldMatrix*camera.ViewProjectionMatirx;
-                    // var MVP = camera.ViewProjectionMatirx*worldMatrix;
-                    // MeshCuller.FrustumCullGeometryDefinition(ref MVP, mesh.GeometryDefinition); 
-                    // commandList.UpdateBuffer<VertexPositionColor>(vertexBuffer,0,ref mesh.Vertices[0], (vertexSizeInBytes* mesh.NumberOfValidVertices).ToUnsigned());     
-                    // commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.MeshIndices[0], (sizeof(ushort)*mesh.NumberOfValidIndices).ToUnsigned());
+                    MeshCuller.FrustumCullGeometryDefinition(ref MVP, mesh.GeometryDefinition); 
+                    uint bytesToCopy = (vertexSizeInBytes* mesh.NumberOfValidVertices).ToUnsigned();
+                    if(bytesToCopy == 0) 
+                        continue;
+                    commandList.UpdateBuffer<VertexPositionColor>(vertexBuffer,0,ref mesh.Vertices[0], bytesToCopy);     
+                    commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.MeshIndices[0], (sizeof(ushort)*mesh.NumberOfValidIndices).ToUnsigned());
 
                     // graphicsDevice.UpdateBuffer<VertexPositionColor>(vertexBuffer,0,ref mesh.Vertices[0], (vertexSizeInBytes* mesh.NumberOfValidVertices).ToUnsigned());     
                     // graphicsDevice.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.MeshIndices[0], (sizeof(ushort)*mesh.NumberOfValidIndices).ToUnsigned());
@@ -113,10 +121,12 @@ namespace Henzai
                 foreach(var mesh in model.meshes){
                     var worldMatrix = mesh.World;
                     var MVP = worldMatrix*camera.ViewProjectionMatirx;
-                    // var MVP = camera.ViewProjectionMatirx*worldMatrix;
-                    // MeshCuller.FrustumCullGeometryDefinition(ref MVP, mesh.GeometryDefinition); 
-                    // commandList.UpdateBuffer<VertexPosition>(vertexBuffer,0,ref mesh.Vertices[0], (vertexSizeInBytes* mesh.NumberOfValidVertices).ToUnsigned());     
-                    // commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.MeshIndices[0], (sizeof(ushort)*mesh.NumberOfValidIndices).ToUnsigned());
+                    MeshCuller.FrustumCullGeometryDefinition(ref MVP, mesh.GeometryDefinition); 
+                    uint bytesToCopy = (vertexSizeInBytes* mesh.NumberOfValidVertices).ToUnsigned();
+                    if(bytesToCopy == 0) 
+                        continue;
+                    commandList.UpdateBuffer<VertexPosition>(vertexBuffer,0,ref mesh.Vertices[0], bytesToCopy);     
+                    commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.MeshIndices[0], (sizeof(ushort)*mesh.NumberOfValidIndices).ToUnsigned());
 
                     // graphicsDevice.UpdateBuffer<VertexPosition>(vertexBuffer,0,ref mesh.Vertices[0], (vertexSizeInBytes* mesh.NumberOfValidVertices).ToUnsigned());     
                     // graphicsDevice.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.MeshIndices[0], (sizeof(ushort)*mesh.NumberOfValidIndices).ToUnsigned());
@@ -124,7 +134,7 @@ namespace Henzai
                 }               
             }
 
-            // commandList.End();
+            commandList.End();
         }
 
         protected void EnableCulling(float deltaTime, Camera camera, ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] modelPNTTBDescriptorArray,ModelRuntimeDescriptor<VertexPositionNormal>[] modelPNDescriptorArray,ModelRuntimeDescriptor<VertexPositionTexture>[] modelPTDescriptorArray, ModelRuntimeDescriptor<VertexPositionColor>[] modelPCDescriptorArray, ModelRuntimeDescriptor<VertexPosition>[] modelPDescriptorArray){
@@ -134,8 +144,6 @@ namespace Henzai
                 var vertexBuffer = modelDescriptor.VertexBuffers[0];
                 var indexBuffer = modelDescriptor.IndexBuffers[0];
                 byte vertexSizeInBytes = model.meshes[0].Vertices[0].GetSizeInBytes();
-
-                // commandList.Begin();
 
                 foreach(var mesh in model.meshes){
                     var worldMatrix = mesh.World;
