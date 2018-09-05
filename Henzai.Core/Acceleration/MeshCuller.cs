@@ -99,43 +99,43 @@ namespace Henzai.Core.Acceleration
             return LeftHalfSpaceCheck(ref viewProjectionMatrix) &&
                 RightHalfSpaceCheck(ref viewProjectionMatrix) &&
                 TopHalfSpaceCheck(ref viewProjectionMatrix) &&
-                BottomHalfSpaceCheck(ref viewProjectionMatrix);
-                // NearHalfSpaceCheck(ref viewProjectionMatrix) &&
-                // FarHalfSpaceCheck(ref viewProjectionMatrix);
+                BottomHalfSpaceCheck(ref viewProjectionMatrix) &&
+                NearHalfSpaceCheck(ref viewProjectionMatrix) &&
+                FarHalfSpaceCheck(ref viewProjectionMatrix);
         }
 
         private static bool LeftHalfSpaceCheck(ref Matrix4x4 viewProjectionMatrix) {
-            _frustumRowVector.X = viewProjectionMatrix.M41 + viewProjectionMatrix.M11;
-            _frustumRowVector.Y = viewProjectionMatrix.M42 + viewProjectionMatrix.M12;
-            _frustumRowVector.Z = viewProjectionMatrix.M43 + viewProjectionMatrix.M13;
-            _frustumRowVector.W = viewProjectionMatrix.M44 + viewProjectionMatrix.M14;
+            _frustumRowVector.X = viewProjectionMatrix.M14 + viewProjectionMatrix.M11;
+            _frustumRowVector.Y = viewProjectionMatrix.M24 + viewProjectionMatrix.M21;
+            _frustumRowVector.Z = viewProjectionMatrix.M34 + viewProjectionMatrix.M31;
+            _frustumRowVector.W = viewProjectionMatrix.M44 + viewProjectionMatrix.M41;
 
             return  0 < GeometryUtils.InMemoryDotProduct(ref _frustumRowVector, ref _vertexHomogeneous);
         }
 
         private static bool RightHalfSpaceCheck(ref Matrix4x4 viewProjectionMatrix) {
-            _frustumRowVector.X = viewProjectionMatrix.M41 - viewProjectionMatrix.M11;
-            _frustumRowVector.Y = viewProjectionMatrix.M42 - viewProjectionMatrix.M12;
-            _frustumRowVector.Z = viewProjectionMatrix.M43 - viewProjectionMatrix.M13;
-            _frustumRowVector.W = viewProjectionMatrix.M44 - viewProjectionMatrix.M14;
+            _frustumRowVector.X = viewProjectionMatrix.M14 - viewProjectionMatrix.M11;
+            _frustumRowVector.Y = viewProjectionMatrix.M24 - viewProjectionMatrix.M21;
+            _frustumRowVector.Z = viewProjectionMatrix.M34 - viewProjectionMatrix.M31;
+            _frustumRowVector.W = viewProjectionMatrix.M44 - viewProjectionMatrix.M41;
 
             return 0 < GeometryUtils.InMemoryDotProduct(ref _frustumRowVector, ref _vertexHomogeneous);
         }
 
         private static bool TopHalfSpaceCheck(ref Matrix4x4 viewProjectionMatrix) {
-            _frustumRowVector.X = viewProjectionMatrix.M41 - viewProjectionMatrix.M21;
-            _frustumRowVector.Y = viewProjectionMatrix.M42 - viewProjectionMatrix.M22;
-            _frustumRowVector.Z = viewProjectionMatrix.M43 - viewProjectionMatrix.M23;
-            _frustumRowVector.W = viewProjectionMatrix.M44 - viewProjectionMatrix.M24;
+            _frustumRowVector.X = viewProjectionMatrix.M14 - viewProjectionMatrix.M12;
+            _frustumRowVector.Y = viewProjectionMatrix.M24 - viewProjectionMatrix.M22;
+            _frustumRowVector.Z = viewProjectionMatrix.M34 - viewProjectionMatrix.M32;
+            _frustumRowVector.W = viewProjectionMatrix.M44 - viewProjectionMatrix.M42;
 
             return 0 < GeometryUtils.InMemoryDotProduct(ref _frustumRowVector, ref _vertexHomogeneous);
         }
 
         private static bool BottomHalfSpaceCheck(ref Matrix4x4 viewProjectionMatrix) {
-            _frustumRowVector.X = viewProjectionMatrix.M41 + viewProjectionMatrix.M21;
-            _frustumRowVector.Y = viewProjectionMatrix.M42 + viewProjectionMatrix.M22;
-            _frustumRowVector.Z = viewProjectionMatrix.M43 + viewProjectionMatrix.M23;
-            _frustumRowVector.W = viewProjectionMatrix.M44 + viewProjectionMatrix.M24;
+            _frustumRowVector.X = viewProjectionMatrix.M14 + viewProjectionMatrix.M12;
+            _frustumRowVector.Y = viewProjectionMatrix.M24 + viewProjectionMatrix.M22;
+            _frustumRowVector.Z = viewProjectionMatrix.M34 + viewProjectionMatrix.M32;
+            _frustumRowVector.W = viewProjectionMatrix.M44 + viewProjectionMatrix.M42;
 
             return 0 < GeometryUtils.InMemoryDotProduct(ref _frustumRowVector, ref _vertexHomogeneous);
         }
@@ -150,10 +150,10 @@ namespace Henzai.Core.Acceleration
         }
 
         private static bool FarHalfSpaceCheck(ref Matrix4x4 viewProjectionMatrix) {
-            _frustumRowVector.X = viewProjectionMatrix.M41 - viewProjectionMatrix.M31;
-            _frustumRowVector.Y = viewProjectionMatrix.M42 - viewProjectionMatrix.M32;
-            _frustumRowVector.Z = viewProjectionMatrix.M43 - viewProjectionMatrix.M33;
-            _frustumRowVector.W = viewProjectionMatrix.M44 - viewProjectionMatrix.M34;
+            _frustumRowVector.X = viewProjectionMatrix.M14 - viewProjectionMatrix.M13;
+            _frustumRowVector.Y = viewProjectionMatrix.M24 - viewProjectionMatrix.M23;
+            _frustumRowVector.Z = viewProjectionMatrix.M34 - viewProjectionMatrix.M33;
+            _frustumRowVector.W = viewProjectionMatrix.M44 - viewProjectionMatrix.M43;
 
             return 0 < GeometryUtils.InMemoryDotProduct(ref _frustumRowVector, ref _vertexHomogeneous);
         }

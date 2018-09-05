@@ -324,8 +324,6 @@ namespace Henzai.Runtime
                 model);  
             for(int i = 0; i < model.meshCount; i++){
                 var mesh = model.meshes[i];
-                if(mesh.IsCulled)
-                    continue;
                 RenderCommandGenerator.GenerateCommandsForMesh_Inline(
                     commandList,
                     cubeMapRuntimeDescriptor.VertexBuffers[i],
