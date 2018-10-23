@@ -26,6 +26,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "sponza", "Projects\sponza\s
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Henzai.Core", "Henzai.Core\Henzai.Core.csproj", "{5AD912AC-0B28-4AFE-BC4B-DECE5CD7ED04}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "raytracer", "raytracer\raytracer.fsproj", "{706C2683-4D94-4FE7-AB8C-C555681D51AB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -168,6 +170,18 @@ Global
 		{5AD912AC-0B28-4AFE-BC4B-DECE5CD7ED04}.Release|x64.Build.0 = Release|Any CPU
 		{5AD912AC-0B28-4AFE-BC4B-DECE5CD7ED04}.Release|x86.ActiveCfg = Release|Any CPU
 		{5AD912AC-0B28-4AFE-BC4B-DECE5CD7ED04}.Release|x86.Build.0 = Release|Any CPU
+		{706C2683-4D94-4FE7-AB8C-C555681D51AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{706C2683-4D94-4FE7-AB8C-C555681D51AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{706C2683-4D94-4FE7-AB8C-C555681D51AB}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{706C2683-4D94-4FE7-AB8C-C555681D51AB}.Debug|x64.Build.0 = Debug|Any CPU
+		{706C2683-4D94-4FE7-AB8C-C555681D51AB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{706C2683-4D94-4FE7-AB8C-C555681D51AB}.Debug|x86.Build.0 = Debug|Any CPU
+		{706C2683-4D94-4FE7-AB8C-C555681D51AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{706C2683-4D94-4FE7-AB8C-C555681D51AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{706C2683-4D94-4FE7-AB8C-C555681D51AB}.Release|x64.ActiveCfg = Release|Any CPU
+		{706C2683-4D94-4FE7-AB8C-C555681D51AB}.Release|x64.Build.0 = Release|Any CPU
+		{706C2683-4D94-4FE7-AB8C-C555681D51AB}.Release|x86.ActiveCfg = Release|Any CPU
+		{706C2683-4D94-4FE7-AB8C-C555681D51AB}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

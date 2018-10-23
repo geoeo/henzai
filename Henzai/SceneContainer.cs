@@ -23,7 +23,7 @@ namespace Henzai
             createScene(graphicsBackend,contextWindow);
         }
 
-        //TODO: Way too slow
+        //TODO: Way too slow, needs bounding boxes
             protected void EnableCulling(float deltaTime, GraphicsDevice graphicsDevice, CommandList commandList, Camera camera, ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] modelPNTTBDescriptorArray,ModelRuntimeDescriptor<VertexPositionNormal>[] modelPNDescriptorArray,ModelRuntimeDescriptor<VertexPositionTexture>[] modelPTDescriptorArray, ModelRuntimeDescriptor<VertexPositionColor>[] modelPCDescriptorArray, ModelRuntimeDescriptor<VertexPosition>[] modelPDescriptorArray){
 
             foreach(var modelDescriptor in modelPNTTBDescriptorArray){

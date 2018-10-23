@@ -274,6 +274,7 @@ Assets/**/*.png
 Assets/**/*.jpg
 *.tga
 *.tif
+*.jpg
 
 #licenses
 
