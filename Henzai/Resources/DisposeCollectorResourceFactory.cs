@@ -91,6 +91,13 @@ namespace Henzai
             return tex;
         }
 
+        protected override Texture CreateTextureCore(ulong nativeTexture, ref TextureDescription description)
+        {
+            Texture tex = Factory.CreateTexture(nativeTexture, ref description);
+            DisposeCollector.Add(tex);
+            return tex;
+        }
+
         protected override TextureView CreateTextureViewCore(ref TextureViewDescription description)
         {
             TextureView texView = Factory.CreateTextureView(ref description);
