@@ -12,7 +12,6 @@ namespace Henzai.Core.Numerics
         /// https://www.scratchapixel.com/lessons/3d-basic-rendering/global-illumination-path-tracing/global-illumination-path-tracing-practical-implementation
         /// Peter Shirley's Raytracing Miniseries
         /// </summary>
-       //
         public static void CreateCoordinateSystemAroundNormal(ref Vector3 N, ref Vector3 Nt, ref Vector3 Nb){
             Vector3 a;
             if (MathF.Abs(N.X) > MathF.Abs(N.Y))

@@ -66,6 +66,8 @@ namespace Henzai.Core.Geometry
         public int GetNumberOfValidVertices => NumberOfValidVertices;
         public int GetNumberOfValidIndices => NumberOfValidIndicies;
 
+        public bool IsCulled => NumberOfValidIndicies == 0;
+
         public void SetMeshIndices(ushort[] meshIndices){
             Debug.Assert(meshIndices != null);
 

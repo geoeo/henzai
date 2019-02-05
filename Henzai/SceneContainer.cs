@@ -38,10 +38,11 @@ namespace Henzai
                     var worldMatrix = mesh.World;
                     var MVP = worldMatrix*camera.ViewProjectionMatirx;
                     MeshCuller.FrustumCullGeometryDefinition(ref MVP, mesh.GeometryDefinition);
-                    uint bytesToCopy = (vertexSizeInBytes* mesh.NumberOfValidVertices).ToUnsigned();
+                    uint vertexBytesToCopy = (vertexSizeInBytes* mesh.NumberOfValidVertices).ToUnsigned();
+                    uint indexBytesToCopy = (sizeof(ushort)*mesh.NumberOfValidIndices).ToUnsigned();
 
-                    commandList.UpdateBuffer<VertexPositionNormalTextureTangentBitangent>(vertexBuffer,0,ref mesh.Vertices[0], bytesToCopy);     
-                    commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.MeshIndices[0], (sizeof(ushort)*mesh.NumberOfValidIndices).ToUnsigned());
+                    commandList.UpdateBuffer<VertexPositionNormalTextureTangentBitangent>(vertexBuffer,0,ref mesh.Vertices[0], vertexBytesToCopy);     
+                    commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.MeshIndices[0], indexBytesToCopy);
                 }
             }
 
@@ -55,10 +56,11 @@ namespace Henzai
                     var worldMatrix = mesh.World;
                     var MVP = worldMatrix*camera.ViewProjectionMatirx;
                     MeshCuller.FrustumCullGeometryDefinition(ref MVP, mesh.GeometryDefinition); 
-                    uint bytesToCopy = (vertexSizeInBytes* mesh.NumberOfValidVertices).ToUnsigned();
+                    uint vertexBytesToCopy = (vertexSizeInBytes* mesh.NumberOfValidVertices).ToUnsigned();
+                    uint indexBytesToCopy = (sizeof(ushort)*mesh.NumberOfValidIndices).ToUnsigned();
 
-                    commandList.UpdateBuffer<VertexPositionNormal>(vertexBuffer,0,ref mesh.Vertices[0], bytesToCopy);     
-                    commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.MeshIndices[0], bytesToCopy);
+                    commandList.UpdateBuffer<VertexPositionNormal>(vertexBuffer,0,ref mesh.Vertices[0], vertexBytesToCopy);     
+                    commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.MeshIndices[0], indexBytesToCopy);
                 }             
             }
 
@@ -72,10 +74,11 @@ namespace Henzai
                     var worldMatrix = mesh.World;
                     var MVP = worldMatrix*camera.ViewProjectionMatirx;               
                     MeshCuller.FrustumCullGeometryDefinition(ref MVP, mesh.GeometryDefinition); 
-                    uint bytesToCopy = (vertexSizeInBytes* mesh.NumberOfValidVertices).ToUnsigned();
+                    uint vertexBytesToCopy = (vertexSizeInBytes* mesh.NumberOfValidVertices).ToUnsigned();
+                    uint indexBytesToCopy = (sizeof(ushort)*mesh.NumberOfValidIndices).ToUnsigned();
 
-                    commandList.UpdateBuffer<VertexPositionTexture>(vertexBuffer,0,ref mesh.Vertices[0], bytesToCopy);     
-                    commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.MeshIndices[0], (sizeof(ushort)*mesh.NumberOfValidIndices).ToUnsigned());
+                    commandList.UpdateBuffer<VertexPositionTexture>(vertexBuffer,0,ref mesh.Vertices[0], vertexBytesToCopy);     
+                    commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.MeshIndices[0], indexBytesToCopy);
                 }               
             }
 
@@ -89,10 +92,11 @@ namespace Henzai
                     var worldMatrix = mesh.World;
                     var MVP = worldMatrix*camera.ViewProjectionMatirx;
                     MeshCuller.FrustumCullGeometryDefinition(ref MVP, mesh.GeometryDefinition); 
-                    uint bytesToCopy = (vertexSizeInBytes* mesh.NumberOfValidVertices).ToUnsigned();
+                    uint vertexBytesToCopy = (vertexSizeInBytes* mesh.NumberOfValidVertices).ToUnsigned();
+                    uint indexBytesToCopy = (sizeof(ushort)*mesh.NumberOfValidIndices).ToUnsigned();
 
-                    commandList.UpdateBuffer<VertexPositionColor>(vertexBuffer,0,ref mesh.Vertices[0], bytesToCopy);     
-                    commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.MeshIndices[0], (sizeof(ushort)*mesh.NumberOfValidIndices).ToUnsigned());
+                    commandList.UpdateBuffer<VertexPositionColor>(vertexBuffer,0,ref mesh.Vertices[0], vertexBytesToCopy);     
+                    commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.MeshIndices[0], indexBytesToCopy);
                 }              
             }
 
@@ -106,87 +110,15 @@ namespace Henzai
                     var worldMatrix = mesh.World;
                     var MVP = worldMatrix*camera.ViewProjectionMatirx;
                     MeshCuller.FrustumCullGeometryDefinition(ref MVP, mesh.GeometryDefinition); 
-                    uint bytesToCopy = (vertexSizeInBytes* mesh.NumberOfValidVertices).ToUnsigned();
+                    uint vertexBytesToCopy = (vertexSizeInBytes* mesh.NumberOfValidVertices).ToUnsigned();
+                    uint indexBytesToCopy = (sizeof(ushort)*mesh.NumberOfValidIndices).ToUnsigned();
 
-                    commandList.UpdateBuffer<VertexPosition>(vertexBuffer,0,ref mesh.Vertices[0], bytesToCopy);     
-                    commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.MeshIndices[0], (sizeof(ushort)*mesh.NumberOfValidIndices).ToUnsigned());
+                    commandList.UpdateBuffer<VertexPosition>(vertexBuffer,0,ref mesh.Vertices[0], vertexBytesToCopy);     
+                    commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.MeshIndices[0], indexBytesToCopy);
                 }               
             }
 
             commandList.End();
-        }
-
-        protected void EnableCulling(float deltaTime, Camera camera, ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] modelPNTTBDescriptorArray,ModelRuntimeDescriptor<VertexPositionNormal>[] modelPNDescriptorArray,ModelRuntimeDescriptor<VertexPositionTexture>[] modelPTDescriptorArray, ModelRuntimeDescriptor<VertexPositionColor>[] modelPCDescriptorArray, ModelRuntimeDescriptor<VertexPosition>[] modelPDescriptorArray){
-
-            foreach(var modelDescriptor in modelPNTTBDescriptorArray){
-                var model = modelDescriptor.Model;
-                var vertexBuffer = modelDescriptor.VertexBuffers[0];
-                var indexBuffer = modelDescriptor.IndexBuffers[0];
-                byte vertexSizeInBytes = model.meshes[0].Vertices[0].GetSizeInBytes();
-
-                foreach(var mesh in model.meshes){
-                    var worldMatrix = mesh.World;
-                    var MVP = worldMatrix*camera.ViewProjectionMatirx;
-
-                    mesh.IsCulled = MeshCuller.IsGeometryDefinitionCulled(ref MVP, mesh.GeometryDefinition);
-                }
-            }
-
-            foreach(var modelDescriptor in modelPNDescriptorArray){
-                var model = modelDescriptor.Model;
-                var vertexBuffer = modelDescriptor.VertexBuffers[0];
-                var indexBuffer = modelDescriptor.IndexBuffers[0];                
-                byte vertexSizeInBytes = model.meshes[0].Vertices[0].GetSizeInBytes();
-
-                foreach(var mesh in model.meshes){
-                    var worldMatrix = mesh.World;
-                    var MVP = worldMatrix*camera.ViewProjectionMatirx;
-
-                    mesh.IsCulled = MeshCuller.IsGeometryDefinitionCulled(ref MVP, mesh.GeometryDefinition);
-                }             
-            }
-
-            foreach(var modelDescriptor in modelPTDescriptorArray){
-                var model = modelDescriptor.Model;
-                var vertexBuffer = modelDescriptor.VertexBuffers[0];
-                var indexBuffer = modelDescriptor.IndexBuffers[0];
-                byte vertexSizeInBytes = model.meshes[0].Vertices[0].GetSizeInBytes();
-
-                foreach(var mesh in model.meshes){
-                    var worldMatrix = mesh.World;
-                    var MVP = worldMatrix*camera.ViewProjectionMatirx;  
-
-                    mesh.IsCulled = MeshCuller.IsGeometryDefinitionCulled(ref MVP, mesh.GeometryDefinition);
-                }               
-            }
-
-            foreach(var modelDescriptor in modelPCDescriptorArray){
-                var model = modelDescriptor.Model;
-                var vertexBuffer = modelDescriptor.VertexBuffers[0];
-                var indexBuffer = modelDescriptor.IndexBuffers[0];
-                byte vertexSizeInBytes = model.meshes[0].Vertices[0].GetSizeInBytes();
-
-                foreach(var mesh in model.meshes){
-                    var worldMatrix = mesh.World;
-                    var MVP = worldMatrix*camera.ViewProjectionMatirx;
-
-                    mesh.IsCulled = MeshCuller.IsGeometryDefinitionCulled(ref MVP, mesh.GeometryDefinition);
-                }              
-            }
-
-            foreach(var modelDescriptor in modelPDescriptorArray){
-                var model = modelDescriptor.Model;
-                var vertexBuffer = modelDescriptor.VertexBuffers[0];
-                var indexBuffer = modelDescriptor.IndexBuffers[0];
-                byte vertexSizeInBytes = model.meshes[0].Vertices[0].GetSizeInBytes();
-
-                foreach(var mesh in model.meshes){
-                    var worldMatrix = mesh.World;
-                    var MVP = worldMatrix*camera.ViewProjectionMatirx;
-
-                    mesh.IsCulled = MeshCuller.IsGeometryDefinitionCulled(ref MVP, mesh.GeometryDefinition);
-                }               
-            }
         }
 
     }

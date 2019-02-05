@@ -13,6 +13,9 @@ namespace Henzai.Core.Acceleration
         private static Vector4 _vertexHomogeneous = new Vector4(0,0,0,1);
         private static Dictionary<ushort, bool> _processedIndicesMap = new Dictionary<ushort, bool>();
 
+        /// <summary>
+        /// Culls a <see cref="Henzai.Core.Geometry.GeometryDefinition"/> by testing every triangle of the mesh
+        /// </summary>
         public static void FrustumCullGeometryDefinition<T>(ref Matrix4x4 worldViewProjectionMatrix, GeometryDefinition<T> geometryDefinition) where T: struct, VertexLocateable {
 
             _processedIndicesMap.Clear();
@@ -62,33 +65,6 @@ namespace Henzai.Core.Acceleration
 
             geometryDefinition.NumberOfValidIndicies = validIndicesCounter;
             geometryDefinition.NumberOfValidVertices = validVertexCounter;   
-        }
-
-        public static bool IsGeometryDefinitionCulled<T>(ref Matrix4x4 worldViewProjectionMatrix, GeometryDefinition<T> geometryDefinition) where T: struct, VertexLocateable {
-            T[] vertices = geometryDefinition.GetVertices;
-            ushort[] indices = geometryDefinition.GetIndices;
-
-            bool isCulled = true;
-
-            for(int i = 0; i < indices.Length; i+=3){
-                ushort i1 = indices[i];
-                ushort i2 = indices[i+1];
-                ushort i3 = indices[i+2];
-
-                Vector3 v1 = vertices[i1].GetPosition();
-                Vector3 v2 = vertices[i2].GetPosition();
-                Vector3 v3 = vertices[i3].GetPosition();
-
-                // If at least one vertex is within the frustum, the triangle is not culled.
-                if(IsVertexWithinFrustum(ref worldViewProjectionMatrix,ref v1) 
-                || IsVertexWithinFrustum(ref worldViewProjectionMatrix,ref v2)
-                || IsVertexWithinFrustum(ref worldViewProjectionMatrix,ref v3)){
-                    isCulled = false;
-                    break;
-                }
-            }
-
-            return isCulled; 
         }
 
         private static bool IsVertexWithinFrustum(ref Matrix4x4 worldViewProjectionMatrix, ref Vector3 vertex){
