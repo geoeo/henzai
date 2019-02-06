@@ -82,7 +82,6 @@ namespace Henzai
             
             _lookDirection = Vector3.Normalize(lookDir);
             _viewMatrix = Matrix4x4.CreateLookAt(_position, _position + _lookDirection, Vector3.UnitY);
-            // _viewProjectionMatrix = _viewMatrix*_projectionMatrix;
             _viewProjectionMatrix = _viewMatrix*_projectionMatrix;
         }
 

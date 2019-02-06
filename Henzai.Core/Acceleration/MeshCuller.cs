@@ -16,7 +16,7 @@ namespace Henzai.Core.Acceleration
         /// <summary>
         /// Culls a <see cref="Henzai.Core.Geometry.GeometryDefinition"/> by testing every triangle of the mesh
         /// </summary>
-        public static void FrustumCullGeometryDefinition<T>(ref Matrix4x4 worldViewProjectionMatrix, GeometryDefinition<T> geometryDefinition) where T: struct, VertexLocateable {
+        public static void FrustumCullGeometryDefinition<T>(ref Matrix4x4 modelViewProjectionMatrix, GeometryDefinition<T> geometryDefinition) where T: struct, VertexLocateable {
 
             _processedIndicesMap.Clear();
 
@@ -39,9 +39,9 @@ namespace Henzai.Core.Acceleration
                 Vector3 v3 = vertices[i3].GetPosition();
 
                 // If at least one vertex is within the frustum, the triangle is not culled.
-                if(IsVertexWithinFrustum(ref worldViewProjectionMatrix,ref v1) 
-                || IsVertexWithinFrustum(ref worldViewProjectionMatrix,ref v2)
-                || IsVertexWithinFrustum(ref worldViewProjectionMatrix,ref v3)){
+                if(IsVertexWithinFrustum(ref modelViewProjectionMatrix,ref v1) 
+                || IsVertexWithinFrustum(ref modelViewProjectionMatrix,ref v2)
+                || IsVertexWithinFrustum(ref modelViewProjectionMatrix,ref v3)){
 
                     if(!_processedIndicesMap.ContainsKey(i1)){
                         validVertices[validVertexCounter++] = vertices[i1];
@@ -67,69 +67,69 @@ namespace Henzai.Core.Acceleration
             geometryDefinition.NumberOfValidVertices = validVertexCounter;   
         }
 
-        private static bool IsVertexWithinFrustum(ref Matrix4x4 worldViewProjectionMatrix, ref Vector3 vertex){
+        private static bool IsVertexWithinFrustum(ref Matrix4x4 modelViewProjectionMatrix, ref Vector3 vertex){
             _vertexHomogeneous.X = vertex.X;
             _vertexHomogeneous.Y = vertex.Y;
             _vertexHomogeneous.Z = vertex.Z;
 
-            return LeftHalfSpaceCheck(ref worldViewProjectionMatrix) &&
-                RightHalfSpaceCheck(ref worldViewProjectionMatrix) &&
-                TopHalfSpaceCheck(ref worldViewProjectionMatrix) &&
-                BottomHalfSpaceCheck(ref worldViewProjectionMatrix) &&
-                NearHalfSpaceCheck(ref worldViewProjectionMatrix) &&
-                FarHalfSpaceCheck(ref worldViewProjectionMatrix);
+            return LeftHalfSpaceCheck(ref modelViewProjectionMatrix) &&
+                RightHalfSpaceCheck(ref modelViewProjectionMatrix) &&
+                TopHalfSpaceCheck(ref modelViewProjectionMatrix) &&
+                BottomHalfSpaceCheck(ref modelViewProjectionMatrix) &&
+                NearHalfSpaceCheck(ref modelViewProjectionMatrix) &&
+                FarHalfSpaceCheck(ref modelViewProjectionMatrix);
         }
 
-        private static bool LeftHalfSpaceCheck(ref Matrix4x4 worldViewProjectionMatrix) {
-            _frustumRowVector.X = worldViewProjectionMatrix.M14 + worldViewProjectionMatrix.M11;
-            _frustumRowVector.Y = worldViewProjectionMatrix.M24 + worldViewProjectionMatrix.M21;
-            _frustumRowVector.Z = worldViewProjectionMatrix.M34 + worldViewProjectionMatrix.M31;
-            _frustumRowVector.W = worldViewProjectionMatrix.M44 + worldViewProjectionMatrix.M41;
+        private static bool LeftHalfSpaceCheck(ref Matrix4x4 modelViewProjectionMatrix) {
+            _frustumRowVector.X = modelViewProjectionMatrix.M14 + modelViewProjectionMatrix.M11;
+            _frustumRowVector.Y = modelViewProjectionMatrix.M24 + modelViewProjectionMatrix.M21;
+            _frustumRowVector.Z = modelViewProjectionMatrix.M34 + modelViewProjectionMatrix.M31;
+            _frustumRowVector.W = modelViewProjectionMatrix.M44 + modelViewProjectionMatrix.M41;
 
             return  0 < GeometryUtils.InMemoryDotProduct(ref _frustumRowVector, ref _vertexHomogeneous);
         }
 
-        private static bool RightHalfSpaceCheck(ref Matrix4x4 worldViewProjectionMatrix) {
-            _frustumRowVector.X = worldViewProjectionMatrix.M14 - worldViewProjectionMatrix.M11;
-            _frustumRowVector.Y = worldViewProjectionMatrix.M24 - worldViewProjectionMatrix.M21;
-            _frustumRowVector.Z = worldViewProjectionMatrix.M34 - worldViewProjectionMatrix.M31;
-            _frustumRowVector.W = worldViewProjectionMatrix.M44 - worldViewProjectionMatrix.M41;
+        private static bool RightHalfSpaceCheck(ref Matrix4x4 modelViewProjectionMatrix) {
+            _frustumRowVector.X = modelViewProjectionMatrix.M14 - modelViewProjectionMatrix.M11;
+            _frustumRowVector.Y = modelViewProjectionMatrix.M24 - modelViewProjectionMatrix.M21;
+            _frustumRowVector.Z = modelViewProjectionMatrix.M34 - modelViewProjectionMatrix.M31;
+            _frustumRowVector.W = modelViewProjectionMatrix.M44 - modelViewProjectionMatrix.M41;
 
             return 0 < GeometryUtils.InMemoryDotProduct(ref _frustumRowVector, ref _vertexHomogeneous);
         }
 
-        private static bool TopHalfSpaceCheck(ref Matrix4x4 worldViewProjectionMatrix) {
-            _frustumRowVector.X = worldViewProjectionMatrix.M14 - worldViewProjectionMatrix.M12;
-            _frustumRowVector.Y = worldViewProjectionMatrix.M24 - worldViewProjectionMatrix.M22;
-            _frustumRowVector.Z = worldViewProjectionMatrix.M34 - worldViewProjectionMatrix.M32;
-            _frustumRowVector.W = worldViewProjectionMatrix.M44 - worldViewProjectionMatrix.M42;
+        private static bool TopHalfSpaceCheck(ref Matrix4x4 modelViewProjectionMatrix) {
+            _frustumRowVector.X = modelViewProjectionMatrix.M14 - modelViewProjectionMatrix.M12;
+            _frustumRowVector.Y = modelViewProjectionMatrix.M24 - modelViewProjectionMatrix.M22;
+            _frustumRowVector.Z = modelViewProjectionMatrix.M34 - modelViewProjectionMatrix.M32;
+            _frustumRowVector.W = modelViewProjectionMatrix.M44 - modelViewProjectionMatrix.M42;
 
             return 0 < GeometryUtils.InMemoryDotProduct(ref _frustumRowVector, ref _vertexHomogeneous);
         }
 
-        private static bool BottomHalfSpaceCheck(ref Matrix4x4 worldViewProjectionMatrix) {
-            _frustumRowVector.X = worldViewProjectionMatrix.M14 + worldViewProjectionMatrix.M12;
-            _frustumRowVector.Y = worldViewProjectionMatrix.M24 + worldViewProjectionMatrix.M22;
-            _frustumRowVector.Z = worldViewProjectionMatrix.M34 + worldViewProjectionMatrix.M32;
-            _frustumRowVector.W = worldViewProjectionMatrix.M44 + worldViewProjectionMatrix.M42;
+        private static bool BottomHalfSpaceCheck(ref Matrix4x4 modelViewProjectionMatrix) {
+            _frustumRowVector.X = modelViewProjectionMatrix.M14 + modelViewProjectionMatrix.M12;
+            _frustumRowVector.Y = modelViewProjectionMatrix.M24 + modelViewProjectionMatrix.M22;
+            _frustumRowVector.Z = modelViewProjectionMatrix.M34 + modelViewProjectionMatrix.M32;
+            _frustumRowVector.W = modelViewProjectionMatrix.M44 + modelViewProjectionMatrix.M42;
 
             return 0 < GeometryUtils.InMemoryDotProduct(ref _frustumRowVector, ref _vertexHomogeneous);
         }
 
-        private static bool NearHalfSpaceCheck(ref Matrix4x4 worldViewProjectionMatrix) {
-            _frustumRowVector.X = worldViewProjectionMatrix.M31;
-            _frustumRowVector.Y = worldViewProjectionMatrix.M32;
-            _frustumRowVector.Z = worldViewProjectionMatrix.M33;
-            _frustumRowVector.W = worldViewProjectionMatrix.M34;
+        private static bool NearHalfSpaceCheck(ref Matrix4x4 modelViewProjectionMatrix) {
+            _frustumRowVector.X = modelViewProjectionMatrix.M31;
+            _frustumRowVector.Y = modelViewProjectionMatrix.M32;
+            _frustumRowVector.Z = modelViewProjectionMatrix.M33;
+            _frustumRowVector.W = modelViewProjectionMatrix.M34;
 
             return 0 < GeometryUtils.InMemoryDotProduct(ref _frustumRowVector, ref _vertexHomogeneous);
         }
 
-        private static bool FarHalfSpaceCheck(ref Matrix4x4 worldViewProjectionMatrix) {
-            _frustumRowVector.X = worldViewProjectionMatrix.M14 - worldViewProjectionMatrix.M13;
-            _frustumRowVector.Y = worldViewProjectionMatrix.M24 - worldViewProjectionMatrix.M23;
-            _frustumRowVector.Z = worldViewProjectionMatrix.M34 - worldViewProjectionMatrix.M33;
-            _frustumRowVector.W = worldViewProjectionMatrix.M44 - worldViewProjectionMatrix.M43;
+        private static bool FarHalfSpaceCheck(ref Matrix4x4 modelViewProjectionMatrix) {
+            _frustumRowVector.X = modelViewProjectionMatrix.M14 - modelViewProjectionMatrix.M13;
+            _frustumRowVector.Y = modelViewProjectionMatrix.M24 - modelViewProjectionMatrix.M23;
+            _frustumRowVector.Z = modelViewProjectionMatrix.M34 - modelViewProjectionMatrix.M33;
+            _frustumRowVector.W = modelViewProjectionMatrix.M44 - modelViewProjectionMatrix.M43;
 
             return 0 < GeometryUtils.InMemoryDotProduct(ref _frustumRowVector, ref _vertexHomogeneous);
         }
