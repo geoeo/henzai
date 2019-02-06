@@ -12,10 +12,15 @@ let CanonicalPlaneSpace = Vector3(0.0f,0.0f,-1.0f)
 type Plane(plane : System.Numerics.Plane, center : Point option, width : float32 option, height : float32 option ) = 
     inherit Hitable () with
         member this.Plane = plane
+
         member this.Normal = Vector3.Normalize(this.Plane.Normal)
+
         member this.Center = center
+
         member this.Width = width
+
         member this.Height = height
+
         member this.PointLiesInRectangle (point : Point) =
             let widthOff = this.Width.Value / 2.0f
             let heightOff = this.Height.Value / 2.0f
@@ -38,6 +43,7 @@ type Plane(plane : System.Numerics.Plane, center : Point option, width : float32
             let denominator = Plane.DotNormal(this.Plane,ray.Direction)
             if Math.Abs(denominator) < this.TMin then (false, 0.0f)
             else (true, numerator / denominator)
+
         override this.HasIntersection (ray:Ray) = 
             let (hasIntersection,_) = this.Intersect ray 
             hasIntersection
@@ -47,6 +53,6 @@ type Plane(plane : System.Numerics.Plane, center : Point option, width : float32
             match this.Center with
                 | Some _ -> generalIntersection && this.PointLiesInRectangle pointOnSurface
                 | None -> generalIntersection
+
         override this.NormalForSurfacePoint _ =
             this.Normal
-        override this.IsObstructedBySelf _ = false

@@ -9,7 +9,7 @@ open Raytracer
 
 type ID = uint64
 
-let randomState = new Random()
+let randomState = Random()
         
 [<AbstractClass>]
 type Surface(id: ID, geometry : Hitable, material : Raytracer.Material.Material) =

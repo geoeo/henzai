@@ -10,8 +10,11 @@ type Sphere(sphereCenter : Origin,radius : Radius) =
 
         // override this.TMin = 0.000001f// 0.0001// 0.000001f
         member this.Center = sphereCenter
+
         member this.Radius = radius
+
         member this.GetIntersections (_,i1,i2) = (i1,i2)
+
         member this.IntersectWith (t : LineParameter) (ray : Ray) =
             ((ray.Origin + t*ray.Direction) - this.Center).Length() <= this.Radius
 
@@ -34,13 +37,17 @@ type Sphere(sphereCenter : Origin,radius : Radius) =
                 (hasIntersection,i2)
             else
                 (hasIntersection,i1)
+
         override this.NormalForSurfacePoint (positionOnSphere:Point) =
             Vector3.Normalize((positionOnSphere - this.Center))
+
         override this.HasIntersection ray =
             let (hasIntersection,_,_) = this.Intersections ray 
             hasIntersection
+
         override this.IntersectionAcceptable hasIntersection t _ _ =
             hasIntersection && t > this.TMin
+
         override this.IsObstructedBySelf ray =
             let (b,i1,i2) = this.Intersections ray
-            this.IntersectionAcceptable b (MathF.Max(i1,i2)) 1.0f Vector3.Zero
+            this.IntersectionAcceptable b (MathF.Max(i1, i2)) 1.0f Vector3.Zero

@@ -98,7 +98,7 @@ type Scene () =
         let dirCS = 
             RayDirection (PixelToCamera (float32 px) (float32 py) (float32 width) (float32 height) fov)
         let rot = Rotation cameraWS
-        let dirWS = Vector3.Normalize(Vector3.TransformNormal(dirCS,rot))
+        let dirWS = Vector3.Normalize(Vector3.TransformNormal(dirCS, rot))
         let ray = Ray(cameraWS.Translation, dirWS)
         //V2 - Fastest
         for batchIndex in 0..batches-1 do
@@ -111,7 +111,7 @@ type Scene () =
         //printfn "Completed Ray for pixels (%i,%i)" px py
         //async {printfn "Completed Ray for pixels (%i,%i)" px py} |> Async.StartAsTask |> ignore
         //Gamma correct TODO: refactor
-        frameBuffer.[px,py] <- Vector4(Vector3.SquareRoot(avgColor),1.0f)
+        frameBuffer.[px,py] <- Vector4(Vector3.SquareRoot(avgColor), 1.0f)
         // frameBuffer.[px,py] <- Vector4(avgColor,1.0f)
 
     [<Benchmark>]
@@ -122,10 +122,10 @@ type Scene () =
 
     member self.saveFrameBuffer () =
         using (File.OpenWrite("sphere.jpg")) (fun output ->
-            using(new Image<Rgba32>(width,height))(fun image -> 
+            using(new Image<Rgba32>(width, height))(fun image -> 
                 for px in 0..width-1 do
                     for py in 0..height-1 do
-                        image.Item(px,py) <- Rgba32(frameBuffer.[px,py])
+                        image.Item(px, py) <- Rgba32(frameBuffer.[px,py])
                     
                 image.SaveAsJpeg(output)
             )
@@ -133,11 +133,11 @@ type Scene () =
 
     member self.saveDepthBuffer () =
         using (File.OpenWrite("depth.jpg")) (fun output ->
-            using(new Image<Rgba32>(width,height))(fun image -> 
+            using(new Image<Rgba32>(width, height))(fun image -> 
                 for px in 0..width-1 do
                     for py in 0..height-1 do
-                        let color = Vector4(Vector3(depthBuffer.[px,py]/maxFrameBufferDepth),1.0f)
-                        image.Item(px,py) <- Rgba32(color)
+                        let color = Vector4(Vector3(depthBuffer.[px,py]/maxFrameBufferDepth), 1.0f)
+                        image.Item(px, py) <- Rgba32(color)
                     
                 image.SaveAsJpeg(output)
             )

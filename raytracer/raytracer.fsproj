@@ -15,16 +15,17 @@
     <Compile Include="Geometry/Sphere.fs" />
     <Compile Include="Geometry/Plane.fs" />
     <Compile Include="Geometry/AABB.fs" />
+    <Compile Include="Geometry/Triangle.fs" />
     <Compile Include="Surface.fs" />
     <Compile Include="SceneDefinitions.fs" />
     <Compile Include="Scene.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0004" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0006" />
     <PackageReference Include="BenchmarkDotNet" Version="0.10.14" />
     <!--<PackageReference Include="Microsoft.Azure.WebJobs" Version="3.0.0-beta5" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Core" Version="3.0.0-beta5" />-->
-    <!--<PackageReference Include="FSharp.Core" Version="4.3.1" />-->
+    <PackageReference Update="FSharp.Core" Version="4.3.4" />
   </ItemGroup>
 </Project>
