@@ -42,7 +42,7 @@ let TransposeRot (matrix : Matrix4x4) =
               matrix.M13,matrix.M23,matrix.M33,0.0f,
               0.0f,0.0f,0.0f,0.0f)
 
-let ChangeOfBase (nt : Vector3 byref) (n : Vector3 byref) (nb : Vector3 byref) 
+let ChangeOfBase (nt : byref<Vector3>) (n : byref<Vector3>) (nb : byref<Vector3>) 
     = Matrix4x4(nt.X,nt.Y,nt.Z,0.0f,
                 n.X,n.Y,n.Z,0.0f,
                 nb.X,nb.Y,nb.Z,0.0f,
@@ -60,7 +60,7 @@ let AngleAroundOmega (omega : Vector3) = MathF.Sqrt(Vector3.Dot(omega, omega))
 
 /// Computes the SO3 Matrix from a to b
 /// https://math.stackexchange.com/questions/180418/calculate-rotation-matrix-to-align-vector-a-to-vector-b-in-3d/897677#897677
-let RotationBetweenUnitVectors (a : Vector3) (b : Vector3) (mat : Matrix4x4 byref) =
+let RotationBetweenUnitVectors (a : Vector3) (b : Vector3) (mat : byref<Matrix4x4>) =
    let v1 = a
    let v2 = b
 

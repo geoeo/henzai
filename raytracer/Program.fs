@@ -10,9 +10,9 @@ let main argv =
     //let input = Console.ReadLine()
     printfn "Starting.."
     let mainScene = Scene ()
-    mainScene.renderScene ()
+    mainScene.RenderScene()
     printfn "Finished Rendering"
-    mainScene.saveFrameBuffer ()
-    mainScene.saveDepthBuffer ()
+    mainScene.SaveFrameBuffer()
+    mainScene.SaveDepthBuffer()
     //let summary = benchmarkScene.Force()
     0 // return an integer exit code

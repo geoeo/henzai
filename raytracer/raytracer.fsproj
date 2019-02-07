@@ -2,7 +2,6 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.0</TargetFramework>
-    <!--<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>-->
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../Henzai.Core/Henzai.Core.csproj" />
@@ -24,8 +23,6 @@
   <ItemGroup>
     <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0006" />
     <PackageReference Include="BenchmarkDotNet" Version="0.10.14" />
-    <!--<PackageReference Include="Microsoft.Azure.WebJobs" Version="3.0.0-beta5" />
-    <PackageReference Include="Microsoft.Azure.WebJobs.Core" Version="3.0.0-beta5" />-->
     <PackageReference Update="FSharp.Core" Version="4.3.4" />
   </ItemGroup>
 </Project>

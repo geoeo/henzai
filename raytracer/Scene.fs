@@ -1,4 +1,3 @@
-// https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-generating-camera-rays/generating-camera-rays
 module Raytracer.Scene
 
 open SixLabors.ImageSharp.PixelFormats
@@ -30,11 +29,12 @@ type Scene () =
     let mutable maxFrameBufferDepth = 0.0f
     let maxTraceDepth = 5us
     let backgroundColor = Vector3.Zero
-    let surfaces : (Surface array) = scene_spheres |> Array.ofList
+    let surfaces : (Surface[]) = scene |> Array.ofList
 
     //TODO: Refactor this into camera
-    let cameraOriginWS = Vector3(-3.0f,6.0f,15.0f)
-    let lookAt = Vector3(-1.0f,1.0f,-10.0f)
+    let cameraOriginWS = Vector3(-3.0f, 6.0f, 15.0f)
+    let lookAt = Vector3(-1.0f, 1.0f, -10.0f)
+    // let lookAt = Vector3(0.0f,0.0f,-10.0f)
 
     let viewMatrix = WorldToCamera cameraOriginWS lookAt Vector3.UnitY
 
@@ -73,7 +73,7 @@ type Scene () =
 
 
     let rayTraceBase (ray : Ray) px py iteration batchIndex = 
-        let dotLookAtAndTracingRay = Vector3.Dot(Vector3.Normalize(lookAt),ray.Direction)
+        let dotLookAtAndTracingRay = Vector3.Dot(Vector3.Normalize(lookAt), ray.Direction)
         let (realSolution,t,surface) = findClosestIntersection ray surfaces
         let surfaceGeometry = surface.Geometry
         if surfaceGeometry.IntersectionAcceptable realSolution t dotLookAtAndTracingRay (PointForRay ray t) then
@@ -106,7 +106,7 @@ type Scene () =
             let colorSamplesBatch = Array.map (fun i -> async {return rayTraceBase ray px py i batchIndex}) batchIndices
             let colorsBatch =  colorSamplesBatch |> Async.Parallel |> Async.RunSynchronously
             Array.blit colorsBatch 0 colorSamples (batchIndex*batchSize) batchSize 
-        let avgColor = if Array.isEmpty colorSamples then Vector3.Zero else (Array.reduce (fun acc c -> acc+c) colorSamples)/(float32)samplesPerPixel
+        let avgColor = if Array.isEmpty colorSamples then Vector3.Zero else (Array.reduce (+) colorSamples)/(float32)samplesPerPixel
         Array.blit colorSamplesClear 0 colorSamples 0 samplesPerPixel 
         //printfn "Completed Ray for pixels (%i,%i)" px py
         //async {printfn "Completed Ray for pixels (%i,%i)" px py} |> Async.StartAsTask |> ignore
@@ -115,13 +115,13 @@ type Scene () =
         // frameBuffer.[px,py] <- Vector4(avgColor,1.0f)
 
     [<Benchmark>]
-    member self.renderScene () =
+    member self.RenderScene() =
         for px in 0..width-1 do
             for py in 0..height-1 do
                 renderPass px py
 
-    member self.saveFrameBuffer () =
-        using (File.OpenWrite("sphere.jpg")) (fun output ->
+    member self.SaveFrameBuffer() =
+        using (File.OpenWrite("scene.jpg")) (fun output ->
             using(new Image<Rgba32>(width, height))(fun image -> 
                 for px in 0..width-1 do
                     for py in 0..height-1 do
@@ -131,7 +131,7 @@ type Scene () =
             )
         )
 
-    member self.saveDepthBuffer () =
+    member self.SaveDepthBuffer() =
         using (File.OpenWrite("depth.jpg")) (fun output ->
             using(new Image<Rgba32>(width, height))(fun image -> 
                 for px in 0..width-1 do

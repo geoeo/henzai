@@ -280,3 +280,4 @@ Assets/**/*.jpg
 
 *.txt
 
+msbuild.binlog

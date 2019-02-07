@@ -37,17 +37,17 @@ type Surface(id: ID, geometry : Hitable, material : Raytracer.Material.Material)
     default this.GenerateSamples (incommingRay : Ray) (t : LineParameter) (depthLevel : int) samplesArray  = 
         for i in 0..this.SampleCount-1 do
             let shading = this.ComputeSample (this.Scatter incommingRay t depthLevel)
-            samplesArray.SetValue(shading,i)
-        (this.SampleCount,samplesArray)
+            samplesArray.SetValue(shading, i)
+        (this.SampleCount, samplesArray)
 
 
 type NoSurface(id: ID, geometry : Hitable, material : Raytracer.Material.Material) =
     inherit Surface(id, geometry, material)
 
-    override this.GenerateSamples _ _ _ _ = (0,this.SamplesArray)
+    override this.GenerateSamples _ _ _ _ = (0, this.SamplesArray)
 
-let findClosestIntersection (ray : Ray) (surfaces : Surface array) =
-    let mutable (bMin,tMin,vMin : Surface) = (false,Single.MaxValue, upcast (NoSurface(0UL,NotHitable(),Raytracer.Material.Material(Vector3.Zero))))
+let findClosestIntersection (ray : Ray) (surfaces : Surface[]) =
+    let mutable (bMin,tMin,vMin : Surface) = (false, Single.MaxValue, upcast (NoSurface(0UL, NotHitable(), Raytracer.Material.Material(Vector3.Zero))))
     for surface in surfaces do
         let (b,t) = surface.Geometry.Intersect ray
         if surface.Geometry.IntersectionAcceptable b t 1.0f (PointForRay ray t) &&  t < tMin then
@@ -55,10 +55,10 @@ let findClosestIntersection (ray : Ray) (surfaces : Surface array) =
             tMin <- t
             vMin <- surface
 
-    (bMin,tMin,vMin)
+    (bMin, tMin, vMin)
 
 type Lambertian(id: ID, geometry : Hitable, material : Raytracer.Material.Material) =
-    inherit Surface(id,geometry,material)
+    inherit Surface(id, geometry, material)
 
     override this.SampleCount = 4
     override this.PDF = 1.0f / (2.0f * MathF.PI)
@@ -73,21 +73,21 @@ type Lambertian(id: ID, geometry : Hitable, material : Raytracer.Material.Materi
         let cosOfIncidence = rand_norm.Y
         let mutable nb = Vector3.Zero
         let mutable nt = Vector3.Zero
-        Henzai.Core.Numerics.GeometryUtils.CreateCoordinateSystemAroundNormal(&normal,&nt,&nb)
+        Henzai.Core.Numerics.GeometryUtils.CreateCoordinateSystemAroundNormal(&normal, &nt, &nb)
         let changeOfBaseMatrix = ChangeOfBase &nt &normal &nb
-        let normalSample = Vector4.Transform(rand_norm,changeOfBaseMatrix)
+        let normalSample = Vector4.Transform(rand_norm, changeOfBaseMatrix)
         let outDir = Vector3.Normalize(ToVec3 normalSample)
 
         //let outDir = Vector3.Normalize(normal)
-        let outRay = Ray(positionOnSurface,outDir,this.ID)
-        (true,outRay,cosOfIncidence)
+        let outRay = Ray(positionOnSurface, outDir, this.ID)
+        (true,outRay, cosOfIncidence)
 
 type Metal(id: ID, geometry : Hitable, material : Raytracer.Material.Material, fuzz : float32) =
-    inherit Surface(id,geometry,material)
+    inherit Surface(id, geometry, material)
 
-    member this.Fuzz = MathF.Max(MathF.Min(1.0f,fuzz),0.0f)
+    member this.Fuzz = MathF.Max(MathF.Min(1.0f,fuzz), 0.0f)
     member this.Reflect (incommingRay : Ray) (normalToSurface : Normal) 
-        = incommingRay.Direction - 2.0f*Vector3.Dot(incommingRay.Direction,normalToSurface)*normalToSurface 
+        = incommingRay.Direction - 2.0f*Vector3.Dot(incommingRay.Direction, normalToSurface)*normalToSurface 
 
     override this.SampleCount = 1
     override this.Scatter (incommingRay : Ray) (t : LineParameter) (depthLevel : int) =
@@ -99,28 +99,28 @@ type Metal(id: ID, geometry : Hitable, material : Raytracer.Material.Material, f
         let rand_norm = RandomSampling.RandomInUnitHemisphere_Sync()
         let mutable nb = Vector3.Zero
         let mutable nt = Vector3.Zero
-        Henzai.Core.Numerics.GeometryUtils.CreateCoordinateSystemAroundNormal(&normal,&nt,&nb)
+        Henzai.Core.Numerics.GeometryUtils.CreateCoordinateSystemAroundNormal(&normal, &nt, &nb)
         let changeOfBaseMatrix = ChangeOfBase &nt &normal &nb
-        let normalSample = ToVec3 (Vector4.Transform(rand_norm,changeOfBaseMatrix))
+        let normalSample = ToVec3 (Vector4.Transform(rand_norm, changeOfBaseMatrix))
         let modifiedNormal = Vector3.Normalize((1.0f - this.Fuzz)*normal + this.Fuzz*normalSample)
 
         let outDir = Vector3.Normalize(this.Reflect incommingRay modifiedNormal)
-        let outRay =  Ray(positionOnSurface,outDir,this.ID)    
+        let outRay =  Ray(positionOnSurface, outDir, this.ID)    
         (true,outRay,1.0f)
 
 // https://www.scratchapixel.com/lessons/3d-basic-rendering/introduction-to-shading/reflection-refraction-fresnel
 type Dielectric(id: ID, geometry : Hitable, material : Raytracer.Material.Material, refractiveIndex : float32) =
-    inherit Surface(id,geometry,material)
+    inherit Surface(id, geometry, material)
 
     override this.SampleCount = 2
 
     member this.RefractiveIndex = refractiveIndex
     //https://seblagarde.wordpress.com/2013/04/29/memo-on-fresnel-equations/
     member this.SchlickApprx (cos_incidence : float32) (refractiveIncidenceFactor : float32) (refractiveTransmissionFactor : float32) =
-        let R0 = MathF.Pow((refractiveTransmissionFactor-refractiveIncidenceFactor)/(refractiveTransmissionFactor+refractiveIncidenceFactor),2.0f)
-        R0 + (1.0f - R0)*MathF.Pow((1.0f - cos_incidence),5.0f)
+        let R0 = MathF.Pow((refractiveTransmissionFactor-refractiveIncidenceFactor)/(refractiveTransmissionFactor+refractiveIncidenceFactor), 2.0f)
+        R0 + (1.0f - R0)*MathF.Pow((1.0f - cos_incidence), 5.0f)
     member this.Reflect (incommingRay : Ray) (normalToSurface : Normal) 
-        = incommingRay.Direction - 2.0f*Vector3.Dot(incommingRay.Direction,normalToSurface)*normalToSurface 
+        = incommingRay.Direction - 2.0f*Vector3.Dot(incommingRay.Direction, normalToSurface)*normalToSurface 
     member this.Refract (incommingDirection : Direction) (normalToSurface : Normal) (refractiveIncidenceOverTransmission : float32) (cos_incidence : float32) =
         let discriminant = 1.0f - (Square refractiveIncidenceOverTransmission)*(1.0f - Square cos_incidence)
         if discriminant > 0.0f then 
@@ -140,12 +140,12 @@ type Dielectric(id: ID, geometry : Hitable, material : Raytracer.Material.Materi
         //incidence over transmition
         let (incidenceIndex, transmissionIndex,fresnelNormal)
             // Vector is "comming out" of material into air
-            = if Vector3.Dot(incommingRay.Direction,normal) > 0.0f 
+            = if Vector3.Dot(incommingRay.Direction, normal) > 0.0f 
               then 
-                this.RefractiveIndex,refrativeIndexAir, -normal
+                (this.RefractiveIndex, refrativeIndexAir, -normal)
               else 
-                refrativeIndexAir, this.RefractiveIndex , normal
-        let cos_incidence =  Vector3.Dot(incommingRay.Direction,-fresnelNormal)
+                (refrativeIndexAir, this.RefractiveIndex, normal)
+        let cos_incidence =  Vector3.Dot(incommingRay.Direction, -fresnelNormal)
         let (refracted,refrationDir) = this.Refract incommingRay.Direction fresnelNormal (incidenceIndex/transmissionIndex) cos_incidence
         
         //Use schlick if refraction was successful
@@ -157,9 +157,9 @@ type Dielectric(id: ID, geometry : Hitable, material : Raytracer.Material.Materi
         let randomFloat = RandomSampling.RandomFloat_Sync()
         if randomFloat <= reflectProb 
         then 
-            let reflectRay = Ray(positionOnSurface,reflectDir,this.ID)
+            let reflectRay = Ray(positionOnSurface, reflectDir, this.ID)
             // (true,reflectRay,attenuationDepthAdjusted)
-            (true,reflectRay,1.0f)
+            (true, reflectRay, 1.0f)
         else // refraction has to have been successful
             let refractRay = Ray(positionOnSurface,refractionDir)
             // (true,refractRay,attenuationDepthAdjusted)
@@ -167,18 +167,18 @@ type Dielectric(id: ID, geometry : Hitable, material : Raytracer.Material.Materi
 
     override this.GenerateSamples (incommingRay : Ray) (t : LineParameter) (depthLevel : int) samplesArray =
         let (reflectProb, positionOnSurface, reflectDir, refractionDir) = this.CalcFresnel incommingRay t depthLevel
-        let reflectRay = Ray(positionOnSurface,reflectDir,this.ID)
+        let reflectRay = Ray(positionOnSurface, reflectDir, this.ID)
         let reflectShading : Material.Color = this.BRDF*reflectProb
         if Round reflectProb 3 = 1.0f then 
-            samplesArray.SetValue((reflectRay,reflectShading),0)
-            (1,samplesArray)
+            samplesArray.SetValue((reflectRay, reflectShading), 0)
+            (1, samplesArray)
         else
-            let refractRay = Ray(positionOnSurface,refractionDir)
+            let refractRay = Ray(positionOnSurface, refractionDir)
             let refractShading : Material.Color = this.BRDF*(1.0f - reflectProb)
             // Since this is a "fake brdf" we need to multiply by 2 since we are diving by the sample count
-            samplesArray.SetValue((reflectRay,2.0f*reflectShading),0)
-            samplesArray.SetValue((refractRay, 2.0f*refractShading),1)
-            (2,samplesArray)
+            samplesArray.SetValue((reflectRay, 2.0f*reflectShading), 0)
+            samplesArray.SetValue((refractRay, 2.0f*refractShading), 1)
+            (2, samplesArray)
 
 
 

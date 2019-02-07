@@ -5,6 +5,7 @@ open SixLabors.ImageSharp.PixelFormats
 open Raytracer.Surface
 open Raytracer.Geometry.Sphere
 open Raytracer.Geometry.Plane
+open Raytracer.Geometry.Triangle
 open Raytracer.Material
 open Raytracer.Numerics
 
@@ -101,7 +102,7 @@ let planes_submission : Surface list = [
     Lambertian(assignIDAndIncrement id,Plane(System.Numerics.Plane.CreateFromVertices(Vector3(-1.0f,-6.0f,0.0f),Vector3(1.0f,-6.0f,0.0f),Vector3(0.0f,-6.0f,-1.0f)),None,None,None),Material(Vector3(1.0f,1.0f,1.0f)));
     Lambertian(assignIDAndIncrement id,Plane(new System.Numerics.Plane((SurfaceNormal 0.0f 0.0f -1.0f),17.0f),Some ((Vector3(0.0f,0.0f,17.0f))),Some 30.0f,Some 10.0f), Material(Rgba32.White));
     Lambertian(assignIDAndIncrement id,Plane(new System.Numerics.Plane((SurfaceNormal 0.0f 0.0f 1.0f),30.0f),Some ((Vector3(-5.0f,10.0f,-30.0f))),Some 25.0f,Some 20.0f), Material(Rgba32.IndianRed));
-    Metal(assignIDAndIncrement id, Plane(new System.Numerics.Plane((SurfaceNormal -1.0f 0.0f 1.0f),15.0f),Some ((Vector3(15.0f,3.0f,-15.0f))),Some 10.0f,Some 6.0f), Material(Rgba32.AntiqueWhite),0.00f)
+    Metal(assignIDAndIncrement id, Plane(new System.Numerics.Plane((SurfaceNormal -1.0f 0.0f 1.0f),15.0f),Some ((Vector3(15.0f,3.0f,-15.0f))),Some 10.0f,Some 6.0f), Material(Rgba32.AntiqueWhite),0.0f)
     ]
    
 let planes_simple : Surface list = [
@@ -116,4 +117,11 @@ let planes_scene_2 : Surface list = [
     Lambertian(assignIDAndIncrement id,Plane(new System.Numerics.Plane((SurfaceNormal 0.0f 0.0f 1.0f),30.0f),Some ((Vector3(-5.0f,10.0f,-30.0f))),Some 25.0f,Some 20.0f), Material(Rgba32.IndianRed))
     ]
 
-let scene_spheres = List.concat [spheres_scene_2;planes_scene_2;lights]
+let triangle_scene : Surface list = [
+            Dielectric(assignIDAndIncrement id,Triangle(Vector3(-13.0f,-6.0f,-16.0f),Vector3(-11.0f,-6.0f,-16.0f),Vector3(-12.0f,-3.0f,-16.0f)),Material(Rgba32.IndianRed), 1.5f);
+            Lambertian(assignIDAndIncrement id,Triangle(Vector3(-14.0f,-6.0f,-18.0f),Vector3(-10.0f,-6.0f,-18.0f),Vector3(-12.0f,0.0f,-18.0f)),Material(Rgba32.RoyalBlue));
+]
+
+// let scene = List.concat [spheres_scene_2;planes_scene_2;lights]
+// let scene = List.concat [triangle_scene;planes_scene_2;lights]
+let scene = List.concat [spheres_scene_2;triangle_scene;planes_scene_2;lights]
