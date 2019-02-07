@@ -2,8 +2,8 @@ module Raytracer.Geometry.Sphere
 
 open System
 open System.Numerics
-open Raytracer.Numerics
 open Raytracer.Geometry.Core
+open Henzai.Core.Numerics
 
 type Sphere(sphereCenter : Origin,radius : Radius) =
     inherit Hitable () with
@@ -22,11 +22,11 @@ type Sphere(sphereCenter : Origin,radius : Radius) =
             //A is always one
             let centerToRay = ray.Origin - this.Center
             let B = 2.0f*Vector3.Dot(centerToRay,ray.Direction)
-            let C = Vector3.Dot(centerToRay,centerToRay)-(Square this.Radius)
+            let C = Vector3.Dot(centerToRay,centerToRay)-(Henzai.Core.Numerics.Utils.Square(this.Radius))
             let discriminant = B*B - 4.0f*C
             if discriminant < 0.0f then (false, 0.0f,0.0f)
             // TODO: may cause alsiasing investigate around sphere edges
-            else if Round discriminant 3 = 0.0f then (false,-B/(2.0f),System.Single.MinValue)
+            else if MathF.Round(discriminant, 3) = 0.0f then (false,-B/(2.0f),System.Single.MinValue)
             else (true,((-B + MathF.Sqrt(discriminant))/(2.0f)),((-B - MathF.Sqrt(discriminant))/(2.0f)))
 
         override this.Intersect (ray : Ray) = 

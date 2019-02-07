@@ -2,6 +2,7 @@ module Raytracer.Geometry.Core
 
 open System.Numerics
 open Raytracer.Numerics
+open Henzai.Core.Numerics
 
 type Origin = Vector3 // Position of a point in 3D space
 type Direction = Vector3  
@@ -18,8 +19,8 @@ type Ray =
         val Direction : Vector3
         val SurfaceOrigin : uint64
 
-        new(origin, dir) = { Origin = origin; Direction = NormalizedOrFail(&dir);SurfaceOrigin = 0UL }
-        new(origin, dir, id) = { Origin = origin; Direction = NormalizedOrFail(&dir);SurfaceOrigin = id }
+        new(origin, dir) = { Origin = origin; Direction = Henzai.Core.Numerics.Vector.Normalize(&dir);SurfaceOrigin = 0UL }
+        new(origin, dir, id) = { Origin = origin; Direction = Henzai.Core.Numerics.Vector.Normalize(&dir);SurfaceOrigin = id }
 
     end
 

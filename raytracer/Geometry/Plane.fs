@@ -4,6 +4,7 @@ open System
 open System.Numerics
 open Raytracer.Numerics
 open Raytracer.Geometry.Core
+open Henzai.Core.Numerics
 
 /// Space inwhich points are compared if they are inside a rectangle
 /// Plane is XY
@@ -28,10 +29,10 @@ type Plane(plane : System.Numerics.Plane, center : Point option, width : float32
             let kern = if this.Plane.D > 0.0f then -1.0f*this.Plane.D*this.Normal else this.Plane.D*this.Normal
             let v = point - kern
             let b = this.Center.Value - kern
-            let newDir = Vector4.Transform((ToHomogeneous &v 0.0f), R)
-            let newDir_b = Vector4.Transform((ToHomogeneous &b 0.0f), R)
-            let newP = kern + (ToVec3 newDir)
-            let newB = kern + (ToVec3 newDir_b)
+            let newDir = Vector4.Transform(Henzai.Core.Numerics.Vector.ToHomogeneous(&v, 0.0f), R)
+            let newDir_b = Vector4.Transform(Henzai.Core.Numerics.Vector.ToHomogeneous(&b, 0.0f), R)
+            let newP = kern + (Henzai.Core.Numerics.Vector.ToVec3 &newDir)
+            let newB = kern + (Henzai.Core.Numerics.Vector.ToVec3 &newDir_b)
             newP.X <= newB.X + widthOff && 
             newP.X >= newB.X - widthOff && 
             newP.Y <= newB.Y + heightOff && 

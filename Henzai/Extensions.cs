@@ -20,10 +20,16 @@ namespace Henzai.Extensions
             return Matrix4x4.Transpose(val);
         }
 
+        /// <summary> 
+        ///Pass-By-Value. For more performant option see <see cref="Henzai.Core.Numerics"/>
+        /// </summary> 
         public static Vector4 ToHomogeneous(this Vector3 val){
             return new Vector4(val, 1.0f);
         }
-
+        
+        /// <summary> 
+        ///Pass-By-Value. For more performant option see <see cref="Henzai.Core.Numerics"/>
+        /// </summary> 
         public static Vector4 ToDirection(this Vector3 val){
             return new Vector4(val, 0.0f);
         }

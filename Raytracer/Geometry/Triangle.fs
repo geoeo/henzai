@@ -4,6 +4,7 @@ open System
 open System.Numerics
 open Raytracer.Numerics
 open Raytracer.Geometry.Core
+open Henzai.Core.Numerics
 
 // Baldwin-Weber ray-triangle intersection algorithm: http://jcgt.org/published/0005/03/03/
 type Triangle(v0 : Point, v1 : Point, v2 : Point) =
@@ -62,9 +63,9 @@ type Triangle(v0 : Point, v1 : Point, v2 : Point) =
 
         override this.Intersect (ray:Ray) =
     
-            let rayOriginHomogeneous = ToHomogeneous &ray.Origin 1.0f
+            let rayOriginHomogeneous = Henzai.Core.Numerics.Vector.ToHomogeneous(&ray.Origin, 1.0f)
             let rayOriginInTriangleSpace = Vector4.Transform(rayOriginHomogeneous, this.WorldToLocal)
-            let rayDirectionInTriangleSpace = Vector4.Transform(ToHomogeneous &ray.Direction 0.0f, this.WorldToLocal)
+            let rayDirectionInTriangleSpace = Vector4.Transform(Henzai.Core.Numerics.Vector.ToHomogeneous(&ray.Direction, 0.0f), this.WorldToLocal)
             let t = -rayOriginInTriangleSpace.Z/rayDirectionInTriangleSpace.Z
             let barycentric = rayOriginInTriangleSpace + t*rayDirectionInTriangleSpace
 

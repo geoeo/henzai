@@ -5,33 +5,6 @@ open System
 
 //TODO: Refactor to Henzai.Core
 
-let UnitParameter (value : float32) = 
-    if value >= 0.0f && value <= 1.0f then value else failwith "parameter not in range [0,1]"
-
-let Round (num :float32) (digits:int) = MathF.Round(num, digits)
-
-//TODO: Investigate Vector3 normalization in fsharp
-let NormalizedOrFail(value : byref<Vector3>) = 
-    if Round (value.Length()) 5 = 1.0f then value 
-        else
-            printfn "WARN: Vector3 not normalized %f %f %f" value.X value.Y value.Z
-            Vector3.Normalize(value)
-            // failwith "Vector3 not normalized"
-
-let RoundVec3 (vec3: byref<Vector3>) (digits:int) =
-    Vector3(Round vec3.X digits, Round vec3.Y digits, Round vec3.Z digits)
-
-let ToVec3 (vec4 : Vector4) =
-    Vector3(vec4.X, vec4.Y, vec4.Z)
-
-let ToHomogeneous (v : byref<Vector3>) (c : float32) = Vector4(v, c)
-let ApplyFuncToVector3 func (vec : Vector3) = Vector3(func vec.X, func vec.Y, func vec.Z)
-
-let SurfaceNormal a b c = Vector3.Normalize(Vector3(a, b, c))
-
-let Power exp b = MathF.Pow(b, exp)
-let inline Square b : float32 = b*b
-
 let Rotation (matrix : Matrix4x4)
     = Matrix4x4(matrix.M11, matrix.M12, matrix.M13, 0.0f,
                 matrix.M21, matrix.M22, matrix.M23, 0.0f,

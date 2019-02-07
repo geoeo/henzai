@@ -29,7 +29,7 @@ type Surface(id: ID, geometry : Hitable, material : Raytracer.Material.Material)
     member this.ComputeSample (b : bool , ray : Ray , cosOfIncidience : Cosine) = (ray, this.MCComputeBRDF cosOfIncidience)
     member this.SamplesArray  = Array.zeroCreate<Ray*Raytracer.Material.Color> this.SampleCount 
 
-    default this.Scatter _ _ _ = (true,Ray(Vector3.UnitX,Vector3.UnitX),1.0f)
+    default this.Scatter _ _ _ = (true, Ray(Vector3.UnitX, Vector3.UnitX), 1.0f)
     default this.Emitted = this.Material.Emmitance
     default this.SampleCount = 0
     default this.PDF = 1.0f
@@ -73,10 +73,10 @@ type Lambertian(id: ID, geometry : Hitable, material : Raytracer.Material.Materi
         let cosOfIncidence = rand_norm.Y
         let mutable nb = Vector3.Zero
         let mutable nt = Vector3.Zero
-        Henzai.Core.Numerics.GeometryUtils.CreateCoordinateSystemAroundNormal(&normal, &nt, &nb)
+        Henzai.Core.Numerics.Geometry.CreateCoordinateSystemAroundNormal(&normal, &nt, &nb)
         let changeOfBaseMatrix = ChangeOfBase &nt &normal &nb
         let normalSample = Vector4.Transform(rand_norm, changeOfBaseMatrix)
-        let outDir = Vector3.Normalize(ToVec3 normalSample)
+        let outDir = Vector3.Normalize(Henzai.Core.Numerics.Vector.ToVec3 &normalSample)
 
         //let outDir = Vector3.Normalize(normal)
         let outRay = Ray(positionOnSurface, outDir, this.ID)
@@ -99,9 +99,10 @@ type Metal(id: ID, geometry : Hitable, material : Raytracer.Material.Material, f
         let rand_norm = RandomSampling.RandomInUnitHemisphere_Sync()
         let mutable nb = Vector3.Zero
         let mutable nt = Vector3.Zero
-        Henzai.Core.Numerics.GeometryUtils.CreateCoordinateSystemAroundNormal(&normal, &nt, &nb)
+        Henzai.Core.Numerics.Geometry.CreateCoordinateSystemAroundNormal(&normal, &nt, &nb)
         let changeOfBaseMatrix = ChangeOfBase &nt &normal &nb
-        let normalSample = ToVec3 (Vector4.Transform(rand_norm, changeOfBaseMatrix))
+        let rand_norm_transformed = Vector4.Transform(rand_norm, changeOfBaseMatrix)
+        let normalSample = Henzai.Core.Numerics.Vector.ToVec3 &rand_norm_transformed
         let modifiedNormal = Vector3.Normalize((1.0f - this.Fuzz)*normal + this.Fuzz*normalSample)
 
         let outDir = Vector3.Normalize(this.Reflect incommingRay modifiedNormal)
@@ -122,7 +123,7 @@ type Dielectric(id: ID, geometry : Hitable, material : Raytracer.Material.Materi
     member this.Reflect (incommingRay : Ray) (normalToSurface : Normal) 
         = incommingRay.Direction - 2.0f*Vector3.Dot(incommingRay.Direction, normalToSurface)*normalToSurface 
     member this.Refract (incommingDirection : Direction) (normalToSurface : Normal) (refractiveIncidenceOverTransmission : float32) (cos_incidence : float32) =
-        let discriminant = 1.0f - (Square refractiveIncidenceOverTransmission)*(1.0f - Square cos_incidence)
+        let discriminant = 1.0f - (Henzai.Core.Numerics.Utils.Square refractiveIncidenceOverTransmission)*(1.0f - Henzai.Core.Numerics.Utils.Square cos_incidence)
         if discriminant > 0.0f then 
             let refracted = refractiveIncidenceOverTransmission*(incommingDirection + cos_incidence*normalToSurface) - normalToSurface*MathF.Sqrt(discriminant)
             (true, Vector3.Normalize(refracted))
@@ -169,7 +170,7 @@ type Dielectric(id: ID, geometry : Hitable, material : Raytracer.Material.Materi
         let (reflectProb, positionOnSurface, reflectDir, refractionDir) = this.CalcFresnel incommingRay t depthLevel
         let reflectRay = Ray(positionOnSurface, reflectDir, this.ID)
         let reflectShading : Material.Color = this.BRDF*reflectProb
-        if Round reflectProb 3 = 1.0f then 
+        if MathF.Round(reflectProb, 3) = 1.0f then 
             samplesArray.SetValue((reflectRay, reflectShading), 0)
             (1, samplesArray)
         else
