@@ -7,7 +7,7 @@ open Raytracer.Geometry.Core
 
 /// Space inwhich points are compared if they are inside a rectangle
 /// Plane is XY
-let CanonicalPlaneSpace = Vector3(0.0f,0.0f,-1.0f)
+let mutable CanonicalPlaneSpace = Vector3(0.0f,0.0f,-1.0f)
 
 type Plane(plane : System.Numerics.Plane, center : Point option, width : float32 option, height : float32 option ) = 
     inherit Hitable () with
@@ -24,13 +24,12 @@ type Plane(plane : System.Numerics.Plane, center : Point option, width : float32
         member this.PointLiesInRectangle (point : Point) =
             let widthOff = this.Width.Value / 2.0f
             let heightOff = this.Height.Value / 2.0f
-            let mutable R = Matrix4x4.Identity
-            RotationBetweenUnitVectors this.Normal CanonicalPlaneSpace (&R)
+            let R = RotationBetweenUnitVectors (this.Normal) (&CanonicalPlaneSpace)
             let kern = if this.Plane.D > 0.0f then -1.0f*this.Plane.D*this.Normal else this.Plane.D*this.Normal
             let v = point - kern
             let b = this.Center.Value - kern
-            let newDir = Vector4.Transform((ToHomogeneous v 0.0f), R)
-            let newDir_b = Vector4.Transform((ToHomogeneous b 0.0f), R)
+            let newDir = Vector4.Transform((ToHomogeneous &v 0.0f), R)
+            let newDir_b = Vector4.Transform((ToHomogeneous &b 0.0f), R)
             let newP = kern + (ToVec3 newDir)
             let newB = kern + (ToVec3 newDir_b)
             newP.X <= newB.X + widthOff && 

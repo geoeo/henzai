@@ -62,9 +62,9 @@ type Triangle(v0 : Point, v1 : Point, v2 : Point) =
 
         override this.Intersect (ray:Ray) =
     
-            let rayOriginHomogeneous = ToHomogeneous ray.Origin 1.0f
+            let rayOriginHomogeneous = ToHomogeneous &ray.Origin 1.0f
             let rayOriginInTriangleSpace = Vector4.Transform(rayOriginHomogeneous, this.WorldToLocal)
-            let rayDirectionInTriangleSpace = Vector4.Transform(ToHomogeneous ray.Direction 0.0f, this.WorldToLocal)
+            let rayDirectionInTriangleSpace = Vector4.Transform(ToHomogeneous &ray.Direction 0.0f, this.WorldToLocal)
             let t = -rayOriginInTriangleSpace.Z/rayDirectionInTriangleSpace.Z
             let barycentric = rayOriginInTriangleSpace + t*rayDirectionInTriangleSpace
 

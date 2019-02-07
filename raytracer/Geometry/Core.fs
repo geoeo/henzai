@@ -18,8 +18,8 @@ type Ray =
         val Direction : Vector3
         val SurfaceOrigin : uint64
 
-        new(origin, dir) = { Origin = origin; Direction = NormalizedOrFail(dir);SurfaceOrigin = 0UL }
-        new(origin, dir, id) = { Origin = origin; Direction = NormalizedOrFail(dir);SurfaceOrigin = id }
+        new(origin, dir) = { Origin = origin; Direction = NormalizedOrFail(&dir);SurfaceOrigin = 0UL }
+        new(origin, dir, id) = { Origin = origin; Direction = NormalizedOrFail(&dir);SurfaceOrigin = id }
 
     end
 
