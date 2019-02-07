@@ -1,9 +1,7 @@
 module Raytracer.Material
 
 open System.Numerics
-open Raytracer.Numerics
 open SixLabors.ImageSharp.PixelFormats
-open Henzai.Core.Numerics
 
 type Color = Vector3
 

@@ -4,7 +4,6 @@ open System
 open System.Numerics
 open Raytracer.Geometry.Core
 open Henzai.Core.Numerics
-open Raytracer.Numerics
 open Raytracer
 
 type ID = uint64
@@ -74,7 +73,7 @@ type Lambertian(id: ID, geometry : Hitable, material : Raytracer.Material.Materi
         let mutable nb = Vector3.Zero
         let mutable nt = Vector3.Zero
         Henzai.Core.Numerics.Geometry.CreateCoordinateSystemAroundNormal(&normal, &nt, &nb)
-        let changeOfBaseMatrix = ChangeOfBase &nt &normal &nb
+        let changeOfBaseMatrix = Henzai.Core.Numerics.Geometry.ChangeOfBase(&nt, &normal, &nb)
         let normalSample = Vector4.Transform(rand_norm, changeOfBaseMatrix)
         let outDir = Vector3.Normalize(Henzai.Core.Numerics.Vector.ToVec3 &normalSample)
 
@@ -100,7 +99,7 @@ type Metal(id: ID, geometry : Hitable, material : Raytracer.Material.Material, f
         let mutable nb = Vector3.Zero
         let mutable nt = Vector3.Zero
         Henzai.Core.Numerics.Geometry.CreateCoordinateSystemAroundNormal(&normal, &nt, &nb)
-        let changeOfBaseMatrix = ChangeOfBase &nt &normal &nb
+        let changeOfBaseMatrix = Henzai.Core.Numerics.Geometry.ChangeOfBase(&nt, &normal, &nb)
         let rand_norm_transformed = Vector4.Transform(rand_norm, changeOfBaseMatrix)
         let normalSample = Henzai.Core.Numerics.Vector.ToVec3 &rand_norm_transformed
         let modifiedNormal = Vector3.Normalize((1.0f - this.Fuzz)*normal + this.Fuzz*normalSample)

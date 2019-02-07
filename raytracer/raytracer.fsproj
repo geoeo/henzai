@@ -7,7 +7,6 @@
     <ProjectReference Include="../Henzai.Core/Henzai.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Numerics.fs" />
     <Compile Include="Camera.fs" />
     <Compile Include="Material.fs" />
     <Compile Include="Geometry/Core.fs" />

@@ -9,20 +9,20 @@ type Sphere(sphereCenter : Origin,radius : Radius) =
     inherit Hitable () with
 
         // override this.TMin = 0.000001f// 0.0001// 0.000001f
-        member this.Center = sphereCenter
+        let center = sphereCenter
 
-        member this.Radius = radius
+        let radius = radius
 
         member this.GetIntersections (_,i1,i2) = (i1,i2)
 
         member this.IntersectWith (t : LineParameter) (ray : Ray) =
-            ((ray.Origin + t*ray.Direction) - this.Center).Length() <= this.Radius
+            ((ray.Origin + t*ray.Direction) - center).Length() <= radius
 
         member this.Intersections (ray : Ray) = 
             //A is always one
-            let centerToRay = ray.Origin - this.Center
+            let centerToRay = ray.Origin - center
             let B = 2.0f*Vector3.Dot(centerToRay,ray.Direction)
-            let C = Vector3.Dot(centerToRay,centerToRay)-(Henzai.Core.Numerics.Utils.Square(this.Radius))
+            let C = Vector3.Dot(centerToRay,centerToRay)-(Henzai.Core.Numerics.Utils.Square(radius))
             let discriminant = B*B - 4.0f*C
             if discriminant < 0.0f then (false, 0.0f,0.0f)
             // TODO: may cause alsiasing investigate around sphere edges
@@ -39,7 +39,7 @@ type Sphere(sphereCenter : Origin,radius : Radius) =
                 (hasIntersection,i1)
 
         override this.NormalForSurfacePoint (positionOnSphere:Point) =
-            Vector3.Normalize((positionOnSphere - this.Center))
+            Vector3.Normalize((positionOnSphere - center))
 
         override this.HasIntersection ray =
             let (hasIntersection,_,_) = this.Intersections ray 

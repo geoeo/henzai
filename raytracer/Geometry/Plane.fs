@@ -2,33 +2,33 @@ module Raytracer.Geometry.Plane
 
 open System
 open System.Numerics
-open Raytracer.Numerics
 open Raytracer.Geometry.Core
 open Henzai.Core.Numerics
 
 /// Space inwhich points are compared if they are inside a rectangle
 /// Plane is XY
-let mutable CanonicalPlaneSpace = Vector3(0.0f,0.0f,-1.0f)
+let mutable CanonicalPlaneSpace = Vector3(0.0f, 0.0f, -1.0f)
 
 type Plane(plane : System.Numerics.Plane, center : Point option, width : float32 option, height : float32 option ) = 
     inherit Hitable () with
-        member this.Plane = plane
 
-        member this.Normal = Vector3.Normalize(this.Plane.Normal)
+        let plane = plane
 
-        member this.Center = center
+        let normal = Vector3.Normalize(plane.Normal)
 
-        member this.Width = width
+        let center = center
 
-        member this.Height = height
+        let width = width
+
+        let height = height
 
         member this.PointLiesInRectangle (point : Point) =
-            let widthOff = this.Width.Value / 2.0f
-            let heightOff = this.Height.Value / 2.0f
-            let R = RotationBetweenUnitVectors (this.Normal) (&CanonicalPlaneSpace)
-            let kern = if this.Plane.D > 0.0f then -1.0f*this.Plane.D*this.Normal else this.Plane.D*this.Normal
+            let widthOff = width.Value / 2.0f
+            let heightOff = height.Value / 2.0f
+            let R = Henzai.Core.Numerics.Geometry.RotationBetweenUnitVectors(&normal, &CanonicalPlaneSpace)
+            let kern = if plane.D > 0.0f then -1.0f*plane.D*normal else plane.D*normal
             let v = point - kern
-            let b = this.Center.Value - kern
+            let b = center.Value - kern
             let newDir = Vector4.Transform(Henzai.Core.Numerics.Vector.ToHomogeneous(&v, 0.0f), R)
             let newDir_b = Vector4.Transform(Henzai.Core.Numerics.Vector.ToHomogeneous(&b, 0.0f), R)
             let newP = kern + (Henzai.Core.Numerics.Vector.ToVec3 &newDir)
@@ -39,8 +39,8 @@ type Plane(plane : System.Numerics.Plane, center : Point option, width : float32
             newP.Y >= newB.Y - heightOff
 
         override this.Intersect (ray:Ray) =
-            let numerator = -this.Plane.D - Plane.DotNormal(this.Plane,ray.Origin) 
-            let denominator = Plane.DotNormal(this.Plane,ray.Direction)
+            let numerator = -plane.D - Plane.DotNormal(plane,ray.Origin) 
+            let denominator = Plane.DotNormal(plane,ray.Direction)
             if Math.Abs(denominator) < this.TMin then (false, 0.0f)
             else (true, numerator / denominator)
 
@@ -50,9 +50,9 @@ type Plane(plane : System.Numerics.Plane, center : Point option, width : float32
         // dotView factor ensures sampling "straight" at very large distances due to fov
         override this.IntersectionAcceptable hasIntersection t dotViewTrace pointOnSurface =
             let generalIntersection = hasIntersection && t > this.TMin && t <= (this.TMax/dotViewTrace)
-            match this.Center with
+            match center with
                 | Some _ -> generalIntersection && this.PointLiesInRectangle pointOnSurface
                 | None -> generalIntersection
 
         override this.NormalForSurfacePoint _ =
-            this.Normal
+            normal

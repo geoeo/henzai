@@ -1,7 +1,6 @@
 module Raytracer.Geometry.Core
 
 open System.Numerics
-open Raytracer.Numerics
 open Henzai.Core.Numerics
 
 type Origin = Vector3 // Position of a point in 3D space

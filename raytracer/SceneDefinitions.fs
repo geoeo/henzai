@@ -7,7 +7,6 @@ open Raytracer.Geometry.Sphere
 open Raytracer.Geometry.Plane
 open Raytracer.Geometry.Triangle
 open Raytracer.Material
-open Raytracer.Numerics
 open Henzai.Core.Numerics
 
 let lambertianSampleCount = 4

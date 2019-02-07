@@ -2,7 +2,6 @@ module Raytracer.Camera
 
 open System
 open System.Numerics
-open Raytracer.Numerics
 open Henzai.Core.Numerics
 
 // https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-generating-camera-rays/generating-camera-rays

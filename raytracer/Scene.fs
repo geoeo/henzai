@@ -7,7 +7,7 @@ open System
 open System.Numerics
 open Raytracer.Camera
 open Raytracer.Geometry.Core
-open Raytracer.Numerics
+open Henzai.Core.Numerics
 open Raytracer.Surface
 open Raytracer.SceneDefinitions
 open BenchmarkDotNet.Attributes
@@ -16,8 +16,8 @@ type Scene () =
 
     let width = 800
     let height = 640
-    let samplesPerPixel = 1
-    let batchSize = 1
+    let samplesPerPixel = 8
+    let batchSize = 8
     let batches = samplesPerPixel / batchSize
     let batchIndices = [|1..batchSize|]
     let colorSamples = Array.create samplesPerPixel Vector3.Zero
@@ -97,7 +97,7 @@ type Scene () =
     let renderPass px py = 
         let dirCS = 
             RayDirection (PixelToCamera (float32 px) (float32 py) (float32 width) (float32 height) fov)
-        let rot = Rotation cameraWS
+        let rot = Henzai.Core.Numerics.Geometry.Rotation &cameraWS
         let dirWS = Vector3.Normalize(Vector3.TransformNormal(dirCS, rot))
         let ray = Ray(cameraWS.Translation, dirWS)
         //V2 - Fastest
