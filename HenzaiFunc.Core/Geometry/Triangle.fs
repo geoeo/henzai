@@ -2,16 +2,15 @@ module HenzaiFunc.Core.Geometry.Triangle
 
 open System
 open System.Numerics
-open HenzaiFunc.Core.Geometry.Types
+open HenzaiFunc.Core.Types
 open HenzaiFunc.Core.Geometry.Ray
 open HenzaiFunc.Core.Geometry.Hitable
 open Henzai.Core.Numerics
+open Henzai.Core.Geometry
 
 // Baldwin-Weber ray-triangle intersection algorithm: http://jcgt.org/published/0005/03/03/
 type Triangle(v0 : Point, v1 : Point, v2 : Point) =
     inherit Hitable() with
-
-        override this.TMin = 0.000001f
 
         let v0 = v0
 
@@ -24,6 +23,8 @@ type Triangle(v0 : Point, v1 : Point, v2 : Point) =
         let e2 = v2 - v0
 
         let normal = Vector3.Cross(e1, e2)
+
+        override this.TMin = 0.000001f
 
         let localToWorld 
             = Matrix4x4(e1.X, e1.Y, e1.Z, 0.0f,
@@ -78,6 +79,8 @@ type Triangle(v0 : Point, v1 : Point, v2 : Point) =
              barycentric.X+barycentric.Y <= 1.0f, tWorld)
 
 
+let CreateTriangleFromVertexStructs<'T when 'T : struct and 'T :> VertexLocateable>(a : 'T, b : 'T, c : 'T)
+    = Triangle(a.GetPosition(), b.GetPosition(), c.GetPosition())
 
              
 

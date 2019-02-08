@@ -2,7 +2,7 @@ module HenzaiFunc.Core.Geometry.Plane
 
 open System
 open System.Numerics
-open HenzaiFunc.Core.Geometry.Types
+open HenzaiFunc.Core.Types
 open HenzaiFunc.Core.Geometry.Ray
 open HenzaiFunc.Core.Geometry.Hitable
 open Henzai.Core.Numerics

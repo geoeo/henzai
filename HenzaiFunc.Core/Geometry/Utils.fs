@@ -1,6 +1,6 @@
 module HenzaiFunc.Core.Geometry.Utils
 
-open HenzaiFunc.Core.Geometry.Types
+open HenzaiFunc.Core.Types
 open HenzaiFunc.Core.Geometry.Ray
 open HenzaiFunc.Core.Geometry.Hitable
 

@@ -2,7 +2,7 @@ module HenzaiFunc.Core.Geometry.Sphere
 
 open System
 open System.Numerics
-open HenzaiFunc.Core.Geometry.Types
+open HenzaiFunc.Core.Types
 open HenzaiFunc.Core.Geometry.Ray
 open HenzaiFunc.Core.Geometry.Hitable
 open Henzai.Core.Numerics
@@ -14,6 +14,8 @@ type Sphere(sphereCenter : Point,radius : Radius) =
         let center = sphereCenter
 
         let radius = radius
+
+        member this.Radius = radius
 
         member this.IntersectWith (t : LineParameter) (ray : Ray) =
             ((ray.Origin + t*ray.Direction) - center).Length() <= radius

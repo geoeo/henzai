@@ -1,8 +1,10 @@
-module HenzaiFunc.Core.Geometry.Types
+module HenzaiFunc.Core.Types
 
 open System.Numerics
 
 type Point = Vector3 // Position of a point in 3D space
+type MinPoint = Vector3 
+type MaxPoint = Vector3 
 type Direction = Vector3  
 type Normal = Vector3
 type Offset = float32  

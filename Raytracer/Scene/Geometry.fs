@@ -3,7 +3,7 @@ module Raytracer.Scene.Geometry
 open System.Numerics
 open SixLabors.ImageSharp.PixelFormats
 open Raytracer.Surface
-open HenzaiFunc.Core.Geometry.Types
+open HenzaiFunc.Core.Types
 open HenzaiFunc.Core.Geometry.Sphere
 open HenzaiFunc.Core.Geometry.Plane
 open HenzaiFunc.Core.Geometry.Triangle
