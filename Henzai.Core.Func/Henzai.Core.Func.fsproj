@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../Henzai.Core/Henzai.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Acceleration/Types.fs" />
+    <Compile Include="Acceleration/AABB.fs" />
+    <Compile Include="Acceleration/Culler.fs" />
+    <Compile Include="Library.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="4.3.4" />
+  </ItemGroup>
+
+</Project>
