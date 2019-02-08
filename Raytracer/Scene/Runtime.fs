@@ -1,4 +1,4 @@
-module Raytracer.Scene
+module Raytracer.Scene.Runtime
 
 open SixLabors.ImageSharp.PixelFormats
 open SixLabors.ImageSharp
@@ -6,18 +6,17 @@ open System.IO
 open System
 open System.Numerics
 open Raytracer.Camera
-open Raytracer.Geometry.Core
+open Raytracer.Geometry.Hitable
+open Raytracer.Geometry.Ray
+open Raytracer.Geometry.Utils
 open Henzai.Core.Numerics
 open Raytracer.Surface
-open Raytracer.SceneDefinitions
+open Raytracer.Scene.Builder
+open Raytracer.RuntimeParameters
 open BenchmarkDotNet.Attributes
 
-type Scene () =
+type RuntimeScene () =
 
-    let width = 800
-    let height = 640
-    let samplesPerPixel = 8
-    let batchSize = 8
     let batches = samplesPerPixel / batchSize
     let batchIndices = [|1..batchSize|]
     let colorSamples = Array.create samplesPerPixel Vector3.Zero
@@ -27,7 +26,6 @@ type Scene () =
     let frameBuffer = Array2D.create width height Vector4.Zero
     let depthBuffer = Array2D.create width height System.Single.MaxValue
     let mutable maxFrameBufferDepth = 0.0f
-    let maxTraceDepth = 5us
     let backgroundColor = Vector3.Zero
     let surfaces : (Surface[]) = scene |> Array.ofList
 
@@ -121,7 +119,7 @@ type Scene () =
                 renderPass px py
 
     member self.SaveFrameBuffer() =
-        using (File.OpenWrite("scene.jpg")) (fun output ->
+        using (File.OpenWrite(sceneImageName)) (fun output ->
             using(new Image<Rgba32>(width, height))(fun image -> 
                 for px in 0..width-1 do
                     for py in 0..height-1 do
@@ -132,7 +130,7 @@ type Scene () =
         )
 
     member self.SaveDepthBuffer() =
-        using (File.OpenWrite("depth.jpg")) (fun output ->
+        using (File.OpenWrite(depthImageName)) (fun output ->
             using(new Image<Rgba32>(width, height))(fun image -> 
                 for px in 0..width-1 do
                     for py in 0..height-1 do

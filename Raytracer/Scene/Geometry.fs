@@ -1,21 +1,16 @@
-module Raytracer.SceneDefinitions
+module Raytracer.Scene.Geometry
 
 open System.Numerics
 open SixLabors.ImageSharp.PixelFormats
 open Raytracer.Surface
+open Raytracer.Geometry.Types
 open Raytracer.Geometry.Sphere
 open Raytracer.Geometry.Plane
 open Raytracer.Geometry.Triangle
 open Raytracer.Material
 open Henzai.Core.Numerics
 
-let lambertianSampleCount = 4
-let lightSampleCount = 0
-let dialectricSampleCount = 2
-let metalSampleCount = 1
-
 let mutable id : ID = 1UL
-
 
 let assignIDAndIncrement idIn : ID =
     let toBeAssigned = idIn
@@ -38,6 +33,10 @@ let lights_simple : Surface list
         //NoSurface(assignIDAndIncrement id, Plane(new System.Numerics.Plane((SurfaceNormal -1.0f -1.0f 1.0f),20.0f),Some ((SurfaceNormal -1.0f -1.0f 1.0f)*(-20.0f)),Some 40.0f,Some 13.0f), Material(Rgba32.White, 0.0f, Rgba32.White, 1.0f));
         //NoSurface(assignIDAndIncrement id, Plane(new System.Numerics.Plane((SurfaceNormal 1.0f 0.0f 0.0f),15.0f),Some ((Vector3(-15.0f,5.0f,-10.0f))),Some 20.0f,Some 10.0f), Material(Rgba32.White,0.0f, Rgba32.White,1.0f));
     ]
+
+let light_sphere : Surface list = [
+        NoSurface(assignIDAndIncrement id, Sphere(Vector3(0.0f,10.0f,-10.0f),3.0f), Material(Rgba32.White,0.0f, Rgba32.White,1.0f));  
+]
 
 let spheres : Surface list
     = [
@@ -91,6 +90,11 @@ let spheres_scene_2 : Surface list
         Dielectric(assignIDAndIncrement id,Sphere(Vector3(-5.1f,-2.0f,-11.0f),3.0f),Material(Rgba32.White),1.5f);
         Dielectric(assignIDAndIncrement id,Sphere(Vector3(2.5f,-3.0f,-3.0f),1.5f), Material(Rgba32.White),1.5f);
       ]
+
+let spheres_glass : Surface list = [
+        Dielectric(assignIDAndIncrement id,Sphere(Vector3(-5.1f,-2.0f,-11.0f),3.0f),Material(Rgba32.White),1.5f);
+]
+
 let planes : Surface list = [
     Lambertian(assignIDAndIncrement id,Plane(System.Numerics.Plane.CreateFromVertices(Vector3(-1.0f,-6.0f,0.0f),Vector3(1.0f,-6.0f,0.0f),Vector3(0.0f,-6.0f,-1.0f)),None,None,None),Material(Vector3(1.0f,1.0f,1.0f)));
     Lambertian(assignIDAndIncrement id,Plane(new System.Numerics.Plane((Henzai.Core.Numerics.Vector.CreateUnitVector3(0.0f, 0.0f, -1.0f)),17.0f),Some ((Vector3(0.0f,0.0f,17.0f))),Some 30.0f,Some 10.0f), Material(Rgba32.White));
@@ -117,11 +121,12 @@ let planes_scene_2 : Surface list = [
     Lambertian(assignIDAndIncrement id,Plane(new System.Numerics.Plane((Henzai.Core.Numerics.Vector.CreateUnitVector3(0.0f, 0.0f, 1.0f)),30.0f),Some ((Vector3(-5.0f,10.0f,-30.0f))),Some 25.0f,Some 20.0f), Material(Rgba32.IndianRed))
     ]
 
+let plane_floor : Surface list = [
+    Lambertian(assignIDAndIncrement id,Plane(System.Numerics.Plane.CreateFromVertices(Vector3(-1.0f,-6.0f,0.0f),Vector3(1.0f,-6.0f,0.0f),Vector3(0.0f,-6.0f,-1.0f)),None,None,None),Material(Vector3(1.0f,1.0f,1.0f)));    
+    ]
+
 let triangle_scene : Surface list = [
             Dielectric(assignIDAndIncrement id,Triangle(Vector3(-13.0f,-6.0f,-16.0f),Vector3(-11.0f,-6.0f,-16.0f),Vector3(-12.0f,-3.0f,-16.0f)),Material(Rgba32.IndianRed), 1.5f);
             Lambertian(assignIDAndIncrement id,Triangle(Vector3(-14.0f,-6.0f,-18.0f),Vector3(-10.0f,-6.0f,-18.0f),Vector3(-12.0f,0.0f,-18.0f)),Material(Rgba32.RoyalBlue));
 ]
 
-// let scene = List.concat [spheres_scene_2;planes_scene_2;lights]
-// let scene = List.concat [triangle_scene;planes_scene_2;lights]
-let scene = List.concat [spheres_scene_2;triangle_scene;planes_scene_2;lights]

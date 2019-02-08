@@ -2,14 +2,19 @@ module Raytracer.Surface
 
 open System
 open System.Numerics
-open Raytracer.Geometry.Core
+open Raytracer.RuntimeParameters
+open Raytracer.Geometry.Types
+open Raytracer.Geometry.Hitable
+open Raytracer.Geometry.NoHitable
+open Raytracer.Geometry.Ray
+open Raytracer.Geometry.Utils
 open Henzai.Core.Numerics
 open Raytracer
 
-type ID = uint64
 
 let randomState = Random()
-        
+   
+//TODO: Split this up    
 [<AbstractClass>]
 type Surface(id: ID, geometry : Hitable, material : Raytracer.Material.Material) =
     //let mutable samplesArray  = Array.zeroCreate<Ray*Raytracer.Material.Color> this.SampleCount
@@ -30,7 +35,7 @@ type Surface(id: ID, geometry : Hitable, material : Raytracer.Material.Material)
 
     default this.Scatter _ _ _ = (true, Ray(Vector3.UnitX, Vector3.UnitX), 1.0f)
     default this.Emitted = this.Material.Emmitance
-    default this.SampleCount = 0
+    default this.SampleCount = noSampleCount
     default this.PDF = 1.0f
     default this.BRDF = this.Material.Albedo
     default this.GenerateSamples (incommingRay : Ray) (t : LineParameter) (depthLevel : int) samplesArray  = 
@@ -43,7 +48,7 @@ type Surface(id: ID, geometry : Hitable, material : Raytracer.Material.Material)
 type NoSurface(id: ID, geometry : Hitable, material : Raytracer.Material.Material) =
     inherit Surface(id, geometry, material)
 
-    override this.GenerateSamples _ _ _ _ = (0, this.SamplesArray)
+    override this.GenerateSamples _ _ _ _ = (noSampleCount, this.SamplesArray)
 
 let findClosestIntersection (ray : Ray) (surfaces : Surface[]) =
     let mutable (bMin,tMin,vMin : Surface) = (false, Single.MaxValue, upcast (NoSurface(0UL, NotHitable(), Raytracer.Material.Material(Vector3.Zero))))
@@ -59,7 +64,7 @@ let findClosestIntersection (ray : Ray) (surfaces : Surface[]) =
 type Lambertian(id: ID, geometry : Hitable, material : Raytracer.Material.Material) =
     inherit Surface(id, geometry, material)
 
-    override this.SampleCount = 4
+    override this.SampleCount = lambertianSampleCount
     override this.PDF = 1.0f / (2.0f * MathF.PI)
     override this.BRDF = this.Material.Albedo / MathF.PI
     override this.Scatter (incommingRay : Ray) (t : LineParameter) (depthLevel : int) =
@@ -88,7 +93,7 @@ type Metal(id: ID, geometry : Hitable, material : Raytracer.Material.Material, f
     member this.Reflect (incommingRay : Ray) (normalToSurface : Normal) 
         = incommingRay.Direction - 2.0f*Vector3.Dot(incommingRay.Direction, normalToSurface)*normalToSurface 
 
-    override this.SampleCount = 1
+    override this.SampleCount = metalSampleCount
     override this.Scatter (incommingRay : Ray) (t : LineParameter) (depthLevel : int) =
 
         let positionOnSurface = incommingRay.Origin + t*incommingRay.Direction
@@ -112,7 +117,7 @@ type Metal(id: ID, geometry : Hitable, material : Raytracer.Material.Material, f
 type Dielectric(id: ID, geometry : Hitable, material : Raytracer.Material.Material, refractiveIndex : float32) =
     inherit Surface(id, geometry, material)
 
-    override this.SampleCount = 2
+    override this.SampleCount = dialectricSampleCount
 
     member this.RefractiveIndex = refractiveIndex
     //https://seblagarde.wordpress.com/2013/04/29/memo-on-fresnel-equations/

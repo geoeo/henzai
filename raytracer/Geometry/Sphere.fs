@@ -2,10 +2,12 @@ module Raytracer.Geometry.Sphere
 
 open System
 open System.Numerics
-open Raytracer.Geometry.Core
+open Raytracer.Geometry.Types
+open Raytracer.Geometry.Ray
+open Raytracer.Geometry.Hitable
 open Henzai.Core.Numerics
 
-type Sphere(sphereCenter : Origin,radius : Radius) =
+type Sphere(sphereCenter : Point,radius : Radius) =
     inherit Hitable () with
 
         // override this.TMin = 0.000001f// 0.0001// 0.000001f
