@@ -1,10 +1,10 @@
-module Raytracer.Geometry.Plane
+module HenzaiFunc.Core.Geometry.Plane
 
 open System
 open System.Numerics
-open Raytracer.Geometry.Types
-open Raytracer.Geometry.Ray
-open Raytracer.Geometry.Hitable
+open HenzaiFunc.Core.Geometry.Types
+open HenzaiFunc.Core.Geometry.Ray
+open HenzaiFunc.Core.Geometry.Hitable
 open Henzai.Core.Numerics
 
 /// Space inwhich points are compared if they are inside a rectangle

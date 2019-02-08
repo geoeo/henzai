@@ -1,10 +1,10 @@
-module Raytracer.Geometry.Triangle
+module HenzaiFunc.Core.Geometry.Triangle
 
 open System
 open System.Numerics
-open Raytracer.Geometry.Types
-open Raytracer.Geometry.Ray
-open Raytracer.Geometry.Hitable
+open HenzaiFunc.Core.Geometry.Types
+open HenzaiFunc.Core.Geometry.Ray
+open HenzaiFunc.Core.Geometry.Hitable
 open Henzai.Core.Numerics
 
 // Baldwin-Weber ray-triangle intersection algorithm: http://jcgt.org/published/0005/03/03/

@@ -1,10 +1,10 @@
-module Raytracer.Geometry.Sphere
+module HenzaiFunc.Core.Geometry.Sphere
 
 open System
 open System.Numerics
-open Raytracer.Geometry.Types
-open Raytracer.Geometry.Ray
-open Raytracer.Geometry.Hitable
+open HenzaiFunc.Core.Geometry.Types
+open HenzaiFunc.Core.Geometry.Ray
+open HenzaiFunc.Core.Geometry.Hitable
 open Henzai.Core.Numerics
 
 type Sphere(sphereCenter : Point,radius : Radius) =

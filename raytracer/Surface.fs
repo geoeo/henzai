@@ -3,11 +3,11 @@ module Raytracer.Surface
 open System
 open System.Numerics
 open Raytracer.RuntimeParameters
-open Raytracer.Geometry.Types
-open Raytracer.Geometry.Hitable
-open Raytracer.Geometry.NoHitable
-open Raytracer.Geometry.Ray
-open Raytracer.Geometry.Utils
+open HenzaiFunc.Core.Geometry.Types
+open HenzaiFunc.Core.Geometry.Hitable
+open HenzaiFunc.Core.Geometry.NoHitable
+open HenzaiFunc.Core.Geometry.Ray
+open HenzaiFunc.Core.Geometry.Utils
 open Henzai.Core.Numerics
 open Raytracer
 

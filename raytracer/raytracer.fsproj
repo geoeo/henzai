@@ -4,21 +4,13 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="../HenzaiFunc.Core/HenzaiFunc.Core.fsproj" />
     <ProjectReference Include="../Henzai.Core/Henzai.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="RuntimeParameters.fs" />
     <Compile Include="Camera.fs" />
     <Compile Include="Material.fs" />
-    <Compile Include="Geometry/Types.fs" />
-    <Compile Include="Geometry/Ray.fs" />
-    <Compile Include="Geometry/Hitable.fs" />
-    <Compile Include="Geometry/NoHitable.fs" />
-    <Compile Include="Geometry/Utils.fs" />
-    <Compile Include="Geometry/Sphere.fs" />
-    <Compile Include="Geometry/Plane.fs" />
-    <Compile Include="Geometry/AABB.fs" />
-    <Compile Include="Geometry/Triangle.fs" />
     <Compile Include="Surface.fs" />
     <Compile Include="Scene/Geometry.fs" />
     <Compile Include="Scene/Builder.fs" />

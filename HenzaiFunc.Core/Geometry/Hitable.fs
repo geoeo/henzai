@@ -1,7 +1,7 @@
-module Raytracer.Geometry.Hitable
+module HenzaiFunc.Core.Geometry.Hitable
 
-open Raytracer.Geometry.Types
-open Raytracer.Geometry.Ray
+open HenzaiFunc.Core.Geometry.Types
+open HenzaiFunc.Core.Geometry.Ray
 open System.Numerics
 
 [<AbstractClass>]

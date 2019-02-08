@@ -9,10 +9,17 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Geometry/Types.fs" />
+    <Compile Include="Geometry/Ray.fs" />
+    <Compile Include="Geometry/Hitable.fs" />
+    <Compile Include="Geometry/NoHitable.fs" />
+    <Compile Include="Geometry/Utils.fs" />
+    <Compile Include="Geometry/Sphere.fs" />
+    <Compile Include="Geometry/Plane.fs" />
+    <Compile Include="Geometry/Triangle.fs" />
     <Compile Include="Acceleration/Types.fs" />
     <Compile Include="Acceleration/AABB.fs" />
     <Compile Include="Acceleration/Culler.fs" />
-    <Compile Include="Library.fs" />
   </ItemGroup>
 
   <ItemGroup>

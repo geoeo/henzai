@@ -1,6 +1,6 @@
-module Raytracer.Geometry.Ray
+module HenzaiFunc.Core.Geometry.Ray
 
-open Raytracer.Geometry.Types
+open HenzaiFunc.Core.Geometry.Types
 open Henzai.Core.Numerics
 open System.Numerics
 
