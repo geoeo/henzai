@@ -24,7 +24,7 @@ type Plane(plane : System.Numerics.Plane, center : Point option, width : float32
 
         let height = height
 
-        member this.PointLiesInRectangle (point : Point) =
+        let pointLiesInRectangle (point : Point) =
             let widthOff = width.Value / 2.0f
             let heightOff = height.Value / 2.0f
             let R = Henzai.Core.Numerics.Geometry.RotationBetweenUnitVectors(&normal, &CanonicalPlaneSpace)
@@ -53,7 +53,7 @@ type Plane(plane : System.Numerics.Plane, center : Point option, width : float32
         override this.IntersectionAcceptable hasIntersection t dotViewTrace pointOnSurface =
             let generalIntersection = hasIntersection && t > this.TMin && t <= (this.TMax/dotViewTrace)
             match center with
-                | Some _ -> generalIntersection && this.PointLiesInRectangle pointOnSurface
+                | Some _ -> generalIntersection && pointLiesInRectangle pointOnSurface
                 | None -> generalIntersection
 
         override this.NormalForSurfacePoint _ =

@@ -15,8 +15,6 @@ type Sphere(sphereCenter : Point,radius : Radius) =
 
         let radius = radius
 
-        member this.GetIntersections (_,i1,i2) = (i1,i2)
-
         member this.IntersectWith (t : LineParameter) (ray : Ray) =
             ((ray.Origin + t*ray.Direction) - center).Length() <= radius
 
