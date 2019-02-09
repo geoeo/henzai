@@ -2,10 +2,13 @@ module HenzaiFunc.Core.Geometry.Hitable
 
 open HenzaiFunc.Core.Types
 open HenzaiFunc.Core.Geometry.Ray
+open HenzaiFunc.Core.Acceleration.Boundable
 open System.Numerics
+open HenzaiFunc.Core.Acceleration
 
 [<AbstractClass>]
 type Hitable ()  =
+
     abstract member HasIntersection: Ray -> bool
     abstract member Intersect: Ray -> bool*LineParameter
     abstract member IntersectionAcceptable : bool -> LineParameter -> float32 -> Point -> bool
@@ -22,3 +25,10 @@ type Hitable ()  =
     default this.IntersectionAcceptable _ _ _ _ = false
     default this.NormalForSurfacePoint _ = Vector3.Zero
     default this.IsObstructedBySelf _ = false
+
+    interface Boundable with
+        member this.GetBounds = struct(Vector3.Zero, Vector3.Zero)
+        member this.IsBoundable = false
+   
+    member this.AsBoundable = this :> Boundable
+

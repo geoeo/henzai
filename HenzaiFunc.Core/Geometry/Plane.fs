@@ -5,6 +5,7 @@ open System.Numerics
 open HenzaiFunc.Core.Types
 open HenzaiFunc.Core.Geometry.Ray
 open HenzaiFunc.Core.Geometry.Hitable
+open HenzaiFunc.Core.Acceleration.Boundable
 open Henzai.Core.Numerics
 
 /// Space inwhich points are compared if they are inside a rectangle
@@ -24,25 +25,38 @@ type Plane(plane : System.Numerics.Plane, center : Point option, width : float32
 
         let height = height
 
+        let widthOff = if width.IsNone then 0.0f else width.Value / 2.0f
+
+        let heightOff = if height.IsNone then 0.0f else height.Value / 2.0f
+
+        let R_orientation_canoical = Henzai.Core.Numerics.Geometry.RotationBetweenUnitVectors(&normal, &CanonicalPlaneSpace)
+
+        let R_canoical_orientation = Matrix4x4.Transpose(R_orientation_canoical)
+
+        // the point at which the normal form origin intersects with the plane
+        let kern = plane.D*normal
+
+        let b = if center.IsNone then Vector3.Zero else center.Value - kern
+
+        let b_canonical = Vector4.Transform(Henzai.Core.Numerics.Vector.ToHomogeneous(&b, 0.0f), R_orientation_canoical)
+
         let pointLiesInRectangle (point : Point) =
-            let widthOff = width.Value / 2.0f
-            let heightOff = height.Value / 2.0f
-            let R = Henzai.Core.Numerics.Geometry.RotationBetweenUnitVectors(&normal, &CanonicalPlaneSpace)
-            let kern = if plane.D > 0.0f then -1.0f*plane.D*normal else plane.D*normal
-            let v = point - kern
-            let b = center.Value - kern
-            let newDir = Vector4.Transform(Henzai.Core.Numerics.Vector.ToHomogeneous(&v, 0.0f), R)
-            let newDir_b = Vector4.Transform(Henzai.Core.Numerics.Vector.ToHomogeneous(&b, 0.0f), R)
-            let newP = kern + (Henzai.Core.Numerics.Vector.ToVec3 &newDir)
-            let newB = kern + (Henzai.Core.Numerics.Vector.ToVec3 &newDir_b)
-            newP.X <= newB.X + widthOff && 
-            newP.X >= newB.X - widthOff && 
-            newP.Y <= newB.Y + heightOff && 
-            newP.Y >= newB.Y - heightOff
+
+            if center.IsNone then true
+            
+            else
+                let v = point - kern
+                let v_canonical = Vector4.Transform(Henzai.Core.Numerics.Vector.ToHomogeneous(&v, 0.0f), R_orientation_canoical)
+                let newP = kern + (Henzai.Core.Numerics.Vector.ToVec3 &v_canonical)
+                let newB = kern + (Henzai.Core.Numerics.Vector.ToVec3 &b_canonical)
+                newP.X <= newB.X + widthOff && 
+                newP.X >= newB.X - widthOff && 
+                newP.Y <= newB.Y + heightOff && 
+                newP.Y >= newB.Y - heightOff
 
         override this.Intersect (ray:Ray) =
-            let numerator = -plane.D - Plane.DotNormal(plane,ray.Origin) 
-            let denominator = Plane.DotNormal(plane,ray.Direction)
+            let numerator = -plane.D - Plane.DotNormal(plane, ray.Origin) 
+            let denominator = Plane.DotNormal(plane, ray.Direction)
             if Math.Abs(denominator) < this.TMin then (false, 0.0f)
             else (true, numerator / denominator)
 
@@ -58,3 +72,26 @@ type Plane(plane : System.Numerics.Plane, center : Point option, width : float32
 
         override this.NormalForSurfacePoint _ =
             normal
+         
+        interface Boundable with
+            override this.GetBounds =
+
+                if center.IsNone then struct(Vector3.Zero,Vector3.Zero)
+
+                else
+
+                    let cornerLB = center.Value + Vector3(-widthOff, -heightOff, 0.0f)
+
+                    let cornerRU = center.Value + Vector3(widthOff, heightOff, 0.0f)
+
+                    let zBack = (center.Value - plane.Normal).Z
+
+                    let zFront = (center.Value + plane.Normal).Z
+
+                    let pMin = Vector3(MathF.Min(cornerLB.X, cornerRU.X), MathF.Min(cornerLB.Y, cornerRU.Y), MathF.Min(zFront, zBack))
+
+                    let pMax = Vector3(MathF.Max(cornerLB.X, cornerRU.X), MathF.Max(cornerLB.Y, cornerRU.Y), MathF.Max(zFront, zBack))
+
+                    struct(pMin, pMax)
+
+            override this.IsBoundable = center.IsSome

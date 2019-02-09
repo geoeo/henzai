@@ -412,7 +412,7 @@ namespace Henzai.Geometry
             return new Mesh<VertexPositionNormalTextureTangentBitangent>(vertices,indices.ToArray());
         }
 
-/// <summary>
+        /// <summary>
         /// Returns a Sphere Mesh with the corresponing vertex struct.
         /// </summary>
         public static Mesh<VertexPositionNormal> GenerateSphereNormal(int numLatitudeLines, int numLongitudeLines, float radius){

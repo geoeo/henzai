@@ -7,10 +7,12 @@ type MinPoint = Vector3
 type MaxPoint = Vector3 
 type Direction = Vector3  
 type Normal = Vector3
-type Offset = float32  
+type Offset = float32 
 type Radius = float32
 type LineParameter = float32
 type Cosine = float32
+type Angle = float32
+type Radians = float32
 type ID = uint64
 
 

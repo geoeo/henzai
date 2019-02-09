@@ -5,6 +5,7 @@ open System.Numerics
 open HenzaiFunc.Core.Types
 open HenzaiFunc.Core.Geometry.Ray
 open HenzaiFunc.Core.Geometry.Hitable
+open HenzaiFunc.Core.Acceleration.Boundable
 open Henzai.Core.Numerics
 open Henzai.Core.Geometry
 
@@ -77,6 +78,17 @@ type Triangle(v0 : Point, v1 : Point, v2 : Point) =
             (0.0f <= barycentric.X && barycentric.X <= 1.0f && 
              0.0f <= barycentric.Y && barycentric.Y <= 1.0f &&
              barycentric.X+barycentric.Y <= 1.0f, tWorld)
+
+        interface Boundable with
+            override this.GetBounds =
+
+                let pMin = Vector3(MathF.Min(v0.X, MathF.Min(v1.X, v2.X)), MathF.Min(v0.Y, MathF.Min(v1.Y, v2.Y)), MathF.Min(v0.Z, MathF.Min(v1.Z, v2.Z)))
+
+                let pMax = Vector3(MathF.Max(v0.X, MathF.Min(v1.X, v2.X)), MathF.Max(v0.Y, MathF.Min(v1.Y, v2.Y)), MathF.Max(v0.Z, MathF.Min(v1.Z, v2.Z)))
+
+                struct(pMin, pMax)
+
+            override this.IsBoundable = true
 
 
 let CreateTriangleFromVertexStructs<'T when 'T : struct and 'T :> VertexLocateable>(a : 'T, b : 'T, c : 'T)

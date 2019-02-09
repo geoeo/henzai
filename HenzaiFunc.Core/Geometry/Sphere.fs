@@ -5,7 +5,15 @@ open System.Numerics
 open HenzaiFunc.Core.Types
 open HenzaiFunc.Core.Geometry.Ray
 open HenzaiFunc.Core.Geometry.Hitable
+open HenzaiFunc.Core.Acceleration.Boundable
 open Henzai.Core.Numerics
+
+// http://mathworld.wolfram.com/Sphere.html
+let parametricEquationOfASpehre (r : Radius) (phi : Radians) (theta : Radians) =
+    assert (phi >= 0.0f && phi <= MathF.PI)
+
+    r*Vector3(MathF.Sin(phi)*MathF.Cos(theta), MathF.Sin(phi)*MathF.Sin(theta), MathF.Cos(phi))
+   
 
 type Sphere(sphereCenter : Point,radius : Radius) =
     inherit Hitable () with
@@ -14,6 +22,15 @@ type Sphere(sphereCenter : Point,radius : Radius) =
         let center = sphereCenter
 
         let radius = radius
+        
+        // values for calculating a bounding box 
+        let minThetaBounding = 14.0f*MathF.PI / 8.0f
+
+        let minPhiBounding = 3.0f*MathF.PI/ 4.0f
+
+        let maxThetaBounding = 6.0f * MathF.PI / 8.0f
+
+        let maxPhiBounding = MathF.PI / 4.0f
 
         member this.Radius = radius
 
@@ -53,3 +70,14 @@ type Sphere(sphereCenter : Point,radius : Radius) =
         override this.IsObstructedBySelf ray =
             let (b,i1,i2) = this.Intersections ray
             this.IntersectionAcceptable b (MathF.Max(i1, i2)) 1.0f Vector3.Zero
+
+        interface Boundable with
+            override this.GetBounds =
+
+                let pMin = parametricEquationOfASpehre radius minPhiBounding minThetaBounding
+                let pMax = parametricEquationOfASpehre radius maxPhiBounding maxThetaBounding
+
+                struct(pMin, pMax)
+
+            override this.IsBoundable = true
+

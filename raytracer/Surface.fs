@@ -11,7 +11,6 @@ open HenzaiFunc.Core.Geometry.Utils
 open Henzai.Core.Numerics
 open Raytracer
 
-
 let randomState = Random()
    
 //TODO: Split this up    
