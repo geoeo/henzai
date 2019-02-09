@@ -10,6 +10,7 @@ open Henzai.Core.Numerics
 open Henzai.Core.Geometry
 
 // Baldwin-Weber ray-triangle intersection algorithm: http://jcgt.org/published/0005/03/03/
+/// Vertices are CCW
 type Triangle(v0 : Point, v1 : Point, v2 : Point) =
     inherit Hitable() with
 
