@@ -39,7 +39,6 @@ namespace Henzai
                     var worldMatrix = mesh.World;
                     var MVP = worldMatrix*camera.ViewProjectionMatirx;
                     Culler.FrustumCullGeometryDefinition(ref MVP, mesh.GeometryDefinition);
-                    // MeshCuller.FrustumCullGeometryDefinition(ref MVP, mesh.GeometryDefinition);
                     uint vertexBytesToCopy = (vertexSizeInBytes* mesh.NumberOfValidVertices).ToUnsigned();
                     uint indexBytesToCopy = (sizeof(ushort)*mesh.NumberOfValidIndices).ToUnsigned();
 
@@ -58,7 +57,6 @@ namespace Henzai
                     var worldMatrix = mesh.World;
                     var MVP = worldMatrix*camera.ViewProjectionMatirx;
                     Culler.FrustumCullGeometryDefinition(ref MVP, mesh.GeometryDefinition); 
-                    // MeshCuller.FrustumCullGeometryDefinition(ref MVP, mesh.GeometryDefinition); 
                     uint vertexBytesToCopy = (vertexSizeInBytes* mesh.NumberOfValidVertices).ToUnsigned();
                     uint indexBytesToCopy = (sizeof(ushort)*mesh.NumberOfValidIndices).ToUnsigned();
 
@@ -77,7 +75,6 @@ namespace Henzai
                     var worldMatrix = mesh.World;
                     var MVP = worldMatrix*camera.ViewProjectionMatirx;               
                     Culler.FrustumCullGeometryDefinition(ref MVP, mesh.GeometryDefinition); 
-                    // MeshCuller.FrustumCullGeometryDefinition(ref MVP, mesh.GeometryDefinition); 
                     uint vertexBytesToCopy = (vertexSizeInBytes* mesh.NumberOfValidVertices).ToUnsigned();
                     uint indexBytesToCopy = (sizeof(ushort)*mesh.NumberOfValidIndices).ToUnsigned();
 
@@ -96,7 +93,6 @@ namespace Henzai
                     var worldMatrix = mesh.World;
                     var MVP = worldMatrix*camera.ViewProjectionMatirx;
                     Culler.FrustumCullGeometryDefinition(ref MVP, mesh.GeometryDefinition); 
-                    // MeshCuller.FrustumCullGeometryDefinition(ref MVP, mesh.GeometryDefinition); 
                     uint vertexBytesToCopy = (vertexSizeInBytes* mesh.NumberOfValidVertices).ToUnsigned();
                     uint indexBytesToCopy = (sizeof(ushort)*mesh.NumberOfValidIndices).ToUnsigned();
 
@@ -115,7 +111,6 @@ namespace Henzai
                     var worldMatrix = mesh.World;
                     var MVP = worldMatrix*camera.ViewProjectionMatirx;
                     Culler.FrustumCullGeometryDefinition(ref MVP, mesh.GeometryDefinition); 
-                    // MeshCuller.FrustumCullGeometryDefinition(ref MVP, mesh.GeometryDefinition); 
                     uint vertexBytesToCopy = (vertexSizeInBytes* mesh.NumberOfValidVertices).ToUnsigned();
                     uint indexBytesToCopy = (sizeof(ushort)*mesh.NumberOfValidIndices).ToUnsigned();
 

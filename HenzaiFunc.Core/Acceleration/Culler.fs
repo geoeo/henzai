@@ -83,6 +83,9 @@ let IsVertexWithinFrustum(modelViewProjectionMatrix : byref<Matrix4x4>, vertex :
     nearHalfSpaceCheck(&modelViewProjectionMatrix, &frustumRowVector, &vertexHomogeneous) &&
     farHalfSpaceCheck(&modelViewProjectionMatrix, &frustumRowVector, &vertexHomogeneous)
 
+/// <summary>
+/// Culls a <see cref="Henzai.Core.Geometry.GeometryDefinition"/> by testing every triangle of the mesh
+/// </summary>
 let FrustumCullGeometryDefinition(modelViewProjectionMatrix : byref<Matrix4x4>, geometryDefinition : Henzai.Core.Geometry.GeometryDefinition<'T>) =
     let processedIndicesMap = geometryDefinition.ProcessedIndicesMap;
     processedIndicesMap.Clear()
