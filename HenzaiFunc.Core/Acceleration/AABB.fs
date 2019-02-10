@@ -37,7 +37,7 @@ type AABB(pMin : MinPoint, pMax : MaxPoint) =
 
     let surfaceArea = ()
 
-    let voleume = ()
+    let volume = ()
 
     let maximumExtent = ()
 

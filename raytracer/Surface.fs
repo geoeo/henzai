@@ -83,12 +83,12 @@ type Lambertian(id: ID, geometry : Hitable, material : Raytracer.Material.Materi
 
         //let outDir = Vector3.Normalize(normal)
         let outRay = Ray(positionOnSurface, outDir, this.ID)
-        (true,outRay, cosOfIncidence)
+        (true, outRay, cosOfIncidence)
 
 type Metal(id: ID, geometry : Hitable, material : Raytracer.Material.Material, fuzz : float32) =
     inherit Surface(id, geometry, material)
 
-    member this.Fuzz = MathF.Max(MathF.Min(1.0f,fuzz), 0.0f)
+    member this.Fuzz = MathF.Max(MathF.Min(1.0f, fuzz), 0.0f)
     member this.Reflect (incommingRay : Ray) (normalToSurface : Normal) 
         = incommingRay.Direction - 2.0f*Vector3.Dot(incommingRay.Direction, normalToSurface)*normalToSurface 
 
@@ -162,12 +162,10 @@ type Dielectric(id: ID, geometry : Hitable, material : Raytracer.Material.Materi
         if randomFloat <= reflectProb 
         then 
             let reflectRay = Ray(positionOnSurface, reflectDir, this.ID)
-            // (true,reflectRay,attenuationDepthAdjusted)
             (true, reflectRay, 1.0f)
         else // refraction has to have been successful
-            let refractRay = Ray(positionOnSurface,refractionDir)
-            // (true,refractRay,attenuationDepthAdjusted)
-            (true,refractRay,1.0f)
+            let refractRay = Ray(positionOnSurface, refractionDir)
+            (true, refractRay, 1.0f)
 
     override this.GenerateSamples (incommingRay : Ray) (t : LineParameter) (depthLevel : int) samplesArray =
         let (reflectProb, positionOnSurface, reflectDir, refractionDir) = this.CalcFresnel incommingRay t depthLevel

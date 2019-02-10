@@ -133,8 +133,6 @@ let FrustumCullGeometryDefinition(modelViewProjectionMatrix : byref<Matrix4x4>, 
            validIndices.[validIndicesCounter] <- i3
            validIndicesCounter <- validIndicesCounter+1
 
-
-   
     geometryDefinition.NumberOfValidIndicies <- validIndicesCounter
     geometryDefinition.NumberOfValidVertices <- validVertexCounter
 
