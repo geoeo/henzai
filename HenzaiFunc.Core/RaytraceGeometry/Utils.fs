@@ -1,8 +1,8 @@
-module HenzaiFunc.Core.Geometry.Utils
+module HenzaiFunc.Core.RaytraceGeometry.Utils
 
 open HenzaiFunc.Core.Types
-open HenzaiFunc.Core.Geometry.Ray
-open HenzaiFunc.Core.Geometry.Hitable
+open HenzaiFunc.Core.RaytraceGeometry.Ray
+open HenzaiFunc.Core.RaytraceGeometry.Hitable
 
 
 /// Does the ray penetrating the surface have a t < tCompare

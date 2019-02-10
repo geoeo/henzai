@@ -6,9 +6,9 @@ open System.IO
 open System
 open System.Numerics
 open Raytracer.Camera
-open HenzaiFunc.Core.Geometry.Hitable
-open HenzaiFunc.Core.Geometry.Ray
-open HenzaiFunc.Core.Geometry.Utils
+open HenzaiFunc.Core.RaytraceGeometry.Hitable
+open HenzaiFunc.Core.RaytraceGeometry.Ray
+open HenzaiFunc.Core.RaytraceGeometry.Utils
 open Henzai.Core.Numerics
 open Raytracer.Surface
 open Raytracer.Scene.Builder

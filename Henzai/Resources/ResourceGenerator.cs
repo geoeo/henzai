@@ -10,7 +10,7 @@ using Veldrid.ImageSharp;
 using Henzai;
 using Henzai.Geometry;
 using Henzai.Runtime;
-using Henzai.Core.Geometry;
+using Henzai.Core.VertexGeometry;
 
 namespace Henzai
 {

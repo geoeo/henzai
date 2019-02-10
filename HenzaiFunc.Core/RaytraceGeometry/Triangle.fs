@@ -1,13 +1,13 @@
-module HenzaiFunc.Core.Geometry.Triangle
+module HenzaiFunc.Core.RaytraceGeometry.Triangle
 
 open System
 open System.Numerics
 open HenzaiFunc.Core.Types
-open HenzaiFunc.Core.Geometry.Ray
-open HenzaiFunc.Core.Geometry.Hitable
+open HenzaiFunc.Core.RaytraceGeometry.Ray
+open HenzaiFunc.Core.RaytraceGeometry.Hitable
 open HenzaiFunc.Core.Acceleration.Boundable
 open Henzai.Core.Numerics
-open Henzai.Core.Geometry
+open Henzai.Core.VertexGeometry
 
 // Baldwin-Weber ray-triangle intersection algorithm: http://jcgt.org/published/0005/03/03/
 /// Vertices are CCW

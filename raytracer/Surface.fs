@@ -4,10 +4,10 @@ open System
 open System.Numerics
 open Raytracer.RuntimeParameters
 open HenzaiFunc.Core.Types
-open HenzaiFunc.Core.Geometry.Hitable
-open HenzaiFunc.Core.Geometry.NoHitable
-open HenzaiFunc.Core.Geometry.Ray
-open HenzaiFunc.Core.Geometry.Utils
+open HenzaiFunc.Core.RaytraceGeometry.Hitable
+open HenzaiFunc.Core.RaytraceGeometry.NoHitable
+open HenzaiFunc.Core.RaytraceGeometry.Ray
+open HenzaiFunc.Core.RaytraceGeometry.Utils
 open Henzai.Core.Numerics
 open Raytracer
 

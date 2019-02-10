@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using System.Numerics;
 using Assimp;
 using Henzai.Geometry;
-using Henzai.Core.Geometry;
+using Henzai.Core.VertexGeometry;
 using Henzai.Extensions;
 using Henzai.Runtime;
 

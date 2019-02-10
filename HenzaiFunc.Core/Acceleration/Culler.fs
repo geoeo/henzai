@@ -2,6 +2,7 @@ module HenzaiFunc.Core.Acceleration.Culler
 
 open System.Numerics
 open Henzai.Core.Numerics
+open Henzai.Core.VertexGeometry
 
 // https://www.gamedevs.org/uploads/fast-extraction-viewing-frustum-planes-from-world-view-projection-matrix.pdf
 
@@ -83,9 +84,9 @@ let IsVertexWithinFrustum(modelViewProjectionMatrix : byref<Matrix4x4>, vertex :
     farHalfSpaceCheck(&modelViewProjectionMatrix, &frustumRowVector, &vertexHomogeneous)
 
 /// <summary>
-/// Culls a <see cref="Henzai.Core.Geometry.GeometryDefinition"/> by testing every triangle of the mesh
+/// Culls a <see cref="Henzai.Core.VertexGeometry.GeometryDefinition"/> by testing every triangle of the mesh
 /// </summary>
-let FrustumCullGeometryDefinition(modelViewProjectionMatrix : byref<Matrix4x4>, geometryDefinition : Henzai.Core.Geometry.GeometryDefinition<'T>) =
+let FrustumCullGeometryDefinition(modelViewProjectionMatrix : byref<Matrix4x4>, geometryDefinition : Henzai.Core.VertexGeometry.GeometryDefinition<'T>) =
     let processedIndicesMap = geometryDefinition.ProcessedIndicesMap
     processedIndicesMap.Clear()
 

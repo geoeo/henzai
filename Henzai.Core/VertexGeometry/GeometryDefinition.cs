@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace Henzai.Core.Geometry
+namespace Henzai.Core.VertexGeometry
 {
     
     public sealed class GeometryDefinition<T> where T : struct, VertexLocateable

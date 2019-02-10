@@ -11,13 +11,13 @@
   <ItemGroup>
     <Compile Include="Types.fs" />
     <Compile Include="Acceleration/Boundable.fs" />
-    <Compile Include="Geometry/Ray.fs" />
-    <Compile Include="Geometry/Hitable.fs" />
-    <Compile Include="Geometry/NoHitable.fs" />
-    <Compile Include="Geometry/Utils.fs" />
-    <Compile Include="Geometry/Sphere.fs" />
-    <Compile Include="Geometry/Plane.fs" />
-    <Compile Include="Geometry/Triangle.fs" />
+    <Compile Include="RaytraceGeometry/Ray.fs" />
+    <Compile Include="RaytraceGeometry/Hitable.fs" />
+    <Compile Include="RaytraceGeometry/NoHitable.fs" />
+    <Compile Include="RaytraceGeometry/Utils.fs" />
+    <Compile Include="RaytraceGeometry/Sphere.fs" />
+    <Compile Include="RaytraceGeometry/Plane.fs" />
+    <Compile Include="RaytraceGeometry/Triangle.fs" />
     <Compile Include="Acceleration/AABB.fs" />
     <Compile Include="Acceleration/Culler.fs" />
   </ItemGroup>

@@ -3,7 +3,7 @@ module HenzaiFunc.Core.Acceleration.AABB
 open System
 open System.Numerics
 open HenzaiFunc.Core.Types
-open HenzaiFunc.Core.Geometry.Sphere
+open HenzaiFunc.Core.RaytraceGeometry.Sphere
 open Henzai.Core.Numerics
 
 type AABB(pMin : MinPoint, pMax : MaxPoint) = 

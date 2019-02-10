@@ -1,10 +1,10 @@
-module HenzaiFunc.Core.Geometry.Plane
+module HenzaiFunc.Core.RaytraceGeometry.Plane
 
 open System
 open System.Numerics
 open HenzaiFunc.Core.Types
-open HenzaiFunc.Core.Geometry.Ray
-open HenzaiFunc.Core.Geometry.Hitable
+open HenzaiFunc.Core.RaytraceGeometry.Ray
+open HenzaiFunc.Core.RaytraceGeometry.Hitable
 open HenzaiFunc.Core.Acceleration.Boundable
 open Henzai.Core.Numerics
 

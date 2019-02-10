@@ -1,7 +1,7 @@
 using System;
 using System.Numerics;
 using Henzai.Core.Numerics;
-using Henzai.Core.Geometry;
+using Henzai.Core.VertexGeometry;
 
 namespace Henzai.Core.Acceleration
 {

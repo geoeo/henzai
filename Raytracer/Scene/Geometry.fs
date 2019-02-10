@@ -4,9 +4,9 @@ open System.Numerics
 open SixLabors.ImageSharp.PixelFormats
 open Raytracer.Surface
 open HenzaiFunc.Core.Types
-open HenzaiFunc.Core.Geometry.Sphere
-open HenzaiFunc.Core.Geometry.Plane
-open HenzaiFunc.Core.Geometry.Triangle
+open HenzaiFunc.Core.RaytraceGeometry.Sphere
+open HenzaiFunc.Core.RaytraceGeometry.Plane
+open HenzaiFunc.Core.RaytraceGeometry.Triangle
 open Raytracer.Material
 open Henzai.Core.Numerics
 

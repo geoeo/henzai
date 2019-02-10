@@ -1,6 +1,6 @@
 using System;
 using System.Numerics;
-using Henzai.Core.Geometry;
+using Henzai.Core.VertexGeometry;
 
 namespace Henzai.Geometry
 {
