@@ -19,10 +19,10 @@ let assignIDAndIncrement idIn : ID =
 
 let lights : Surface list 
     =  [
-        //Emitting(assignIDAndIncrement id, Sphere(Vector3(3.0f, 8.0f, -5.0f),3.0f), Material(Vector3(1.0f,1.0f,1.0f)));
-        // Emitting(assignIDAndIncrement id, Sphere(Vector3(-4.0f, 8.0f, -10.0f),3.0f), Material(Vector3(1.0f,1.0f,1.0f)));
         NoSurface(assignIDAndIncrement id, Plane(new System.Numerics.Plane((Henzai.Core.Numerics.Vector.CreateUnitVector3(-1.0f, -1.0f, 1.0f)),20.0f),Some ((Henzai.Core.Numerics.Vector.CreateUnitVector3(-1.0f, -1.0f, 1.0f))*(-20.0f)),Some 40.0f,Some 13.0f), Material(Rgba32.White, 0.0f, Rgba32.White, 1.0f));
         NoSurface(assignIDAndIncrement id, Plane(new System.Numerics.Plane((Henzai.Core.Numerics.Vector.CreateUnitVector3(1.0f, 0.0f, 0.0f)),15.0f),Some ((Vector3(-15.0f,5.0f,-10.0f))),Some 20.0f,Some 10.0f), Material(Rgba32.White,0.0f, Rgba32.White,1.0f));
+        // NoSurface(assignIDAndIncrement id,Plane(new System.Numerics.Plane((Henzai.Core.Numerics.Vector.CreateUnitVector3(0.0f, 0.0f, 1.0f)),21.0f),Some ((Vector3(-12.0f,0.0f,21.0f))),Some 5.0f,Some 8.0f), Material(Rgba32.White,0.0f, Rgba32.White,1.0f));
+        // NoSurface(assignIDAndIncrement id,Plane(new System.Numerics.Plane((Henzai.Core.Numerics.Vector.CreateUnitVector3(0.0f, 0.0f, 1.0f)),-21.0f),Some ((Vector3(-12.0f,0.0f,-21.0f))),Some 5.0f,Some 16.0f), Material(Rgba32.White,0.0f, Rgba32.White,1.0f));
     ]
 
 let lights_simple : Surface list 
@@ -117,7 +117,7 @@ let planes_simple : Surface list = [
 let planes_scene_2 : Surface list = [
     Lambertian(assignIDAndIncrement id,Plane(System.Numerics.Plane.CreateFromVertices(Vector3(-1.0f,-6.0f,0.0f),Vector3(1.0f,-6.0f,0.0f),Vector3(0.0f,-6.0f,-1.0f)),None,None,None),Material(Vector3(1.0f,1.0f,1.0f)));
     Lambertian(assignIDAndIncrement id,Plane(new System.Numerics.Plane((Henzai.Core.Numerics.Vector.CreateUnitVector3(0.0f, 0.0f, -1.0f)),17.0f),Some ((Vector3(0.0f,0.0f,17.0f))),Some 30.0f,Some 10.0f), Material(Rgba32.White));
-    Metal(assignIDAndIncrement id, Plane(new System.Numerics.Plane((Henzai.Core.Numerics.Vector.CreateUnitVector3(-1.0f, 0.0f, 1.0f)),15.0f),Some ((Vector3(15.0f,3.0f,-15.0f))),Some 10.0f,Some 6.0f), Material(Rgba32.AntiqueWhite),0.00f);
+    Metal(assignIDAndIncrement id, Plane(new System.Numerics.Plane((Henzai.Core.Numerics.Vector.CreateUnitVector3(-1.0f, 0.0f, 1.0f)),15.0f),Some ((Vector3(15.0f,3.0f,-15.0f))),Some 10.0f,Some 6.0f), Material(Rgba32.AntiqueWhite),0.0f);
     Lambertian(assignIDAndIncrement id,Plane(new System.Numerics.Plane((Henzai.Core.Numerics.Vector.CreateUnitVector3(0.0f, 0.0f, 1.0f)),30.0f),Some ((Vector3(-5.0f,10.0f,-30.0f))),Some 25.0f,Some 20.0f), Material(Rgba32.IndianRed))
     ]
 
@@ -126,7 +126,8 @@ let plane_floor : Surface list = [
     ]
 
 let triangle_scene : Surface list = [
-            Dielectric(assignIDAndIncrement id,Triangle(Vector3(-13.0f,-6.0f,-16.0f),Vector3(-11.0f,-6.0f,-16.0f),Vector3(-12.0f,-3.0f,-16.0f)),Material(Rgba32.IndianRed), 1.5f);
+            //Dielectric(assignIDAndIncrement id,Triangle(Vector3(-13.0f,-6.0f,-16.0f),Vector3(-11.0f,-6.0f,-16.0f),Vector3(-12.0f,-3.0f,-16.0f)),Material(Rgba32.IndianRed), 1.5f);
+            Lambertian(assignIDAndIncrement id,Triangle(Vector3(-13.0f,-6.0f,-16.0f),Vector3(-11.0f,-6.0f,-16.0f),Vector3(-12.0f,-3.0f,-16.0f)),Material(Rgba32.IndianRed));
             Lambertian(assignIDAndIncrement id,Triangle(Vector3(-14.0f,-6.0f,-18.0f),Vector3(-10.0f,-6.0f,-18.0f),Vector3(-12.0f,0.0f,-18.0f)),Material(Rgba32.RoyalBlue));
 ]
 
