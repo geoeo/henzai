@@ -15,7 +15,7 @@ let parametricEquationOfASpehre (r : Radius) (phi : Radians) (theta : Radians) =
     r*Vector3(MathF.Sin(phi)*MathF.Cos(theta), MathF.Sin(phi)*MathF.Sin(theta), MathF.Cos(phi))
    
 
-type Sphere(sphereCenter : Point,radius : Radius) =
+type Sphere(sphereCenter : Point, radius : Radius) =
     inherit Hitable () with
 
         // override this.TMin = 0.000001f// 0.0001// 0.000001f

@@ -17,5 +17,10 @@ namespace Henzai.Core.Numerics{
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Square(float b) { return b*b;}
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Lerp(float t, float a, float b){
+            return (1.0f - t) * a + t*b;
+        }
+
     }
 }

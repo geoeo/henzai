@@ -2,7 +2,6 @@ module HenzaiFunc.Core.Acceleration.Culler
 
 open System.Numerics
 open Henzai.Core.Numerics
-open Henzai.Core.Geometry
 
 // https://www.gamedevs.org/uploads/fast-extraction-viewing-frustum-planes-from-world-view-projection-matrix.pdf
 
@@ -15,7 +14,7 @@ let leftHalfSpaceCheck
     frustumRowVector.Z <- modelViewProjectionMatrix.M34 + modelViewProjectionMatrix.M31
     frustumRowVector.W <- modelViewProjectionMatrix.M44 + modelViewProjectionMatrix.M41
 
-    0.0f < Henzai.Core.Numerics.Geometry.InMemoryDotProduct(&frustumRowVector, &vertexHomogeneous)
+    0.0f < Henzai.Core.Numerics.Vector.InMemoryDotProduct(&frustumRowVector, &vertexHomogeneous)
 
 let rightHalfSpaceCheck
     (modelViewProjectionMatrix : byref<Matrix4x4>, 
@@ -26,7 +25,7 @@ let rightHalfSpaceCheck
     frustumRowVector.Y <- modelViewProjectionMatrix.M24 - modelViewProjectionMatrix.M21
     frustumRowVector.W <- modelViewProjectionMatrix.M44 - modelViewProjectionMatrix.M41
 
-    0.0f < Henzai.Core.Numerics.Geometry.InMemoryDotProduct(&frustumRowVector, &vertexHomogeneous)
+    0.0f < Henzai.Core.Numerics.Vector.InMemoryDotProduct(&frustumRowVector, &vertexHomogeneous)
 
 let topHalfSpaceCheck
     (modelViewProjectionMatrix : byref<Matrix4x4>, 
@@ -37,7 +36,7 @@ let topHalfSpaceCheck
     frustumRowVector.Z <- modelViewProjectionMatrix.M34 - modelViewProjectionMatrix.M32
     frustumRowVector.W <- modelViewProjectionMatrix.M44 - modelViewProjectionMatrix.M42
 
-    0.0f < Henzai.Core.Numerics.Geometry.InMemoryDotProduct(&frustumRowVector, &vertexHomogeneous)
+    0.0f < Henzai.Core.Numerics.Vector.InMemoryDotProduct(&frustumRowVector, &vertexHomogeneous)
 
 let bottomHalfSpaceCheck
     (modelViewProjectionMatrix : byref<Matrix4x4>, 
@@ -48,7 +47,7 @@ let bottomHalfSpaceCheck
     frustumRowVector.Z <- modelViewProjectionMatrix.M34 + modelViewProjectionMatrix.M32
     frustumRowVector.W <- modelViewProjectionMatrix.M44 + modelViewProjectionMatrix.M42
 
-    0.0f < Henzai.Core.Numerics.Geometry.InMemoryDotProduct(&frustumRowVector, &vertexHomogeneous)
+    0.0f < Henzai.Core.Numerics.Vector.InMemoryDotProduct(&frustumRowVector, &vertexHomogeneous)
 
 let nearHalfSpaceCheck
     (modelViewProjectionMatrix : byref<Matrix4x4>, 
@@ -59,7 +58,7 @@ let nearHalfSpaceCheck
     frustumRowVector.Z <- modelViewProjectionMatrix.M33
     frustumRowVector.W <- modelViewProjectionMatrix.M34
 
-    0.0f < Henzai.Core.Numerics.Geometry.InMemoryDotProduct(&frustumRowVector, &vertexHomogeneous)
+    0.0f < Henzai.Core.Numerics.Vector.InMemoryDotProduct(&frustumRowVector, &vertexHomogeneous)
 
 let farHalfSpaceCheck
     (modelViewProjectionMatrix : byref<Matrix4x4>, 
@@ -70,7 +69,7 @@ let farHalfSpaceCheck
     frustumRowVector.Z <- modelViewProjectionMatrix.M34 - modelViewProjectionMatrix.M33;
     frustumRowVector.W <- modelViewProjectionMatrix.M44 - modelViewProjectionMatrix.M43;
 
-    0.0f < Henzai.Core.Numerics.Geometry.InMemoryDotProduct(&frustumRowVector, &vertexHomogeneous)
+    0.0f < Henzai.Core.Numerics.Vector.InMemoryDotProduct(&frustumRowVector, &vertexHomogeneous)
 
 let IsVertexWithinFrustum(modelViewProjectionMatrix : byref<Matrix4x4>, vertex : byref<Vector3>) =
     let mutable frustumRowVector = Vector4.Zero
@@ -87,7 +86,7 @@ let IsVertexWithinFrustum(modelViewProjectionMatrix : byref<Matrix4x4>, vertex :
 /// Culls a <see cref="Henzai.Core.Geometry.GeometryDefinition"/> by testing every triangle of the mesh
 /// </summary>
 let FrustumCullGeometryDefinition(modelViewProjectionMatrix : byref<Matrix4x4>, geometryDefinition : Henzai.Core.Geometry.GeometryDefinition<'T>) =
-    let processedIndicesMap = geometryDefinition.ProcessedIndicesMap;
+    let processedIndicesMap = geometryDefinition.ProcessedIndicesMap
     processedIndicesMap.Clear()
 
     let vertices = geometryDefinition.GetVertices

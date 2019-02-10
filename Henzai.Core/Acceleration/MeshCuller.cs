@@ -84,7 +84,7 @@ namespace Henzai.Core.Acceleration
             frustumRowVector.Z = modelViewProjectionMatrix.M34 + modelViewProjectionMatrix.M31;
             frustumRowVector.W = modelViewProjectionMatrix.M44 + modelViewProjectionMatrix.M41;
 
-            return  0 < Numerics.Geometry.InMemoryDotProduct(ref frustumRowVector, ref vertexHomogeneous);
+            return  0 < Numerics.Vector.InMemoryDotProduct(ref frustumRowVector, ref vertexHomogeneous);
         }
 
         private static bool RightHalfSpaceCheck(ref Matrix4x4 modelViewProjectionMatrix, ref Vector4 frustumRowVector, ref Vector4 vertexHomogeneous) {
@@ -93,7 +93,7 @@ namespace Henzai.Core.Acceleration
             frustumRowVector.Y = modelViewProjectionMatrix.M24 - modelViewProjectionMatrix.M21;
             frustumRowVector.W = modelViewProjectionMatrix.M44 - modelViewProjectionMatrix.M41;
 
-            return 0 < Numerics.Geometry.InMemoryDotProduct(ref frustumRowVector, ref vertexHomogeneous);
+            return 0 < Numerics.Vector.InMemoryDotProduct(ref frustumRowVector, ref vertexHomogeneous);
         }
 
         private static bool TopHalfSpaceCheck(ref Matrix4x4 modelViewProjectionMatrix, ref Vector4 frustumRowVector, ref Vector4 vertexHomogeneous) {
@@ -102,7 +102,7 @@ namespace Henzai.Core.Acceleration
             frustumRowVector.Z = modelViewProjectionMatrix.M34 - modelViewProjectionMatrix.M32;
             frustumRowVector.W = modelViewProjectionMatrix.M44 - modelViewProjectionMatrix.M42;
 
-            return 0 < Numerics.Geometry.InMemoryDotProduct(ref frustumRowVector, ref vertexHomogeneous);
+            return 0 < Numerics.Vector.InMemoryDotProduct(ref frustumRowVector, ref vertexHomogeneous);
         }
 
         private static bool BottomHalfSpaceCheck(ref Matrix4x4 modelViewProjectionMatrix, ref Vector4 frustumRowVector, ref Vector4 vertexHomogeneous) {
@@ -111,7 +111,7 @@ namespace Henzai.Core.Acceleration
             frustumRowVector.Z = modelViewProjectionMatrix.M34 + modelViewProjectionMatrix.M32;
             frustumRowVector.W = modelViewProjectionMatrix.M44 + modelViewProjectionMatrix.M42;
 
-            return 0 < Numerics.Geometry.InMemoryDotProduct(ref frustumRowVector, ref vertexHomogeneous);
+            return 0 < Numerics.Vector.InMemoryDotProduct(ref frustumRowVector, ref vertexHomogeneous);
         }
 
         private static bool NearHalfSpaceCheck(ref Matrix4x4 modelViewProjectionMatrix, ref Vector4 frustumRowVector, ref Vector4 vertexHomogeneous) {
@@ -120,7 +120,7 @@ namespace Henzai.Core.Acceleration
             frustumRowVector.Z = modelViewProjectionMatrix.M33;
             frustumRowVector.W = modelViewProjectionMatrix.M34;
 
-            return 0 < Numerics.Geometry.InMemoryDotProduct(ref frustumRowVector, ref vertexHomogeneous);
+            return 0 < Numerics.Vector.InMemoryDotProduct(ref frustumRowVector, ref vertexHomogeneous);
         }
 
         private static bool FarHalfSpaceCheck(ref Matrix4x4 modelViewProjectionMatrix, ref Vector4 frustumRowVector, ref Vector4 vertexHomogeneous) {
@@ -129,7 +129,7 @@ namespace Henzai.Core.Acceleration
             frustumRowVector.Z = modelViewProjectionMatrix.M34 - modelViewProjectionMatrix.M33;
             frustumRowVector.W = modelViewProjectionMatrix.M44 - modelViewProjectionMatrix.M43;
 
-            return 0 < Numerics.Geometry.InMemoryDotProduct(ref frustumRowVector, ref vertexHomogeneous);
+            return 0 < Numerics.Vector.InMemoryDotProduct(ref frustumRowVector, ref vertexHomogeneous);
         }
 
     }

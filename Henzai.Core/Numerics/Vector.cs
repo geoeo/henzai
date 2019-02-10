@@ -2,7 +2,7 @@ using System;
 using System.Numerics;
 using System.Runtime.CompilerServices; 
 
-namespace Henzai.Core.Numerics{
+namespace Henzai.Core.Numerics {
 
     public static class Vector {
 
@@ -39,8 +39,27 @@ namespace Henzai.Core.Numerics{
             return Vector3.Normalize(new Vector3(a, b, c));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float InMemoryDotProduct(ref Vector4 a, ref Vector4 b){
+            return a.X*b.X+a.Y*b.Y+a.Z*b.Z+a.W*b.W;
+        }
 
-// let ApplyFuncToVector3 func (vec : Vector3) = Vector3(func vec.X, func vec.Y, func vec.Z)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float InMemoryDotProduct(ref Vector3 a, ref Vector3 b){
+            return a.X*b.X+a.Y*b.Y+a.Z*b.Z;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Distance(ref Vector3 from, ref Vector3 to){
+            return (to - from).Length();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float DistanceSquared(ref Vector3 from, ref Vector3 to){
+            return (to - from).LengthSquared();
+        }
+
+
 
     }
 }

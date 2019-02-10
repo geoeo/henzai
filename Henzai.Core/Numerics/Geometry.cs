@@ -26,16 +26,6 @@ namespace Henzai.Core.Numerics
 
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float InMemoryDotProduct(ref Vector4 a, ref Vector4 b){
-            return a.X*b.X+a.Y*b.Y+a.Z*b.Z+a.W*b.W;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float InMemoryDotProduct(ref Vector3 a, ref Vector3 b){
-            return a.X*b.X+a.Y*b.Y+a.Z*b.Z;
-        }
-
         public static Matrix4x4 Rotation(ref Matrix4x4 matrix){
             return new Matrix4x4(
                 matrix.M11, matrix.M12, matrix.M13, 0.0f,
@@ -78,7 +68,7 @@ namespace Henzai.Core.Numerics
         /// </summary>
 
         public static float AngleAroundOmega(ref Vector3 omega){
-            return MathF.Sqrt(InMemoryDotProduct(ref omega, ref omega));
+            return MathF.Sqrt(Vector.InMemoryDotProduct(ref omega, ref omega));
         }
 
         /// <summary>
@@ -93,6 +83,7 @@ namespace Henzai.Core.Numerics
             var angle = AngleAroundOmega(ref omega);
             var c = MathF.Cos(angle);
 
+            //TODO: Optimize this for less allocations
             return Matrix4x4.Identity + omega_x + Matrix4x4.Multiply(omega_x_squared, (1.0f/(1.0f+c)));
         }
 
