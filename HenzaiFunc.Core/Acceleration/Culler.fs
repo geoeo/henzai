@@ -75,7 +75,6 @@ let farHalfSpaceCheck
 let IsVertexWithinFrustum(modelViewProjectionMatrix : byref<Matrix4x4>, vertex : byref<Vector3>) =
     let mutable frustumRowVector = Vector4.Zero
     let mutable vertexHomogeneous = Vector4(vertex.X, vertex.Y, vertex.Z, 1.0f)
-    // let mutable vertexHomogeneous = Henzai.Core.Numerics.Vector.ToHomogeneous(ref vertex, 1.0f) // Performance Killer!
 
     leftHalfSpaceCheck(&modelViewProjectionMatrix, &frustumRowVector, &vertexHomogeneous) &&
     rightHalfSpaceCheck(&modelViewProjectionMatrix, &frustumRowVector, &vertexHomogeneous) &&

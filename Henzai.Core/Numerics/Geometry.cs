@@ -1,5 +1,6 @@
 using System;
 using System.Numerics;
+using System.Runtime.CompilerServices; 
 
 namespace Henzai.Core.Numerics
 {
@@ -25,10 +26,12 @@ namespace Henzai.Core.Numerics
 
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float InMemoryDotProduct(ref Vector4 a, ref Vector4 b){
             return a.X*b.X+a.Y*b.Y+a.Z*b.Z+a.W*b.W;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float InMemoryDotProduct(ref Vector3 a, ref Vector3 b){
             return a.X*b.X+a.Y*b.Y+a.Z*b.Z;
         }
