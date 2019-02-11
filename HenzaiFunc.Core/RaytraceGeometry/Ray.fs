@@ -10,5 +10,5 @@ type Ray =
         val Direction : Direction
         val SurfaceOrigin : ID
 
-        new(origin, dir) = { Origin = origin; Direction = Henzai.Core.Numerics.Vector.Normalize(&dir);SurfaceOrigin = 0UL }
-        new(origin, dir, id) = { Origin = origin; Direction = Henzai.Core.Numerics.Vector.Normalize(&dir);SurfaceOrigin = id }
+        new(origin, dir) = { Origin = origin; Direction = Henzai.Core.Numerics.Vector.Normalize(ref dir);SurfaceOrigin = 0UL }
+        new(origin, dir, id) = { Origin = origin; Direction = Henzai.Core.Numerics.Vector.Normalize(ref dir);SurfaceOrigin = id }

@@ -29,7 +29,7 @@ type Plane(plane : System.Numerics.Plane, center : Point option, width : float32
 
         let heightOff = if height.IsNone then 0.0f else height.Value / 2.0f
 
-        let R_orientation_canoical = Henzai.Core.Numerics.Geometry.RotationBetweenUnitVectors(&normal, &CanonicalPlaneSpace)
+        let R_orientation_canoical = Henzai.Core.Numerics.Geometry.RotationBetweenUnitVectors(ref normal, ref CanonicalPlaneSpace)
 
         let R_canoical_orientation = Matrix4x4.Transpose(R_orientation_canoical)
 
@@ -38,7 +38,7 @@ type Plane(plane : System.Numerics.Plane, center : Point option, width : float32
 
         let b = if center.IsNone then Vector3.Zero else center.Value - kern
 
-        let b_canonical = Vector4.Transform(Henzai.Core.Numerics.Vector.ToHomogeneous(&b, 0.0f), R_orientation_canoical)
+        let b_canonical = Vector4.Transform(Henzai.Core.Numerics.Vector.ToHomogeneous(ref b, 0.0f), R_orientation_canoical)
 
         let pointLiesInRectangle (point : Point) =
 
@@ -46,9 +46,9 @@ type Plane(plane : System.Numerics.Plane, center : Point option, width : float32
             
             else
                 let v = point - kern
-                let v_canonical = Vector4.Transform(Henzai.Core.Numerics.Vector.ToHomogeneous(&v, 0.0f), R_orientation_canoical)
-                let newP = kern + (Henzai.Core.Numerics.Vector.ToVec3 &v_canonical)
-                let newB = kern + (Henzai.Core.Numerics.Vector.ToVec3 &b_canonical)
+                let v_canonical = Vector4.Transform(Henzai.Core.Numerics.Vector.ToHomogeneous(ref v, 0.0f), R_orientation_canoical)
+                let newP = kern + (Henzai.Core.Numerics.Vector.ToVec3(ref v_canonical))
+                let newB = kern + (Henzai.Core.Numerics.Vector.ToVec3(ref b_canonical))
                 newP.X <= newB.X + widthOff && 
                 newP.X >= newB.X - widthOff && 
                 newP.Y <= newB.Y + heightOff && 

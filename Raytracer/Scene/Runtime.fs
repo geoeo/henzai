@@ -95,7 +95,7 @@ type RuntimeScene () =
     let renderPass px py = 
         let dirCS = 
             RayDirection (PixelToCamera (float32 px) (float32 py) (float32 width) (float32 height) fov)
-        let rot = Henzai.Core.Numerics.Geometry.Rotation &cameraWS
+        let rot = Henzai.Core.Numerics.Geometry.Rotation(ref cameraWS)
         let dirWS = Vector3.Normalize(Vector3.TransformNormal(dirCS, rot))
         let ray = Ray(cameraWS.Translation, dirWS)
         //V2 - Fastest

@@ -79,7 +79,7 @@ type Lambertian(id: ID, geometry : Hitable, material : Raytracer.Material.Materi
         Henzai.Core.Numerics.Geometry.CreateCoordinateSystemAroundNormal(&normal, &nt, &nb)
         let changeOfBaseMatrix = Henzai.Core.Numerics.Geometry.ChangeOfBase(&nt, &normal, &nb)
         let normalSample = Vector4.Transform(rand_norm, changeOfBaseMatrix)
-        let outDir = Vector3.Normalize(Henzai.Core.Numerics.Vector.ToVec3 &normalSample)
+        let outDir = Vector3.Normalize(Henzai.Core.Numerics.Vector.ToVec3(ref normalSample))
 
         //let outDir = Vector3.Normalize(normal)
         let outRay = Ray(positionOnSurface, outDir, this.ID)
@@ -105,7 +105,7 @@ type Metal(id: ID, geometry : Hitable, material : Raytracer.Material.Material, f
         Henzai.Core.Numerics.Geometry.CreateCoordinateSystemAroundNormal(&normal, &nt, &nb)
         let changeOfBaseMatrix = Henzai.Core.Numerics.Geometry.ChangeOfBase(&nt, &normal, &nb)
         let rand_norm_transformed = Vector4.Transform(rand_norm, changeOfBaseMatrix)
-        let normalSample = Henzai.Core.Numerics.Vector.ToVec3 &rand_norm_transformed
+        let normalSample = Henzai.Core.Numerics.Vector.ToVec3(ref rand_norm_transformed)
         let modifiedNormal = Vector3.Normalize((1.0f - this.Fuzz)*normal + this.Fuzz*normalSample)
 
         let outDir = Vector3.Normalize(this.Reflect incommingRay modifiedNormal)

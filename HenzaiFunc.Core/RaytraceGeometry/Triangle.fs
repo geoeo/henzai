@@ -67,9 +67,9 @@ type Triangle(v0 : Point, v1 : Point, v2 : Point) =
 
         override this.Intersect (ray:Ray) =
     
-            let rayOriginHomogeneous = Henzai.Core.Numerics.Vector.ToHomogeneous(&ray.Origin, 1.0f)
+            let rayOriginHomogeneous = Henzai.Core.Numerics.Vector.ToHomogeneous(ref ray.Origin, 1.0f)
             let rayOriginInTriangleSpace = Vector4.Transform(rayOriginHomogeneous, worldToLocal)
-            let rayDirectionInTriangleSpace = Vector4.Transform(Henzai.Core.Numerics.Vector.ToHomogeneous(&ray.Direction, 0.0f), worldToLocal)
+            let rayDirectionInTriangleSpace = Vector4.Transform(Henzai.Core.Numerics.Vector.ToHomogeneous(ref ray.Direction, 0.0f), worldToLocal)
             let t = -rayOriginInTriangleSpace.Z/rayDirectionInTriangleSpace.Z
             let barycentric = rayOriginInTriangleSpace + t*rayDirectionInTriangleSpace
 

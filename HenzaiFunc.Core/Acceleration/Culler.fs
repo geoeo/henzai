@@ -103,15 +103,15 @@ let FrustumCullGeometryDefinition(modelViewProjectionMatrix : byref<Matrix4x4>, 
         let i2 = indices.[i+1]
         let i3 = indices.[i+2]
 
-        let v1 = vertices.[int i1].GetPosition()
-        let v2 = vertices.[int i2].GetPosition()
-        let v3 = vertices.[int i3].GetPosition()
+        let mutable v1 = vertices.[int i1].GetPosition()
+        let mutable v2 = vertices.[int i2].GetPosition()
+        let mutable v3 = vertices.[int i3].GetPosition()
 
         // If at least one vertex is within the frustum, the triangle is not culled.
         if(IsVertexWithinFrustum(&modelViewProjectionMatrix, &v1) ||
            IsVertexWithinFrustum(&modelViewProjectionMatrix, &v2) ||
            IsVertexWithinFrustum(&modelViewProjectionMatrix, &v3)) then
-
+           
            if(not(processedIndicesMap.ContainsKey(i1))) then
             validVertices.[validVertexCounter] <- vertices.[int i1]
             validVertexCounter <- validVertexCounter+1
