@@ -67,7 +67,7 @@ namespace Henzai.Core.Acceleration
         //TODO: Use "in" keyword when upgraded to C# >= 7.2
         private static bool IsVertexWithinFrustum(ref Matrix4x4 modelViewProjectionMatrix, ref Vector3 vertex){
 
-            Vector4 frustumRowVector = new Vector4();
+            Vector4 frustumRowVector = Vector4.Zero;
             Vector4 vertexHomogeneous = new Vector4(vertex.X,vertex.Y, vertex.Z,1);
 
             return LeftHalfSpaceCheck(ref modelViewProjectionMatrix, ref frustumRowVector, ref vertexHomogeneous) &&
