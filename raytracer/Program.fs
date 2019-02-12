@@ -1,4 +1,5 @@
-﻿open Raytracer.Scene.Runtime
+﻿open Raytracer.Scene.Builder
+open Raytracer.Scene.Runtime
 open BenchmarkDotNet.Running
 
 
@@ -9,7 +10,7 @@ let main argv =
     // Console.Write("Press Enter")
     //let input = Console.ReadLine()
     printfn "Starting.."
-    let mainScene = RuntimeScene ()
+    let mainScene = RuntimeScene (scene)
     mainScene.RenderScene()
     printfn "Finished Rendering"
     mainScene.SaveFrameBuffer()

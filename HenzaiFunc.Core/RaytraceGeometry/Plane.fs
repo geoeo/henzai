@@ -67,10 +67,10 @@ type Plane(plane : System.Numerics.Plane, center : Point option, width : float32
         override this.NormalForSurfacePoint _ =
             normal
          
-        interface Boundable with
+        interface AxisAlignedBoundable with
             override this.GetBounds =
 
-                if center.IsNone then struct(Vector3.Zero,Vector3.Zero)
+                if center.IsNone then AABB(Vector3.Zero, Vector3.Zero)
 
                 else
 
@@ -86,6 +86,6 @@ type Plane(plane : System.Numerics.Plane, center : Point option, width : float32
 
                     let pMax = Vector3(MathF.Max(cornerLB.X, cornerRU.X), MathF.Max(cornerLB.Y, cornerRU.Y), MathF.Max(zFront, zBack))
 
-                    struct(pMin, pMax)
+                    AABB(pMin, pMax)
 
             override this.IsBoundable = center.IsSome

@@ -13,7 +13,7 @@ open Raytracer.Scene.Builder
 open Raytracer.RuntimeParameters
 open BenchmarkDotNet.Attributes
 
-type RuntimeScene () =
+type RuntimeScene (sceneGeometry : Surface list) =
 
     let batches = samplesPerPixel / batchSize
     let batchIndices = [|1..batchSize|]
@@ -25,7 +25,7 @@ type RuntimeScene () =
     let depthBuffer = Array2D.create width height System.Single.MaxValue
     let mutable maxFrameBufferDepth = 0.0f
     let backgroundColor = Vector3.Zero
-    let surfaces : (Surface[]) = scene |> Array.ofList
+    let surfaces : (Surface[]) = sceneGeometry |> Array.ofList
 
     //TODO: Refactor this into camera
     let cameraOriginWS = Vector3(-3.0f, 6.0f, 15.0f)

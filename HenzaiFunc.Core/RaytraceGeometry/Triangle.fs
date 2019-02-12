@@ -65,9 +65,9 @@ type Triangle(v0 : Point, v1 : Point, v2 : Point) =
 
         override this.Intersect (ray:Ray) =
 
-            let rayOriginHomogeneous = Henzai.Core.Numerics.Vector.ToHomogeneous(ref ray.Origin, 1.0f)
+            let rayOriginHomogeneous = Vector.ToHomogeneous(ref ray.Origin, 1.0f)
             let rayOriginInTriangleSpace = Vector4.Transform(rayOriginHomogeneous, worldToLocal)
-            let rayDirectionInTriangleSpace = Vector4.Transform(Henzai.Core.Numerics.Vector.ToHomogeneous(ref ray.Direction, 0.0f), worldToLocal)
+            let rayDirectionInTriangleSpace = Vector4.Transform(Vector.ToHomogeneous(ref ray.Direction, 0.0f), worldToLocal)
             let t = -rayOriginInTriangleSpace.Z/rayDirectionInTriangleSpace.Z
             let barycentric = rayOriginInTriangleSpace + t*rayDirectionInTriangleSpace
 
@@ -78,14 +78,14 @@ type Triangle(v0 : Point, v1 : Point, v2 : Point) =
              0.0f <= barycentric.Y && barycentric.Y <= 1.0f &&
              barycentric.X+barycentric.Y <= 1.0f, tWorld)
 
-        interface Boundable with
+        interface AxisAlignedBoundable with
             override this.GetBounds =
 
                 let pMin = Vector3(MathF.Min(v0.X, MathF.Min(v1.X, v2.X)), MathF.Min(v0.Y, MathF.Min(v1.Y, v2.Y)), MathF.Min(v0.Z, MathF.Min(v1.Z, v2.Z)))
 
                 let pMax = Vector3(MathF.Max(v0.X, MathF.Min(v1.X, v2.X)), MathF.Max(v0.Y, MathF.Min(v1.Y, v2.Y)), MathF.Max(v0.Z, MathF.Min(v1.Z, v2.Z)))
 
-                struct(pMin, pMax)
+                AABB(pMin, pMax)
 
             override this.IsBoundable = true
 

@@ -10,7 +10,7 @@ open Raytracer
 
 let randomState = Random()
    
-//TODO: Split this up    
+//TODO: Refactor namespace + Split this up    
 [<AbstractClass>]
 type Surface(id: ID, geometry : Hitable, material : Raytracer.Material.Material) =
     //let mutable samplesArray  = Array.zeroCreate<Ray*Raytracer.Material.Color> this.SampleCount

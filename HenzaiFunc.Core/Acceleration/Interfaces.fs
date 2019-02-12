@@ -2,7 +2,8 @@ namespace HenzaiFunc.Core.Acceleration
 
 open HenzaiFunc.Core.Types
 
-type Boundable =
-    abstract member GetBounds: struct(MinPoint*MaxPoint)
+
+type AxisAlignedBoundable =
+    abstract member GetBounds: AABB
     abstract member IsBoundable: bool
 

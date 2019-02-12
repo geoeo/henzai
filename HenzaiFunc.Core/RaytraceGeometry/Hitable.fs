@@ -24,9 +24,9 @@ type Hitable ()  =
     default this.NormalForSurfacePoint _ = Vector3.Zero
     default this.IsObstructedBySelf _ = false
 
-    interface Boundable with
-        member this.GetBounds = struct(Vector3.Zero, Vector3.Zero)
+    interface AxisAlignedBoundable with
+        member this.GetBounds = AABB(Vector3.Zero, Vector3.Zero)
         member this.IsBoundable = false
    
-    member this.AsBoundable = this :> Boundable
+    member this.AsBoundable = this :> AxisAlignedBoundable
 

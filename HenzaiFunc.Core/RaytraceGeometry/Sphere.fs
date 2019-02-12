@@ -30,6 +30,11 @@ type Sphere(sphereCenter : Point, radius : Radius) =
 
             r*Vector3(MathF.Sin(phi)*MathF.Cos(theta), MathF.Sin(phi)*MathF.Sin(theta), MathF.Cos(phi))
 
+        static member BoundingSphere (aabb : AABB) =
+            let center = AABB.center aabb
+            let radius = if AABB.inside aabb center then Vector.Distance(ref center, ref aabb.PMax) else 0.0f    
+            Sphere(center, radius)
+
         member this.Radius = radius
 
         member this.IntersectWith (t : LineParameter) (ray : Ray) =
@@ -38,22 +43,22 @@ type Sphere(sphereCenter : Point, radius : Radius) =
         member this.Intersections (ray : Ray) = 
             //A is always one
             let centerToRay = ray.Origin - center
-            let B = 2.0f*Vector3.Dot(centerToRay,ray.Direction)
-            let C = Vector3.Dot(centerToRay,centerToRay)-(Henzai.Core.Numerics.Utils.Square(radius))
+            let B = 2.0f*Vector3.Dot(centerToRay, ray.Direction)
+            let C = Vector3.Dot(centerToRay, centerToRay)-(Henzai.Core.Numerics.Utils.Square(radius))
             let discriminant = B*B - 4.0f*C
-            if discriminant < 0.0f then (false, 0.0f,0.0f)
+            if discriminant < 0.0f then (false, 0.0f, 0.0f)
             // TODO: may cause alsiasing investigate around sphere edges
-            else if MathF.Round(discriminant, 3) = 0.0f then (false,-B/(2.0f),System.Single.MinValue)
-            else (true,((-B + MathF.Sqrt(discriminant))/(2.0f)),((-B - MathF.Sqrt(discriminant))/(2.0f)))
+            else if MathF.Round(discriminant, 3) = 0.0f then (false,-B/(2.0f), System.Single.MinValue)
+            else (true, ((-B + MathF.Sqrt(discriminant))/(2.0f)), ((-B - MathF.Sqrt(discriminant))/(2.0f)))
 
         override this.Intersect (ray : Ray) = 
             let (hasIntersection,i1,i2) = this.Intersections (ray : Ray)
             if i1 >= this.TMin && i2 >= this.TMin then
-                (hasIntersection,MathF.Min(i1,i2))
+                (hasIntersection,MathF.Min(i1, i2))
             else if i1 < 0.0f then
-                (hasIntersection,i2)
+                (hasIntersection, i2)
             else
-                (hasIntersection,i1)
+                (hasIntersection, i1)
 
         override this.NormalForSurfacePoint (positionOnSphere:Point) =
             Vector3.Normalize((positionOnSphere - center))
@@ -69,13 +74,13 @@ type Sphere(sphereCenter : Point, radius : Radius) =
             let (b,i1,i2) = this.Intersections ray
             this.IntersectionAcceptable b (MathF.Max(i1, i2)) 1.0f Vector3.Zero
 
-        interface Boundable with
+        interface AxisAlignedBoundable with
             override this.GetBounds =
 
                 let pMin = Sphere.ParametricEquationOfASpehre radius minPhiBounding minThetaBounding
                 let pMax = Sphere.ParametricEquationOfASpehre radius maxPhiBounding maxThetaBounding
 
-                struct(pMin, pMax)
+                AABB(pMin, pMax)
 
             override this.IsBoundable = true
 
