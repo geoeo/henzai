@@ -48,7 +48,7 @@ type Sphere(sphereCenter : Point, radius : Radius) =
             let discriminant = B*B - 4.0f*C
             if discriminant < 0.0f then (false, 0.0f, 0.0f)
             // TODO: may cause alsiasing investigate around sphere edges
-            else if MathF.Round(discriminant, 3) = 0.0f then (false,-B/(2.0f), System.Single.MinValue)
+            else if MathF.Round(discriminant, 3) = 0.0f then (false, -B/(2.0f), System.Single.MinValue)
             else (true, ((-B + MathF.Sqrt(discriminant))/(2.0f)), ((-B - MathF.Sqrt(discriminant))/(2.0f)))
 
         override this.Intersect (ray : Ray) = 

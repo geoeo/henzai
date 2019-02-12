@@ -23,7 +23,7 @@ type Plane(plane : System.Numerics.Plane, center : Point option, width : float32
 
         let heightOff = if height.IsNone then 0.0f else height.Value / 2.0f
 
-        let R_orientation_canoical = Henzai.Core.Numerics.Geometry.RotationBetweenUnitVectors(ref normal, ref RaytraceGeometryUtils.CanonicalPlaneSpace)
+        let R_orientation_canoical = Geometry.RotationBetweenUnitVectors(ref normal, ref RaytraceGeometryUtils.CanonicalPlaneSpace)
 
         let R_canoical_orientation = Matrix4x4.Transpose(R_orientation_canoical)
 
