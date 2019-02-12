@@ -1,10 +1,7 @@
 namespace HenzaiFunc.Core.RaytraceGeometry
 
-open System
 open System.Numerics
 open HenzaiFunc.Core.Types
-open Henzai.Core.VertexGeometry
-open HenzaiFunc.Core.RaytraceGeometry
 
 
 module RaytraceGeometryUtils = 
@@ -16,11 +13,11 @@ module RaytraceGeometryUtils =
 
     let PointForRay (ray : Ray) (t : LineParameter) = ray.Origin + t*ray.Direction
 
-    let smallestIntersection (b,t,x) (b_new,t_new,x_new) =
+    let smallestIntersection (b,t,x) (b_new, t_new, x_new) =
         if t <= t_new then (b,t,x)
-        else (b_new,t_new,x_new)
+        else (b_new, t_new, x_new)
 
-    let flattenIntersection ((b,t),x) = (b,t,x)
+    let flattenIntersection ((b, t), x) = (b, t, x)
     
     /// Space inwhich points are compared if they are inside a rectangle
     /// Plane is XY

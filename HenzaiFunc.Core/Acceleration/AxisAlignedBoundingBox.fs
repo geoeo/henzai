@@ -98,7 +98,7 @@ module AABBFunctions =
 
     let boundingSphere (aabb : AABB) =
        let center = (aabb.PMin + aabb.PMax) / 2.0f
-       let radius = if inside aabb center then Henzai.Core.Numerics.Vector.Distance(ref center, ref aabb.PMax) else 0.0f
+       let radius = if inside aabb center then Henzai.Core.Numerics.Vector.Distance(ref center, ref aabb.PMax) else 0.0f    
        Sphere(center, radius)
 
 
