@@ -1,11 +1,9 @@
-module HenzaiFunc.Core.RaytraceGeometry.Triangle
+namespace HenzaiFunc.Core.RaytraceGeometry
 
 open System
 open System.Numerics
 open HenzaiFunc.Core.Types
-open HenzaiFunc.Core.RaytraceGeometry.Ray
-open HenzaiFunc.Core.RaytraceGeometry.Hitable
-open HenzaiFunc.Core.Acceleration.Boundable
+open HenzaiFunc.Core.Acceleration
 open Henzai.Core.Numerics
 open Henzai.Core.VertexGeometry
 
@@ -55,7 +53,7 @@ type Triangle(v0 : Point, v1 : Point, v2 : Point) =
                            -e2.X/normal.Z, e1.X/normal.Z, normal.Y/normal.Z, 0.0f,
                            0.0f, 0.0f, 1.0f, 0.0f,
                            crossV2V0.Z/normal.Z, -crossV1V0.Z/normal.Z, -nDotV1/normal.Z, 1.0f)
-        
+
         override this.NormalForSurfacePoint _ = normal
 
         override this.IntersectionAcceptable hasIntersection t _ _ =
@@ -66,7 +64,7 @@ type Triangle(v0 : Point, v1 : Point, v2 : Point) =
             hasIntersection
 
         override this.Intersect (ray:Ray) =
-    
+
             let rayOriginHomogeneous = Henzai.Core.Numerics.Vector.ToHomogeneous(ref ray.Origin, 1.0f)
             let rayOriginInTriangleSpace = Vector4.Transform(rayOriginHomogeneous, worldToLocal)
             let rayDirectionInTriangleSpace = Vector4.Transform(Henzai.Core.Numerics.Vector.ToHomogeneous(ref ray.Direction, 0.0f), worldToLocal)
@@ -92,8 +90,8 @@ type Triangle(v0 : Point, v1 : Point, v2 : Point) =
             override this.IsBoundable = true
 
 
-let CreateTriangleFromVertexStructs<'T when 'T : struct and 'T :> VertexLocateable>(a : 'T, b : 'T, c : 'T)
-    = Triangle(a.GetPosition(), b.GetPosition(), c.GetPosition())
+        static member CreateTriangleFromVertexStructs<'T when 'T : struct and 'T :> VertexLocateable>(a : 'T, b : 'T, c : 'T)
+           = Triangle(a.GetPosition(), b.GetPosition(), c.GetPosition())
 
              
 

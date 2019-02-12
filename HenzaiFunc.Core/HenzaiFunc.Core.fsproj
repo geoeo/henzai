@@ -5,25 +5,22 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../Henzai.Core/Henzai.Core.csproj" />
+    <PackageReference Update="FSharp.Core" Version="4.3.4" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Include="Types.fs" />
-    <Compile Include="Acceleration/Boundable.fs" />
+    <Compile Include="Acceleration/Interfaces.fs" />
     <Compile Include="RaytraceGeometry/Ray.fs" />
     <Compile Include="RaytraceGeometry/Hitable.fs" />
     <Compile Include="RaytraceGeometry/NoHitable.fs" />
-    <Compile Include="RaytraceGeometry/Utils.fs" />
+    <Compile Include="RaytraceGeometry/RaytraceGeometryUtils.fs" />
     <Compile Include="RaytraceGeometry/Sphere.fs" />
     <Compile Include="RaytraceGeometry/Plane.fs" />
     <Compile Include="RaytraceGeometry/Triangle.fs" />
-    <Compile Include="Acceleration/AABB.fs" />
+    <Compile Include="Acceleration/AxisAlignedBoundingBox.fs" />
     <Compile Include="Acceleration/Culler.fs" />
+    <Compile Include="Acceleration/BVH.fs" />
+    <ProjectReference Include="../Henzai.Core/Henzai.Core.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Update="FSharp.Core" Version="4.3.4" />
-  </ItemGroup>
-
 </Project>

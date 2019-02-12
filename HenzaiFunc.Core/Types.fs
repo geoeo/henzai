@@ -1,4 +1,4 @@
-module HenzaiFunc.Core.Types
+namespace HenzaiFunc.Core.Types
 
 open System.Numerics
 

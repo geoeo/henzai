@@ -1,16 +1,10 @@
-module HenzaiFunc.Core.RaytraceGeometry.Plane
+namespace HenzaiFunc.Core.RaytraceGeometry
 
 open System
 open System.Numerics
 open HenzaiFunc.Core.Types
-open HenzaiFunc.Core.RaytraceGeometry.Ray
-open HenzaiFunc.Core.RaytraceGeometry.Hitable
-open HenzaiFunc.Core.Acceleration.Boundable
+open HenzaiFunc.Core.Acceleration
 open Henzai.Core.Numerics
-
-/// Space inwhich points are compared if they are inside a rectangle
-/// Plane is XY
-let mutable CanonicalPlaneSpace = Vector3(0.0f, 0.0f, -1.0f)
 
 type Plane(plane : System.Numerics.Plane, center : Point option, width : float32 option, height : float32 option ) = 
     inherit Hitable () with
@@ -29,7 +23,7 @@ type Plane(plane : System.Numerics.Plane, center : Point option, width : float32
 
         let heightOff = if height.IsNone then 0.0f else height.Value / 2.0f
 
-        let R_orientation_canoical = Henzai.Core.Numerics.Geometry.RotationBetweenUnitVectors(ref normal, ref CanonicalPlaneSpace)
+        let R_orientation_canoical = Henzai.Core.Numerics.Geometry.RotationBetweenUnitVectors(ref normal, ref RaytraceGeometryUtils.CanonicalPlaneSpace)
 
         let R_canoical_orientation = Matrix4x4.Transpose(R_orientation_canoical)
 

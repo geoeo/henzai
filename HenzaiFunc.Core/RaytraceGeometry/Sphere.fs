@@ -1,18 +1,10 @@
-module HenzaiFunc.Core.RaytraceGeometry.Sphere
+namespace HenzaiFunc.Core.RaytraceGeometry
 
 open System
 open System.Numerics
 open HenzaiFunc.Core.Types
-open HenzaiFunc.Core.RaytraceGeometry.Ray
-open HenzaiFunc.Core.RaytraceGeometry.Hitable
-open HenzaiFunc.Core.Acceleration.Boundable
+open HenzaiFunc.Core.Acceleration
 open Henzai.Core.Numerics
-
-// http://mathworld.wolfram.com/Sphere.html
-let parametricEquationOfASpehre (r : Radius) (phi : Radians) (theta : Radians) =
-    assert (phi >= 0.0f && phi <= MathF.PI)
-
-    r*Vector3(MathF.Sin(phi)*MathF.Cos(theta), MathF.Sin(phi)*MathF.Sin(theta), MathF.Cos(phi))
    
 
 type Sphere(sphereCenter : Point, radius : Radius) =
@@ -31,6 +23,12 @@ type Sphere(sphereCenter : Point, radius : Radius) =
         let maxThetaBounding = 6.0f * MathF.PI / 8.0f
 
         let maxPhiBounding = MathF.PI / 4.0f
+
+        // http://mathworld.wolfram.com/Sphere.html
+        static member ParametricEquationOfASpehre (r : Radius) (phi : Radians) (theta : Radians) = 
+            assert (phi >= 0.0f && phi <= MathF.PI)
+
+            r*Vector3(MathF.Sin(phi)*MathF.Cos(theta), MathF.Sin(phi)*MathF.Sin(theta), MathF.Cos(phi))
 
         member this.Radius = radius
 
@@ -74,10 +72,12 @@ type Sphere(sphereCenter : Point, radius : Radius) =
         interface Boundable with
             override this.GetBounds =
 
-                let pMin = parametricEquationOfASpehre radius minPhiBounding minThetaBounding
-                let pMax = parametricEquationOfASpehre radius maxPhiBounding maxThetaBounding
+                let pMin = Sphere.ParametricEquationOfASpehre radius minPhiBounding minThetaBounding
+                let pMax = Sphere.ParametricEquationOfASpehre radius maxPhiBounding maxThetaBounding
 
                 struct(pMin, pMax)
 
             override this.IsBoundable = true
+
+        
 

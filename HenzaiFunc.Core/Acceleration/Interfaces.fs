@@ -1,4 +1,4 @@
-module HenzaiFunc.Core.Acceleration.Boundable
+namespace HenzaiFunc.Core.Acceleration
 
 open HenzaiFunc.Core.Types
 

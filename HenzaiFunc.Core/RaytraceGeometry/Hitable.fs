@@ -1,8 +1,6 @@
-module HenzaiFunc.Core.RaytraceGeometry.Hitable
+namespace HenzaiFunc.Core.RaytraceGeometry
 
 open HenzaiFunc.Core.Types
-open HenzaiFunc.Core.RaytraceGeometry.Ray
-open HenzaiFunc.Core.Acceleration.Boundable
 open System.Numerics
 open HenzaiFunc.Core.Acceleration
 

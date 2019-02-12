@@ -6,9 +6,7 @@ open System.IO
 open System
 open System.Numerics
 open Raytracer.Camera
-open HenzaiFunc.Core.RaytraceGeometry.Hitable
-open HenzaiFunc.Core.RaytraceGeometry.Ray
-open HenzaiFunc.Core.RaytraceGeometry.Utils
+open HenzaiFunc.Core.RaytraceGeometry
 open Henzai.Core.Numerics
 open Raytracer.Surface
 open Raytracer.Scene.Builder
@@ -54,7 +52,7 @@ type RuntimeScene () =
             let currentTraceDepth = previousTraceDepth + 1us
             let (realSolution,t,surface) = findClosestIntersection ray surfaces
             let surfaceGeometry : Hitable = surface.Geometry
-            if surfaceGeometry.IntersectionAcceptable realSolution t 1.0f (PointForRay ray t)
+            if surfaceGeometry.IntersectionAcceptable realSolution t 1.0f (RaytraceGeometryUtils.PointForRay ray t)
             then
                 let emittedRadiance = surface.Emitted
                 let (validSamples,raySamples) = surface.GenerateSamples ray t ((int)currentTraceDepth) surface.SamplesArray
@@ -74,7 +72,7 @@ type RuntimeScene () =
         let dotLookAtAndTracingRay = Vector3.Dot(Vector3.Normalize(lookAt), ray.Direction)
         let (realSolution,t,surface) = findClosestIntersection ray surfaces
         let surfaceGeometry = surface.Geometry
-        if surfaceGeometry.IntersectionAcceptable realSolution t dotLookAtAndTracingRay (PointForRay ray t) then
+        if surfaceGeometry.IntersectionAcceptable realSolution t dotLookAtAndTracingRay (RaytraceGeometryUtils.PointForRay ray t) then
             if iteration = 1 && batchIndex = 0 then writeToDepthBuffer t px py
 
             let currentTraceDepth = 0us

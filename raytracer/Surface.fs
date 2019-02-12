@@ -4,10 +4,7 @@ open System
 open System.Numerics
 open Raytracer.RuntimeParameters
 open HenzaiFunc.Core.Types
-open HenzaiFunc.Core.RaytraceGeometry.Hitable
-open HenzaiFunc.Core.RaytraceGeometry.NoHitable
-open HenzaiFunc.Core.RaytraceGeometry.Ray
-open HenzaiFunc.Core.RaytraceGeometry.Utils
+open HenzaiFunc.Core.RaytraceGeometry
 open Henzai.Core.Numerics
 open Raytracer
 
@@ -53,7 +50,7 @@ let findClosestIntersection (ray : Ray) (surfaces : Surface[]) =
     let mutable (bMin,tMin,vMin : Surface) = (false, Single.MaxValue, upcast (NoSurface(0UL, NotHitable(), Raytracer.Material.Material(Vector3.Zero))))
     for surface in surfaces do
         let (b,t) = surface.Geometry.Intersect ray
-        if surface.Geometry.IntersectionAcceptable b t 1.0f (PointForRay ray t) &&  t < tMin then
+        if surface.Geometry.IntersectionAcceptable b t 1.0f (RaytraceGeometryUtils.PointForRay ray t) &&  t < tMin then
             bMin <- b
             tMin <- t
             vMin <- surface

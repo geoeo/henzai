@@ -1,4 +1,4 @@
-module HenzaiFunc.Core.RaytraceGeometry.Ray
+namespace HenzaiFunc.Core.RaytraceGeometry
 
 open HenzaiFunc.Core.Types
 open Henzai.Core.Numerics
