@@ -22,6 +22,11 @@ module BVHTree =
             let mid = smaller.Length
             (mid , [])
         | x -> failwithf "Recursive splitmethod %u not yet implemented" (LanguagePrimitives.EnumToValue x)
+    
+    let decomposeBVHBuild tree = 
+        match tree with
+        | Empty -> failwith "recursiveBuild produced Empty; this can't happen"
+        | Node (v, l, r) -> (v, l, r)
 
     let rec recursiveBuild ( geometryArray : AxisAlignedBoundable []) (primitiveArray : BVHPrimitive []) (start : int) (finish : int) (orderedGeometryList : AxisAlignedBoundable list) (splitMethod : SplitMethods) = 
         let nPrimitives = finish - start
@@ -46,8 +51,10 @@ module BVHTree =
             else
                 let splitPoint , orderedGeometryList = calculateSplitPoint subArray start finish centroidBounds dim splitMethod
                 // TODO: investigate Async
-                let (Node (leftNode, ll, lr), leftSubList) = recursiveBuild geometryArray primitiveArray start splitPoint orderedGeometryList splitMethod
-                let (Node (rightNode,rl, rr), rightSubList) = recursiveBuild geometryArray primitiveArray splitPoint finish orderedGeometryList splitMethod
+                let (leftSubTree, leftSubList) = recursiveBuild geometryArray primitiveArray start splitPoint orderedGeometryList splitMethod
+                let (rightSubTree, rightSubList) = recursiveBuild geometryArray primitiveArray splitPoint finish orderedGeometryList splitMethod
+                let leftNode, ll, lr =  decomposeBVHBuild leftSubTree
+                let rightNode, rl, rr =  decomposeBVHBuild rightSubTree
                 let bvhNode = BVHNode(dim, start, nPrimitives, AABB.unionWithAABB leftNode.aabb rightNode.aabb)
                 (Node (bvhNode, Node (leftNode , ll, lr), Node (rightNode , rl, rr)), List.concat [leftSubList; rightSubList])
 
