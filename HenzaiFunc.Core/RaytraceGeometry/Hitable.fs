@@ -2,7 +2,7 @@ namespace HenzaiFunc.Core.RaytraceGeometry
 
 open HenzaiFunc.Core.Types
 open System.Numerics
-open HenzaiFunc.Core.Acceleration
+open HenzaiFunc.Core
 
 [<AbstractClass>]
 type Hitable ()  =

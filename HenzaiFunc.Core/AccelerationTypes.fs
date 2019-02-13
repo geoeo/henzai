@@ -1,18 +1,18 @@
 namespace HenzaiFunc.Core.Types
 
 open System.Numerics
-
+ 
 type SplitMethods =
-    | SAH = 0us // Surface Area Heuristic
-    | HLBVH = 1us // Hierarchical Linear Bounding Volume Hierarchies
-    | Middle = 2us
-    | EqualCounts = 3us
+    | SAH = 0uy // Surface Area Heuristic
+    | HLBVH = 1uy // Hierarchical Linear Bounding Volume Hierarchies
+    | Middle = 2uy
+    | EqualCounts = 3uy
 
 type SplitAxis = 
-    | X = 0us
-    | Y = 1us
-    | Z = 2us
-    | None = 4us
+    | X = 0uy
+    | Y = 1uy
+    | Z = 2uy
+    | None = 4uy
 
 type AABB(pMin : MinPoint, pMax : MaxPoint) = 
 
@@ -33,6 +33,11 @@ type AABB(pMin : MinPoint, pMax : MaxPoint) =
     member this.PMin = boundingCorners.[0]
     member this.PMax = boundingCorners.[1]
 
+    new() = AABB(Vector3(System.Single.MaxValue), Vector3(System.Single.MinValue))
+
+type AxisAlignedBoundable =
+    abstract member GetBounds: AABB
+    abstract member IsBoundable: bool
 
 /// A layer of abstraction to index a geometry in the main array/storage
 [<Struct>]

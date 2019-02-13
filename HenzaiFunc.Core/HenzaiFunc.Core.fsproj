@@ -13,8 +13,6 @@
     <Compile Include="AccelerationTypes.fs" />
     <Compile Include="Acceleration/AxisAlignedBoundingBox.fs" />
     <Compile Include="Acceleration/Interfaces.fs" />
-    <Compile Include="Acceleration/Culler.fs" />
-    <Compile Include="Acceleration/BVH.fs" />
     <Compile Include="RaytraceGeometry/Ray.fs" />
     <Compile Include="RaytraceGeometry/Hitable.fs" />
     <Compile Include="RaytraceGeometry/NoHitable.fs" />
@@ -22,6 +20,8 @@
     <Compile Include="RaytraceGeometry/Sphere.fs" />
     <Compile Include="RaytraceGeometry/Plane.fs" />
     <Compile Include="RaytraceGeometry/Triangle.fs" />
+    <Compile Include="Acceleration/Culler.fs" />
+    <Compile Include="Acceleration/BVH.fs" />
     <ProjectReference Include="../Henzai.Core/Henzai.Core.csproj" />
   </ItemGroup>
 </Project>
