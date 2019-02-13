@@ -5,33 +5,20 @@ open System.Numerics
 open HenzaiFunc.Core.Types
 open Henzai.Core.Numerics
 
-type AABB(pMin : MinPoint, pMax : MaxPoint) = 
-
-   let boundingCorners : Point[] = [|pMin; pMax|]
-
-   member this.Corner (index : int) =
-    
-      let cornerXIndex = index &&& 1
-      let cornerYIndex = index &&& 2
-      let cornerZIndex = index &&& 4
-
-      let cornerX = boundingCorners.[cornerXIndex].X
-      let cornerY = boundingCorners.[cornerYIndex].Y
-      let cornerZ = boundingCorners.[cornerZIndex].Z
-
-      Vector3(cornerX, cornerY, cornerZ) : Point
-   member this.PMin = boundingCorners.[0]
-   member this.PMax = boundingCorners.[1]
-
 // Phyisically Based Rendering Third Edition p. 78
 
 module AABB =
 
    let center (aabb : AABB) = ((aabb.PMin + aabb.PMax) / 2.0f) : Point
 
-   let union (aabb : AABB) (p : Point)  =
+   let unionWithPoint (aabb : AABB) (p : Point)  =
       let newMin = Vector3(MathF.Min(aabb.PMin.X, p.X), MathF.Min(aabb.PMin.Y, p.Y), MathF.Min(aabb.PMin.Z, p.Z))
       let newMax = Vector3(MathF.Max(aabb.PMax.X, p.X), MathF.Max(aabb.PMax.Y, p.Y), MathF.Max(aabb.PMax.Z, p.Z))
+      AABB(newMin, newMax)
+
+   let unionWithAABB (aabb1 : AABB) (aabb2 : AABB)  =
+      let newMin = Vector3(MathF.Min(aabb1.PMin.X, aabb2.PMin.X), MathF.Min(aabb1.PMin.Y, aabb2.PMin.Y), MathF.Min(aabb1.PMin.Z, aabb2.PMin.Z))
+      let newMax = Vector3(MathF.Max(aabb1.PMax.X, aabb2.PMax.X), MathF.Max(aabb1.PMax.Y, aabb2.PMax.Y), MathF.Max(aabb1.PMax.Z, aabb2.PMax.Z))
       AABB(newMin, newMax)
 
    let intersect (aabb1 : AABB) (aabb2 : AABB) = 
@@ -76,9 +63,9 @@ module AABB =
    /// X : 0, Y : 1, Z : 2
    let maximumExtent (aabb : AABB) = 
       let diagonal = diagonal aabb
-      if diagonal.X > diagonal.Y && diagonal.X > diagonal.Z then 0
-      else if diagonal.Y > diagonal.Z then 1
-      else 2
+      if diagonal.X > diagonal.Y && diagonal.X > diagonal.Z then SplitAxis.X
+      else if diagonal.Y > diagonal.Z then SplitAxis.Y
+      else SplitAxis.Z
 
    let lerp (parameterVector : Vector3) (aabb : AABB) =
       let interpX = Utils.Lerp(parameterVector.X, aabb.PMin.X, aabb.PMax.X)

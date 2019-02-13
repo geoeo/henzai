@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <Compile Include="Types.fs" />
+    <Compile Include="AccelerationTypes.fs" />
     <Compile Include="Acceleration/AxisAlignedBoundingBox.fs" />
     <Compile Include="Acceleration/Interfaces.fs" />
     <Compile Include="Acceleration/Culler.fs" />
