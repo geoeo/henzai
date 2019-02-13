@@ -10,7 +10,10 @@ let main argv =
     // Console.Write("Press Enter")
     //let input = Console.ReadLine()
     printfn "Starting.."
-    let mainScene = RuntimeScene (scene)
+    printfn "Constructing BVH Tree.."
+    let bvhTree = constructBVHTree sceneArray
+    printfn "Constructed BVH Tree.."
+    let mainScene = RuntimeScene (sceneArray)
     mainScene.RenderScene()
     printfn "Finished Rendering"
     mainScene.SaveFrameBuffer()

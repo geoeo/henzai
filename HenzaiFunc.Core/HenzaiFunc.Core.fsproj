@@ -12,7 +12,6 @@
     <Compile Include="Types.fs" />
     <Compile Include="AccelerationTypes.fs" />
     <Compile Include="Acceleration/AxisAlignedBoundingBox.fs" />
-    <Compile Include="Acceleration/Interfaces.fs" />
     <Compile Include="RaytraceGeometry/Ray.fs" />
     <Compile Include="RaytraceGeometry/Hitable.fs" />
     <Compile Include="RaytraceGeometry/NoHitable.fs" />
