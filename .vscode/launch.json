@@ -1,0 +1,133 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": ".NET Core Launch (getting started)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build getting started",
+            "program": "${workspaceFolder}/Projects/getting_started/bin/Debug/netcoreapp2.2/getting_started.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Projects/getting_started",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": ".NET Core Launch (textured cube)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build textured cube",
+            "program": "${workspaceFolder}/Projects/textured_cube/bin/Debug/netcoreapp2.2/textured_cube.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Projects/textured_cube",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": ".NET Core Launch (offscreen)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build offscreen",
+            "program": "${workspaceFolder}/Projects/offscreen/bin/Debug/netcoreapp2.2/offscreen.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Projects/offscreen",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": ".NET Core Launch (sdl2-gui)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build sdl2-gui",
+            "program": "${workspaceFolder}/Projects/sdl2-gui/bin/Debug/netcoreapp2.2/sdl2-gui.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Projects/sdl2-gui",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": ".NET Core Launch (asset-loading)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build asset-loading",
+            "program": "${workspaceFolder}/Projects/asset-loading/bin/Debug/netcoreapp2.2/asset-loading.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Projects/asset-loading",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": ".NET Core Launch (normal-mapping)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build normal-mapping",
+            "program": "${workspaceFolder}/Projects/normal-mapping/bin/Debug/netcoreapp2.2/normal-mapping.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Projects/normal-mapping",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": ".NET Core Launch (hierarchical-mesh)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build hierarchical-mesh",
+            "program": "${workspaceFolder}/Projects/hierarchical-mesh/bin/Debug/netcoreapp2.2/hierarchical-mesh.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Projects/hierarchical-mesh",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": ".NET Core Launch (lights)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build lights",
+            "program": "${workspaceFolder}/Projects/lights/bin/Debug/netcoreapp2.2/lights.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Projects/lights",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": ".NET Core Launch (sponza)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build sponza",
+            "program": "${workspaceFolder}/Projects/sponza/bin/Debug/netcoreapp2.2/sponza.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Projects/sponza",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": ".NET Core Launch (raytracer)",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "${workspaceFolder}/Raytracer/bin/Debug/netcoreapp2.2/raytracer.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Raytracer",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": ".NET Core Attach",
+            "type": "coreclr",
+            "request": "attach",
+            "processId": "${command:pickProcess}"
+        }
+    ]
+}

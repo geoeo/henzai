@@ -1,0 +1,200 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build Henzai",
+            "command": "dotnet build Henzai/Henzai.csproj",
+            "type": "shell",
+            "group": "build",
+            "presentation": {
+                "reveal": "silent"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "build Henzai.Core",
+            "command": "dotnet build Henzai.Core/Henzai.Core.csproj",
+            "type": "shell",
+            "group": "build",
+            "presentation": {
+                "reveal": "silent"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "build getting started",
+            "command": "dotnet build Projects/getting_started/getting_started.csproj",
+            "type": "shell",
+            "group": "build",
+            "presentation": {
+                "reveal": "silent"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "build textured cube",
+            "command": "dotnet build Projects/textured_cube/textured_cube.csproj",
+            "type": "shell",
+            "group": "build",
+            "presentation": {
+                "reveal": "silent"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "build offscreen",
+            "command": "dotnet build Projects/offscreen/offscreen.csproj",
+            "type": "shell",
+            "group": "build",
+            "presentation": {
+                "reveal": "silent"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "build sdl2-gui",
+            "command": "dotnet build Projects/sdl2-gui/sdl2-gui.csproj",
+            "type": "shell",
+            "group": "build",
+            "presentation": {
+                "reveal": "silent"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "build asset-loading",
+            "command": "dotnet build Projects/asset-loading/asset-loading.csproj",
+            "type": "shell",
+            "group": "build",
+            "presentation": {
+                "reveal": "silent"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "build normal-mapping",
+            "command": "dotnet build Projects/normal-mapping/normal-mapping.csproj",
+            "type": "shell",
+            "group": "build",
+            "presentation": {
+                "reveal": "silent"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "build hierarchical-mesh",
+            "command": "dotnet build Projects/hierarchical-mesh/hierarchical-mesh.csproj",
+            "type": "shell",
+            "group": "build",
+            "presentation": {
+                "reveal": "silent"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "build lights",
+            "command": "dotnet build Projects/lights/lights.csproj",
+            "type": "shell",
+            "group": "build",
+            "presentation": {
+                "reveal": "silent"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "build sponza",
+            "command": "dotnet build Projects/sponza/sponza.csproj",
+            "type": "shell",
+            "group": "build",
+            "presentation": {
+                "reveal": "silent"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "compile metal shaders (Henzai)",
+            "type": "shell",
+            "group": "build",
+            "command": "${cwd}/compileMetal.sh",
+            "args": [
+                "${cwd}/Henzai/Shaders/"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "compile metal shaders (Projects)",
+            "type": "shell",
+            "group": "build",
+            "command": "${cwd}/compileMetal.sh",
+            "args": [
+                "${cwd}/Shaders/"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "run getting started",
+            "type": "shell",
+            "group": "build",
+            "command": "dotnet run --project Projects/getting_started/",
+            "problemMatcher":"$msCompile"
+        },
+        {
+            "label": "run textured cube",
+            "type": "shell",
+            "group": "build",
+            "command": "dotnet run --project Projects/textured_cube/",
+            "problemMatcher":"$msCompile"
+        },
+        {
+            "label": "run offscreen",
+            "type": "shell",
+            "group": "build",
+            "command": "dotnet run --project Projects/offscreen/",
+            "problemMatcher":"$msCompile"
+        },
+        {
+            "label": "run sdl2-gui",
+            "type": "shell",
+            "group": "build",
+            "command": "dotnet run --project Projects/sdl2-gui/",
+            "problemMatcher":"$msCompile"
+        },
+        {
+            "label": "run asset-loading",
+            "type": "shell",
+            "group": "build",
+            "command": "dotnet run --project Projects/asset-loading/",
+            "problemMatcher":"$msCompile"
+        },
+        {
+            "label": "run normal-mapping",
+            "type": "shell",
+            "group": "build",
+            "command": "dotnet run --project Projects/normal-mapping/",
+            "problemMatcher":"$msCompile"
+        },
+        {
+            "label": "run hierarchical-mesh",
+            "type": "shell",
+            "group": "build",
+            "command": "dotnet run --project Projects/hierarchical-mesh/",
+            "problemMatcher":"$msCompile"
+        },
+        {
+            "label": "run lights",
+            "type": "shell",
+            "group": "build",
+            "command": "dotnet run --project Projects/lights/",
+            "problemMatcher":"$msCompile"
+        },
+        {
+            "label": "run sponza",
+            "type": "shell",
+            "group": "build",
+            "command": "dotnet run --project Projects/sponza/",
+            "problemMatcher":"$msCompile"
+        }
+    ]
+}

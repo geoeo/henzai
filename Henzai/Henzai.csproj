@@ -1,0 +1,81 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NativeLibraryLoader" Version="1.0.10" />
+    <PackageReference Include="Veldrid" Version="4.5.0" />
+    <!-- <Reference Include="../../veldrid_fork/bin/Debug/Veldrid/netstandard2.0/*.dll"/> -->
+    <!-- <ProjectReference Include="../../veldrid_fork/src/Veldrid/Veldrid.csproj" /> -->
+    <!-- <ProjectReference Include="../../veldrid/src/Veldrid/Veldrid.csproj" /> -->
+    <PackageReference Include="Veldrid.ImageSharp" Version="4.5.0" />
+    <PackageReference Include="Veldrid.Sdl2" Version="4.4.0" />
+    <PackageReference Include="Veldrid.ImGui" Version="4.4.0" />
+    <PackageReference Include="Veldrid.StartupUtilities" Version="4.4.0" />
+    <PackageReference Include="AssimpNet-netstandard" Version="3.3.1" />
+    <ProjectReference Include="../Henzai.Core/Henzai.Core.csproj" />
+    <ProjectReference Include="../HenzaiFunc.Core/HenzaiFunc.Core.fsproj" />
+  </ItemGroup>
+
+    <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)/Shaders/imgui-vertex.glsl">
+      <LogicalName>imgui-vertex.glsl</LogicalName>
+    </EmbeddedResource>
+
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)/Shaders/imgui-frag.glsl">
+      <LogicalName>imgui-frag.glsl</LogicalName>
+    </EmbeddedResource>
+
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)/Shaders/imgui-vertex.metallib">
+      <LogicalName>imgui-vertex.metallib</LogicalName>
+    </EmbeddedResource>
+
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)/Shaders/imgui-frag.metallib">
+      <LogicalName>imgui-frag.metallib</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)/../Dependencies/libassimp.dylib">
+      <Link>libassimp.dylib</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+
+    <Content Include="$(MSBuildThisFileDirectory)/Shaders/**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+
+  </ItemGroup>
+
+
+  <Target Name="DeleteFiles" AfterTargets="Clean">
+
+    <RemoveDir Directories="$(OutputPath)/Shaders/" />
+
+
+    <!-- TODO: Enforce this -->
+    <Delete Files="Veldrid*" />
+  </Target>
+
+</Project>

@@ -1,0 +1,324 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../Henzai/Henzai.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+
+    <Content Include="../../Assets/Skyboxes/cloudtop/*.*">
+      <Link>cloudtop/%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+
+  
+    <Content Include="../../Assets/sponza2/*.*">
+      <Link>sponza/%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+
+      
+    <Content Include="../../Assets/sponza2/textures/*.*">
+      <Link>sponza/textures/%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+
+
+
+    <Content Include="../../Dependencies/libassimp.dylib">
+      <Link>libassimp.dylib</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <GLSL Include="../../Shaders/*.glsl" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <METAL Include="../../Shaders/*.metallib" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="..\..\Assets\Skyboxes\cloudtop\cloudtop_bk.png">
+      <Link>cloudtop\cloudtop_bk.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\Skyboxes\cloudtop\cloudtop_dn.png">
+      <Link>cloudtop\cloudtop_dn.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\Skyboxes\cloudtop\cloudtop_ft.png">
+      <Link>cloudtop\cloudtop_ft.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\Skyboxes\cloudtop\cloudtop_lf.png">
+      <Link>cloudtop\cloudtop_lf.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\Skyboxes\cloudtop\cloudtop_rt.png">
+      <Link>cloudtop\cloudtop_rt.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\Skyboxes\cloudtop\cloudtop_up.png">
+      <Link>cloudtop\cloudtop_up.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\.DS_Store">
+      <Link>sponza\.DS_Store</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\sponza.mtl">
+      <Link>sponza\sponza.mtl</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\sponza.obj">
+      <Link>sponza\sponza.obj</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\background.png">
+      <Link>sponza\textures\background.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\backgroundBGR.png">
+      <Link>sponza\textures\backgroundBGR.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\background_bump.png">
+      <Link>sponza\textures\background_bump.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\background_ddn.png">
+      <Link>sponza\textures\background_ddn.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\chain_texture.png">
+      <Link>sponza\textures\chain_texture.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\chain_texture_bump.png">
+      <Link>sponza\textures\chain_texture_bump.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\chain_texture_ddn.png">
+      <Link>sponza\textures\chain_texture_ddn.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\chain_texture_mask.png">
+      <Link>sponza\textures\chain_texture_mask.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\gi_flag.png">
+      <Link>sponza\textures\gi_flag.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\lion.png">
+      <Link>sponza\textures\lion.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\lion2_bump.png">
+      <Link>sponza\textures\lion2_bump.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\lion2_ddn.png">
+      <Link>sponza\textures\lion2_ddn.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\lion_bump.png">
+      <Link>sponza\textures\lion_bump.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\lion_ddn.png">
+      <Link>sponza\textures\lion_ddn.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\spnza_bricks_a_bump.png">
+      <Link>sponza\textures\spnza_bricks_a_bump.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\spnza_bricks_a_ddn.png">
+      <Link>sponza\textures\spnza_bricks_a_ddn.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\spnza_bricks_a_diff.png">
+      <Link>sponza\textures\spnza_bricks_a_diff.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\spnza_bricks_a_spec.png">
+      <Link>sponza\textures\spnza_bricks_a_spec.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\sponza_arch_bump.png">
+      <Link>sponza\textures\sponza_arch_bump.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\sponza_arch_ddn.png">
+      <Link>sponza\textures\sponza_arch_ddn.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\sponza_arch_diff.png">
+      <Link>sponza\textures\sponza_arch_diff.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\sponza_arch_diff_NRM.png">
+      <Link>sponza\textures\sponza_arch_diff_NRM.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\sponza_arch_spec.png">
+      <Link>sponza\textures\sponza_arch_spec.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\sponza_ceiling_a_diff.png">
+      <Link>sponza\textures\sponza_ceiling_a_diff.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\sponza_ceiling_a_diff_NRM.png">
+      <Link>sponza\textures\sponza_ceiling_a_diff_NRM.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\sponza_ceiling_a_spec.png">
+      <Link>sponza\textures\sponza_ceiling_a_spec.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\sponza_column_a_bump.png">
+      <Link>sponza\textures\sponza_column_a_bump.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\sponza_column_a_ddn.png">
+      <Link>sponza\textures\sponza_column_a_ddn.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\sponza_column_a_diff.png">
+      <Link>sponza\textures\sponza_column_a_diff.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\sponza_column_a_spec.png">
+      <Link>sponza\textures\sponza_column_a_spec.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\sponza_column_b_bump.png">
+      <Link>sponza\textures\sponza_column_b_bump.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\sponza_column_b_ddn.png">
+      <Link>sponza\textures\sponza_column_b_ddn.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\sponza_column_b_diff.png">
+      <Link>sponza\textures\sponza_column_b_diff.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\sponza_column_b_spec.png">
+      <Link>sponza\textures\sponza_column_b_spec.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\sponza_column_c_bump.png">
+      <Link>sponza\textures\sponza_column_c_bump.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\sponza_column_c_ddn.png">
+      <Link>sponza\textures\sponza_column_c_ddn.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\sponza_column_c_diff.png">
+      <Link>sponza\textures\sponza_column_c_diff.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\sponza_column_c_spec.png">
+      <Link>sponza\textures\sponza_column_c_spec.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\sponza_curtain_blue_diff.png">
+      <Link>sponza\textures\sponza_curtain_blue_diff.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\sponza_curtain_blue_diff_NRM.png">
+      <Link>sponza\textures\sponza_curtain_blue_diff_NRM.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\sponza_curtain_diff.png">
+      <Link>sponza\textures\sponza_curtain_diff.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\sponza_curtain_green_diff.png">
+      <Link>sponza\textures\sponza_curtain_green_diff.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\sponza_details_diff.png">
+      <Link>sponza\textures\sponza_details_diff.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\sponza_details_diff_NRM.png">
+      <Link>sponza\textures\sponza_details_diff_NRM.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\sponza_details_spec.png">
+      <Link>sponza\textures\sponza_details_spec.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\sponza_fabric_blue_diff.png">
+      <Link>sponza\textures\sponza_fabric_blue_diff.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\sponza_fabric_blue_diff_NRM.png">
+      <Link>sponza\textures\sponza_fabric_blue_diff_NRM.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\sponza_fabric_diff.png">
+      <Link>sponza\textures\sponza_fabric_diff.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\sponza_fabric_green_diff.png">
+      <Link>sponza\textures\sponza_fabric_green_diff.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\sponza_fabric_spec.png">
+      <Link>sponza\textures\sponza_fabric_spec.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\sponza_flagpole_diff.png">
+      <Link>sponza\textures\sponza_flagpole_diff.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\sponza_flagpole_diff_NRM.png">
+      <Link>sponza\textures\sponza_flagpole_diff_NRM.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\sponza_flagpole_spec.png">
+      <Link>sponza\textures\sponza_flagpole_spec.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\sponza_floor_a_diff.png">
+      <Link>sponza\textures\sponza_floor_a_diff.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\sponza_floor_a_diff_NRM.png">
+      <Link>sponza\textures\sponza_floor_a_diff_NRM.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\sponza_floor_a_spec.png">
+      <Link>sponza\textures\sponza_floor_a_spec.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\sponza_roof_diff.png">
+      <Link>sponza\textures\sponza_roof_diff.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\sponza_roof_diff_NRM.png">
+      <Link>sponza\textures\sponza_roof_diff_NRM.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\sponza_thorn_bump.png">
+      <Link>sponza\textures\sponza_thorn_bump.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\sponza_thorn_ddn.png">
+      <Link>sponza\textures\sponza_thorn_ddn.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\sponza_thorn_diff.png">
+      <Link>sponza\textures\sponza_thorn_diff.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\sponza_thorn_mask.png">
+      <Link>sponza\textures\sponza_thorn_mask.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\sponza_thorn_spec.png">
+      <Link>sponza\textures\sponza_thorn_spec.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\vase_bump.png">
+      <Link>sponza\textures\vase_bump.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\vase_ddn.png">
+      <Link>sponza\textures\vase_ddn.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\vase_dif.png">
+      <Link>sponza\textures\vase_dif.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\vase_hanging.png">
+      <Link>sponza\textures\vase_hanging.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\vase_hanging_NRM.png">
+      <Link>sponza\textures\vase_hanging_NRM.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\vase_plant.png">
+      <Link>sponza\textures\vase_plant.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\vase_plant_NRM.png">
+      <Link>sponza\textures\vase_plant_NRM.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\vase_plant_mask.png">
+      <Link>sponza\textures\vase_plant_mask.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\vase_plant_spec.png">
+      <Link>sponza\textures\vase_plant_spec.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\vase_round.png">
+      <Link>sponza\textures\vase_round.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\vase_round_bump.png">
+      <Link>sponza\textures\vase_round_bump.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\vase_round_ddn.png">
+      <Link>sponza\textures\vase_round_ddn.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\sponza2\textures\vase_round_spec.png">
+      <Link>sponza\textures\vase_round_spec.png</Link>
+    </Content>
+  </ItemGroup>
+  <Target Name="CopyFiles" BeforeTargets="Build">
+  
+    <Copy SourceFiles="@(GLSL)" DestinationFolder="$(OutputPath)/Shaders/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+
+      <Copy SourceFiles="@(METAL)" DestinationFolder="$(OutputPath)/Shaders/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+
+  </Target>
+
+    <Target Name="DeleteFiles" AfterTargets="Clean">
+  
+    <RemoveDir Directories="$(OutputPath)/Shaders/" />
+
+    <!-- TODO: Enforce this -->
+    <RemoveDir Directories="$(OutputPath)/Models/" />
+
+    <RemoveDir Directories="$(OutputPath)/sponza/" />
+
+    <RemoveDir Directories="$(OutputPath)/cloudtop/" />
+  </Target>
+
+</Project>

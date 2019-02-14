@@ -1,0 +1,147 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../Henzai/Henzai.csproj" />
+    <!-- <Reference Include="../../../veldrid/bin/Debug/Veldrid/netstandard2.0/*.dll"/> -->
+  </ItemGroup>
+
+  <ItemGroup>
+
+  
+    <Content Include="../../Assets/Textures/PavingStones05_col.jpg">
+      <Link>paving/pavingColor.jpg</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+
+    <Content Include="../../Assets/Textures/PavingStones05_nrm.jpg">
+      <Link>paving/pavingNorm.jpg</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content> 
+
+    <Content Include="../../Assets/armor/color_astc_8x8_unorm.png">
+      <Link>armor/diffuse.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+
+    <Content Include="../../Assets/armor/normal_astc_8x8_unorm.png">
+      <Link>armor/normal.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+
+    <Content Include="../../Assets/armor/armor.dae">
+      <Link>armor/armor.dae</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  
+    <Content Include="../../Assets/nanosuit/**/*.*">
+      <Link>nanosuit/%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+
+    <Content Include="../../Dependencies/libassimp.dylib">
+      <Link>libassimp.dylib</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <GLSL Include="../../Shaders/*.glsl" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <METAL Include="../../Shaders/*.metallib" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="..\..\Assets\nanosuit\LICENSE.txt">
+      <Link>nanosuit\LICENSE.txt</Link>
+    </Content>
+    <Content Update="..\..\Assets\nanosuit\arm_dif.png">
+      <Link>nanosuit\arm_dif.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\nanosuit\arm_showroom_ddn.png">
+      <Link>nanosuit\arm_showroom_ddn.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\nanosuit\arm_showroom_spec.png">
+      <Link>nanosuit\arm_showroom_spec.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\nanosuit\body_dif.png">
+      <Link>nanosuit\body_dif.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\nanosuit\body_showroom_ddn.png">
+      <Link>nanosuit\body_showroom_ddn.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\nanosuit\body_showroom_spec.png">
+      <Link>nanosuit\body_showroom_spec.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\nanosuit\glass_ddn.png">
+      <Link>nanosuit\glass_ddn.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\nanosuit\glass_dif.png">
+      <Link>nanosuit\glass_dif.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\nanosuit\hand_dif.png">
+      <Link>nanosuit\hand_dif.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\nanosuit\hand_showroom_ddn.png">
+      <Link>nanosuit\hand_showroom_ddn.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\nanosuit\hand_showroom_spec.png">
+      <Link>nanosuit\hand_showroom_spec.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\nanosuit\helmet_diff.png">
+      <Link>nanosuit\helmet_diff.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\nanosuit\helmet_showroom_ddn.png">
+      <Link>nanosuit\helmet_showroom_ddn.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\nanosuit\helmet_showroom_spec.png">
+      <Link>nanosuit\helmet_showroom_spec.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\nanosuit\leg_dif.png">
+      <Link>nanosuit\leg_dif.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\nanosuit\leg_showroom_ddn.png">
+      <Link>nanosuit\leg_showroom_ddn.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\nanosuit\leg_showroom_spec.png">
+      <Link>nanosuit\leg_showroom_spec.png</Link>
+    </Content>
+    <Content Update="..\..\Assets\nanosuit\nanosuit.blend">
+      <Link>nanosuit\nanosuit.blend</Link>
+    </Content>
+    <Content Update="..\..\Assets\nanosuit\nanosuit.mtl">
+      <Link>nanosuit\nanosuit.mtl</Link>
+    </Content>
+    <Content Update="..\..\Assets\nanosuit\nanosuit.obj">
+      <Link>nanosuit\nanosuit.obj</Link>
+    </Content>
+  </ItemGroup>
+  <Target Name="CopyFiles" BeforeTargets="Build">
+  
+    <Copy SourceFiles="@(GLSL)" DestinationFolder="$(OutputPath)/Shaders/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+
+      <Copy SourceFiles="@(METAL)" DestinationFolder="$(OutputPath)/Shaders/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+
+  </Target>
+
+    <Target Name="DeleteFiles" AfterTargets="Clean">
+    <Delete Files="Veldrid*" />
+  
+    <RemoveDir Directories="$(OutputPath)/Shaders/" />
+
+    <!-- TODO: Enforce this -->
+    <RemoveDir Directories="$(OutputPath)/Models/" />
+
+    <RemoveDir Directories="$(OutputPath)/Textures/" />
+    <RemoveDir Directories="$(OutputPath)/armor/" />
+    <RemoveDir Directories="$(OutputPath)/paving/" />
+    <RemoveDir Directories="$(OutputPath)/nanosuit/" />
+  </Target>
+
+</Project>

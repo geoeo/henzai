@@ -1,0 +1,46 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../Henzai/Henzai.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="../../Shaders/**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+
+    <Content Include="../../Assets/Textures/Name.png">
+      <Link>Textures/Name.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <GLSL Include="../../Shaders/*.glsl" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <METAL Include="../../Shaders/*.metallib" />
+  </ItemGroup>
+
+  <Target Name="CopyFiles" BeforeTargets="Build">
+  
+    <Copy SourceFiles="@(GLSL)" DestinationFolder="$(OutputPath)/Shaders/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+
+      <Copy SourceFiles="@(METAL)" DestinationFolder="$(OutputPath)/Shaders/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+
+  </Target>
+
+    <Target Name="DeleteFiles" AfterTargets="Clean">
+  
+    <RemoveDir Directories="$(OutputPath)/Shaders/" />
+
+    <RemoveDir Directories="$(OutputPath)/Models/" />
+  </Target>
+
+</Project>
