@@ -37,8 +37,8 @@ module BVHTree =
             let bvhPrimitive = bvhInfoArray.[start]
             let boundableIndex = bvhPrimitive.indexOfBoundable
             let primitive = geometryArray.[boundableIndex]
-            let singleItemLeaf = Node (BVHNode(SplitAxis.None, orderedGeometryList.Length, nPrimitives, bvhPrimitive.aabb), Empty, Empty)
-            (singleItemLeaf, primitive :: orderedGeometryList)
+            let singleItemLeaf = Node (BVHNodeBVHBuildNode(SplitAxis.None, orderedGeometryList.Length, nPrimitives, bvhPrimitive.aabb), Empty, Empty)
+            (singleItemLeaf, primitive :: orderedGeometryList, 1)
         else            
             // TODO: investigate Span type for this when upgrading to >= F#4.5
             // TODO: profile this
@@ -49,19 +49,20 @@ module BVHTree =
             if accessPointBySplitDim centroidBounds.PMin dim = accessPointBySplitDim centroidBounds.PMax dim then
                 let bounds = Array.fold (fun acc (elem : BVHPrimitive) -> AABB.unionWithAABB acc elem.aabb) (AABB()) subArray
                 let newOrderedList = Array.fold (fun acc (elem : BVHPrimitive) -> (geometryArray.[elem.indexOfBoundable] :: acc)) orderedGeometryList bvhInfoArray
-                let leaf = Node (BVHNode(SplitAxis.None, orderedGeometryList.Length, nPrimitives, bounds), Empty, Empty)
-                (leaf, newOrderedList)
+                let leaf = Node (BVHNodeBVHBuildNode(SplitAxis.None, orderedGeometryList.Length, nPrimitives, bounds), Empty, Empty)
+                (leaf, newOrderedList, 1)
             else
                 let splitPoint , smallerThanMidArray, largerThanMidArray = calculateSplitPoint subArray start finish centroidBounds dim splitMethod
                 Array.blit smallerThanMidArray 0 bvhInfoArray start smallerThanMidArray.Length
                 Array.blit largerThanMidArray 0 bvhInfoArray (start + smallerThanMidArray.Length) largerThanMidArray.Length
                 // TODO: investigate Async
-                let (leftSubTree, leftOrderedSubList) = recursiveBuild geometryArray bvhInfoArray start splitPoint orderedGeometryList splitMethod
-                let (rightSubTree, rightOrderedSubList) = recursiveBuild geometryArray bvhInfoArray splitPoint finish orderedGeometryList splitMethod
+                let (leftSubTree, leftOrderedSubList, leftTotalNodes) = recursiveBuild geometryArray bvhInfoArray start splitPoint orderedGeometryList splitMethod
+                let (rightSubTree, rightOrderedSubList, rightTotalNodes) = recursiveBuild geometryArray bvhInfoArray splitPoint finish orderedGeometryList splitMethod
                 let leftNode, ll, lr =  decomposeBVHBuild leftSubTree
                 let rightNode, rl, rr =  decomposeBVHBuild rightSubTree
-                let bvhNode = BVHNode(dim, start, nPrimitives, AABB.unionWithAABB leftNode.aabb rightNode.aabb)
-                (Node (bvhNode, Node (leftNode , ll, lr), Node (rightNode , rl, rr)), List.concat [leftOrderedSubList; rightOrderedSubList])
+                let bvhNode = BVHNodeBVHBuildNode(dim, start, nPrimitives, AABB.unionWithAABB leftNode.aabb rightNode.aabb)
+                let newTotalNodes = leftTotalNodes + rightTotalNodes + 1
+                (Node (bvhNode, Node (leftNode , ll, lr), Node (rightNode , rl, rr)), List.concat [leftOrderedSubList; rightOrderedSubList], newTotalNodes)
 
     let build ( geometryArray : AxisAlignedBoundable []) (splitMethod : SplitMethods) = 
         let bvhInfoArray = buildBVHInfoArray geometryArray
