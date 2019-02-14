@@ -3,7 +3,7 @@
 open HenzaiFunc.Core.Types
 
 // Phyisically Based Rendering Third Edition p. 257
-
+/// Implements methods to generate a BVH BST
 module BVHTree =
 
     let buildBVHInfoArray ( geometryArray : AxisAlignedBoundable []) =
@@ -37,7 +37,7 @@ module BVHTree =
             let bvhPrimitive = bvhInfoArray.[start]
             let boundableIndex = bvhPrimitive.indexOfBoundable
             let primitive = geometryArray.[boundableIndex]
-            let singleItemLeaf = Node (BVHNodeBVHBuildNode(SplitAxis.None, orderedGeometryList.Length, nPrimitives, bvhPrimitive.aabb), Empty, Empty)
+            let singleItemLeaf = Node (BVHBuildNode(SplitAxis.None, orderedGeometryList.Length, nPrimitives, bvhPrimitive.aabb), Empty, Empty)
             (singleItemLeaf, primitive :: orderedGeometryList, 1)
         else            
             // TODO: investigate Span type for this when upgrading to >= F#4.5
@@ -49,7 +49,7 @@ module BVHTree =
             if accessPointBySplitDim centroidBounds.PMin dim = accessPointBySplitDim centroidBounds.PMax dim then
                 let bounds = Array.fold (fun acc (elem : BVHPrimitive) -> AABB.unionWithAABB acc elem.aabb) (AABB()) subArray
                 let newOrderedList = Array.fold (fun acc (elem : BVHPrimitive) -> (geometryArray.[elem.indexOfBoundable] :: acc)) orderedGeometryList bvhInfoArray
-                let leaf = Node (BVHNodeBVHBuildNode(SplitAxis.None, orderedGeometryList.Length, nPrimitives, bounds), Empty, Empty)
+                let leaf = Node (BVHBuildNode(SplitAxis.None, orderedGeometryList.Length, nPrimitives, bounds), Empty, Empty)
                 (leaf, newOrderedList, 1)
             else
                 let splitPoint , smallerThanMidArray, largerThanMidArray = calculateSplitPoint subArray start finish centroidBounds dim splitMethod
@@ -60,7 +60,7 @@ module BVHTree =
                 let (rightSubTree, rightOrderedSubList, rightTotalNodes) = recursiveBuild geometryArray bvhInfoArray splitPoint finish orderedGeometryList splitMethod
                 let leftNode, ll, lr =  decomposeBVHBuild leftSubTree
                 let rightNode, rl, rr =  decomposeBVHBuild rightSubTree
-                let bvhNode = BVHNodeBVHBuildNode(dim, start, nPrimitives, AABB.unionWithAABB leftNode.aabb rightNode.aabb)
+                let bvhNode = BVHBuildNode(dim, start, nPrimitives, AABB.unionWithAABB leftNode.aabb rightNode.aabb)
                 let newTotalNodes = leftTotalNodes + rightTotalNodes + 1
                 (Node (bvhNode, Node (leftNode , ll, lr), Node (rightNode , rl, rr)), List.concat [leftOrderedSubList; rightOrderedSubList], newTotalNodes)
 

@@ -1,6 +1,9 @@
 namespace HenzaiFunc.Core.Types
 
 open System.Runtime.CompilerServices
+open System.Runtime.InteropServices
+
+#nowarn "9"
  
 type SplitMethods =
     | SAH = 0uy // Surface Area Heuristic
@@ -31,7 +34,7 @@ type BVHPrimitive =
 /// A node of the BVH Tree
 /// Not used for runtime traversal
 [<IsReadOnly;Struct>]
-type BVHNodeBVHBuildNode = 
+type BVHBuildNode = 
     val splitAxis : SplitAxis
     // the starting location of contained primtives in the primitive array
     val firstPrimitiveOffset : int
@@ -49,4 +52,28 @@ type BVHNodeBVHBuildNode =
 
 type BVHTree = 
     | Empty
-    | Node of leaf : BVHNodeBVHBuildNode * left : BVHTree * right : BVHTree
+    | Node of node : BVHBuildNode * left : BVHTree * right : BVHTree
+    
+[<IsReadOnly;Struct>]
+type LeafLinearNodeInfo =
+    val primitivesOffset : int
+    val nPrimitives : int
+
+/// 8 byte alinged struct
+[<IsReadOnly;Struct>]
+type InteriorLinearNodeInfo =
+    val secondChildOffset : int
+    val splitAxis : SplitAxis
+
+type LeafOrNodeInfo = 
+    | LeafInfo of LeafLinearNodeInfo // 8 bytes
+    | InteriorInfo of InteriorLinearNodeInfo // 8 bytes
+    
+/// 32 byte aligned struct for cache efficiency
+[<IsReadOnly;Struct;StructLayout(LayoutKind.Explicit)>]
+type BVHLinearNode =
+    [<FieldOffset 8>] val aabb : AABB // 8 bytes on 64 bit
+    [<FieldOffset 24>] val leafOrNodeInfo : LeafOrNodeInfo // 8 bytes
+
+    new(aabbIn, nodeInfoIn) = {aabb = aabbIn; leafOrNodeInfo = nodeInfoIn}
+   

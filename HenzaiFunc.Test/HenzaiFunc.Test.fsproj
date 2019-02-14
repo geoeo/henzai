@@ -14,6 +14,7 @@
   <ItemGroup>
     <Compile Include="BVHTests.fs" />
     <Compile Include="SphereTests.fs" />
+    <Compile Include="TypeTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

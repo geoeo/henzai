@@ -15,6 +15,11 @@ type Angle = float32
 type Radians = float32
 type ID = uint64
 
+/// Defines the basis along the viewing direction
+type CoordinateSystem = 
+    | XYNegZ = 0uy //RHS
+    | XYZ = 1uy //LHS
+
 
 
        
