@@ -11,7 +11,7 @@ let main argv =
     //let input = Console.ReadLine()
     printfn "Starting.."
     printfn "Constructing BVH Tree.."
-    let bvhTree = constructBVHTree sceneArray
+    let bvhTree, orderedGeometryList, totalNodeCount = constructBVHTree sceneArray
     printfn "Constructed BVH Tree.."
     let mainScene = RuntimeScene (sceneArray)
     mainScene.RenderScene()
