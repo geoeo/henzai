@@ -56,14 +56,14 @@ module BVHTree =
                 let splitPoint , smallerThanMidArray, largerThanMidArray = calculateSplitPoint subArray start finish centroidBounds axis splitMethod
                 Array.blit smallerThanMidArray 0 bvhInfoArray start smallerThanMidArray.Length
                 Array.blit largerThanMidArray 0 bvhInfoArray (start + smallerThanMidArray.Length) largerThanMidArray.Length
-                // TODO: investigate Async
+                // TODO: investigate Parallel, need to rework sublists as they have a seq dependency
                 let (leftSubTree, leftOrderedSubList, leftTotalNodes) = recursiveBuild geometryArray bvhInfoArray start splitPoint orderedGeometryList splitMethod
-                let (rightSubTree, rightOrderedSubList, rightTotalNodes) = recursiveBuild geometryArray bvhInfoArray splitPoint finish orderedGeometryList splitMethod
+                let (rightSubTree, rightOrderedSubList, rightTotalNodes) = recursiveBuild geometryArray bvhInfoArray splitPoint finish leftOrderedSubList splitMethod
                 let leftNode, ll, lr =  decompose leftSubTree
                 let rightNode, rl, rr =  decompose rightSubTree
-                let bvhNode = BVHBuildNode(axis, start, nPrimitives, AABB.unionWithAABB leftNode.aabb rightNode.aabb)
+                let bvhNode = BVHBuildNode(axis, start, 0, AABB.unionWithAABB leftNode.aabb rightNode.aabb)
                 let newTotalNodes = leftTotalNodes + rightTotalNodes + 1
-                (Node (bvhNode, Node (leftNode , ll, lr), Node (rightNode , rl, rr)), List.concat [leftOrderedSubList; rightOrderedSubList], newTotalNodes)
+                (Node (bvhNode, Node (leftNode , ll, lr), Node (rightNode , rl, rr)), rightOrderedSubList, newTotalNodes)
 
     let build ( geometryArray : AxisAlignedBoundable []) (splitMethod : SplitMethods) = 
         let bvhInfoArray = buildBVHInfoArray geometryArray
@@ -73,6 +73,6 @@ module BVHTree =
             | SplitMethods.Middle -> recursiveBuild geometryArray bvhInfoArray 0 bvhInfoArray.Length [] splitMethod
             | SplitMethods.EqualCounts -> recursiveBuild geometryArray bvhInfoArray 0 bvhInfoArray.Length [] splitMethod
             | x -> failwithf "Splitmethod %u not yet implemented" (LanguagePrimitives.EnumToValue x)
-        // We have to reverse here, since list can only append to head
-        (bvhTree, List.rev orderedGeometryList, totalNodes)
+        // Need to reverse since implicit indexing via build is for a Queue (FIFO) data structure
+        (bvhTree, List.toArray (List.rev orderedGeometryList), totalNodes)
         

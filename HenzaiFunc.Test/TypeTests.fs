@@ -18,8 +18,8 @@ let InteriorRuntimeNodeInfoSizeTest () =
 [<Fact>]
 let LeafRuntimeNodeInfoSizeTest () =
     let t = LeafRuntimeNode()
-    Assert.Equal(8, sizeof<LeafRuntimeNode>)
-    Assert.Equal(8, Marshal.SizeOf(t))
+    Assert.Equal(4, sizeof<LeafRuntimeNode>)
+    Assert.Equal(4, Marshal.SizeOf(t))
 
 [<Fact>]
 let BVHLinearNodeInfoSizeTest () =

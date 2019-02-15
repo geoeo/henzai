@@ -56,12 +56,10 @@ type BVHTree =
 [<IsReadOnly;Struct>]
 type LeafRuntimeNode =
     val primitivesOffset : int
-    val nPrimitives : int
 
-    new(primitivesOffsetIn, nPrimitivesIn) = 
+    new(primitivesOffsetIn) = 
         {
             primitivesOffset = primitivesOffsetIn;
-            nPrimitives = nPrimitivesIn
         }
 
 /// 8 byte alinged struct
@@ -82,8 +80,9 @@ type InteriorRuntimeNode =
 type BVHRuntimeNode =
     [<FieldOffset 8>] val aabb : AABB // 8 bytes on 64 bit
     [<FieldOffset 16>] val interiorNode : InteriorRuntimeNode // 8 bytes
-    [<FieldOffset 24>] val leafNode : LeafRuntimeNode // 8 bytes
+    [<FieldOffset 20>] val leafNode : LeafRuntimeNode // 8 bytes
+    [<FieldOffset 24>] val nPrimitives : int // 8 bytes on 64 bit
 
-    new(aabbIn, interiorNodeIn) = {aabb = aabbIn; interiorNode = interiorNodeIn; leafNode = LeafRuntimeNode()}
-    new(aabbIn, leafNodeIn) = {aabb = aabbIn; leafNode = leafNodeIn; interiorNode = InteriorRuntimeNode()}
+    new(aabbIn, interiorNodeIn, nPrimitivesIn) = {aabb = aabbIn; interiorNode = interiorNodeIn; nPrimitives = nPrimitivesIn ;leafNode = LeafRuntimeNode()}
+    new(aabbIn, leafNodeIn, nPrimitivesIn) = {aabb = aabbIn; leafNode = leafNodeIn; nPrimitives = nPrimitivesIn ;interiorNode = InteriorRuntimeNode()}
    

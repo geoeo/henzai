@@ -23,17 +23,17 @@ module BVHRuntime =
         let (currentNode, leftSubTree, rightSubTree) = BVHTree.decompose bvhTree
         let currentBounds = currentNode.aabb
         if currentNode.nPrimitives > 0 then
-            let leafRuntimeNode = LeafRuntimeNode(currentNode.firstPrimitiveOffset, currentNode.nPrimitives)
-            bvhRuntimeArray.[currentOffset] <- BVHRuntimeNode(currentBounds, leafRuntimeNode)
-            currentOffset + 1
+            let leafRuntimeNode = LeafRuntimeNode(currentNode.firstPrimitiveOffset)
+            bvhRuntimeArray.[currentOffset] <- BVHRuntimeNode(currentBounds, leafRuntimeNode, currentNode.nPrimitives)
+            currentOffset
         else
             let splitAxis = currentNode.splitAxis
             let (closerSubTree, fartherSubTree) = determineSubTreeOrder (leftSubTree, rightSubTree) splitAxis coordinateSystem
             let firstChildOffset = flattenBVHTree closerSubTree bvhRuntimeArray (currentOffset + 1) coordinateSystem
             let secondChildOffset = flattenBVHTree fartherSubTree bvhRuntimeArray (firstChildOffset + 1) coordinateSystem
             let interiorRuntimeNode = InteriorRuntimeNode(secondChildOffset, splitAxis)
-            bvhRuntimeArray.[currentOffset] <- BVHRuntimeNode(currentBounds, interiorRuntimeNode)
-            secondChildOffset + 1
+            bvhRuntimeArray.[currentOffset] <- BVHRuntimeNode(currentBounds, interiorRuntimeNode, 0)
+            secondChildOffset
         
             
         
