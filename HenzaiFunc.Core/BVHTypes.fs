@@ -15,8 +15,7 @@ type SplitAxis =
     | X = 0uy
     | Y = 1uy
     | Z = 2uy
-    | None = 4uy
-   
+    | None = 4uy 
 
 /// A layer of abstraction to index a geometry in the main array/storage
 [<IsReadOnly;Struct>]
@@ -55,25 +54,36 @@ type BVHTree =
     | Node of node : BVHBuildNode * left : BVHTree * right : BVHTree
     
 [<IsReadOnly;Struct>]
-type LeafLinearNodeInfo =
+type LeafRuntimeNode =
     val primitivesOffset : int
     val nPrimitives : int
 
+    new(primitivesOffsetIn, nPrimitivesIn) = 
+        {
+            primitivesOffset = primitivesOffsetIn;
+            nPrimitives = nPrimitivesIn
+        }
+
 /// 8 byte alinged struct
-[<IsReadOnly;Struct>]
-type InteriorLinearNodeInfo =
+[<IsReadOnly;Struct;StructLayout(LayoutKind.Sequential, Pack=4)>]
+type InteriorRuntimeNode =
     val secondChildOffset : int
     val splitAxis : SplitAxis
 
-type LeafOrNodeInfo = 
-    | LeafInfo of LeafLinearNodeInfo // 8 bytes
-    | InteriorInfo of InteriorLinearNodeInfo // 8 bytes
+    new (secondChildOffsetIn, splitAxisIn) =
+        {
+            secondChildOffset = secondChildOffsetIn;
+            splitAxis = splitAxisIn
+        }
+      
     
 /// 32 byte aligned struct for cache efficiency
 [<IsReadOnly;Struct;StructLayout(LayoutKind.Explicit)>]
-type BVHLinearNode =
+type BVHRuntimeNode =
     [<FieldOffset 8>] val aabb : AABB // 8 bytes on 64 bit
-    [<FieldOffset 24>] val leafOrNodeInfo : LeafOrNodeInfo // 8 bytes
+    [<FieldOffset 16>] val interiorNode : InteriorRuntimeNode // 8 bytes
+    [<FieldOffset 24>] val leafNode : LeafRuntimeNode // 8 bytes
 
-    new(aabbIn, nodeInfoIn) = {aabb = aabbIn; leafOrNodeInfo = nodeInfoIn}
+    new(aabbIn, interiorNodeIn) = {aabb = aabbIn; interiorNode = interiorNodeIn; leafNode = LeafRuntimeNode()}
+    new(aabbIn, leafNodeIn) = {aabb = aabbIn; leafNode = leafNodeIn; interiorNode = InteriorRuntimeNode()}
    

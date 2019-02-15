@@ -10,17 +10,17 @@ let SplitAxisSizeTest () =
     Assert.Equal(1, sizeof<SplitAxis>)
 
 [<Fact>]
-let InteriorLinearNodeInfoSizeTest () =
-    let t = InteriorLinearNodeInfo()
-    Assert.Equal(8, sizeof<InteriorLinearNodeInfo>)
+let InteriorRuntimeNodeInfoSizeTest () =
+    let t = InteriorRuntimeNode()
+    Assert.Equal(8, sizeof<InteriorRuntimeNode>)
     Assert.Equal(8, Marshal.SizeOf(t))
 
 [<Fact>]
-let LeafLinearNodeInfoSizeTest () =
-    let t = LeafLinearNodeInfo()
-    Assert.Equal(8, sizeof<LeafLinearNodeInfo>)
+let LeafRuntimeNodeInfoSizeTest () =
+    let t = LeafRuntimeNode()
+    Assert.Equal(8, sizeof<LeafRuntimeNode>)
     Assert.Equal(8, Marshal.SizeOf(t))
 
 [<Fact>]
 let BVHLinearNodeInfoSizeTest () =
-    Assert.Equal(32, sizeof<BVHLinearNode>)
+    Assert.Equal(32, sizeof<BVHRuntimeNode>)
