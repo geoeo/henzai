@@ -4,10 +4,7 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Update="FSharp.Core" Version="4.3.4" />
-  </ItemGroup>
-
+  
   <ItemGroup>
     <Compile Include="Types.fs" />
     <Compile Include="BoundingBoxTypes.fs" />
