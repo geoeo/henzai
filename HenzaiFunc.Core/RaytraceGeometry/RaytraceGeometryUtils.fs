@@ -7,7 +7,7 @@ open HenzaiFunc.Core.Types
 module RaytraceGeometryUtils = 
 
     /// Does the ray penetrating the surface have a t < tCompare
-    let IsIntersectionInfrontOf (geometry : IHitable) (ray : Ray) (tCompare : LineParameter) = 
+    let IsIntersectionInfrontOf (geometry : Hitable) (ray : Ray) (tCompare : LineParameter) = 
             let (hasIntersections,t) = geometry.Intersect ray
             if hasIntersections && t > geometry.TMin then t < tCompare else false
 

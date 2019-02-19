@@ -9,7 +9,7 @@ open Henzai.Core.VertexGeometry
 // Baldwin-Weber ray-triangle intersection algorithm: http://jcgt.org/published/0005/03/03/
 /// Vertices are CCW
 type Triangle(v0 : Point, v1 : Point, v2 : Point) =
-    inherit Hitable() with
+    inherit HitableGeometry() with
 
         let v0 = v0
 
@@ -51,16 +51,16 @@ type Triangle(v0 : Point, v1 : Point, v2 : Point) =
                            0.0f, 0.0f, 1.0f, 0.0f,
                            crossV2V0.Z/normal.Z, -crossV1V0.Z/normal.Z, -nDotV1/normal.Z, 1.0f)
 
-        interface IHitable with
+        interface Hitable with
             override this.TMin = 0.000001f
 
             override this.NormalForSurfacePoint _ = normal
 
             override this.IntersectionAcceptable hasIntersection t _ _ =
-                hasIntersection && t > this.AsIHitable.TMin
+                hasIntersection && t > this.AsHitable.TMin
 
             override this.HasIntersection (ray:Ray) = 
-                let (hasIntersection,_) = this.AsIHitable.Intersect ray 
+                let (hasIntersection,_) = this.AsHitable.Intersect ray 
                 hasIntersection
 
             override this.Intersect (ray:Ray) =

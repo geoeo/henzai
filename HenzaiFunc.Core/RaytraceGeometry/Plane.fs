@@ -7,7 +7,7 @@ open HenzaiFunc.Core.Acceleration
 open Henzai.Core.Numerics
 
 type Plane(plane : System.Numerics.Plane, center : Point option, width : float32 option, height : float32 option ) = 
-    inherit Hitable () with
+    inherit HitableGeometry () with
 
         let plane = plane
 
@@ -48,20 +48,20 @@ type Plane(plane : System.Numerics.Plane, center : Point option, width : float32
                 newP.Y <= newB.Y + heightOff && 
                 newP.Y >= newB.Y - heightOff
 
-        interface IHitable with
+        interface Hitable with
 
             override this.Intersect (ray:Ray) =
                 let numerator = -plane.D - Plane.DotNormal(plane, ray.Origin) 
                 let denominator = Plane.DotNormal(plane, ray.Direction)
-                if Math.Abs(denominator) < this.AsIHitable.TMin then (false, 0.0f)
+                if Math.Abs(denominator) < this.AsHitable.TMin then (false, 0.0f)
                 else (true, numerator / denominator)
 
             override this.HasIntersection (ray:Ray) = 
-                let (hasIntersection,_) = this.AsIHitable.Intersect ray 
+                let (hasIntersection, _) = this.AsHitable.Intersect ray 
                 hasIntersection
             // dotView factor ensures sampling "straight" at very large distances due to fov
             override this.IntersectionAcceptable hasIntersection t dotViewTrace pointOnSurface =
-                let generalIntersection = hasIntersection && t > this.AsIHitable.TMin && t <= (this.AsIHitable.TMax/dotViewTrace)
+                let generalIntersection = hasIntersection && t > this.AsHitable.TMin && t <= (this.AsHitable.TMax/dotViewTrace)
                 match center with
                     | Some _ -> generalIntersection && pointLiesInRectangle pointOnSurface
                     | None -> generalIntersection

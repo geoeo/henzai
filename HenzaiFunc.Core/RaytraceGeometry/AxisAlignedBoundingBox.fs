@@ -23,7 +23,7 @@ type AABB(pMin : MinPoint, pMax : MaxPoint) =
     member this.PMin = boundingCorners.[0]
     member this.PMax = boundingCorners.[1]
 
-    interface IHitable with
+    interface Hitable with
 
         // effects shadow acne
         member this.TMin = 0.001f
