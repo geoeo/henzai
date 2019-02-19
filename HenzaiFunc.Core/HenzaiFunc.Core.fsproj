@@ -12,7 +12,7 @@
     <Compile Include="RaytraceGeometry/AxisAlignedBoundingBox.fs" />
     <Compile Include="BVHTypes.fs" />
     <Compile Include="Acceleration/AxisAlignedBoundingBox.fs" />
-    <Compile Include="BoundingBoxTypes.fs" />
+    <Compile Include="RaytraceGeometry/Boundables.fs" />
     <Compile Include="RaytraceGeometry/RaytracingGeometry.fs" />
     <Compile Include="RaytraceGeometry/NotHitable.fs" />
     <Compile Include="RaytraceGeometry/RaytraceGeometryUtils.fs" />
