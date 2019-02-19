@@ -50,7 +50,7 @@ type RuntimeScene (surfaces : Surface []) =
         else
             let currentTraceDepth = previousTraceDepth + 1us
             let (realSolution,t,surface) = findClosestIntersection ray surfaces
-            let surfaceGeometry : HitableGeometry = surface.Geometry
+            let surfaceGeometry : RaytracingGeometry = surface.Geometry
             if surfaceGeometry.AsHitable.IntersectionAcceptable realSolution t 1.0f (RaytraceGeometryUtils.PointForRay ray t)
             then
                 let emittedRadiance = surface.Emitted

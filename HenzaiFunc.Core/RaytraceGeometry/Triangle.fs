@@ -9,7 +9,7 @@ open Henzai.Core.VertexGeometry
 // Baldwin-Weber ray-triangle intersection algorithm: http://jcgt.org/published/0005/03/03/
 /// Vertices are CCW
 type Triangle(v0 : Point, v1 : Point, v2 : Point) =
-    inherit HitableGeometry() with
+    inherit RaytracingGeometry() with
 
         let v0 = v0
 

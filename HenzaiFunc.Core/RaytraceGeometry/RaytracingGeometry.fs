@@ -5,7 +5,7 @@ open System.Numerics
 open HenzaiFunc.Core
 
 [<AbstractClass>]
-type HitableGeometry ()  =
+type RaytracingGeometry ()  =
     interface Hitable with
     
         // effects shadow acne

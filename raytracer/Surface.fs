@@ -12,7 +12,7 @@ let randomState = Random()
    
 //TODO: Refactor namespace + Split this up    
 [<AbstractClass>]
-type Surface(id: ID, geometry : HitableGeometry, material : Raytracer.Material.Material) =
+type Surface(id: ID, geometry : RaytracingGeometry, material : Raytracer.Material.Material) =
     //let mutable samplesArray  = Array.zeroCreate<Ray*Raytracer.Material.Color> this.SampleCount
 
     abstract member Scatter: Ray -> LineParameter -> int -> bool*Ray*Cosine
@@ -41,7 +41,7 @@ type Surface(id: ID, geometry : HitableGeometry, material : Raytracer.Material.M
         (this.SampleCount, samplesArray)
 
 
-type NoSurface(id: ID, geometry : HitableGeometry, material : Raytracer.Material.Material) =
+type NoSurface(id: ID, geometry : RaytracingGeometry, material : Raytracer.Material.Material) =
     inherit Surface(id, geometry, material)
 
     override this.GenerateSamples _ _ _ _ = (noSampleCount, this.SamplesArray)
@@ -57,7 +57,7 @@ let findClosestIntersection (ray : Ray) (surfaces : Surface[]) =
 
     (bMin, tMin, vMin)
 
-type Lambertian(id: ID, geometry : HitableGeometry, material : Raytracer.Material.Material) =
+type Lambertian(id: ID, geometry : RaytracingGeometry, material : Raytracer.Material.Material) =
     inherit Surface(id, geometry, material)
 
     override this.SampleCount = lambertianSampleCount
@@ -82,7 +82,7 @@ type Lambertian(id: ID, geometry : HitableGeometry, material : Raytracer.Materia
         let outRay = Ray(positionOnSurface, outDir, this.ID)
         (true, outRay, cosOfIncidence)
 
-type Metal(id: ID, geometry : HitableGeometry, material : Raytracer.Material.Material, fuzz : float32) =
+type Metal(id: ID, geometry : RaytracingGeometry, material : Raytracer.Material.Material, fuzz : float32) =
     inherit Surface(id, geometry, material)
 
     member this.Fuzz = MathF.Max(MathF.Min(1.0f, fuzz), 0.0f)
@@ -110,7 +110,7 @@ type Metal(id: ID, geometry : HitableGeometry, material : Raytracer.Material.Mat
         (true,outRay,1.0f)
 
 // https://www.scratchapixel.com/lessons/3d-basic-rendering/introduction-to-shading/reflection-refraction-fresnel
-type Dielectric(id: ID, geometry : HitableGeometry, material : Raytracer.Material.Material, refractiveIndex : float32) =
+type Dielectric(id: ID, geometry : RaytracingGeometry, material : Raytracer.Material.Material, refractiveIndex : float32) =
     inherit Surface(id, geometry, material)
 
     override this.SampleCount = dialectricSampleCount

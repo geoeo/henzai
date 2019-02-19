@@ -7,7 +7,7 @@ open HenzaiFunc.Core.Acceleration
 open Henzai.Core.Numerics
 
 type Plane(plane : System.Numerics.Plane, center : Point option, width : float32 option, height : float32 option ) = 
-    inherit HitableGeometry () with
+    inherit RaytracingGeometry () with
 
         let plane = plane
 

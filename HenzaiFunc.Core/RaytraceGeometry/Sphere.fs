@@ -8,7 +8,7 @@ open Henzai.Core.Numerics
    
 
 type Sphere(sphereCenter : Point, radius : Radius) =
-    inherit HitableGeometry() with
+    inherit RaytracingGeometry() with
 
         // override this.TMin = 0.000001f// 0.0001// 0.000001f
         let center = sphereCenter
