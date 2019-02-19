@@ -1,6 +1,7 @@
 ﻿namespace HenzaiFunc.Core.Acceleration
 
 open HenzaiFunc.Core.Types
+open HenzaiFunc.Core.RaytraceGeometry
 
 // Phyisically Based Rendering Third Edition p. 257
 /// Implements methods to generate a BVH BST

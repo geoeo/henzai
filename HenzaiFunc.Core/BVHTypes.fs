@@ -2,6 +2,7 @@ namespace HenzaiFunc.Core.Types
 
 open System.Runtime.CompilerServices
 open System.Runtime.InteropServices
+open HenzaiFunc.Core.RaytraceGeometry
 
 #nowarn "9"
  

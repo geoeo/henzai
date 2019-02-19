@@ -3,7 +3,6 @@ namespace HenzaiFunc.Core.RaytraceGeometry
 open System
 open System.Numerics
 open HenzaiFunc.Core.Types
-open HenzaiFunc.Core.Acceleration
 open Henzai.Core.Numerics
 open Henzai.Core.VertexGeometry
 
@@ -23,8 +22,6 @@ type Triangle(v0 : Point, v1 : Point, v2 : Point) =
         let e2 = v2 - v0
 
         let normal = Vector3.Cross(e1, e2)
-
-        override this.TMin = 0.000001f
 
         let localToWorld 
             = Matrix4x4(e1.X, e1.Y, e1.Z, 0.0f,
@@ -54,29 +51,32 @@ type Triangle(v0 : Point, v1 : Point, v2 : Point) =
                            0.0f, 0.0f, 1.0f, 0.0f,
                            crossV2V0.Z/normal.Z, -crossV1V0.Z/normal.Z, -nDotV1/normal.Z, 1.0f)
 
-        override this.NormalForSurfacePoint _ = normal
+        interface IHitable with
+            override this.TMin = 0.000001f
 
-        override this.IntersectionAcceptable hasIntersection t _ _ =
-            hasIntersection && t > this.TMin
+            override this.NormalForSurfacePoint _ = normal
 
-        override this.HasIntersection (ray:Ray) = 
-            let (hasIntersection,_) = this.Intersect ray 
-            hasIntersection
+            override this.IntersectionAcceptable hasIntersection t _ _ =
+                hasIntersection && t > this.AsIHitable.TMin
 
-        override this.Intersect (ray:Ray) =
+            override this.HasIntersection (ray:Ray) = 
+                let (hasIntersection,_) = this.AsIHitable.Intersect ray 
+                hasIntersection
 
-            let rayOriginHomogeneous = Vector.ToHomogeneous(ref ray.Origin, 1.0f)
-            let rayOriginInTriangleSpace = Vector4.Transform(rayOriginHomogeneous, worldToLocal)
-            let rayDirectionInTriangleSpace = Vector4.Transform(Vector.ToHomogeneous(ref ray.Direction, 0.0f), worldToLocal)
-            let t = -rayOriginInTriangleSpace.Z/rayDirectionInTriangleSpace.Z
-            let barycentric = rayOriginInTriangleSpace + t*rayDirectionInTriangleSpace
+            override this.Intersect (ray:Ray) =
 
-            let intersectionWorld = Vector4.Transform(barycentric, localToWorld)
-            let tWorld = Vector4.Distance(intersectionWorld, rayOriginHomogeneous)
+                let rayOriginHomogeneous = Vector.ToHomogeneous(ref ray.Origin, 1.0f)
+                let rayOriginInTriangleSpace = Vector4.Transform(rayOriginHomogeneous, worldToLocal)
+                let rayDirectionInTriangleSpace = Vector4.Transform(Vector.ToHomogeneous(ref ray.Direction, 0.0f), worldToLocal)
+                let t = -rayOriginInTriangleSpace.Z/rayDirectionInTriangleSpace.Z
+                let barycentric = rayOriginInTriangleSpace + t*rayDirectionInTriangleSpace
 
-            (0.0f <= barycentric.X && barycentric.X <= 1.0f && 
-             0.0f <= barycentric.Y && barycentric.Y <= 1.0f &&
-             barycentric.X+barycentric.Y <= 1.0f, tWorld)
+                let intersectionWorld = Vector4.Transform(barycentric, localToWorld)
+                let tWorld = Vector4.Distance(intersectionWorld, rayOriginHomogeneous)
+
+                (0.0f <= barycentric.X && barycentric.X <= 1.0f && 
+                 0.0f <= barycentric.Y && barycentric.Y <= 1.0f &&
+                 barycentric.X+barycentric.Y <= 1.0f, tWorld)
 
         interface AxisAlignedBoundable with
             override this.GetBounds =

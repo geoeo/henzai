@@ -3,6 +3,7 @@ namespace HenzaiFunc.Core.Acceleration
 open System
 open System.Numerics
 open HenzaiFunc.Core.Types
+open HenzaiFunc.Core.RaytraceGeometry
 open Henzai.Core.Numerics
 
 // Phyisically Based Rendering Third Edition p. 78

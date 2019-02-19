@@ -53,28 +53,30 @@ type Sphere(sphereCenter : Point, radius : Radius) =
             else if MathF.Round(discriminant, 3) = 0.0f then (false, -B/(2.0f), System.Single.MinValue)
             else (true, ((-B + MathF.Sqrt(discriminant))/(2.0f)), ((-B - MathF.Sqrt(discriminant))/(2.0f)))
 
-        override this.Intersect (ray : Ray) = 
-            let (hasIntersection,i1,i2) = this.Intersections (ray : Ray)
-            if i1 >= this.TMin && i2 >= this.TMin then
-                (hasIntersection,MathF.Min(i1, i2))
-            else if i1 < 0.0f then
-                (hasIntersection, i2)
-            else
-                (hasIntersection, i1)
+        interface IHitable with 
 
-        override this.NormalForSurfacePoint (positionOnSphere:Point) =
-            Vector3.Normalize((positionOnSphere - center))
+            override this.Intersect (ray : Ray) = 
+                let (hasIntersection,i1,i2) = this.Intersections (ray : Ray)
+                if i1 >= this.AsIHitable.TMin && i2 >= this.AsIHitable.TMin then
+                    (hasIntersection, MathF.Min(i1, i2))
+                else if i1 < 0.0f then
+                    (hasIntersection, i2)
+                else
+                    (hasIntersection, i1)
 
-        override this.HasIntersection ray =
-            let (hasIntersection,_,_) = this.Intersections ray 
-            hasIntersection
+            override this.NormalForSurfacePoint (positionOnSphere:Point) =
+                Vector3.Normalize((positionOnSphere - center))
 
-        override this.IntersectionAcceptable hasIntersection t _ _ =
-            hasIntersection && t > this.TMin
+            override this.HasIntersection ray =
+                let (hasIntersection,_,_) = this.Intersections ray 
+                hasIntersection
 
-        override this.IsObstructedBySelf ray =
-            let (b,i1,i2) = this.Intersections ray
-            this.IntersectionAcceptable b (MathF.Max(i1, i2)) 1.0f Vector3.Zero
+            override this.IntersectionAcceptable hasIntersection t _ _ =
+                hasIntersection && t > this.AsIHitable.TMin
+
+            override this.IsObstructedBySelf ray =
+                let (b,i1,i2) = this.Intersections ray
+                this.AsIHitable.IntersectionAcceptable b (MathF.Max(i1, i2)) 1.0f Vector3.Zero
 
         interface AxisAlignedBoundable with
             override this.GetBounds =

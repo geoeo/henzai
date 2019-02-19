@@ -48,24 +48,26 @@ type Plane(plane : System.Numerics.Plane, center : Point option, width : float32
                 newP.Y <= newB.Y + heightOff && 
                 newP.Y >= newB.Y - heightOff
 
-        override this.Intersect (ray:Ray) =
-            let numerator = -plane.D - Plane.DotNormal(plane, ray.Origin) 
-            let denominator = Plane.DotNormal(plane, ray.Direction)
-            if Math.Abs(denominator) < this.TMin then (false, 0.0f)
-            else (true, numerator / denominator)
+        interface IHitable with
 
-        override this.HasIntersection (ray:Ray) = 
-            let (hasIntersection,_) = this.Intersect ray 
-            hasIntersection
-        // dotView factor ensures sampling "straight" at very large distances due to fov
-        override this.IntersectionAcceptable hasIntersection t dotViewTrace pointOnSurface =
-            let generalIntersection = hasIntersection && t > this.TMin && t <= (this.TMax/dotViewTrace)
-            match center with
-                | Some _ -> generalIntersection && pointLiesInRectangle pointOnSurface
-                | None -> generalIntersection
+            override this.Intersect (ray:Ray) =
+                let numerator = -plane.D - Plane.DotNormal(plane, ray.Origin) 
+                let denominator = Plane.DotNormal(plane, ray.Direction)
+                if Math.Abs(denominator) < this.AsIHitable.TMin then (false, 0.0f)
+                else (true, numerator / denominator)
 
-        override this.NormalForSurfacePoint _ =
-            normal
+            override this.HasIntersection (ray:Ray) = 
+                let (hasIntersection,_) = this.AsIHitable.Intersect ray 
+                hasIntersection
+            // dotView factor ensures sampling "straight" at very large distances due to fov
+            override this.IntersectionAcceptable hasIntersection t dotViewTrace pointOnSurface =
+                let generalIntersection = hasIntersection && t > this.AsIHitable.TMin && t <= (this.AsIHitable.TMax/dotViewTrace)
+                match center with
+                    | Some _ -> generalIntersection && pointLiesInRectangle pointOnSurface
+                    | None -> generalIntersection
+
+            override this.NormalForSurfacePoint _ =
+                normal
          
         interface AxisAlignedBoundable with
             override this.GetBounds =
