@@ -12,5 +12,5 @@ let sceneArray : (Surface[]) = sceneList |> Array.ofList
 //let scene = List.concat [plane_floor;light_sphere;spheres_glass]
 
 let constructBVHTree surfaceArray = 
-    let geometryArray = Array.map (fun (elem : Surface) -> elem.Geometry :> AxisAlignedBoundable) surfaceArray
+    let geometryArray = Array.map (fun (elem : Surface) -> elem.Geometry.AsBoundable) surfaceArray
     BVHTree.build geometryArray SplitMethods.Middle

@@ -49,8 +49,8 @@ type NoSurface(id: ID, geometry : Hitable, material : Raytracer.Material.Materia
 let findClosestIntersection (ray : Ray) (surfaces : Surface[]) =
     let mutable (bMin,tMin,vMin : Surface) = (false, Single.MaxValue, upcast (NoSurface(0UL, NotHitable(), Raytracer.Material.Material(Vector3.Zero))))
     for surface in surfaces do
-        let (b,t) = surface.Geometry.Intersect ray
-        if surface.Geometry.IntersectionAcceptable b t 1.0f (RaytraceGeometryUtils.PointForRay ray t) &&  t < tMin then
+        let (b,t) = surface.Geometry.AsIHitable.Intersect ray
+        if surface.Geometry.AsIHitable.IntersectionAcceptable b t 1.0f (RaytraceGeometryUtils.PointForRay ray t) &&  t < tMin then
             bMin <- b
             tMin <- t
             vMin <- surface
@@ -66,7 +66,7 @@ type Lambertian(id: ID, geometry : Hitable, material : Raytracer.Material.Materi
     override this.Scatter (incommingRay : Ray) (t : LineParameter) (depthLevel : int) =
 
         let positionOnSurface = incommingRay.Origin + t*incommingRay.Direction
-        let mutable normal = this.Geometry.NormalForSurfacePoint positionOnSurface
+        let mutable normal = this.Geometry.AsIHitable.NormalForSurfacePoint positionOnSurface
 
         //sampling hemisphere
         let rand_norm = RandomSampling.RandomInUnitHemisphere_Sync()
@@ -93,7 +93,7 @@ type Metal(id: ID, geometry : Hitable, material : Raytracer.Material.Material, f
     override this.Scatter (incommingRay : Ray) (t : LineParameter) (depthLevel : int) =
 
         let positionOnSurface = incommingRay.Origin + t*incommingRay.Direction
-        let mutable normal = Vector3.Normalize(this.Geometry.NormalForSurfacePoint positionOnSurface)
+        let mutable normal = Vector3.Normalize(this.Geometry.AsIHitable.NormalForSurfacePoint positionOnSurface)
 
         //sampling hemisphere
         let rand_norm = RandomSampling.RandomInUnitHemisphere_Sync()
@@ -134,7 +134,7 @@ type Dielectric(id: ID, geometry : Hitable, material : Raytracer.Material.Materi
     /// </summary>
     member this.CalcFresnel (incommingRay : Ray) (t : LineParameter) (depthLevel : int) = 
         let positionOnSurface = incommingRay.Origin + t*incommingRay.Direction
-        let normal = Vector3.Normalize(this.Geometry.NormalForSurfacePoint positionOnSurface)
+        let normal = Vector3.Normalize(this.Geometry.AsIHitable.NormalForSurfacePoint positionOnSurface)
         let reflectDir = Vector3.Normalize(this.Reflect incommingRay normal)
         let refrativeIndexAir = 1.0f
 
