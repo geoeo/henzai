@@ -12,7 +12,7 @@ let randomState = Random()
    
 //TODO: Refactor namespace + Split this up    
 [<AbstractClass>]
-type Surface(id: ID, geometry : Hitable, material : Raytracer.Material.Material) =
+type Surface(id: ID, geometry : HitableGeometry, material : Raytracer.Material.Material) =
     //let mutable samplesArray  = Array.zeroCreate<Ray*Raytracer.Material.Color> this.SampleCount
 
     abstract member Scatter: Ray -> LineParameter -> int -> bool*Ray*Cosine
@@ -41,7 +41,7 @@ type Surface(id: ID, geometry : Hitable, material : Raytracer.Material.Material)
         (this.SampleCount, samplesArray)
 
 
-type NoSurface(id: ID, geometry : Hitable, material : Raytracer.Material.Material) =
+type NoSurface(id: ID, geometry : HitableGeometry, material : Raytracer.Material.Material) =
     inherit Surface(id, geometry, material)
 
     override this.GenerateSamples _ _ _ _ = (noSampleCount, this.SamplesArray)
@@ -49,15 +49,15 @@ type NoSurface(id: ID, geometry : Hitable, material : Raytracer.Material.Materia
 let findClosestIntersection (ray : Ray) (surfaces : Surface[]) =
     let mutable (bMin,tMin,vMin : Surface) = (false, Single.MaxValue, upcast (NoSurface(0UL, NotHitable(), Raytracer.Material.Material(Vector3.Zero))))
     for surface in surfaces do
-        let (b,t) = surface.Geometry.AsIHitable.Intersect ray
-        if surface.Geometry.AsIHitable.IntersectionAcceptable b t 1.0f (RaytraceGeometryUtils.PointForRay ray t) &&  t < tMin then
+        let (b,t) = surface.Geometry.AsHitable.Intersect ray
+        if surface.Geometry.AsHitable.IntersectionAcceptable b t 1.0f (RaytraceGeometryUtils.PointForRay ray t) &&  t < tMin then
             bMin <- b
             tMin <- t
             vMin <- surface
 
     (bMin, tMin, vMin)
 
-type Lambertian(id: ID, geometry : Hitable, material : Raytracer.Material.Material) =
+type Lambertian(id: ID, geometry : HitableGeometry, material : Raytracer.Material.Material) =
     inherit Surface(id, geometry, material)
 
     override this.SampleCount = lambertianSampleCount
@@ -66,7 +66,7 @@ type Lambertian(id: ID, geometry : Hitable, material : Raytracer.Material.Materi
     override this.Scatter (incommingRay : Ray) (t : LineParameter) (depthLevel : int) =
 
         let positionOnSurface = incommingRay.Origin + t*incommingRay.Direction
-        let mutable normal = this.Geometry.AsIHitable.NormalForSurfacePoint positionOnSurface
+        let mutable normal = this.Geometry.AsHitable.NormalForSurfacePoint positionOnSurface
 
         //sampling hemisphere
         let rand_norm = RandomSampling.RandomInUnitHemisphere_Sync()
@@ -82,7 +82,7 @@ type Lambertian(id: ID, geometry : Hitable, material : Raytracer.Material.Materi
         let outRay = Ray(positionOnSurface, outDir, this.ID)
         (true, outRay, cosOfIncidence)
 
-type Metal(id: ID, geometry : Hitable, material : Raytracer.Material.Material, fuzz : float32) =
+type Metal(id: ID, geometry : HitableGeometry, material : Raytracer.Material.Material, fuzz : float32) =
     inherit Surface(id, geometry, material)
 
     member this.Fuzz = MathF.Max(MathF.Min(1.0f, fuzz), 0.0f)
@@ -93,7 +93,7 @@ type Metal(id: ID, geometry : Hitable, material : Raytracer.Material.Material, f
     override this.Scatter (incommingRay : Ray) (t : LineParameter) (depthLevel : int) =
 
         let positionOnSurface = incommingRay.Origin + t*incommingRay.Direction
-        let mutable normal = Vector3.Normalize(this.Geometry.AsIHitable.NormalForSurfacePoint positionOnSurface)
+        let mutable normal = Vector3.Normalize(this.Geometry.AsHitable.NormalForSurfacePoint positionOnSurface)
 
         //sampling hemisphere
         let rand_norm = RandomSampling.RandomInUnitHemisphere_Sync()
@@ -110,7 +110,7 @@ type Metal(id: ID, geometry : Hitable, material : Raytracer.Material.Material, f
         (true,outRay,1.0f)
 
 // https://www.scratchapixel.com/lessons/3d-basic-rendering/introduction-to-shading/reflection-refraction-fresnel
-type Dielectric(id: ID, geometry : Hitable, material : Raytracer.Material.Material, refractiveIndex : float32) =
+type Dielectric(id: ID, geometry : HitableGeometry, material : Raytracer.Material.Material, refractiveIndex : float32) =
     inherit Surface(id, geometry, material)
 
     override this.SampleCount = dialectricSampleCount
@@ -134,7 +134,7 @@ type Dielectric(id: ID, geometry : Hitable, material : Raytracer.Material.Materi
     /// </summary>
     member this.CalcFresnel (incommingRay : Ray) (t : LineParameter) (depthLevel : int) = 
         let positionOnSurface = incommingRay.Origin + t*incommingRay.Direction
-        let normal = Vector3.Normalize(this.Geometry.AsIHitable.NormalForSurfacePoint positionOnSurface)
+        let normal = Vector3.Normalize(this.Geometry.AsHitable.NormalForSurfacePoint positionOnSurface)
         let reflectDir = Vector3.Normalize(this.Reflect incommingRay normal)
         let refrativeIndexAir = 1.0f
 

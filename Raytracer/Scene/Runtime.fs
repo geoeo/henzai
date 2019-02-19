@@ -50,8 +50,8 @@ type RuntimeScene (surfaces : Surface []) =
         else
             let currentTraceDepth = previousTraceDepth + 1us
             let (realSolution,t,surface) = findClosestIntersection ray surfaces
-            let surfaceGeometry : Hitable = surface.Geometry
-            if surfaceGeometry.AsIHitable.IntersectionAcceptable realSolution t 1.0f (RaytraceGeometryUtils.PointForRay ray t)
+            let surfaceGeometry : HitableGeometry = surface.Geometry
+            if surfaceGeometry.AsHitable.IntersectionAcceptable realSolution t 1.0f (RaytraceGeometryUtils.PointForRay ray t)
             then
                 let emittedRadiance = surface.Emitted
                 let (validSamples,raySamples) = surface.GenerateSamples ray t ((int)currentTraceDepth) surface.SamplesArray
@@ -71,7 +71,7 @@ type RuntimeScene (surfaces : Surface []) =
         let dotLookAtAndTracingRay = Vector3.Dot(Vector3.Normalize(lookAt), ray.Direction)
         let (realSolution,t,surface) = findClosestIntersection ray surfaces
         let surfaceGeometry = surface.Geometry
-        if surfaceGeometry.AsIHitable.IntersectionAcceptable realSolution t dotLookAtAndTracingRay (RaytraceGeometryUtils.PointForRay ray t) then
+        if surfaceGeometry.AsHitable.IntersectionAcceptable realSolution t dotLookAtAndTracingRay (RaytraceGeometryUtils.PointForRay ray t) then
             if iteration = 1 && batchIndex = 0 then writeToDepthBuffer t px py
 
             let currentTraceDepth = 0us
