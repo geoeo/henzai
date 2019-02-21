@@ -8,20 +8,14 @@
   </PropertyGroup>
    
   <ItemGroup>
-    <ProjectReference Include="../HenzaiFunc.Core/HenzaiFunc.Core.fsproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Include="BVHTests.fs" />
     <Compile Include="SphereTests.fs" />
     <Compile Include="TypeTests.fs" />
     <Compile Include="Program.fs" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <None Include="AABBTest.fs" />
+    <ProjectReference Include="../HenzaiFunc.Core/HenzaiFunc.Core.fsproj" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
     <PackageReference Include="xunit" Version="2.4.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
   </ItemGroup>
-
 </Project>
