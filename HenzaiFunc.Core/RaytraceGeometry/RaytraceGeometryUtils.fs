@@ -29,5 +29,10 @@ module RaytraceGeometryUtils =
     let robustRayBounds value gamma = value * (1.0f + 2.0f*gamma)
 
     let gamma (n : int) = (float32(n)*System.Single.Epsilon)/(1.0f - float32(n)*System.Single.Epsilon)
+
+    let boolToInt b = 
+        match b with
+        | true -> 1
+        | false -> 0
     
         

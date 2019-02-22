@@ -1,12 +1,13 @@
 ﻿namespace HenzaiFunc.Core.RaytraceGeometry
 
+open System
 open System.Numerics
 open HenzaiFunc.Core.Types
 
 
 type AABB(pMin : MinPoint, pMax : MaxPoint) = 
 
-    let boundingCorners : Point[] = [|pMin; pMax|]
+    member this.boundingCorners : Point[] = [|pMin; pMax|]
 
     member this.Corner (index : int) =
 
@@ -14,14 +15,14 @@ type AABB(pMin : MinPoint, pMax : MaxPoint) =
         let cornerYIndex = index &&& 2
         let cornerZIndex = index &&& 4
 
-        let cornerX = boundingCorners.[cornerXIndex].X
-        let cornerY = boundingCorners.[cornerYIndex].Y
-        let cornerZ = boundingCorners.[cornerZIndex].Z
+        let cornerX = this.boundingCorners.[cornerXIndex].X
+        let cornerY = this.boundingCorners.[cornerYIndex].Y
+        let cornerZ = this.boundingCorners.[cornerZIndex].Z
 
         Vector3(cornerX, cornerY, cornerZ) : Point
 
-    member this.PMin = boundingCorners.[0]
-    member this.PMax = boundingCorners.[1]
+    member this.PMin = this.boundingCorners.[0]
+    member this.PMax = this.boundingCorners.[1]
     member this.AsHitable = this :> Hitable
 
     interface Hitable with
@@ -29,44 +30,36 @@ type AABB(pMin : MinPoint, pMax : MaxPoint) =
         // effects shadow acne
         member this.TMin = 0.001f
         member this.TMax = 500.0f
+        // Optimized Ray Box Intersection Phyisically Based Rendering Third Edition p. 129
         member this.Intersect ray = 
-            let mutable t0 = this.AsHitable.TMin
-            let mutable t1 = this.AsHitable.TMax
             let mutable isAcceptable = true
+            let invDir = Vector3(1.0f / ray.Direction.X, 1.0f/ ray.Direction.Y, 1.0f / ray.Direction.Z)
+            let struct(isXDirNeg, isYDirNeg, isZDirNeg) = struct(invDir.X < 0.0f, invDir.Y < 0.0f, invDir.Z < 0.0f)
             let gamma3 = (RaytraceGeometryUtils.gamma 3)
-            for i in 0..2 do
-                match i with
-                | 0 ->
-                    let invRayDir = 1.0f / ray.Direction.X
-                    let tNear1 = (this.PMin.X - ray.Origin.X) * invRayDir
-                    let tFar1 = (this.PMax.X - ray.Origin.X) * invRayDir
-                    let (tNear2, tFar2) = RaytraceGeometryUtils.conditionalSwap ( > ) tNear1 tFar1
-                    let tFar3 = RaytraceGeometryUtils.robustRayBounds tFar2 gamma3
-                    t0 <- if tNear2 > t0 then tNear2 else t0
-                    t1 <- if tFar3 < t1 then tFar3 else t1
-                    ()
-                | 1 ->
-                    let invRayDir = 1.0f / ray.Direction.Y
-                    let tNear1 = (this.PMin.Y - ray.Origin.Y) * invRayDir
-                    let tFar1 = (this.PMax.Y - ray.Origin.Y) * invRayDir
-                    let (tNear2, tFar2) = RaytraceGeometryUtils.conditionalSwap ( > ) tNear1 tFar1
-                    let tFar3 = RaytraceGeometryUtils.robustRayBounds tFar2 gamma3
-                    t0 <- if tNear2 > t0 then tNear2 else t0
-                    t1 <- if tFar3 < t1 then tFar3 else t1
-                    ()
-                | 2 ->
-                    let invRayDir = 1.0f / ray.Direction.Z
-                    let tNear1 = (this.PMin.Z - ray.Origin.Z) * invRayDir
-                    let tFar1 = (this.PMax.Z - ray.Origin.Z) * invRayDir
-                    let (tNear2, tFar2) = RaytraceGeometryUtils.conditionalSwap ( > ) tNear1 tFar1
-                    let tFar3 = RaytraceGeometryUtils.robustRayBounds tFar2 gamma3
-                    t0 <- if tNear2 > t0 then tNear2 else t0
-                    t1 <- if tFar3 < t1 then tFar3 else t1
-                    ()
-                | x -> failwithf "value %u not possible in AABB interection" x
-                isAcceptable <- t1 > t0
-            (isAcceptable, t0)
-            
+
+            let mutable tMin = (this.boundingCorners.[RaytraceGeometryUtils.boolToInt isXDirNeg].X - ray.Origin.X) * invDir.X
+            let mutable tMax = (this.boundingCorners.[1 - RaytraceGeometryUtils.boolToInt isXDirNeg].X - ray.Origin.X) * invDir.X
+            let tyMin = (this.boundingCorners.[RaytraceGeometryUtils.boolToInt isYDirNeg].Y - ray.Origin.Y) * invDir.Y
+            let mutable tyMax = (this.boundingCorners.[1 - RaytraceGeometryUtils.boolToInt isYDirNeg].Y - ray.Origin.Y) * invDir.Y
+            let tzMin = (this.boundingCorners.[RaytraceGeometryUtils.boolToInt isZDirNeg].Z - ray.Origin.Z) * invDir.Z
+            let mutable tzMax = (this.boundingCorners.[1 - RaytraceGeometryUtils.boolToInt isZDirNeg].Z - ray.Origin.Z) * invDir.Z
+            tMax <- RaytraceGeometryUtils.robustRayBounds tMax gamma3
+            tyMax <- RaytraceGeometryUtils.robustRayBounds tyMax gamma3
+            tzMax <- RaytraceGeometryUtils.robustRayBounds tzMax gamma3
+            let passed = not (tMin > tyMax || tyMin > tMax || tMin > tzMax || tzMin > tMax)
+
+            if tyMin > tMin then tMin <- tyMin else ()
+            if tyMax < tMax then tMax <- tyMax else ()
+            if tzMin > tMin then tMin <- tzMin else ()
+            if tzMax < tMax then tMax <- tzMax else ()
+
+            // if insinde a box tMin might be negative 
+            // in that case return tMax
+            if tMin < 0.0f then tMin <- tMax else ()
+
+
+            (tMin < this.AsHitable.TMax && tMax > 0.0f && passed , tMin)
+
         member this.HasIntersection ray =
             let (hasIntersection,_) = this.AsHitable.Intersect ray 
             hasIntersection

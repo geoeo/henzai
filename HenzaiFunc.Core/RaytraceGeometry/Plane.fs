@@ -3,7 +3,6 @@ namespace HenzaiFunc.Core.RaytraceGeometry
 open System
 open System.Numerics
 open HenzaiFunc.Core.Types
-open HenzaiFunc.Core.Acceleration
 open Henzai.Core.Numerics
 
 type Plane(plane : System.Numerics.Plane, center : Point option, width : float32 option, height : float32 option ) = 

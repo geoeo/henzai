@@ -26,11 +26,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "sponza", "Projects\sponza\s
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Henzai.Core", "Henzai.Core\Henzai.Core.csproj", "{5AD912AC-0B28-4AFE-BC4B-DECE5CD7ED04}"
 EndProject
-Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "HenzaiFunc.Core", "HenzaiFunc.Core\HenzaiFunc.Core.fsproj", "{EA092FF4-397F-49E2-BB17-C80207886253}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "HenzaiFunc.Core", "HenzaiFunc.Core\HenzaiFunc.Core.fsproj", "{EA092FF4-397F-49E2-BB17-C80207886253}"
 EndProject
-Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "Raytracer", "Raytracer\Raytracer.fsproj", "{1227850F-444B-4A04-AED1-E23BBA574195}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Raytracer", "Raytracer\Raytracer.fsproj", "{1227850F-444B-4A04-AED1-E23BBA574195}"
 EndProject
-Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "HenzaiFunc.Test", "HenzaiFunc.Test\HenzaiFunc.Test.fsproj", "{DCD3D337-792D-4852-B8C1-626458FCF0B9}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "HenzaiFunc.Test", "HenzaiFunc.Test\HenzaiFunc.Test.fsproj", "{DCD3D337-792D-4852-B8C1-626458FCF0B9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
