@@ -50,7 +50,7 @@ module BVHRuntime =
         let mutable toVisitOffset = 0
         let mutable currentNodeIndex = 0
         let mutable hasIntersection = false
-        let mutable tHit = 0.0f
+        let mutable tHit = System.Single.MaxValue
         let mutable intersectedGeometry : (RaytracingGeometry option) = None
         let mutable nodesToVisit = Array.zeroCreate bvhArray.Length
 
@@ -63,9 +63,10 @@ module BVHRuntime =
                     for i in 0..nPrimitives-1 do
                         let geometry = orderedPrimitives.[node.leafNode.primitivesOffset + i]
                         let (leafHasIntersection, leafHit) = geometry.AsHitable.Intersect ray
-                        hasIntersection <- leafHasIntersection
-                        tHit <- leafHit
-                        intersectedGeometry <- Some geometry
+                        if leafHit < tHit then
+                            hasIntersection <- leafHasIntersection
+                            tHit <- leafHit
+                            intersectedGeometry <- Some geometry
                     toVisitOffset <- toVisitOffset - 1
                     if toVisitOffset >= 0 then 
                         currentNodeIndex <- nodesToVisit.[toVisitOffset]

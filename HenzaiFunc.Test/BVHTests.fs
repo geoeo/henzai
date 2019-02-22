@@ -243,6 +243,60 @@ let intersectBVHSimpleSphereTest () =
     Assert.Equal(Vector3(4.0f,-1.0f,-15.0f), sphere.Center)
     Assert.Equal(3.5f, sphere.Radius)
     Assert.Equal(tHit, 1.5f)
+
+
+[<Fact>]
+let intersectBVHStandardSphereTest () =
+    let (bvhTree, orderedPrimitiveArray, nodeCount) = BVHTree.build standardSphereGeomertryArray SplitMethods.Middle
+    let bvhArray = BVHRuntime.allocateMemoryForBVHRuntime nodeCount
+    let out = BVHRuntime.flattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYNegZ
+    let ray = Ray(Vector3(12.0f, -4.5f, -7.0f), Vector3(-1.0f, 0.0f, 0.0f))
+    let (hasIntersection, tHit, geometryOption) = BVHRuntime.traverse bvhArray orderedPrimitiveArray ray
+
+    let geometry = RaytraceGeometryUtils.forceExtract geometryOption
+    let sphere = geometry :?> Sphere
+
+
+    Assert.True(hasIntersection)
+    Assert.Equal(Vector3(10.0f,-4.5f,-7.0f), sphere.Center)
+    Assert.Equal(1.5f, sphere.Radius)
+    Assert.Equal(tHit, 0.5f)
+
+
+[<Fact>]
+let intersectBVHIdenticalSphereTest () =
+    let (bvhTree, orderedPrimitiveArray, nodeCount) = BVHTree.build identicalSphereGeomertryArray SplitMethods.Middle
+    let bvhArray = BVHRuntime.allocateMemoryForBVHRuntime nodeCount
+    let out = BVHRuntime.flattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYNegZ
+    let ray = Ray(Vector3(2.0f, -10.5f, -7.0f), Vector3(0.0f, 1.0f, 0.0f))
+    let (hasIntersection, tHit, geometryOption) = BVHRuntime.traverse bvhArray orderedPrimitiveArray ray
+
+    let geometry = RaytraceGeometryUtils.forceExtract geometryOption
+    let sphere = geometry :?> Sphere
+
+
+    Assert.True(hasIntersection)
+    Assert.Equal(Vector3(2.0f,-4.5f,-7.0f), sphere.Center)
+    Assert.Equal(1.5f, sphere.Radius)
+    Assert.Equal(tHit, 4.5f)
+
+
+
+[<Fact>]
+let intersectBVHLargeSphereTest () =
+    let (bvhTree, orderedPrimitiveArray, nodeCount) = BVHTree.build largeSphereGeomertryArray SplitMethods.Middle
+    let bvhArray = BVHRuntime.allocateMemoryForBVHRuntime nodeCount
+    let out = BVHRuntime.flattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYNegZ
+    let ray = Ray(Vector3(4.0f, 5.0f, -22.0f), Vector3(0.0f, 0.0f, 1.0f))
+    let (hasIntersection, tHit, geometryOption) = BVHRuntime.traverse bvhArray orderedPrimitiveArray ray
+
+    let geometry = RaytraceGeometryUtils.forceExtract geometryOption
+    let sphere = geometry :?> Sphere
+
+
+    Assert.True(hasIntersection)
+    Assert.Equal(Vector3(4.0f,5.0f,-16.5f), sphere.Center)
+    Assert.Equal(3.5f, sphere.Radius)
+    Assert.Equal(tHit, 2.0f)
+
     
-
-
