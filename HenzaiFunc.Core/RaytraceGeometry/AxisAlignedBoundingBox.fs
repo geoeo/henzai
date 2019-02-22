@@ -31,6 +31,7 @@ type AABB(pMin : MinPoint, pMax : MaxPoint) =
         member this.TMin = 0.001f
         member this.TMax = 500.0f
         // Optimized Ray Box Intersection Phyisically Based Rendering Third Edition p. 129
+        // TODO: investigate performance improvement when passing in invDir
         member this.Intersect ray = 
             let mutable isAcceptable = true
             let invDir = Vector3(1.0f / ray.Direction.X, 1.0f/ ray.Direction.Y, 1.0f / ray.Direction.Z)
