@@ -7,8 +7,8 @@ open HenzaiFunc.Core.RaytraceGeometry
 /// Implements methods to generate a BVH BST
 module BVHTree =
 
-    let buildBVHInfoArray ( geometryArray : AxisAlignedBoundable []) =
-        Array.mapi (fun i (elem : AxisAlignedBoundable) -> BVHPrimitive(i, elem.GetBounds)) geometryArray
+    let buildBVHInfoArray ( geometryArray : RaytracingGeometry []) =
+        Array.mapi (fun i (elem : RaytracingGeometry) -> BVHPrimitive(i, elem.AsBoundable.GetBounds)) geometryArray
 
     let accessPointBySplitAxis (p : Point) axis = 
         match axis with
@@ -33,7 +33,7 @@ module BVHTree =
         | Node (v, l, r) -> (v, l, r)
 
     /// Builds a BST of bounding volumes. Primitives are ordered Smallest-To-Largest along the split axis
-    let rec recursiveBuild ( geometryArray : AxisAlignedBoundable []) (bvhInfoArray : BVHPrimitive []) (start : int) (finish : int) (orderedGeometryList : AxisAlignedBoundable list) (splitMethod : SplitMethods) = 
+    let rec recursiveBuild ( geometryArray : RaytracingGeometry []) (bvhInfoArray : BVHPrimitive []) (start : int) (finish : int) (orderedGeometryList : RaytracingGeometry list) (splitMethod : SplitMethods) = 
         let nPrimitives = finish - start
         if nPrimitives = 1 then
             let bvhPrimitive = bvhInfoArray.[start]
@@ -66,7 +66,7 @@ module BVHTree =
                 let newTotalNodes = leftTotalNodes + rightTotalNodes + 1
                 (Node (bvhNode, Node (leftNode , ll, lr), Node (rightNode , rl, rr)), rightOrderedSubList, newTotalNodes)
 
-    let build ( geometryArray : AxisAlignedBoundable []) (splitMethod : SplitMethods) = 
+    let build ( geometryArray : RaytracingGeometry []) (splitMethod : SplitMethods) = 
         let bvhInfoArray = buildBVHInfoArray geometryArray
         let (bvhTree, orderedGeometryList, totalNodes) = 
             match splitMethod with

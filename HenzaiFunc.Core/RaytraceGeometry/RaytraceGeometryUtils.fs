@@ -34,5 +34,10 @@ module RaytraceGeometryUtils =
         match b with
         | true -> 1
         | false -> 0
+
+    let forceExtract option =
+        match option with
+        | Some x -> x
+        | None -> failwithf "Make sure what you are extracting is not None!"
     
         

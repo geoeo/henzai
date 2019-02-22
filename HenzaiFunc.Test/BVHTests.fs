@@ -7,19 +7,19 @@ open HenzaiFunc.Core.Acceleration
 open HenzaiFunc.Core.Types
 
 
-let simpleSphereGeomertryArray : AxisAlignedBoundable []  = 
+let simpleSphereGeomertryArray : RaytracingGeometry []  = 
     [|
         Sphere(Vector3(4.0f,-1.0f,-15.0f),3.5f);
     |]
 
-let standardSphereGeomertryArray : AxisAlignedBoundable []  = 
+let standardSphereGeomertryArray : RaytracingGeometry []  = 
     [|
         Sphere(Vector3(4.0f,-1.0f,-15.0f),3.5f);
         Sphere(Vector3(10.0f,-4.5f,-7.0f),1.5f);
         Sphere(Vector3(2.0f,-4.5f,-7.0f),1.5f)
     |]
 
-let largeSphereGeomertryArray : AxisAlignedBoundable []  = 
+let largeSphereGeomertryArray : RaytracingGeometry []  = 
     [|
        Sphere(Vector3(4.0f,-2.0f,-16.0f),3.5f);
        Sphere(Vector3(4.0f,5.0f,-16.5f),3.5f);
@@ -28,14 +28,14 @@ let largeSphereGeomertryArray : AxisAlignedBoundable []  =
        Sphere(Vector3(2.0f,-4.5f,-7.0f),1.5f)
     |]
 
-let overlappingSphereGeomertryArray : AxisAlignedBoundable []  = 
+let overlappingSphereGeomertryArray : RaytracingGeometry []  = 
     [|
      Sphere(Vector3(4.0f,-1.0f,-15.0f),100.0f);
      Sphere(Vector3(2.0f,-4.5f,-7.0f),1.5f);
      Sphere(Vector3(2.5f,-4.5f,-7.0f),1.5f)
     |]
 
-let identicalSphereGeomertryArray : AxisAlignedBoundable []  = 
+let identicalSphereGeomertryArray : RaytracingGeometry []  = 
     [|
      Sphere(Vector3(2.0f,-4.5f,-7.0f),1.5f);
      Sphere(Vector3(2.0f,-4.5f,-7.0f),1.5f);
@@ -45,8 +45,12 @@ let identicalSphereGeomertryArray : AxisAlignedBoundable []  =
 [<Fact>]
 let buildBVHSimpleSphereTest () =
     let (bvhTree, orderedPrimitiveList, nodeCount) = BVHTree.build simpleSphereGeomertryArray SplitMethods.Middle
+    let (value, left, right) = BVHTree.decompose bvhTree
     Assert.Equal(1, nodeCount)
     Assert.Equal(1, orderedPrimitiveList.Length)
+    Assert.Equal(1, value.nPrimitives)
+    
+    
 
 [<Fact>]
 let buildBVHStandardSphereTest () =
@@ -84,6 +88,7 @@ let flattenBVHSimpleSphereTest () =
 
     Assert.Equal(Vector3(4.0f,-1.0f,-15.0f), sphere.Center)
     Assert.Equal(1, nodeCount)
+    Assert.Equal(1, bvhRuntimeNode.nPrimitives)
 
 
 [<Fact>]
@@ -220,6 +225,24 @@ let flattenBVHLargeSphereTest () =
     Assert.Equal(Vector3(4.0f,-2.0f,-16.0f), sphere_Three.Center)
     Assert.Equal(Vector3(4.0f,5.0f,-16.5f), sphere_Four.Center)
 
+
+
+[<Fact>]
+let intersectBVHSimpleSphereTest () =
+    let (bvhTree, orderedPrimitiveArray, nodeCount) = BVHTree.build simpleSphereGeomertryArray SplitMethods.Middle
+    let bvhArray = BVHRuntime.allocateMemoryForBVHRuntime nodeCount
+    let out = BVHRuntime.flattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYNegZ
+    let ray = Ray(Vector3(4.0f, -1.0f, -10.0f), Vector3(0.0f, 0.0f, -1.0f))
+    let (hasIntersection, tHit, geometryOption) = BVHRuntime.traverse bvhArray orderedPrimitiveArray ray
+
+    let geometry = RaytraceGeometryUtils.forceExtract geometryOption
+    let sphere = geometry :?> Sphere
+
+
+    Assert.True(hasIntersection)
+    Assert.Equal(Vector3(4.0f,-1.0f,-15.0f), sphere.Center)
+    Assert.Equal(3.5f, sphere.Radius)
+    Assert.Equal(tHit, 1.5f)
     
 
 
