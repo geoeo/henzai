@@ -83,7 +83,7 @@ type Triangle(v0 : Point, v1 : Point, v2 : Point) =
 
                 let pMin = Vector3(MathF.Min(v0.X, MathF.Min(v1.X, v2.X)), MathF.Min(v0.Y, MathF.Min(v1.Y, v2.Y)), MathF.Min(v0.Z, MathF.Min(v1.Z, v2.Z)))
 
-                let pMax = Vector3(MathF.Max(v0.X, MathF.Min(v1.X, v2.X)), MathF.Max(v0.Y, MathF.Min(v1.Y, v2.Y)), MathF.Max(v0.Z, MathF.Min(v1.Z, v2.Z)))
+                let pMax = Vector3(MathF.Max(v0.X, MathF.Max(v1.X, v2.X)), MathF.Max(v0.Y, MathF.Max(v1.Y, v2.Y)), MathF.Max(v0.Z, MathF.Max(v1.Z, v2.Z)))
 
                 AABB(pMin, pMax)
 

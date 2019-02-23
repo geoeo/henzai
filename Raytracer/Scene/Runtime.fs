@@ -113,7 +113,6 @@ type RuntimeScene (surfaces : Surface [], bvhRuntime : BVHRuntime<Surface>, bvhR
         for batchIndex in 0..batches-1 do
             //TODO: Remove this map for / Preallocate array
             let colorSamplesBatch = Array.map (fun i -> async {return rayTraceBase ray px py i batchIndex}) batchIndices
-            //let colorsBatch =  colorSamplesBatch |> Async.Parallel |> Async.RunSynchronously
             let colorsBatch =  colorSamplesBatch |> Async.Parallel |> Async.RunSynchronously
             Array.blit colorsBatch 0 colorSamples (batchIndex*batchSize) batchSize 
         let avgColor = if Array.isEmpty colorSamples then Vector3.Zero else (Array.reduce (+) colorSamples)/(float32)samplesPerPixel

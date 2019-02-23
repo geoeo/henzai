@@ -26,7 +26,7 @@ let lights : Surface list
 let lights_simple : Surface list 
     =  [
         //Emitting(assignIDAndIncrement id, Sphere(Vector3(3.0f, 8.0f, -5.0f),3.0f), Material(Vector3(1.0f,1.0f,1.0f)));
-        //NoSurface(assignIDAndIncrement id, Sphere(Vector3(-5.0f,10.0f,0.0f),2.0f), Material(Rgba32.White,0.0f, Rgba32.White,1.0f));
+        NoSurface(assignIDAndIncrement id, Sphere(Vector3(-5.0f,10.0f,0.0f),2.0f), Material(Rgba32.White,0.0f, Rgba32.White,1.0f));
         NoSurface(assignIDAndIncrement id, Sphere(Vector3(0.0f,-70.0f,0.0f),50.0f), Material(Rgba32.White,0.0f, Rgba32.White,1.0f));
         //NoSurface(assignIDAndIncrement id, Plane(new System.Numerics.Plane((SurfaceNormal -1.0f -1.0f 1.0f),20.0f),Some ((SurfaceNormal -1.0f -1.0f 1.0f)*(-20.0f)),Some 40.0f,Some 13.0f), Material(Rgba32.White, 0.0f, Rgba32.White, 1.0f));
         //NoSurface(assignIDAndIncrement id, Plane(new System.Numerics.Plane((SurfaceNormal 1.0f 0.0f 0.0f),15.0f),Some ((Vector3(-15.0f,5.0f,-10.0f))),Some 20.0f,Some 10.0f), Material(Rgba32.White,0.0f, Rgba32.White,1.0f));
@@ -132,7 +132,7 @@ let plane_floor : Surface list = [
 
 let triangle_scene : Surface list = [
             //Dielectric(assignIDAndIncrement id,Triangle(Vector3(-13.0f,-6.0f,-16.0f),Vector3(-11.0f,-6.0f,-16.0f),Vector3(-12.0f,-3.0f,-16.0f)),Material(Rgba32.IndianRed), 1.5f);
-            Lambertian(assignIDAndIncrement id,Triangle(Vector3(-13.0f,-6.0f,-16.0f),Vector3(-11.0f,-6.0f,-16.0f),Vector3(-12.0f,-3.0f,-16.0f)),Material(Rgba32.IndianRed));
-            Lambertian(assignIDAndIncrement id,Triangle(Vector3(-14.0f,-6.0f,-18.0f),Vector3(-10.0f,-6.0f,-18.0f),Vector3(-12.0f,0.0f,-18.0f)),Material(Rgba32.RoyalBlue));
+            Lambertian(assignIDAndIncrement id,Triangle(Vector3(-13.0f,-6.0f,-16.0f),Vector3(-11.0f,-6.0f,-16.0f),Vector3(-12.0f,-3.0f,-16.0f)),Material(Rgba32.IndianRed, 1.0f, Rgba32.IndianRed, 1.0f));
+            Lambertian(assignIDAndIncrement id,Triangle(Vector3(-14.0f,-6.0f,-18.0f),Vector3(-10.0f,-6.0f,-18.0f),Vector3(-12.0f,0.0f,-18.0f)),Material(Rgba32.RoyalBlue, 1.0f, Rgba32.RoyalBlue, 1.0f));
 ]
 
