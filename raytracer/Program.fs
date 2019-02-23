@@ -1,6 +1,8 @@
 ﻿open Raytracer.Scene.Builder
 open Raytracer.Scene.Runtime
 open BenchmarkDotNet.Running
+open HenzaiFunc.Core.RaytraceGeometry
+open HenzaiFunc.Core.Acceleration
 
 
 let benchmarkScene = lazy BenchmarkRunner.Run<RuntimeScene>()
@@ -9,9 +11,11 @@ let benchmarkScene = lazy BenchmarkRunner.Run<RuntimeScene>()
 let main argv =
     // Console.Write("Press Enter")
     //let input = Console.ReadLine()
-    printfn "Starting.."
+    printfn "Starting.." 
     printfn "Constructing BVH Tree.."
     let (bvhTree, orderedGeometryList, totalNodeCount) = constructBVHTree sceneArray
+    let bvhRuntime = BVHRuntime<RaytracingGeometry>()
+    let bvhRuntimeArray = bvhRuntime.constructBVHRuntime bvhTree totalNodeCount
     printfn "Constructed BVH Tree.."
     let mainScene = RuntimeScene (sceneArray)
     mainScene.RenderScene()

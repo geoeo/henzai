@@ -17,7 +17,7 @@
     <Compile Include="RaytraceGeometry/Plane.fs" />
     <Compile Include="RaytraceGeometry/Triangle.fs" />
     <Compile Include="Acceleration/Culler.fs" />
-    <Compile Include="Acceleration/BVHTree.fs" />
+    <Compile Include="Acceleration/BVHTreeBuilder.fs" />
     <Compile Include="Acceleration/BVHRuntime.fs" />
     <ProjectReference Include="../Henzai.Core/Henzai.Core.csproj" />
   </ItemGroup>

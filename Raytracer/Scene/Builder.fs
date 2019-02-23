@@ -3,6 +3,7 @@ module Raytracer.Scene.Builder
 open Raytracer.Scene.Geometry
 open Raytracer.Surface
 open HenzaiFunc.Core.Types
+open HenzaiFunc.Core.RaytraceGeometry
 open HenzaiFunc.Core.Acceleration
 
 // let scene = List.concat [spheres_scene_2;planes_scene_2;lights]
@@ -13,4 +14,6 @@ let sceneArray : (Surface[]) = sceneList |> Array.ofList
 
 let constructBVHTree surfaceArray = 
     let geometryArray = Array.map (fun (elem : Surface) -> elem.Geometry) surfaceArray
-    BVHTree.build geometryArray SplitMethods.Middle
+    let bvhTreeBuilder = BVHTreeBuilder<RaytracingGeometry>()
+    bvhTreeBuilder.build geometryArray SplitMethods.Middle
+    

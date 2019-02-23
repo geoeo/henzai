@@ -53,6 +53,11 @@ type BVHBuildNode =
 type BVHTree = 
     | Empty
     | Node of node : BVHBuildNode * left : BVHTree * right : BVHTree
+
+    static member decompose (tree : BVHTree) = 
+        match tree with
+        | Empty -> failwith "recursiveBuild produced Empty; this can't happen"
+        | Node (v, l, r) -> (v, l, r)
     
 [<IsReadOnly;Struct>]
 type LeafRuntimeNode =

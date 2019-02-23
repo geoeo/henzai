@@ -5,10 +5,10 @@ open HenzaiFunc.Core.RaytraceGeometry
 
 // Phyisically Based Rendering Third Edition p. 257
 /// Implements methods to generate a BVH BST
-module BVHTree =
+type BVHTreeBuilder<'T when 'T :> AxisAlignedBoundable>() =
 
-    let buildBVHInfoArray ( geometryArray : RaytracingGeometry []) =
-        Array.mapi (fun i (elem : RaytracingGeometry) -> BVHPrimitive(i, elem.AsBoundable.GetBounds)) geometryArray
+    let buildBVHInfoArray ( geometryArray : 'T [] ) =
+        Array.mapi (fun i (elem : 'T) -> BVHPrimitive(i, elem.GetBounds)) geometryArray
 
     let accessPointBySplitAxis (p : Point) axis = 
         match axis with
@@ -27,13 +27,13 @@ module BVHTree =
             (mid , smaller, larger)
         | x -> failwithf "Recursive splitmethod %u not yet implemented" (LanguagePrimitives.EnumToValue x)
 
-    let decompose tree = 
-        match tree with
-        | Empty -> failwith "recursiveBuild produced Empty; this can't happen"
-        | Node (v, l, r) -> (v, l, r)
+    //let decompose tree = 
+        //match tree with
+        //| Empty -> failwith "recursiveBuild produced Empty; this can't happen"
+        //| Node (v, l, r) -> (v, l, r)
 
     /// Builds a BST of bounding volumes. Primitives are ordered Smallest-To-Largest along the split axis
-    let rec recursiveBuild ( geometryArray : RaytracingGeometry []) (bvhInfoArray : BVHPrimitive []) (start : int) (finish : int) (orderedGeometryList : RaytracingGeometry list) (splitMethod : SplitMethods) = 
+    let rec recursiveBuild ( geometryArray : 'T []) (bvhInfoArray : BVHPrimitive []) (start : int) (finish : int) (orderedGeometryList : 'T  list) (splitMethod : SplitMethods) = 
         let nPrimitives = finish - start
         if nPrimitives = 1 then
             let bvhPrimitive = bvhInfoArray.[start]
@@ -60,13 +60,13 @@ module BVHTree =
                 // TODO: investigate Parallel, need to rework sublists as they have a seq dependency
                 let (leftSubTree, leftOrderedSubList, leftTotalNodes) = recursiveBuild geometryArray bvhInfoArray start splitPoint orderedGeometryList splitMethod
                 let (rightSubTree, rightOrderedSubList, rightTotalNodes) = recursiveBuild geometryArray bvhInfoArray splitPoint finish leftOrderedSubList splitMethod
-                let leftNode, ll, lr =  decompose leftSubTree
-                let rightNode, rl, rr =  decompose rightSubTree
+                let (leftNode, ll, lr)  =  BVHTree.decompose leftSubTree
+                let (rightNode, rl, rr) =  BVHTree.decompose rightSubTree
                 let bvhNode = BVHBuildNode(axis, start, 0, AABB.unionWithAABB leftNode.aabb rightNode.aabb)
                 let newTotalNodes = leftTotalNodes + rightTotalNodes + 1
                 (Node (bvhNode, Node (leftNode , ll, lr), Node (rightNode , rl, rr)), rightOrderedSubList, newTotalNodes)
 
-    let build ( geometryArray : RaytracingGeometry []) (splitMethod : SplitMethods) = 
+    member this.build ( geometryArray : 'T []) (splitMethod : SplitMethods) = 
         let bvhInfoArray = buildBVHInfoArray geometryArray
         let (bvhTree, orderedGeometryList, totalNodes) = 
             match splitMethod with
@@ -76,4 +76,6 @@ module BVHTree =
             | x -> failwithf "Splitmethod %u not yet implemented" (LanguagePrimitives.EnumToValue x)
         // Need to reverse since implicit indexing via build is for a Queue (FIFO) data structure
         (bvhTree, List.toArray (List.rev orderedGeometryList), totalNodes)
+
+
         

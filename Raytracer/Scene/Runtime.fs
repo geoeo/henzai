@@ -8,6 +8,8 @@ open System.Numerics
 open Raytracer.Camera
 open HenzaiFunc.Core.RaytraceGeometry
 open Henzai.Core.Numerics
+open HenzaiFunc.Core.Types
+open HenzaiFunc.Core.Acceleration
 open Raytracer.Surface
 open Raytracer.Scene.Builder
 open Raytracer.RuntimeParameters
