@@ -56,6 +56,15 @@ let smallLargeInFrontSphereGeometryArray : RaytracingGeometry [] =
     |]
 
 
+let smallLargeInFront2SphereGeometryArray : RaytracingGeometry [] =
+    [|
+        Sphere(Vector3(4.0f,-1.0f,-15.0f),3.5f);
+        Sphere(Vector3(-4.5f,-1.5f,-3.5f),5.5f);
+        Sphere(Vector3(0.0f,-70.0f,0.0f),50.0f)
+    |]
+   
+
+
 
 [<Fact>]
 let buildBVHSimpleSphereTest () =
@@ -402,4 +411,9 @@ let intersectBVHSmallLargeSphereInfrontTest () =
 
 
     Assert.True(hasIntersection)
+
+
+//TODO: Write test for one AABB being infront (Z) if another
+// but the actual geometry intersection is in the one behind
+
 

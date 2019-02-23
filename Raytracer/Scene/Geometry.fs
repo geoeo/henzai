@@ -92,8 +92,8 @@ let spheres_scene_2 : Surface list
 
 let spheres_scene_3 : Surface list
      = [
-         Lambertian(assignIDAndIncrement id,Sphere(Vector3(4.0f,-1.0f,-15.0f),3.5f), Material(Rgba32.RoyalBlue));
-         Lambertian(assignIDAndIncrement id,Sphere(Vector3(1.5f,-1.5f,-3.5f),5.5f), Material(Rgba32.Red));
+         Lambertian(assignIDAndIncrement id,Sphere(Vector3(6.5f,-1.0f,-15.0f),3.5f), Material(Rgba32.RoyalBlue));
+         Lambertian(assignIDAndIncrement id,Sphere(Vector3(-4.5f,-1.5f,-3.5f),2.5f), Material(Rgba32.Red));
        ]
 
 let spheres_glass : Surface list = [

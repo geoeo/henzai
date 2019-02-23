@@ -58,7 +58,12 @@ type BVHTree =
         match tree with
         | Empty -> failwith "recursiveBuild produced Empty; this can't happen"
         | Node (v, l, r) -> (v, l, r)
-    
+
+    static member isEmpty (tree : BVHTree) = 
+        match tree with
+        | Empty -> true
+        | _ -> false
+
 [<IsReadOnly;Struct>]
 type LeafRuntimeNode =
     val primitivesOffset : int
