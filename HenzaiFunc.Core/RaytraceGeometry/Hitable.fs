@@ -6,6 +6,7 @@ type Hitable =
 
     abstract member HasIntersection: Ray -> bool
     abstract member Intersect: Ray -> bool*LineParameter
+    //TODO: Make Point optional
     abstract member IntersectionAcceptable : bool -> LineParameter -> float32 -> Point -> bool
     abstract member NormalForSurfacePoint : Point -> Normal
     abstract member IsObstructedBySelf: Ray -> bool 

@@ -84,9 +84,9 @@ type InteriorRuntimeNode =
 /// 32 byte aligned struct for cache efficiency
 [<IsReadOnly;Struct;StructLayout(LayoutKind.Explicit)>]
 type BVHRuntimeNode =
-    [<FieldOffset 8>] val aabb : AABB // 8 bytes on 64 bit
-    [<FieldOffset 16>] val interiorNode : InteriorRuntimeNode // 8 bytes
-    [<FieldOffset 20>] val leafNode : LeafRuntimeNode // 8 bytes
+    [<FieldOffset 0>] val aabb : AABB // 8 bytes on 64 bit
+    [<FieldOffset 12>] val interiorNode : InteriorRuntimeNode // 8 bytes
+    [<FieldOffset 20>] val leafNode : LeafRuntimeNode // 4 bytes
     [<FieldOffset 24>] val nPrimitives : int // 8 bytes on 64 bit
 
     new(aabbIn, interiorNodeIn, nPrimitivesIn) = {aabb = aabbIn; interiorNode = interiorNodeIn; nPrimitives = nPrimitivesIn ;leafNode = LeafRuntimeNode()}

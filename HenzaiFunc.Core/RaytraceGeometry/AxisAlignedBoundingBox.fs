@@ -59,7 +59,7 @@ type AABB(pMin : MinPoint, pMax : MaxPoint) =
             if tMin < 0.0f then tMin <- tMax else ()
 
 
-            (tMin < this.AsHitable.TMax && tMax > 0.0f && passed , tMin)
+            (tMin > this.AsHitable.TMin && tMin < this.AsHitable.TMax && tMax > 0.0f && passed , tMin)
 
         member this.HasIntersection ray =
             let (hasIntersection,_) = this.AsHitable.Intersect ray 

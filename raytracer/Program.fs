@@ -1,7 +1,7 @@
 ﻿open Raytracer.Scene.Builder
 open Raytracer.Scene.Runtime
 open BenchmarkDotNet.Running
-open HenzaiFunc.Core.RaytraceGeometry
+open Raytracer.Surface
 open HenzaiFunc.Core.Acceleration
 
 
@@ -13,11 +13,12 @@ let main argv =
     //let input = Console.ReadLine()
     printfn "Starting.." 
     printfn "Constructing BVH Tree.."
-    let (bvhTree, orderedGeometryList, totalNodeCount) = constructBVHTree sceneArray
-    let bvhRuntime = BVHRuntime<RaytracingGeometry>()
+    let (bvhTree, orderedSurfaceArray, totalNodeCount) = constructBVHTree sceneArray
+    let bvhRuntime = BVHRuntime<Surface>()
     let bvhRuntimeArray = bvhRuntime.constructBVHRuntime bvhTree totalNodeCount
     printfn "Constructed BVH Tree.."
-    let mainScene = RuntimeScene (sceneArray)
+    printfn "Rendering.."
+    let mainScene = RuntimeScene (orderedSurfaceArray, bvhRuntime, bvhRuntimeArray)
     mainScene.RenderScene()
     printfn "Finished Rendering"
     mainScene.SaveFrameBuffer()

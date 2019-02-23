@@ -8,12 +8,12 @@ open HenzaiFunc.Core.Acceleration
 
 // let scene = List.concat [spheres_scene_2;planes_scene_2;lights]
 // let scene = List.concat [triangle_scene;planes_scene_2;lights]
-let sceneList = List.concat [spheres_scene_2;triangle_scene;planes_scene_2;lights]
+//let sceneList = List.concat [spheres_scene_2;triangle_scene;planes_scene_2;lights]
+let sceneList = List.concat [spheres_scene_2;lights_simple]
 let sceneArray : (Surface[]) = sceneList |> Array.ofList
 //let scene = List.concat [plane_floor;light_sphere;spheres_glass]
 
 let constructBVHTree surfaceArray = 
-    let geometryArray = Array.map (fun (elem : Surface) -> elem.Geometry) surfaceArray
-    let bvhTreeBuilder = BVHTreeBuilder<RaytracingGeometry>()
-    bvhTreeBuilder.build geometryArray SplitMethods.Middle
+    let bvhTreeBuilder = BVHTreeBuilder<Surface>()
+    bvhTreeBuilder.build surfaceArray SplitMethods.Middle
     

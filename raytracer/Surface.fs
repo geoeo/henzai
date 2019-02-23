@@ -40,6 +40,19 @@ type Surface(id: ID, geometry : RaytracingGeometry, material : Raytracer.Materia
             samplesArray.SetValue(shading, i)
         (this.SampleCount, samplesArray)
 
+    interface Hitable with
+        member this.TMin = this.Geometry.AsHitable.TMin
+        member this.TMax = this.Geometry.AsHitable.TMax
+        member this.HasIntersection ray = this.Geometry.AsHitable.HasIntersection ray
+        member this.Intersect ray = this.Geometry.AsHitable.Intersect ray
+        member this.IntersectionAcceptable b t factor point = this.Geometry.AsHitable.IntersectionAcceptable b t factor point
+        member this.NormalForSurfacePoint point = this.Geometry.AsHitable.NormalForSurfacePoint point
+        member this.IsObstructedBySelf ray = this.Geometry.AsHitable.IsObstructedBySelf ray
+
+    interface AxisAlignedBoundable with
+        member this.GetBounds = this.Geometry.AsBoundable.GetBounds
+        member this.IsBoundable = this.Geometry.AsBoundable.IsBoundable
+
 
 type NoSurface(id: ID, geometry : RaytracingGeometry, material : Raytracer.Material.Material) =
     inherit Surface(id, geometry, material)

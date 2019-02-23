@@ -15,7 +15,7 @@ open Raytracer.Scene.Builder
 open Raytracer.RuntimeParameters
 open BenchmarkDotNet.Attributes
 
-type RuntimeScene (surfaces : Surface []) =
+type RuntimeScene (surfaces : Surface [], bvhRuntime : BVHRuntime<Surface>, bvhRuntimeArray : BVHRuntimeNode []) =
 
     let batches = samplesPerPixel / batchSize
     let batchIndices = [|1..batchSize|]
@@ -51,10 +51,41 @@ type RuntimeScene (surfaces : Surface []) =
             backgroundColor
         else
             let currentTraceDepth = previousTraceDepth + 1us
-            let (realSolution,t,surface) = findClosestIntersection ray surfaces
-            let surfaceGeometry : RaytracingGeometry = surface.Geometry
-            if surfaceGeometry.AsHitable.IntersectionAcceptable realSolution t 1.0f (RaytraceGeometryUtils.PointForRay ray t)
-            then
+            //let (realSolution,t,surface) = findClosestIntersection ray surfaces
+            let (realSolution, t, surfaceOption) = bvhRuntime.traverse bvhRuntimeArray surfaces ray
+            if realSolution then
+                let surface = surfaceOption.Value
+                let surfaceGeometry = surface.Geometry
+                if surfaceGeometry.AsHitable.IntersectionAcceptable realSolution t 1.0f (RaytraceGeometryUtils.PointForRay ray t)
+                then
+                    let emittedRadiance = surface.Emitted
+                    let (validSamples,raySamples) = surface.GenerateSamples ray t ((int)currentTraceDepth) surface.SamplesArray
+                    if validSamples = 0 then
+                        emittedRadiance
+                    else 
+                        let mutable totalReflectedLight = Vector3.Zero
+                        for i in 0..validSamples-1 do
+                            let (ray,shading) = raySamples.[i]
+                            totalReflectedLight <- totalReflectedLight + shading*rayTrace currentTraceDepth ray
+                        emittedRadiance + totalReflectedLight/(float32)validSamples              
+                else 
+                    backgroundColor
+             else
+                 backgroundColor
+
+
+    let rayTraceBase (ray : Ray) px py iteration batchIndex = 
+        let dotLookAtAndTracingRay = Vector3.Dot(Vector3.Normalize(lookAt), ray.Direction)
+        //let (realSolution,t,surface) = findClosestIntersection ray surfaces
+        let (realSolution, t, surfaceOption) = bvhRuntime.traverse bvhRuntimeArray surfaces ray
+
+        if realSolution then
+            let surface = surfaceOption.Value
+            let surfaceGeometry = surface.Geometry
+            if surfaceGeometry.AsHitable.IntersectionAcceptable realSolution t dotLookAtAndTracingRay (RaytraceGeometryUtils.PointForRay ray t) then
+                if iteration = 1 && batchIndex = 0 then writeToDepthBuffer t px py
+
+                let currentTraceDepth = 0us
                 let emittedRadiance = surface.Emitted
                 let (validSamples,raySamples) = surface.GenerateSamples ray t ((int)currentTraceDepth) surface.SamplesArray
                 if validSamples = 0 then
@@ -64,32 +95,12 @@ type RuntimeScene (surfaces : Surface []) =
                     for i in 0..validSamples-1 do
                         let (ray,shading) = raySamples.[i]
                         totalReflectedLight <- totalReflectedLight + shading*rayTrace currentTraceDepth ray
-                    emittedRadiance + totalReflectedLight/(float32)validSamples              
-            else 
-                backgroundColor
-
-
-    let rayTraceBase (ray : Ray) px py iteration batchIndex = 
-        let dotLookAtAndTracingRay = Vector3.Dot(Vector3.Normalize(lookAt), ray.Direction)
-        let (realSolution,t,surface) = findClosestIntersection ray surfaces
-        let surfaceGeometry = surface.Geometry
-        if surfaceGeometry.AsHitable.IntersectionAcceptable realSolution t dotLookAtAndTracingRay (RaytraceGeometryUtils.PointForRay ray t) then
-            if iteration = 1 && batchIndex = 0 then writeToDepthBuffer t px py
-
-            let currentTraceDepth = 0us
-            let emittedRadiance = surface.Emitted
-            let (validSamples,raySamples) = surface.GenerateSamples ray t ((int)currentTraceDepth) surface.SamplesArray
-            if validSamples = 0 then
-                emittedRadiance
-            else 
-                let mutable totalReflectedLight = Vector3.Zero
-                for i in 0..validSamples-1 do
-                    let (ray,shading) = raySamples.[i]
-                    totalReflectedLight <- totalReflectedLight + shading*rayTrace currentTraceDepth ray
-                emittedRadiance + totalReflectedLight/(float32)validSamples
-            
-        else
-            backgroundColor 
+                    emittedRadiance + totalReflectedLight/(float32)validSamples
+                
+            else
+                backgroundColor 
+         else
+             backgroundColor
 
     let renderPass px py = 
         let dirCS = 
