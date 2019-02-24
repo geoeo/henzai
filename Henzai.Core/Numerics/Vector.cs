@@ -20,6 +20,12 @@ namespace Henzai.Core.Numerics {
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector4 RoundVec4(ref Vector4 vec4, int digits)
+        {
+            return new Vector4(MathF.Round(vec4.X, digits), MathF.Round(vec4.Y, digits), MathF.Round(vec4.Z, digits), MathF.Round(vec4.W, digits));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector3 ToVec3(ref Vector4 vec4){
             return new Vector3(vec4.X, vec4.Y, vec4.Z);
         }
@@ -57,6 +63,23 @@ namespace Henzai.Core.Numerics {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float DistanceSquared(ref Vector3 from, ref Vector3 to){
             return (to - from).LengthSquared();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void RoundVectorInMem(ref Vector4 vec, int digits)
+        {
+            vec.X = MathF.Round(vec.X, digits);
+            vec.Y = MathF.Round(vec.Y, digits);
+            vec.Z = MathF.Round(vec.Z, digits);
+            vec.W = MathF.Round(vec.W, digits);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void RoundVectorInMem(ref Vector3 vec, int digits)
+        {
+            vec.X = MathF.Round(vec.X, digits);
+            vec.Y = MathF.Round(vec.Y, digits);
+            vec.Z = MathF.Round(vec.Z, digits);
         }
 
 

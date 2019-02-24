@@ -8,11 +8,11 @@ open HenzaiFunc.Core.Acceleration
 
 // let scene = List.concat [spheres_scene_2;planes_scene_2;lights]
 // let scene = List.concat [triangle_scene;planes_scene_2;lights]
-let sceneList = List.concat [planes_scene_2;lights]
+let sceneList = List.concat [spheres_scene_2;lights]
 //let sceneList = List.concat [lights]
 let sceneArray : (Surface[]) = sceneList |> Array.ofList
-//let sceneNonBoundableArray : Surface [] = List.concat [plane_floor] |> Array.ofList
-let sceneNonBoundableArray : Surface [] = List.concat [] |> Array.ofList
+let sceneNonBoundableArray : Surface [] = List.concat [plane_floor] |> Array.ofList
+//let sceneNonBoundableArray : Surface [] = List.concat [] |> Array.ofList
 //let scene = List.concat [plane_floor;light_sphere;spheres_glass]
 
 let constructBVHTree surfaceArray = 
