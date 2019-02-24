@@ -7,8 +7,8 @@ let metalSampleCount = 1
 
 let width = 800
 let height = 640
-let samplesPerPixel = 1
-let batchSize = 1
+let samplesPerPixel = 8
+let batchSize = 8
 let maxTraceDepth = 5us
 
 let sceneImageName = "scene.jpg"

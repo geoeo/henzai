@@ -18,7 +18,7 @@ let main argv =
     let bvhRuntimeArray = bvhRuntime.constructBVHRuntime bvhTree totalNodeCount
     printfn "Constructed BVH Tree.."
     printfn "Rendering.."
-    let mainScene = RuntimeScene (orderedSurfaceArray, bvhRuntime, bvhRuntimeArray)
+    let mainScene = RuntimeScene (orderedSurfaceArray, sceneNonBoundableArray, bvhRuntime, bvhRuntimeArray)
     mainScene.RenderScene()
     printfn "Finished Rendering"
     mainScene.SaveFrameBuffer()

@@ -15,7 +15,8 @@ open Raytracer.Scene.Builder
 open Raytracer.RuntimeParameters
 open BenchmarkDotNet.Attributes
 
-type RuntimeScene (surfaces : Surface [], bvhRuntime : BVHRuntime<Surface>, bvhRuntimeArray : BVHRuntimeNode []) =
+//TODO: make this also work with unboundable geometry i.e. infinite planes
+type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvhRuntime : BVHRuntime<Surface>, bvhRuntimeArray : BVHRuntimeNode []) =
 
     let batches = samplesPerPixel / batchSize
     let batchIndices = [|1..batchSize|]
@@ -51,12 +52,21 @@ type RuntimeScene (surfaces : Surface [], bvhRuntime : BVHRuntime<Surface>, bvhR
             backgroundColor
         else
             let currentTraceDepth = previousTraceDepth + 1us
-            //let (realSolution,t,surface) = findClosestIntersection ray surfaces
-            let (realSolution, t, surfaceOption) = bvhRuntime.traverse bvhRuntimeArray surfaces ray
-            if realSolution then
-                let surface = surfaceOption.Value
+            let mutable (hasIntersection, t, surface) = findClosestIntersection ray surfaces
+            //let mutable (hasIntersection, t, surfaceOption) = bvhRuntime.traverse bvhRuntimeArray surfaces ray
+
+            // Some geometry is not present in the BVH i.e. infinite planes
+            let (b, t2, s) = findClosestIntersection ray nonBoundableSurfaces
+            if t2 < t && s.Geometry.AsHitable.IntersectionAcceptable b t2 1.0f (RaytraceGeometryUtils.PointForRay ray t2) then
+                hasIntersection <- b
+                t <- t2
+                //surfaceOption <- Some s
+                surface <- s
+
+            if hasIntersection then
+                //let surface = surfaceOption.Value
                 let surfaceGeometry = surface.Geometry
-                if surfaceGeometry.AsHitable.IntersectionAcceptable realSolution t 1.0f (RaytraceGeometryUtils.PointForRay ray t)
+                if surfaceGeometry.AsHitable.IntersectionAcceptable hasIntersection t 1.0f (RaytraceGeometryUtils.PointForRay ray t)
                 then
                     let emittedRadiance = surface.Emitted
                     let (validSamples,raySamples) = surface.GenerateSamples ray t ((int)currentTraceDepth) surface.SamplesArray
@@ -76,14 +86,22 @@ type RuntimeScene (surfaces : Surface [], bvhRuntime : BVHRuntime<Surface>, bvhR
 
     let rayTraceBase (ray : Ray) px py iteration batchIndex = 
         let dotLookAtAndTracingRay = Vector3.Dot(Vector3.Normalize(lookAt), ray.Direction)
-        //let (realSolution,t,surface) = findClosestIntersection ray surfaces
-        let (realSolution, t, surfaceOption) = bvhRuntime.traverse bvhRuntimeArray surfaces ray
+        let mutable (hasIntersection, t, surface) = findClosestIntersection ray surfaces
+        //let mutable (hasIntersection, t, surfaceOption) = bvhRuntime.traverse bvhRuntimeArray surfaces ray
 
-        if realSolution then
-            let surface = surfaceOption.Value
+        // Some geometry is not present in the BVH i.e. infinite planes
+        let (b, t2, s) = findClosestIntersection ray nonBoundableSurfaces
+        if t2 < t && s.Geometry.AsHitable.IntersectionAcceptable b t2 dotLookAtAndTracingRay (RaytraceGeometryUtils.PointForRay ray t2) then
+            hasIntersection <- b
+            t <- t2
+            //surfaceOption <- Some s
+            surface <- s
+
+        if hasIntersection then
+            //let surface = surfaceOption.Value
 
             let surfaceGeometry = surface.Geometry
-            if surfaceGeometry.AsHitable.IntersectionAcceptable realSolution t dotLookAtAndTracingRay (RaytraceGeometryUtils.PointForRay ray t) then
+            if surfaceGeometry.AsHitable.IntersectionAcceptable hasIntersection t dotLookAtAndTracingRay (RaytraceGeometryUtils.PointForRay ray t) then
                 if iteration = 1 && batchIndex = 0 then writeToDepthBuffer t px py
 
                 let currentTraceDepth = 0us

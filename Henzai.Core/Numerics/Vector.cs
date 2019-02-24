@@ -7,7 +7,7 @@ namespace Henzai.Core.Numerics {
     public static class Vector {
 
         public static Vector3 Normalize(ref Vector3 vec){
-            if (Math.Round(vec.Length(),5) == 1.0f)
+            if (Math.Round(vec.Length(), 5) == 1.0f)
                 return vec;
             else
                 Console.WriteLine($"WARN: Vector3 not normalized {vec.X} {vec.Y} {vec.Z}");
