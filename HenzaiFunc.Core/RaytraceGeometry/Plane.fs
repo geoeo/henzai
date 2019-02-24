@@ -39,8 +39,11 @@ type Plane(plane : System.Numerics.Plane, center : Point option, width : float32
         let(pMin, pMax) =
             if center.IsNone then (Vector3.Zero, Vector3.Zero)
             else
-                let withVal = width.Value
-                let heightVal = height.Value
+                //let withVal = width.Value
+                //let heightVal = height.Value
+
+                let withVal = widthOff
+                let heightVal = heightOff
 
                 let p1 = Vector4(-withVal, heightVal, -1.0f, 0.0f)
                 let p2 = Vector4(-withVal, heightVal, 1.0f, 0.0f)
