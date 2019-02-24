@@ -12,6 +12,8 @@
     <Compile Include="SphereTests.fs" />
     <Compile Include="TypeTests.fs" />
     <Compile Include="AABBTests.fs" />
+    <Compile Include="BVHPlaneTests.fs" />
+    <Compile Include="PlaneTests.fs" />
     <Compile Include="Program.fs" />
     <ProjectReference Include="../HenzaiFunc.Core/HenzaiFunc.Core.fsproj" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />

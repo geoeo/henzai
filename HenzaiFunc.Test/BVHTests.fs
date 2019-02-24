@@ -418,8 +418,6 @@ let intersectBVHSmallLargeSphereInfrontTest () =
 
     Assert.True(hasIntersection)
 
-
-//TODO: Write test for one AABB being infront (Z) if another
-// but the actual geometry intersection is in the one behind
+    
 
 
