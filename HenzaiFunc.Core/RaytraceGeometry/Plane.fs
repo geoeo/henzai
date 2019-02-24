@@ -34,35 +34,37 @@ type Plane(plane : System.Numerics.Plane, center : Point option, width : float32
         let b_canonical = Vector4.Transform(Henzai.Core.Numerics.Vector.ToHomogeneous(ref b, 0.0f), R_orientation_canoical)
 
         let(pMin, pMax) =
-            let xCanonical = widthOff*Vector4(1.0f, 0.0f, 0.0f, 0.0f)
-            let yCanonical = heightOff*Vector4(0.0f, 1.0f, 0.0f, 0.0f)
-            let zCanonical = Vector4(0.0f, 0.0f, 1.0f, 0.0f)
+            if center.IsNone then (Vector3.Zero, Vector3.Zero)
+            else
+                let xCanonical = Vector4(1.0f, 0.0f, 0.0f, 0.0f)
+                let yCanonical = Vector4(0.0f, 1.0f, 0.0f, 0.0f)
+                let zCanonical = Vector4(0.0f, 0.0f, -1.0f, 0.0f)
 
-            let xObj = Henzai.Core.Numerics.Vector.ToVec3(Vector4.Transform(xCanonical, R_canoical_orientation))
-            let yObj = Henzai.Core.Numerics.Vector.ToVec3(Vector4.Transform(yCanonical, R_canoical_orientation))
-            let zObj = Henzai.Core.Numerics.Vector.ToVec3(Vector4.Transform(zCanonical, R_canoical_orientation))
+                let xObj = widthOff*Henzai.Core.Numerics.Vector.ToVec3(Vector4.Transform(xCanonical, R_canoical_orientation))
+                let yObj = heightOff*Henzai.Core.Numerics.Vector.ToVec3(Vector4.Transform(yCanonical, R_canoical_orientation))
+                let zObj = Henzai.Core.Numerics.Vector.ToVec3(Vector4.Transform(zCanonical, R_canoical_orientation))
 
-            let pXA = center.Value + xObj
-            let pXB = center.Value - xObj
+                let pXA = center.Value + xObj
+                let pXB = center.Value - xObj
 
-            let pYA = center.Value + yObj
-            let pYB = center.Value - yObj
+                let pYA = center.Value + yObj
+                let pYB = center.Value - yObj
 
-            let pZA = center.Value + zObj
-            let pZB = center.Value - zObj
+                let pZA = center.Value + zObj
+                let pZB = center.Value - zObj
 
-            let xMin = MathF.Min(pXA.X, MathF.Min(pXB.X, MathF.Min(pYA.X, MathF.Min(pYB.X, MathF.Min(pZA.X, pZB.X)))))
-            let yMin = MathF.Min(pXA.Y, MathF.Min(pXB.Y, MathF.Min(pYA.Y, MathF.Min(pYB.Y, MathF.Min(pZA.Y, pZB.Y)))))
-            let zMin = MathF.Min(pXA.Z, MathF.Min(pXB.Z, MathF.Min(pYA.Z, MathF.Min(pYB.Z, MathF.Min(pZA.Z, pZB.Z)))))
+                let xMin = MathF.Min(pXA.X, MathF.Min(pXB.X, MathF.Min(pYA.X, MathF.Min(pYB.X, MathF.Min(pZA.X, pZB.X)))))
+                let yMin = MathF.Min(pXA.Y, MathF.Min(pXB.Y, MathF.Min(pYA.Y, MathF.Min(pYB.Y, MathF.Min(pZA.Y, pZB.Y)))))
+                let zMin = MathF.Min(pXA.Z, MathF.Min(pXB.Z, MathF.Min(pYA.Z, MathF.Min(pYB.Z, MathF.Min(pZA.Z, pZB.Z)))))
 
-            let xMax = MathF.Max(pXA.X, MathF.Max(pXB.X, MathF.Max(pYA.X, MathF.Max(pYB.X, MathF.Max(pZA.X, pZB.X)))))
-            let yMax = MathF.Max(pXA.Y, MathF.Max(pXB.Y, MathF.Max(pYA.Y, MathF.Max(pYB.Y, MathF.Max(pZA.Y, pZB.Y)))))
-            let zMax = MathF.Max(pXA.Z, MathF.Max(pXB.Z, MathF.Max(pYA.Z, MathF.Max(pYB.Z, MathF.Max(pZA.Z, pZB.Z)))))
+                let xMax = MathF.Max(pXA.X, MathF.Max(pXB.X, MathF.Max(pYA.X, MathF.Max(pYB.X, MathF.Max(pZA.X, pZB.X)))))
+                let yMax = MathF.Max(pXA.Y, MathF.Max(pXB.Y, MathF.Max(pYA.Y, MathF.Max(pYB.Y, MathF.Max(pZA.Y, pZB.Y)))))
+                let zMax = MathF.Max(pXA.Z, MathF.Max(pXB.Z, MathF.Max(pYA.Z, MathF.Max(pYB.Z, MathF.Max(pZA.Z, pZB.Z)))))
 
-            let pMin = Vector3(xMin, yMin, zMin)
-            let pMax = Vector3(xMax, yMax, zMax)
+                let pMin = Vector3(xMin, yMin, zMin)
+                let pMax = Vector3(xMax, yMax, zMax)
 
-            (pMin, pMax)
+                (pMin, pMax)
             
 
         let pointLiesInRectangle (point : Point) =
@@ -101,12 +103,6 @@ type Plane(plane : System.Numerics.Plane, center : Point option, width : float32
                 normal
 
         interface AxisAlignedBoundable with
-            // TODO: Seems wrong
-            override this.GetBounds =
-
-                if center.IsNone then AABB(Vector3.Zero, Vector3.Zero)
-
-                else
-                    AABB(pMin, pMax)
+            override this.GetBounds = AABB(pMin, pMax)
 
             override this.IsBoundable = center.IsSome

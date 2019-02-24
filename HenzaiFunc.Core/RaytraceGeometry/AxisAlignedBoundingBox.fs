@@ -35,7 +35,7 @@ type AABB(pMin : MinPoint, pMax : MaxPoint) =
         member this.Intersect ray = 
             //let mutable isAcceptable = true
             let invDir = Vector3(1.0f / ray.Direction.X, 1.0f/ ray.Direction.Y, 1.0f / ray.Direction.Z)
-            let (isXDirNeg, isYDirNeg, isZDirNeg) = (invDir.X < 0.0f, invDir.Y < 0.0f, invDir.Z < 0.0f)
+            let struct(isXDirNeg, isYDirNeg, isZDirNeg) = struct(invDir.X < 0.0f, invDir.Y < 0.0f, invDir.Z < 0.0f)
             let gamma3 = (RaytraceGeometryUtils.gamma 3)
 
             let mutable tMin = (this.boundingCorners.[RaytraceGeometryUtils.boolToInt isXDirNeg].X - ray.Origin.X) * invDir.X

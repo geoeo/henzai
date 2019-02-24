@@ -298,9 +298,10 @@ let intersectBVHSimpleSphereTest () =
     let bvhRuntime = BVHRuntime<RaytracingGeometry>() 
     let (bvhTree, orderedPrimitiveArray, nodeCount) = bvhTreeBuilder.build simpleSphereGeomertryArray SplitMethods.Middle
     let bvhArray = bvhRuntime.allocateMemoryForBVHRuntime nodeCount
+    let bvhRuntimeStack = Array.zeroCreate bvhArray.Length
     let out = bvhRuntime.flattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYNegZ
     let ray = Ray(Vector3(4.0f, -1.0f, -10.0f), Vector3(0.0f, 0.0f, -1.0f))
-    let (hasIntersection, tHit, geometryOption) = bvhRuntime.traverse bvhArray orderedPrimitiveArray ray
+    let (hasIntersection, tHit, geometryOption) = bvhRuntime.traverse bvhArray orderedPrimitiveArray bvhRuntimeStack ray
 
     let geometry = RaytraceGeometryUtils.forceExtract geometryOption
     let sphere = geometry :?> Sphere
@@ -318,9 +319,10 @@ let intersectBVHStandardSphereTest () =
     let bvhRuntime = BVHRuntime<RaytracingGeometry>()
     let (bvhTree, orderedPrimitiveArray, nodeCount) = bvhTreeBuilder.build standardSphereGeomertryArray SplitMethods.Middle
     let bvhArray = bvhRuntime.allocateMemoryForBVHRuntime nodeCount
+    let bvhRuntimeStack = Array.zeroCreate bvhArray.Length
     let out = bvhRuntime.flattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYNegZ
     let ray = Ray(Vector3(12.0f, -4.5f, -7.0f), Vector3(-1.0f, 0.0f, 0.0f))
-    let (hasIntersection, tHit, geometryOption) = bvhRuntime.traverse bvhArray orderedPrimitiveArray ray
+    let (hasIntersection, tHit, geometryOption) = bvhRuntime.traverse bvhArray orderedPrimitiveArray bvhRuntimeStack ray
 
     let geometry = RaytraceGeometryUtils.forceExtract geometryOption
     let sphere = geometry :?> Sphere
@@ -338,9 +340,10 @@ let intersectBVHIdenticalSphereTest () =
     let bvhRuntime = BVHRuntime<RaytracingGeometry>()
     let (bvhTree, orderedPrimitiveArray, nodeCount) = bvhTreeBuilder.build identicalSphereGeomertryArray SplitMethods.Middle
     let bvhArray = bvhRuntime.allocateMemoryForBVHRuntime nodeCount
+    let bvhRuntimeStack = Array.zeroCreate bvhArray.Length
     let out = bvhRuntime.flattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYNegZ
     let ray = Ray(Vector3(2.0f, -10.5f, -7.0f), Vector3(0.0f, 1.0f, 0.0f))
-    let (hasIntersection, tHit, geometryOption) = bvhRuntime.traverse bvhArray orderedPrimitiveArray ray
+    let (hasIntersection, tHit, geometryOption) = bvhRuntime.traverse bvhArray orderedPrimitiveArray bvhRuntimeStack ray
 
     let geometry = RaytraceGeometryUtils.forceExtract geometryOption
     let sphere = geometry :?> Sphere
@@ -359,9 +362,10 @@ let intersectBVHLargeSphereTest () =
     let bvhRuntime = BVHRuntime<RaytracingGeometry>()
     let (bvhTree, orderedPrimitiveArray, nodeCount) = bvhTreeBuilder.build largeSphereGeomertryArray SplitMethods.Middle
     let bvhArray = bvhRuntime.allocateMemoryForBVHRuntime nodeCount
+    let bvhRuntimeStack = Array.zeroCreate bvhArray.Length
     let out = bvhRuntime.flattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYNegZ
     let ray = Ray(Vector3(4.0f, 5.0f, -22.0f), Vector3(0.0f, 0.0f, 1.0f))
-    let (hasIntersection, tHit, geometryOption) = bvhRuntime.traverse bvhArray orderedPrimitiveArray ray
+    let (hasIntersection, tHit, geometryOption) = bvhRuntime.traverse bvhArray orderedPrimitiveArray bvhRuntimeStack ray
 
     let geometry = RaytraceGeometryUtils.forceExtract geometryOption
     let sphere = geometry :?> Sphere
@@ -379,12 +383,13 @@ let intersectBVHSmallLargeSphereTest () =
     let bvhRuntime = BVHRuntime<RaytracingGeometry>()
     let (bvhTree, orderedPrimitiveArray, nodeCount) = bvhTreeBuilder.build smallLargeSphereGeometryArrray SplitMethods.Middle
     let bvhArray = bvhRuntime.allocateMemoryForBVHRuntime nodeCount
+    let bvhRuntimeStack = Array.zeroCreate bvhArray.Length
     let out = bvhRuntime.flattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYNegZ
     let ray = Ray(Vector3(-1.0f, 0.0f, 15.0f), Vector3(-1.0f, 0.0f, -10.0f))
     let ray2 = Ray(Vector3(1.0f, 0.0f, 15.0f), Vector3(1.0f, 0.0f, -10.0f))
 
-    let (hasIntersection, tHit, geometryOption) = bvhRuntime.traverse bvhArray orderedPrimitiveArray ray
-    let (hasIntersection2, tHit2, geometryOption2) = bvhRuntime.traverse bvhArray orderedPrimitiveArray ray2
+    let (hasIntersection, tHit, geometryOption) = bvhRuntime.traverse bvhArray orderedPrimitiveArray bvhRuntimeStack ray
+    let (hasIntersection2, tHit2, geometryOption2) = bvhRuntime.traverse bvhArray orderedPrimitiveArray bvhRuntimeStack ray2
 
 
     Assert.True(hasIntersection)
@@ -397,11 +402,12 @@ let intersectBVHSmallLargeSphereInfrontTest () =
     let bvhRuntime = BVHRuntime<RaytracingGeometry>()
     let (bvhTree, orderedPrimitiveArray, nodeCount) = bvhTreeBuilder.build smallLargeInFrontSphereGeometryArray SplitMethods.Middle
     let bvhArray = bvhRuntime.allocateMemoryForBVHRuntime nodeCount
+    let bvhRuntimeStack = Array.zeroCreate bvhArray.Length
     let out = bvhRuntime.flattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYNegZ
     let ray = Ray(Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, -1.0f))
     let ray2 = Ray(Vector3(1.0f, 0.0f, 15.0f), Vector3(1.0f, 0.0f, -10.0f))
 
-    let (hasIntersection, tHit, geometryOption) = bvhRuntime.traverse bvhArray orderedPrimitiveArray ray
+    let (hasIntersection, tHit, geometryOption) = bvhRuntime.traverse bvhArray orderedPrimitiveArray bvhRuntimeStack ray
 
     let geometry = RaytraceGeometryUtils.forceExtract geometryOption
     let sphere = geometry :?> Sphere
