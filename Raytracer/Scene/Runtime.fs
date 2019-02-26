@@ -15,12 +15,10 @@ open Raytracer.Scene.Builder
 open Raytracer.RuntimeParameters
 open BenchmarkDotNet.Attributes
 
-//TODO: make this also work with unboundable geometry i.e. infinite planes
 type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvhRuntime : BVHRuntime<Surface>, bvhRuntimeArray : BVHRuntimeNode []) =
 
-
-    let bvhRuntimeStack = Array.zeroCreate bvhRuntimeArray.Length
-
+    //TODO: Create one per thread!
+    let bvhRuntimeStack = Array2D.zeroCreate batchSize bvhRuntimeArray.Length
     let batches = samplesPerPixel / batchSize
     let batchIndices = [|1..batchSize|]
     let colorSamples = Array.create samplesPerPixel Vector3.Zero
@@ -50,21 +48,25 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
 
 
     let rec rayTrace previousTraceDepth (ray : Ray) =
-        if previousTraceDepth > maxTraceDepth 
+        if previousTraceDepth >= maxTraceDepth 
         then  
             backgroundColor
         else
             let currentTraceDepth = previousTraceDepth + 1us
-            //let mutable (hasIntersection, t, surface) = findClosestIntersection ray surfaces
-            let mutable (hasIntersection, t, surfaceOption) = bvhRuntime.traverse bvhRuntimeArray surfaces bvhRuntimeStack ray
+            let mutable struct(hasIntersection, t, surfaceOption) = struct(false, 0.0f, None)
+            if bvhRuntimeArray.Length > 0 then
+                let struct(b_bvh, t_bvh, s_bvh) = bvhRuntime.traverse bvhRuntimeArray surfaces ray
+                hasIntersection <- b_bvh
+                t <- t_bvh
+                surfaceOption <- s_bvh
+                
 
             // Some geometry is not present in the BVH i.e. infinite planes
-            let (b, t2, s) = findClosestIntersection ray nonBoundableSurfaces
-            if not hasIntersection || (t2 < t && s.Geometry.AsHitable.IntersectionAcceptable b t2 1.0f (RaytraceGeometryUtils.PointForRay ray t2)) then
-                hasIntersection <- b
-                t <- t2
-                surfaceOption <- Some s
-                //surface <- s
+            let struct(b_linear, t_linear, s_linear) = findClosestIntersection ray nonBoundableSurfaces
+            if (not hasIntersection || t_linear < t ) && s_linear.Geometry.AsHitable.IntersectionAcceptable b_linear t_linear 1.0f (RaytraceGeometryUtils.PointForRay ray t_linear) then
+                hasIntersection <- b_linear
+                t <- t_linear
+                surfaceOption <- Some s_linear
 
             if hasIntersection then
                 let surface = surfaceOption.Value
@@ -89,16 +91,20 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
 
     let rayTraceBase (ray : Ray) px py iteration batchIndex = 
         let dotLookAtAndTracingRay = Vector3.Dot(Vector3.Normalize(lookAt), ray.Direction)
-        //let mutable (hasIntersection, t, surface) = findClosestIntersection ray surfaces
-        let mutable (hasIntersection, t, surfaceOption) = bvhRuntime.traverse bvhRuntimeArray surfaces bvhRuntimeStack ray
 
+        let mutable struct(hasIntersection, t, surfaceOption) = struct(false, 0.0f, None)
+        if bvhRuntimeArray.Length > 0 then
+            let struct(b_bvh, t_bvh, s_bvh) = bvhRuntime.traverse bvhRuntimeArray surfaces ray
+            hasIntersection <- b_bvh
+            t <- t_bvh
+            surfaceOption <- s_bvh
+            
         // Some geometry is not present in the BVH i.e. infinite planes
-        let (b, t2, s) = findClosestIntersection ray nonBoundableSurfaces
-        if not hasIntersection || (t2 < t && s.Geometry.AsHitable.IntersectionAcceptable b t2 dotLookAtAndTracingRay (RaytraceGeometryUtils.PointForRay ray t2)) then
-            hasIntersection <- b
-            t <- t2
-            surfaceOption <- Some s
-            //surface <- s
+        let struct(b_linear, t_linear, s_linear) = findClosestIntersection ray nonBoundableSurfaces
+        if (not hasIntersection || t_linear < t ) && s_linear.Geometry.AsHitable.IntersectionAcceptable b_linear t_linear 1.0f (RaytraceGeometryUtils.PointForRay ray t_linear) then
+            hasIntersection <- b_linear
+            t <- t_linear
+            surfaceOption <- Some s_linear
 
         if hasIntersection then
             let surface = surfaceOption.Value

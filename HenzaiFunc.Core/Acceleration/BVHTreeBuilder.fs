@@ -66,16 +66,19 @@ type BVHTreeBuilder<'T when 'T :> AxisAlignedBoundable>() =
                 let newTotalNodes = leftTotalNodes + rightTotalNodes + 1
                 (Node (bvhNode, Node (leftNode , ll, lr), Node (rightNode , rl, rr)), rightOrderedSubList, newTotalNodes)
 
-    member this.build ( geometryArray : 'T []) (splitMethod : SplitMethods) = 
-        let bvhInfoArray = buildBVHInfoArray geometryArray
-        let (bvhTree, orderedGeometryList, totalNodes) = 
-            match splitMethod with
-            | SplitMethods.SAH -> recursiveBuild geometryArray bvhInfoArray 0 bvhInfoArray.Length [] splitMethod
-            | SplitMethods.Middle -> recursiveBuild geometryArray bvhInfoArray 0 bvhInfoArray.Length [] splitMethod
-            | SplitMethods.EqualCounts -> recursiveBuild geometryArray bvhInfoArray 0 bvhInfoArray.Length [] splitMethod
-            | x -> failwithf "Splitmethod %u not yet implemented" (LanguagePrimitives.EnumToValue x)
-        // Need to reverse since implicit indexing via build is for a Queue (FIFO) data structure
-        (bvhTree, List.toArray (List.rev orderedGeometryList), totalNodes)
+    member this.build ( geometryArray : 'T []) (splitMethod : SplitMethods) =
+        if Array.isEmpty geometryArray then
+            (Empty, [||], 0)
+        else
+            let bvhInfoArray = buildBVHInfoArray geometryArray
+            let (bvhTree, orderedGeometryList, totalNodes) = 
+                match splitMethod with
+                | SplitMethods.SAH -> recursiveBuild geometryArray bvhInfoArray 0 bvhInfoArray.Length [] splitMethod
+                | SplitMethods.Middle -> recursiveBuild geometryArray bvhInfoArray 0 bvhInfoArray.Length [] splitMethod
+                | SplitMethods.EqualCounts -> recursiveBuild geometryArray bvhInfoArray 0 bvhInfoArray.Length [] splitMethod
+                | x -> failwithf "Splitmethod %u not yet implemented" (LanguagePrimitives.EnumToValue x)
+            // Need to reverse since implicit indexing via build is for a Queue (FIFO) data structure
+            (bvhTree, List.toArray (List.rev orderedGeometryList), totalNodes)
 
 
         

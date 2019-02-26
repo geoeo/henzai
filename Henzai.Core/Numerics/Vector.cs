@@ -16,6 +16,8 @@ namespace Henzai.Core.Numerics {
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector3 RoundVec3(ref Vector3 vec3, int digits){
+            if (digits == -1)
+                return new Vector3(vec3.X, vec3.Y, vec3.Z);
             return new Vector3(MathF.Round(vec3.X, digits), MathF.Round(vec3.Y, digits), MathF.Round(vec3.Z, digits));
         }
 

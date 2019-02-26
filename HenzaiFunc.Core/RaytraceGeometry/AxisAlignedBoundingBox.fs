@@ -56,16 +56,16 @@ type AABB(pMin : MinPoint, pMax : MaxPoint) =
 
             // if insinde a box tMin might be negative 
             // in that case return tMax
-            if tMin < 0.0f then tMin <- tMax else ()
+            //if tMin < 0.0f then tMin <- tMax else ()
 
 
-            (tMin > this.AsHitable.TMin && tMin < this.AsHitable.TMax && tMax > 0.0f && passed , tMin)
+            (tMin < this.AsHitable.TMax && tMax > 0.0f && passed , tMin)
 
         member this.HasIntersection ray =
             let (hasIntersection, t) = this.AsHitable.Intersect ray 
             let p = ray.Origin + t*ray.Direction
             this.AsHitable.IntersectionAcceptable hasIntersection t 0.0f p
-        member this.IntersectionAcceptable hasIntersection t _ _ = hasIntersection && t > this.AsHitable.TMin
+        member this.IntersectionAcceptable hasIntersection t _ _ = hasIntersection
         member this.NormalForSurfacePoint _ = Vector3.Zero
         member this.IsObstructedBySelf _ = false
 

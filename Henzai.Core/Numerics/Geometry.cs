@@ -71,6 +71,7 @@ namespace Henzai.Core.Numerics
             return MathF.Sqrt(Vector.InMemoryDotProduct(ref omega, ref omega));
         }
 
+
         /// <summary>
         /// Computes the SO3 Matrix from a to b
         /// https://math.stackexchange.com/questions/180418/calculate-rotation-matrix-to-align-vector-a-to-vector-b-in-3d/897677#897677
@@ -84,6 +85,7 @@ namespace Henzai.Core.Numerics
             var c = MathF.Cos(angle);
 
             //TODO: Optimize this for less allocations
+            //TODO: try this with double precision
             return Matrix4x4.Identity + omega_x + Matrix4x4.Multiply(omega_x_squared, (1.0f/(1.0f+c)));
         }
 

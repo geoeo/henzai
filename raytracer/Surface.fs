@@ -68,7 +68,7 @@ let findClosestIntersection (ray : Ray) (surfaces : Surface[]) =
             tMin <- t
             vMin <- surface
 
-    (bMin, tMin, vMin)
+    struct(bMin, tMin, vMin)
 
 type Lambertian(id: ID, geometry : RaytracingGeometry, material : Raytracer.Material.Material) =
     inherit Surface(id, geometry, material)

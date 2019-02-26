@@ -9,7 +9,7 @@ let width = 800
 let height = 640
 let samplesPerPixel = 8
 let batchSize = 8
-let maxTraceDepth = 5us
+let maxTraceDepth = 3us
 
 let sceneImageName = "scene.jpg"
 let depthImageName = "depth.jpg"
