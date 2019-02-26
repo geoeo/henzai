@@ -114,13 +114,17 @@ type Plane(plane : System.Numerics.Plane, center : Point option, width : float32
         interface Hitable with
 
             override this.Intersect (ray:Ray) =
-                let numerator = -plane.D - Plane.DotNormal(plane, ray.Origin) 
+                // https://en.wikipedia.org/wiki/Line–plane_intersection
+                // plane store the distance from the plane to the origin i.e. we have to invert
+                let numerator = Plane.DotNormal(plane,  -kern - ray.Origin) 
                 let denominator = Plane.DotNormal(plane, ray.Direction)
-                if Math.Abs(denominator) < this.AsHitable.TMin then (false, 0.0f)
+                if Math.Abs(denominator) < this.AsHitable.TMin || Math.Abs(numerator) < this.AsHitable.TMin  then (false, 0.0f)
                 else 
                     let t = numerator / denominator
-                    let pointOnSurface = ray.Origin + t*ray.Direction
-                    (pointLiesInRectangle pointOnSurface, t)
+                    if t < 0.0f then (false, 0.0f)
+                    else
+                        let pointOnSurface = ray.Origin + t*ray.Direction
+                        (pointLiesInRectangle pointOnSurface, t)
 
             override this.HasIntersection (ray:Ray) = 
                 let (hasIntersection, _) = this.AsHitable.Intersect ray 

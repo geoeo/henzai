@@ -32,8 +32,8 @@ let lightsAA : Surface list
 let lights_simple : Surface list 
     =  [
         //Emitting(assignIDAndIncrement id, Sphere(Vector3(3.0f, 8.0f, -5.0f),3.0f), Material(Vector3(1.0f,1.0f,1.0f)));
-        NoSurface(assignIDAndIncrement id, Sphere(Vector3(-5.0f,10.0f,0.0f),2.0f), Material(Rgba32.White,0.0f, Rgba32.White,1.0f));
-        NoSurface(assignIDAndIncrement id, Sphere(Vector3(0.0f,-70.0f,0.0f),50.0f), Material(Rgba32.White,0.0f, Rgba32.White,1.0f));
+        NoSurface(assignIDAndIncrement id, Sphere(Vector3(-5.0f,8.0f,0.0f),5.0f), Material(Rgba32.White,0.0f, Rgba32.White,1.0f));
+        //NoSurface(assignIDAndIncrement id, Sphere(Vector3(0.0f,-70.0f,0.0f),50.0f), Material(Rgba32.White,0.0f, Rgba32.White,1.0f));
         //NoSurface(assignIDAndIncrement id, Plane(new System.Numerics.Plane((SurfaceNormal -1.0f -1.0f 1.0f),20.0f),Some ((SurfaceNormal -1.0f -1.0f 1.0f)*(-20.0f)),Some 40.0f,Some 13.0f), Material(Rgba32.White, 0.0f, Rgba32.White, 1.0f));
         //NoSurface(assignIDAndIncrement id, Plane(new System.Numerics.Plane((SurfaceNormal 1.0f 0.0f 0.0f),15.0f),Some ((Vector3(-15.0f,5.0f,-10.0f))),Some 20.0f,Some 10.0f), Material(Rgba32.White,0.0f, Rgba32.White,1.0f));
     ]
