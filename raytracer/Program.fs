@@ -11,16 +11,19 @@ let benchmarkScene = lazy BenchmarkRunner.Run<RuntimeScene>()
 let main argv =
     // Console.Write("Press Enter")
     //let input = Console.ReadLine()
+    let stopWatch = System.Diagnostics.Stopwatch.StartNew()
     printfn "Starting.." 
     printfn "Constructing BVH Tree.."
     let (bvhTree, orderedSurfaceArray, totalNodeCount) = constructBVHTree sceneArray
     let bvhRuntime = BVHRuntime<Surface>()
     let bvhRuntimeArray = bvhRuntime.constructBVHRuntime bvhTree totalNodeCount
-    printfn "Constructed BVH Tree.."
+    stopWatch.Stop()
+    printfn "Constructed BVH Tree in %f ms" stopWatch.Elapsed.TotalMilliseconds
     printfn "Rendering.."
+    stopWatch.Restart()
     let mainScene = RuntimeScene (orderedSurfaceArray, sceneNonBoundableArray, bvhRuntime, bvhRuntimeArray)
     mainScene.RenderScene()
-    printfn "Finished Rendering"
+    printfn "Finished Rendering. Time taken: %f ms" stopWatch.Elapsed.TotalMilliseconds
     mainScene.SaveFrameBuffer()
     mainScene.SaveDepthBuffer()
     //let summary = benchmarkScene.Force()
