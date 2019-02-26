@@ -37,7 +37,7 @@ let InsideAABBRayIntersectionTestZ() =
     let ray = Ray(Vector3(0.5f, 0.5f, -0.5f), Vector3(0.0f, 0.0f, -1.0f))
     let (hasIntersection, tHit) = aabb.AsHitable.Intersect ray
     Assert.True(hasIntersection)
-    Assert.Equal(0.5f,tHit)
+    Assert.Equal(-0.5f,tHit)
 
 
 [<Fact>]
@@ -46,7 +46,7 @@ let InsideAABBRayIntersectionTestZ2() =
     let ray = Ray(Vector3(0.5f, 0.5f, -0.5f), Vector3(0.0f, 0.0f, 1.0f))
     let (hasIntersection, tHit) = aabb.AsHitable.Intersect ray
     Assert.True(hasIntersection)
-    Assert.Equal(0.5f,tHit)
+    Assert.Equal(-0.5f,tHit)
 
 
 [<Fact>]
@@ -91,7 +91,7 @@ let InsideAABBRayIntersectionTestX() =
     let ray = Ray(Vector3(0.5f, 0.5f, -0.5f), Vector3(-1.0f, 0.0f, 0.0f))
     let (hasIntersection, tHit) = aabb.AsHitable.Intersect ray
     Assert.True(hasIntersection)
-    Assert.Equal(0.5f,tHit)
+    Assert.Equal(-0.5f,tHit)
 
 
 [<Fact>]
@@ -100,7 +100,7 @@ let InsideAABBRayIntersectionTestX2() =
     let ray = Ray(Vector3(0.5f, 0.5f, -0.5f), Vector3(1.0f, 0.0f, 0.0f))
     let (hasIntersection, tHit) = aabb.AsHitable.Intersect ray
     Assert.True(hasIntersection)
-    Assert.Equal(0.5f,tHit)
+    Assert.Equal(-0.5f,tHit)
 
 
 [<Fact>]
@@ -146,7 +146,7 @@ let InsideAABBRayIntersectionTestY() =
     let ray = Ray(Vector3(0.5f, 0.5f, -0.5f), Vector3(0.0f, -1.0f, 0.0f))
     let (hasIntersection, tHit) = aabb.AsHitable.Intersect ray
     Assert.True(hasIntersection)
-    Assert.Equal(0.5f,tHit)
+    Assert.Equal(-0.5f,tHit)
 
 
 [<Fact>]
@@ -155,7 +155,7 @@ let InsideAABBRayIntersectionTestY2() =
     let ray = Ray(Vector3(0.5f, 0.5f, -0.5f), Vector3(0.0f, 1.0f, 0.0f))
     let (hasIntersection, tHit) = aabb.AsHitable.Intersect ray
     Assert.True(hasIntersection)
-    Assert.Equal(0.5f,tHit)
+    Assert.Equal(-0.5f,tHit)
 
 
 [<Fact>]

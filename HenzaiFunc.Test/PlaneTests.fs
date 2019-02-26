@@ -14,12 +14,12 @@ let PlaneZAABBTest() =
 
     let aabb = (p :> AxisAlignedBoundable).GetBounds
 
-    Assert.Equal(-10.0f, aabb.PMin.X)
-    Assert.Equal(-10.0f, aabb.PMin.Y)
+    Assert.Equal(0.0f, aabb.PMin.X)
+    Assert.Equal(0.0f, aabb.PMin.Y)
     Assert.True(aabb.PMin.Z < -30.0f)
 
-    Assert.Equal(30.0f, aabb.PMax.X)
-    Assert.Equal(30.0f, aabb.PMax.Y)
+    Assert.Equal(20.0f, aabb.PMax.X)
+    Assert.Equal(20.0f, aabb.PMax.Y)
     Assert.True(aabb.PMax.Z > -30.0f)
 
 
@@ -31,12 +31,12 @@ let PlaneYAABBTest() =
     let aabb = (p :> AxisAlignedBoundable).GetBounds
 
 
-    Assert.Equal(-10.0f, aabb.PMin.X)
-    Assert.Equal(-50.0f, aabb.PMin.Z)
+    Assert.Equal(0.0f, aabb.PMin.X)
+    Assert.Equal(-40.0f, aabb.PMin.Z)
     Assert.True(aabb.PMin.Y < 10.0f)
 
-    Assert.Equal(30.0f, aabb.PMax.X)
-    Assert.Equal(-10.0f, aabb.PMax.Z)
+    Assert.Equal(20.0f, aabb.PMax.X)
+    Assert.Equal(-20.0f, aabb.PMax.Z)
     Assert.True(aabb.PMax.Y > 10.0f)
 
 
@@ -48,17 +48,18 @@ let PlaneXAABBTest() =
 
     let aabb = (p :> AxisAlignedBoundable).GetBounds
 
-    Assert.Equal(-50.0f, aabb.PMin.Z)
-    Assert.Equal(-10.0f, aabb.PMin.Y)
+    Assert.Equal(-40.0f, aabb.PMin.Z)
+    Assert.Equal(0.0f, aabb.PMin.Y)
     Assert.True(aabb.PMin.X < 30.0f)
 
-    Assert.Equal(-10.0f, aabb.PMax.Z)
-    Assert.Equal(30.0f, aabb.PMax.Y)
+    Assert.Equal(-20.0f, aabb.PMax.Z)
+    Assert.Equal(20.0f, aabb.PMax.Y)
     Assert.True(aabb.PMax.X > 30.0f)
         
 
 
 // Dont know how explicitly test bounds on arbitrary orientation
+// As of now non AA planes are not supported
 [<Fact>]
 let PlaneXYZAABBTest() =
 
