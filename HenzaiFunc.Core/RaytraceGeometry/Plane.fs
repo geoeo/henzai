@@ -36,14 +36,15 @@ type Plane(plane : System.Numerics.Plane, center : Point option, width : float32
 
         let b_canonical = Vector4.Transform(Henzai.Core.Numerics.Vector.ToHomogeneous(ref b, 0.0f), R_orientation_canoical)
 
+        // Profile this
         let(pMin, pMax) =
             if center.IsNone then (Vector3.Zero, Vector3.Zero)
             else
                 //let withVal = width.Value
                 //let heightVal = height.Value
 
-                let withVal = widthOff
-                let heightVal = heightOff
+                let withVal = 2.0f*widthOff
+                let heightVal = 2.0f*heightOff
 
                 let p1 = Vector4(-withVal, heightVal, -1.0f, 0.0f)
                 let p2 = Vector4(-withVal, heightVal, 1.0f, 0.0f)

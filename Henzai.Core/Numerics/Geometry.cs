@@ -67,8 +67,8 @@ namespace Henzai.Core.Numerics
         /// http://ethaneade.com/lie.pdf
         /// </summary>
 
-        public static float AngleAroundOmega(ref Vector3 omega){
-            return MathF.Sqrt(Vector.InMemoryDotProduct(ref omega, ref omega));
+        public static double AngleAroundOmega(ref Vector3 omega){
+            return Math.Sqrt(Vector.InMemoryDotProduct(ref omega, ref omega));
         }
 
 
@@ -82,11 +82,12 @@ namespace Henzai.Core.Numerics
             var omega_x = SkewSymmetric(ref omega);
             var omega_x_squared = Matrix4x4.Multiply(omega_x,omega_x);
             var angle = AngleAroundOmega(ref omega);
-            var c = MathF.Cos(angle);
+            var c = Math.Cos(angle);
+            var factor = 1.0 / (1.0 + c);
 
             //TODO: Optimize this for less allocations
             //TODO: try this with double precision
-            return Matrix4x4.Identity + omega_x + Matrix4x4.Multiply(omega_x_squared, (1.0f/(1.0f+c)));
+            return Matrix4x4.Identity + omega_x + Matrix4x4.Multiply(omega_x_squared, (float)factor);
         }
 
 
