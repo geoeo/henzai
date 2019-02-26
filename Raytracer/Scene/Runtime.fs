@@ -16,9 +16,8 @@ open Raytracer.RuntimeParameters
 open BenchmarkDotNet.Attributes
 
 type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvhRuntime : BVHRuntime<Surface>, bvhRuntimeArray : BVHRuntimeNode []) =
-
-    //TODO: Create one per thread!
-    let bvhRuntimeStack = Array2D.zeroCreate batchSize bvhRuntimeArray.Length
+    
+    let bvhTraversalStack2D = Array2D.zeroCreate batchSize bvhRuntimeArray.Length
     let batches = samplesPerPixel / batchSize
     let batchIndices = [|1..batchSize|]
     let colorSamples = Array.create samplesPerPixel Vector3.Zero
@@ -47,7 +46,9 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
             maxFrameBufferDepth <- t 
 
 
-    let rec rayTrace previousTraceDepth (ray : Ray) =
+    let rec rayTrace previousTraceDepth (ray : Ray) batchID =
+        let bvhTraversalStack = bvhTraversalStack2D.[batchID, *]
+
         if previousTraceDepth >= maxTraceDepth 
         then  
             backgroundColor
@@ -55,7 +56,7 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
             let currentTraceDepth = previousTraceDepth + 1us
             let mutable struct(hasIntersection, t, surfaceOption) = struct(false, 0.0f, None)
             if bvhRuntimeArray.Length > 0 then
-                let struct(b_bvh, t_bvh, s_bvh) = bvhRuntime.traverse bvhRuntimeArray surfaces ray
+                let struct(b_bvh, t_bvh, s_bvh) = bvhRuntime.traverse bvhRuntimeArray surfaces bvhTraversalStack ray
                 hasIntersection <- b_bvh
                 t <- t_bvh
                 surfaceOption <- s_bvh
@@ -81,7 +82,7 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
                         let mutable totalReflectedLight = Vector3.Zero
                         for i in 0..validSamples-1 do
                             let (ray,shading) = raySamples.[i]
-                            totalReflectedLight <- totalReflectedLight + shading*rayTrace currentTraceDepth ray
+                            totalReflectedLight <- totalReflectedLight + shading*rayTrace currentTraceDepth ray batchID
                         emittedRadiance + totalReflectedLight/(float32)validSamples              
                 else 
                     backgroundColor
@@ -89,12 +90,13 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
                  backgroundColor
 
 
-    let rayTraceBase (ray : Ray) px py iteration batchIndex = 
+    let rayTraceBase (ray : Ray) px py batchID iteration = 
         let dotLookAtAndTracingRay = Vector3.Dot(Vector3.Normalize(lookAt), ray.Direction)
+        let bvhTraversalStack = bvhTraversalStack2D.[batchID, *]
 
         let mutable struct(hasIntersection, t, surfaceOption) = struct(false, 0.0f, None)
         if bvhRuntimeArray.Length > 0 then
-            let struct(b_bvh, t_bvh, s_bvh) = bvhRuntime.traverse bvhRuntimeArray surfaces ray
+            let struct(b_bvh, t_bvh, s_bvh) = bvhRuntime.traverse bvhRuntimeArray surfaces bvhTraversalStack ray
             hasIntersection <- b_bvh
             t <- t_bvh
             surfaceOption <- s_bvh
@@ -111,7 +113,7 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
 
             let surfaceGeometry = surface.Geometry
             if surfaceGeometry.AsHitable.IntersectionAcceptable hasIntersection t dotLookAtAndTracingRay (RaytraceGeometryUtils.PointForRay ray t) then
-                if iteration = 1 && batchIndex = 0 then writeToDepthBuffer t px py
+                if batchID = 0 && iteration = 0 then writeToDepthBuffer t px py
 
                 let currentTraceDepth = 0us
                 let emittedRadiance = surface.Emitted
@@ -122,7 +124,7 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
                     let mutable totalReflectedLight = Vector3.Zero
                     for i in 0..validSamples-1 do
                         let (ray,shading) = raySamples.[i]
-                        totalReflectedLight <- totalReflectedLight + shading*rayTrace currentTraceDepth ray
+                        totalReflectedLight <- totalReflectedLight + shading*rayTrace currentTraceDepth ray batchID
                     emittedRadiance + totalReflectedLight/(float32)validSamples
                 
             else
@@ -139,7 +141,7 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
         //V2 - Fastest
         for batchIndex in 0..batches-1 do
             //TODO: Remove this map for / Preallocate array
-            let colorSamplesBatch = Array.map (fun i -> async {return rayTraceBase ray px py i batchIndex}) batchIndices
+            let colorSamplesBatch = Array.map (fun i -> async {return rayTraceBase ray px py (i-1) batchIndex}) batchIndices
             let colorsBatch =  colorSamplesBatch |> Async.Parallel |> Async.RunSynchronously
             Array.blit colorsBatch 0 colorSamples (batchIndex*batchSize) batchSize 
         let avgColor = if Array.isEmpty colorSamples then Vector3.Zero else (Array.reduce (+) colorSamples)/(float32)samplesPerPixel
