@@ -22,7 +22,7 @@ module RaytraceGeometryUtils =
     /// Space inwhich points are compared if they are inside a rectangle
     /// Plane is XY
     // TODO: replace "mutable" with "in" when available
-    let mutable CanonicalPlaneSpace = Vector3(0.0f, 0.0f, -1.0f)
+    let mutable CanonicalPlaneSpace = Vector4(0.0f, 0.0f, -1.0f, 0.0f)
 
     let conditionalSwap f a b = if f a b then (b, a) else (a, b)
 

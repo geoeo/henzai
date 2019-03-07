@@ -14,11 +14,11 @@ type RaytracingGeometry ()  =
         member this.HasIntersection _ = false
         member this.Intersect _ = (false, 0.0f)
         member this.IntersectionAcceptable _ _ _ _ = false
-        member this.NormalForSurfacePoint _ = Vector3.Zero
+        member this.NormalForSurfacePoint _ = Vector4.Zero
         member this.IsObstructedBySelf _ = false
 
     interface AxisAlignedBoundable with
-        member this.GetBounds = AABB(Vector3.Zero, Vector3.Zero)
+        member this.GetBounds = AABB(Vector4.Zero, Vector4.Zero)
         member this.IsBoundable = false
    
     member this.AsBoundable = this :> AxisAlignedBoundable

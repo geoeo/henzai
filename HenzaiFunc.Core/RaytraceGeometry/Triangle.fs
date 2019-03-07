@@ -11,6 +11,9 @@ open Henzai.Core.VertexGeometry
 type Triangle(v0 : Point, v1 : Point, v2 : Point) =
     inherit RaytracingGeometry() with
 
+        new(v0 : Vector3, v1: Vector3, v2 : Vector3) =
+            Triangle(Vector.ToHomogeneous(ref v0, 1.0f), Vector.ToHomogeneous(ref v1, 1.0f), Vector.ToHomogeneous(ref v2, 1.0f))
+
         let v0 = v0
 
         let v1 = v1
@@ -21,7 +24,7 @@ type Triangle(v0 : Point, v1 : Point, v2 : Point) =
 
         let e2 = v2 - v0
 
-        let normal = Vector3.Cross(e1, e2)
+        let normal = Vector4(Vector3.Cross(Vector.ToVec3(e1), Vector.ToVec3(e2)),0.0f)
 
         let localToWorld 
             = Matrix4x4(e1.X, e1.Y, e1.Z, 0.0f,
@@ -30,12 +33,12 @@ type Triangle(v0 : Point, v1 : Point, v2 : Point) =
                         v0.X, v0.Y, v0.Z, 1.0f)
 
         let worldToLocal = 
-            let crossV2V0 = Vector3.Cross(v2, v0)
-            let crossV1V0 = Vector3.Cross(v1, v0)
+            let crossV2V0 = Vector3.Cross(Vector.ToVec3(v2), Vector.ToVec3(v0))
+            let crossV1V0 = Vector3.Cross(Vector.ToVec3(v1), Vector.ToVec3(v0))
             let normalXAbs = MathF.Abs(normal.X)
             let normalYAbs = MathF.Abs(normal.Y)
             let normalZAbs = MathF.Abs(normal.Z)
-            let nDotV1 = Vector3.Dot(normal, v1)
+            let nDotV1 = Vector.InMemoryDotProduct(ref normal, ref v1)
             if normalXAbs > normalYAbs && normalXAbs > normalYAbs then
                 Matrix4x4(0.0f, 0.0f, 1.0f, 0.0f, 
                           e2.Z/normal.X, -e1.Z/normal.X, normal.Y/normal.Z, 0.0f,
@@ -65,9 +68,9 @@ type Triangle(v0 : Point, v1 : Point, v2 : Point) =
 
             override this.Intersect (ray:Ray) =
 
-                let rayOriginHomogeneous = Vector.ToHomogeneous(ref ray.Origin, 1.0f)
+                let rayOriginHomogeneous = ray.Origin
                 let rayOriginInTriangleSpace = Vector4.Transform(rayOriginHomogeneous, worldToLocal)
-                let rayDirectionInTriangleSpace = Vector4.Transform(Vector.ToHomogeneous(ref ray.Direction, 0.0f), worldToLocal)
+                let rayDirectionInTriangleSpace = Vector4.Transform(ray.Direction, worldToLocal)
                 let t = -rayOriginInTriangleSpace.Z/rayDirectionInTriangleSpace.Z
                 let barycentric = rayOriginInTriangleSpace + t*rayDirectionInTriangleSpace
 
@@ -81,17 +84,20 @@ type Triangle(v0 : Point, v1 : Point, v2 : Point) =
         interface AxisAlignedBoundable with
             override this.GetBounds =
 
-                let pMin = Vector3(MathF.Min(v0.X, MathF.Min(v1.X, v2.X)), MathF.Min(v0.Y, MathF.Min(v1.Y, v2.Y)), MathF.Min(v0.Z, MathF.Min(v1.Z, v2.Z)))
+                let pMin = Vector4(MathF.Min(v0.X, MathF.Min(v1.X, v2.X)), MathF.Min(v0.Y, MathF.Min(v1.Y, v2.Y)), MathF.Min(v0.Z, MathF.Min(v1.Z, v2.Z)), 0.0f)
 
-                let pMax = Vector3(MathF.Max(v0.X, MathF.Max(v1.X, v2.X)), MathF.Max(v0.Y, MathF.Max(v1.Y, v2.Y)), MathF.Max(v0.Z, MathF.Max(v1.Z, v2.Z)))
+                let pMax = Vector4(MathF.Max(v0.X, MathF.Max(v1.X, v2.X)), MathF.Max(v0.Y, MathF.Max(v1.Y, v2.Y)), MathF.Max(v0.Z, MathF.Max(v1.Z, v2.Z)), 0.0f)
 
                 AABB(pMin, pMax)
 
             override this.IsBoundable = true
 
-
+        //TODO: Fix this
         static member CreateTriangleFromVertexStructs<'T when 'T : struct and 'T :> VertexLocateable>(a : 'T, b : 'T, c : 'T)
-           = Triangle(a.GetPosition(), b.GetPosition(), c.GetPosition())
+           = Triangle(
+                Vector.ToHomogeneous(ref (a.GetPosition()), 0.0f), 
+                Vector.ToHomogeneous(ref (b.GetPosition()), 0.0f), 
+                Vector.ToHomogeneous(ref (c.GetPosition()), 0.0f))
 
              
 

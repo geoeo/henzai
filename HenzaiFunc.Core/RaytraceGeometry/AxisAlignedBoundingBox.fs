@@ -19,7 +19,7 @@ type AABB(pMin : MinPoint, pMax : MaxPoint) =
         let cornerY = this.boundingCorners.[cornerYIndex].Y
         let cornerZ = this.boundingCorners.[cornerZIndex].Z
 
-        Vector3(cornerX, cornerY, cornerZ) : Point
+        Vector4(cornerX, cornerY, cornerZ, 0.0f) : Point
 
     member this.PMin = this.boundingCorners.[0]
     member this.PMax = this.boundingCorners.[1]
@@ -66,8 +66,8 @@ type AABB(pMin : MinPoint, pMax : MaxPoint) =
             let p = ray.Origin + t*ray.Direction
             this.AsHitable.IntersectionAcceptable hasIntersection t 0.0f p
         member this.IntersectionAcceptable hasIntersection t _ _ = hasIntersection
-        member this.NormalForSurfacePoint _ = Vector3.Zero
+        member this.NormalForSurfacePoint _ = Vector4.Zero
         member this.IsObstructedBySelf _ = false
 
-    new() = AABB(Vector3(System.Single.MaxValue), Vector3(System.Single.MinValue))
+    new() = AABB(Vector4(System.Single.MaxValue), Vector4(System.Single.MinValue))
 

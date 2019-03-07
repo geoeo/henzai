@@ -7,7 +7,7 @@ namespace Henzai.Core.Numerics {
     public static class Vector {
 
         public static Vector3 Normalize(ref Vector3 vec){
-            if (Math.Round(vec.Length(), 5) == 1.00000f)
+            if (Math.Round(vec.Length(), 5) == 1.0f)
                 return vec;
             else
                 Console.WriteLine($"WARN: Vector3 not normalized {vec.X} {vec.Y} {vec.Z}");
@@ -16,10 +16,10 @@ namespace Henzai.Core.Numerics {
 
         public static Vector4 Normalize(ref Vector4 vec)
         {
-            if (Math.Round(vec.Length(), 5) == 1.00000f)
+            if (Math.Round(vec.Length(), 5) == 1.0f)
                 return vec;
             else
-                Console.WriteLine($"WARN: Vector3 not normalized {vec.X} {vec.Y} {vec.Z} {vec.W}");
+                Console.WriteLine($"WARN: Vector4 not normalized {vec.X} {vec.Y} {vec.Z} {vec.W}");
             return Vector4.Normalize(vec);
         }
 
@@ -33,6 +33,8 @@ namespace Henzai.Core.Numerics {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector4 RoundVec4(ref Vector4 vec4, int digits)
         {
+            if (digits == -1)
+                return new Vector4(vec4.X, vec4.Y, vec4.Z, vec4.W);
             return new Vector4(MathF.Round(vec4.X, digits), MathF.Round(vec4.Y, digits), MathF.Round(vec4.Z, digits), MathF.Round(vec4.W, digits));
         }
 
@@ -97,6 +99,13 @@ namespace Henzai.Core.Numerics {
             vec.X = MathF.Round(vec.X, digits);
             vec.Y = MathF.Round(vec.Y, digits);
             vec.Z = MathF.Round(vec.Z, digits);
+        }
+
+        public static void CopyIntoVector4(ref Vector4 target, ref Vector3 data)
+        {
+            target.X = data.X;
+            target.Y = data.Y;
+            target.Z = data.Z;
         }
 
 

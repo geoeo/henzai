@@ -29,7 +29,7 @@ type Surface(id: ID, geometry : RaytracingGeometry, material : Raytracer.Materia
     member this.ComputeSample (b : bool , ray : Ray , cosOfIncidience : Cosine) = (ray, this.MCComputeBRDF cosOfIncidience)
     member this.SamplesArray  = Array.zeroCreate<Ray*Raytracer.Material.Color> this.SampleCount 
 
-    default this.Scatter _ _ _ = (true, Ray(Vector3.UnitX, Vector3.UnitX), 1.0f)
+    default this.Scatter _ _ _ = (true, Ray(Vector4.UnitX, Vector4.UnitX), 1.0f)
     default this.Emitted = this.Material.Emmitance
     default this.SampleCount = noSampleCount
     default this.PDF = 1.0f
@@ -84,14 +84,13 @@ type Lambertian(id: ID, geometry : RaytracingGeometry, material : Raytracer.Mate
         //sampling hemisphere
         let rand_norm = RandomSampling.RandomInUnitHemisphere_Sync()
         let cosOfIncidence = rand_norm.Y
-        let mutable nb = Vector3.Zero
-        let mutable nt = Vector3.Zero
+        let mutable nb = Vector4.Zero
+        let mutable nt = Vector4.Zero
         Henzai.Core.Numerics.Geometry.CreateCoordinateSystemAroundNormal(&normal, &nt, &nb)
         let changeOfBaseMatrix = Henzai.Core.Numerics.Geometry.ChangeOfBase(&nt, &normal, &nb)
         let normalSample = Vector4.Transform(rand_norm, changeOfBaseMatrix)
-        let outDir = Vector3.Normalize(Henzai.Core.Numerics.Vector.ToVec3(ref normalSample))
 
-        //let outDir = Vector3.Normalize(normal)
+        let outDir = Vector4.Normalize(normalSample)
         let outRay = Ray(positionOnSurface, outDir, this.ID)
         (true, outRay, cosOfIncidence)
 
@@ -100,25 +99,25 @@ type Metal(id: ID, geometry : RaytracingGeometry, material : Raytracer.Material.
 
     member this.Fuzz = MathF.Max(MathF.Min(1.0f, fuzz), 0.0f)
     member this.Reflect (incommingRay : Ray) (normalToSurface : Normal) 
-        = incommingRay.Direction - 2.0f*Vector3.Dot(incommingRay.Direction, normalToSurface)*normalToSurface 
+        = incommingRay.Direction - 2.0f*Vector4.Dot(incommingRay.Direction, normalToSurface)*normalToSurface 
 
     override this.SampleCount = metalSampleCount
     override this.Scatter (incommingRay : Ray) (t : LineParameter) (depthLevel : int) =
 
         let positionOnSurface = incommingRay.Origin + t*incommingRay.Direction
-        let mutable normal = Vector3.Normalize(this.Geometry.AsHitable.NormalForSurfacePoint positionOnSurface)
+        let mutable normal = Vector4.Normalize(this.Geometry.AsHitable.NormalForSurfacePoint positionOnSurface)
 
         //sampling hemisphere
         let rand_norm = RandomSampling.RandomInUnitHemisphere_Sync()
-        let mutable nb = Vector3.Zero
-        let mutable nt = Vector3.Zero
+        let mutable nb = Vector4.Zero
+        let mutable nt = Vector4.Zero
         Henzai.Core.Numerics.Geometry.CreateCoordinateSystemAroundNormal(&normal, &nt, &nb)
         let changeOfBaseMatrix = Henzai.Core.Numerics.Geometry.ChangeOfBase(&nt, &normal, &nb)
         let rand_norm_transformed = Vector4.Transform(rand_norm, changeOfBaseMatrix)
-        let normalSample = Henzai.Core.Numerics.Vector.ToVec3(ref rand_norm_transformed)
-        let modifiedNormal = Vector3.Normalize((1.0f - this.Fuzz)*normal + this.Fuzz*normalSample)
+        let normalSample = rand_norm_transformed
+        let modifiedNormal = Vector4.Normalize((1.0f - this.Fuzz)*normal + this.Fuzz*normalSample)
 
-        let outDir = Vector3.Normalize(this.Reflect incommingRay modifiedNormal)
+        let outDir = Vector4.Normalize(this.Reflect incommingRay modifiedNormal)
         let outRay =  Ray(positionOnSurface, outDir, this.ID)    
         (true,outRay,1.0f)
 
@@ -134,32 +133,32 @@ type Dielectric(id: ID, geometry : RaytracingGeometry, material : Raytracer.Mate
         let R0 = MathF.Pow((refractiveTransmissionFactor-refractiveIncidenceFactor)/(refractiveTransmissionFactor+refractiveIncidenceFactor), 2.0f)
         R0 + (1.0f - R0)*MathF.Pow((1.0f - cos_incidence), 5.0f)
     member this.Reflect (incommingRay : Ray) (normalToSurface : Normal) 
-        = incommingRay.Direction - 2.0f*Vector3.Dot(incommingRay.Direction, normalToSurface)*normalToSurface 
+        = incommingRay.Direction - 2.0f*Vector4.Dot(incommingRay.Direction, normalToSurface)*normalToSurface 
     member this.Refract (incommingDirection : Direction) (normalToSurface : Normal) (refractiveIncidenceOverTransmission : float32) (cos_incidence : float32) =
         let discriminant = 1.0f - (Henzai.Core.Numerics.Utils.Square refractiveIncidenceOverTransmission)*(1.0f - Henzai.Core.Numerics.Utils.Square cos_incidence)
         if discriminant > 0.0f then 
             let refracted = refractiveIncidenceOverTransmission*(incommingDirection + cos_incidence*normalToSurface) - normalToSurface*MathF.Sqrt(discriminant)
-            (true, Vector3.Normalize(refracted))
+            (true, Vector4.Normalize(refracted))
         // total internal refleciton
-        else (false, Vector3.Zero) 
+        else (false, Vector4.Zero) 
     ///<summary>
     /// Returns: (Reflect Probability,intersection Position,Reflection Dir, Refraction Dir)
     /// </summary>
     member this.CalcFresnel (incommingRay : Ray) (t : LineParameter) (depthLevel : int) = 
         let positionOnSurface = incommingRay.Origin + t*incommingRay.Direction
-        let normal = Vector3.Normalize(this.Geometry.AsHitable.NormalForSurfacePoint positionOnSurface)
-        let reflectDir = Vector3.Normalize(this.Reflect incommingRay normal)
+        let normal = Vector4.Normalize(this.Geometry.AsHitable.NormalForSurfacePoint positionOnSurface)
+        let reflectDir = Vector4.Normalize(this.Reflect incommingRay normal)
         let refrativeIndexAir = 1.0f
 
         //incidence over transmition
         let (incidenceIndex, transmissionIndex,fresnelNormal)
             // Vector is "comming out" of material into air
-            = if Vector3.Dot(incommingRay.Direction, normal) > 0.0f 
+            = if Vector4.Dot(incommingRay.Direction, normal) > 0.0f 
               then 
                 (this.RefractiveIndex, refrativeIndexAir, -normal)
               else 
                 (refrativeIndexAir, this.RefractiveIndex, normal)
-        let cos_incidence =  Vector3.Dot(incommingRay.Direction, -fresnelNormal)
+        let cos_incidence =  Vector4.Dot(incommingRay.Direction, -fresnelNormal)
         let (refracted,refrationDir) = this.Refract incommingRay.Direction fresnelNormal (incidenceIndex/transmissionIndex) cos_incidence
         
         //Use schlick if refraction was successful

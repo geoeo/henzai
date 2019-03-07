@@ -91,7 +91,7 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
 
 
     let rayTraceBase (ray : Ray) px py batchID iteration = 
-        let dotLookAtAndTracingRay = Vector3.Dot(Vector3.Normalize(lookAt), ray.Direction)
+        let dotLookAtAndTracingRay = Vector3.Dot(Vector3.Normalize(lookAt), Vector.ToVec3(ray.Direction))
         let bvhTraversalStack = bvhTraversalStack2D.[batchID, *]
 
         let mutable struct(hasIntersection, t, surfaceOption) = struct(false, 0.0f, None)
@@ -136,8 +136,8 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
         let dirCS = 
             RayDirection (PixelToCamera (float32 px) (float32 py) (float32 width) (float32 height) fov)
         let rot = Henzai.Core.Numerics.Geometry.Rotation(ref cameraWS)
-        let dirWS = Vector3.Normalize(Vector3.TransformNormal(dirCS, rot))
-        let ray = Ray(cameraWS.Translation, dirWS)
+        let dirWS = Vector4.Normalize(Vector4.Transform(dirCS, rot))
+        let ray = Ray(Vector4(cameraWS.Translation, 1.0f), dirWS)
         //V2 - Fastest
         for batchIndex in 0..batches-1 do
             //TODO: Remove this map for / Preallocate array
