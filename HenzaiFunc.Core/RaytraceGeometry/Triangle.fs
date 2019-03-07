@@ -8,23 +8,17 @@ open Henzai.Core.VertexGeometry
 
 // Baldwin-Weber ray-triangle intersection algorithm: http://jcgt.org/published/0005/03/03/
 /// Vertices are CCW
-type Triangle(v0 : Point, v1 : Point, v2 : Point) =
+type Triangle(v0 : Vector3, v1 : Vector3, v2 : Vector3) =
     inherit RaytracingGeometry() with
 
-        new(v0 : Vector3, v1: Vector3, v2 : Vector3) =
-            Triangle(Vector.ToHomogeneous(ref v0, 1.0f), Vector.ToHomogeneous(ref v1, 1.0f), Vector.ToHomogeneous(ref v2, 1.0f))
-
-        let v0 = v0
-
-        let v1 = v1
-
-        let v2 = v2
+        new(v0 : Point, v1: Point, v2 : Point) =
+            Triangle(Vector.ToVec3(v0), Vector.ToVec3(v1), Vector.ToVec3(v2))
 
         let e1 = v1 - v0
 
         let e2 = v2 - v0
 
-        let normal = Vector4(Vector3.Cross(Vector.ToVec3(e1), Vector.ToVec3(e2)),0.0f)
+        let normal = Vector4(Vector3.Cross(e1, e2), 0.0f)
 
         let localToWorld 
             = Matrix4x4(e1.X, e1.Y, e1.Z, 0.0f,
@@ -33,12 +27,13 @@ type Triangle(v0 : Point, v1 : Point, v2 : Point) =
                         v0.X, v0.Y, v0.Z, 1.0f)
 
         let worldToLocal = 
-            let crossV2V0 = Vector3.Cross(Vector.ToVec3(v2), Vector.ToVec3(v0))
-            let crossV1V0 = Vector3.Cross(Vector.ToVec3(v1), Vector.ToVec3(v0))
+            let crossV2V0 = Vector3.Cross(v2, v0)
+            let crossV1V0 = Vector3.Cross(v1, v0)
             let normalXAbs = MathF.Abs(normal.X)
             let normalYAbs = MathF.Abs(normal.Y)
             let normalZAbs = MathF.Abs(normal.Z)
-            let nDotV1 = Vector.InMemoryDotProduct(ref normal, ref v1)
+            let normalVec3 = Vector.ToVec3(normal)
+            let nDotV1 = Vector.InMemoryDotProduct(ref normalVec3, ref v1)
             if normalXAbs > normalYAbs && normalXAbs > normalYAbs then
                 Matrix4x4(0.0f, 0.0f, 1.0f, 0.0f, 
                           e2.Z/normal.X, -e1.Z/normal.X, normal.Y/normal.Z, 0.0f,
@@ -91,14 +86,9 @@ type Triangle(v0 : Point, v1 : Point, v2 : Point) =
                 AABB(pMin, pMax)
 
             override this.IsBoundable = true
-
-        //TODO: Fix this
+            
         static member CreateTriangleFromVertexStructs<'T when 'T : struct and 'T :> VertexLocateable>(a : 'T, b : 'T, c : 'T)
-           = Triangle(
-                Vector.ToHomogeneous(ref (a.GetPosition()), 0.0f), 
-                Vector.ToHomogeneous(ref (b.GetPosition()), 0.0f), 
-                Vector.ToHomogeneous(ref (c.GetPosition()), 0.0f))
-
+           = Triangle(a.GetPosition(), b.GetPosition(), c.GetPosition())
              
 
 

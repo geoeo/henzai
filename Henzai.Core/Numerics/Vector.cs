@@ -101,6 +101,7 @@ namespace Henzai.Core.Numerics {
             vec.Z = MathF.Round(vec.Z, digits);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyIntoVector4(ref Vector4 target, ref Vector3 data)
         {
             target.X = data.X;
