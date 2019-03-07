@@ -72,6 +72,12 @@ namespace Henzai.Core.Numerics {
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Distance(ref Vector4 from, ref Vector4 to)
+        {
+            return (to - from).Length();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float DistanceSquared(ref Vector3 from, ref Vector3 to){
             return (to - from).LengthSquared();
         }
