@@ -1,6 +1,6 @@
 using System;
 using System.Numerics;
-using System.Runtime.CompilerServices; 
+using System.Runtime.CompilerServices;
 
 namespace Henzai.Core.Numerics
 {
@@ -23,6 +23,29 @@ namespace Henzai.Core.Numerics
 
             nb = Vector3.Normalize(Vector3.Cross(n, a));
             nt = Vector3.Normalize(Vector3.Cross(n, nb));
+
+        }
+
+        //TODO use correct keywords
+        public static void CreateCoordinateSystemAroundNormal(ref Vector4 nInOut, ref Vector4 ntInOut, ref Vector4 nbInOut)
+        {
+            var n = Vector.ToVec3(nInOut);
+
+            Vector3 a;
+            if (MathF.Abs(n.X) > MathF.Abs(n.Y))
+            {
+                a = Vector3.UnitY;
+            }
+            else
+            {
+                a = Vector3.UnitX;
+            }
+
+            var nbNorm = Vector3.Normalize(Vector3.Cross(n, a));
+            var ntNorm = Vector3.Normalize(Vector3.Cross(n, nbNorm));
+
+            Vector.CopyIntoVector4(ref nbInOut, ref nbNorm );
+            Vector.CopyIntoVector4(ref ntInOut, ref ntNorm);
 
         }
 
@@ -53,6 +76,17 @@ namespace Henzai.Core.Numerics
             );
         }
 
+        public static Matrix4x4 ChangeOfBase(ref Vector4 nt, ref Vector4 n, ref Vector4 nb)
+        {
+            return new Matrix4x4
+            (
+                nt.X, nt.Y, nt.Z, 0.0f,
+                n.X, n.Y, n.Z, 0.0f,
+                nb.X, nb.Y, nb.Z, 0.0f,
+                0.0f, 0.0f, 0.0f, 0.0f
+            );
+        }
+
         public static Matrix4x4 SkewSymmetric(ref Vector3 v){
             return new Matrix4x4(
                 0.0f , -v.Z, v.Y,0.0f,
@@ -68,6 +102,11 @@ namespace Henzai.Core.Numerics
         /// </summary>
 
         public static double AngleAroundOmega(ref Vector3 omega){
+            return Math.Sqrt(Vector.InMemoryDotProduct(ref omega, ref omega));
+        }
+
+        public static double AngleAroundOmega(ref Vector4 omega)
+        {
             return Math.Sqrt(Vector.InMemoryDotProduct(ref omega, ref omega));
         }
 
@@ -90,18 +129,23 @@ namespace Henzai.Core.Numerics
             return Matrix4x4.Identity + omega_x + Matrix4x4.Multiply(omega_x_squared, (float)factor);
         }
 
+        public static Matrix4x4 RotationBetweenUnitVectors(ref Vector4 a, ref Vector4 b)
+        {
+            var a_v3 = Vector.ToVec3(a);
+            var b_v3 = Vector.ToVec3(b);
+            var omega = Vector3.Cross(a_v3, b_v3);
+            var omega_x = SkewSymmetric(ref omega);
+            var omega_x_squared = Matrix4x4.Multiply(omega_x, omega_x);
+            var angle = AngleAroundOmega(ref omega);
+            var c = Math.Cos(angle);
+            var factor = 1.0 / (1.0 + c);
+
+            //TODO: Optimize this for less allocations
+            //TODO: try this with double precision
+            return Matrix4x4.Identity + omega_x + Matrix4x4.Multiply(omega_x_squared, (float)factor);
+        }
 
 
-   
-
-
-
-
-        
-
-
-
-    
 
 
 
@@ -109,5 +153,16 @@ namespace Henzai.Core.Numerics
 
 
 
-   }
+
+
+
+
+
+
+
+
+
+
+
+    }
 }
