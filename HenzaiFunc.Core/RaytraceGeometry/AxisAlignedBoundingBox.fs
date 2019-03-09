@@ -1,7 +1,7 @@
 ﻿namespace HenzaiFunc.Core.RaytraceGeometry
 
-open System
 open System.Numerics
+open HenzaiFunc.Core
 open HenzaiFunc.Core.Types
 
 
@@ -36,17 +36,17 @@ type AABB(pMin : MinPoint, pMax : MaxPoint) =
             //let mutable isAcceptable = true
             let invDir = Vector3(1.0f / ray.Direction.X, 1.0f/ ray.Direction.Y, 1.0f / ray.Direction.Z)
             let struct(isXDirNeg, isYDirNeg, isZDirNeg) = struct(invDir.X < 0.0f, invDir.Y < 0.0f, invDir.Z < 0.0f)
-            let gamma3 = (RaytraceGeometryUtils.gamma 3)
+            let gamma3 = (Utils.gamma 3)
 
-            let mutable tMin = (this.boundingCorners.[RaytraceGeometryUtils.boolToInt isXDirNeg].X - ray.Origin.X) * invDir.X
-            let mutable tMax = (this.boundingCorners.[1 - RaytraceGeometryUtils.boolToInt isXDirNeg].X - ray.Origin.X) * invDir.X
-            let tyMin = (this.boundingCorners.[RaytraceGeometryUtils.boolToInt isYDirNeg].Y - ray.Origin.Y) * invDir.Y
-            let mutable tyMax = (this.boundingCorners.[1 - RaytraceGeometryUtils.boolToInt isYDirNeg].Y - ray.Origin.Y) * invDir.Y
-            let tzMin = (this.boundingCorners.[RaytraceGeometryUtils.boolToInt isZDirNeg].Z - ray.Origin.Z) * invDir.Z
-            let mutable tzMax = (this.boundingCorners.[1 - RaytraceGeometryUtils.boolToInt isZDirNeg].Z - ray.Origin.Z) * invDir.Z
-            tMax <- RaytraceGeometryUtils.robustRayBounds tMax gamma3
-            tyMax <- RaytraceGeometryUtils.robustRayBounds tyMax gamma3
-            tzMax <- RaytraceGeometryUtils.robustRayBounds tzMax gamma3
+            let mutable tMin = (this.boundingCorners.[Utils.boolToInt isXDirNeg].X - ray.Origin.X) * invDir.X
+            let mutable tMax = (this.boundingCorners.[1 - Utils.boolToInt isXDirNeg].X - ray.Origin.X) * invDir.X
+            let tyMin = (this.boundingCorners.[Utils.boolToInt isYDirNeg].Y - ray.Origin.Y) * invDir.Y
+            let mutable tyMax = (this.boundingCorners.[1 - Utils.boolToInt isYDirNeg].Y - ray.Origin.Y) * invDir.Y
+            let tzMin = (this.boundingCorners.[Utils.boolToInt isZDirNeg].Z - ray.Origin.Z) * invDir.Z
+            let mutable tzMax = (this.boundingCorners.[1 - Utils.boolToInt isZDirNeg].Z - ray.Origin.Z) * invDir.Z
+            tMax <- Utils.robustRayBounds tMax gamma3
+            tyMax <- Utils.robustRayBounds tyMax gamma3
+            tzMax <- Utils.robustRayBounds tzMax gamma3
             let passed = not (tMin > tyMax || tyMin > tMax || tMin > tzMax || tzMin > tMax)
 
             if tyMin > tMin then tMin <- tyMin else ()

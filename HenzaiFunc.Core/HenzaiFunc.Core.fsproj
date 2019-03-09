@@ -3,6 +3,7 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Utils.fs" />
     <Compile Include="Types.fs" />
     <Compile Include="RaytraceGeometry/Ray.fs" />
     <Compile Include="RaytraceGeometry/Hitable.fs" />

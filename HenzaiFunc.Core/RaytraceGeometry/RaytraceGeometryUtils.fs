@@ -23,21 +23,5 @@ module RaytraceGeometryUtils =
     /// Plane is XY
     // TODO: replace "mutable" with "in" when available
     let mutable CanonicalPlaneSpace = Vector4(0.0f, 0.0f, -1.0f, 0.0f)
-
-    let conditionalSwap f a b = if f a b then (b, a) else (a, b)
-
-    let robustRayBounds value gamma = value * (1.0f + 2.0f*gamma)
-
-    let gamma (n : int) = (float32(n)*System.Single.Epsilon)/(1.0f - float32(n)*System.Single.Epsilon)
-
-    let boolToInt b = 
-        match b with
-        | true -> 1
-        | false -> 0
-
-    let forceExtract option =
-        match option with
-        | Some x -> x
-        | None -> failwithf "Make sure what you are extracting is not None!"
     
         

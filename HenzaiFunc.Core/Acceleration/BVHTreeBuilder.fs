@@ -24,13 +24,11 @@ type BVHTreeBuilder<'T when 'T :> AxisAlignedBoundable>() =
             //TODO: investigate in place solution without allocating
             let smaller, larger = Array.partition (fun (elem : BVHPrimitive) -> accessPointBySplitAxis (AABB.center elem.aabb) dim < midFloat) bvhInfoSubArray
             let mid = start + smaller.Length
-            (mid , smaller, larger)
+            struct(mid , smaller, larger)
+        | SplitMethods.EqualCounts ->
+            let mid = (start + finish) / 2
+            struct(0, [||], [||])
         | x -> failwithf "Recursive splitmethod %u not yet implemented" (LanguagePrimitives.EnumToValue x)
-
-    //let decompose tree = 
-        //match tree with
-        //| Empty -> failwith "recursiveBuild produced Empty; this can't happen"
-        //| Node (v, l, r) -> (v, l, r)
 
     /// Builds a BST of bounding volumes. Primitives are ordered Smallest-To-Largest along the split axis
     let rec recursiveBuild ( geometryArray : 'T []) (bvhInfoArray : BVHPrimitive []) (start : int) (finish : int) (orderedGeometryList : 'T  list) (splitMethod : SplitMethods) = 
@@ -54,7 +52,7 @@ type BVHTreeBuilder<'T when 'T :> AxisAlignedBoundable>() =
                 let leaf = Node (BVHBuildNode(SplitAxis.None, orderedGeometryList.Length, nPrimitives, bounds), Empty, Empty)
                 (leaf, newOrderedList, 1)
             else
-                let splitPoint , smallerThanMidArray, largerThanMidArray = calculateSplitPoint subArray start finish centroidBounds axis splitMethod
+                let struct(splitPoint , smallerThanMidArray, largerThanMidArray) = calculateSplitPoint subArray start finish centroidBounds axis splitMethod
                 Array.blit smallerThanMidArray 0 bvhInfoArray start smallerThanMidArray.Length
                 Array.blit largerThanMidArray 0 bvhInfoArray (start + smallerThanMidArray.Length) largerThanMidArray.Length
                 // TODO: investigate Parallel, need to rework sublists as they have a seq dependency
