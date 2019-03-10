@@ -1,13 +1,12 @@
 ﻿namespace HenzaiFunc.Core.Extensions
 
-
 module Array =
 
     type 'T``[]`` with
         /// Partitions x such that x[i..k-1] <= x[k] <= x[k+1..j]
         /// Returns k, the new idx of x[pidx]
+        /// See https://en.cppreference.com/w/cpp/algorithm/nth_element
         member x.PartitionInPlace(map : ('T -> 'U)  when 'U : comparison, i: int, j: int, pidx: int) =
-            assert (pidx < j)
             assert (j < x.Length)
 
             let p = x.[pidx]
@@ -45,15 +44,11 @@ module Array =
                     x.[largeIdx] <- temp
                     mappedSmall <- map(x.[smallIdx])
                     mappedLarge <- map(x.[largeIdx])
-
             k
-        /// The value pointed at pivot is changed such that its value would be as if the array is sorted.
-        /// All elements i' with an index less than pivot satisfy map(i') <= map(m).
-        /// All elements i'' with an index greater than pivot satisfy map(i'') >= map(m).
-        /// See https://en.cppreference.com/w/cpp/algorithm/nth_element
-        /// Implementation : https://archive.siam.org/meetings/analco04/abstracts/CMartinez.pdf
-        //TODO: test
-        member x.PartialSortInPlace(map : ('T -> 'U)  when 'U : comparison, m : int) = 
+
+        // Obtain a sorted list of the m smallest elements of a given set of n elements.
+        // Implementation : https://archive.siam.org/meetings/analco04/abstracts/CMartinez.pdf
+        member x.PartialQuickSortInPlace(map : ('T -> 'U)  when 'U : comparison, m : int) = 
             assert (m < x.Length)
             let pivot i j = (i+j)/2
             let rec partialSort i j =

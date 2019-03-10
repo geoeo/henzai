@@ -23,12 +23,22 @@ type BVHTreeBuilder<'T when 'T :> AxisAlignedBoundable>() =
         | SplitMethods.Middle ->
             let midFloat = (accessPointBySplitAxis centroidBounds.PMin dim + accessPointBySplitAxis centroidBounds.PMax dim) / 2.0f
             //TODO: investigate in place solution without allocating
-            let smaller, larger = Array.partition (fun (elem : BVHPrimitive) -> accessPointBySplitAxis (AABB.center elem.aabb) dim < midFloat) bvhInfoSubArray
+            let smaller, largerOrEqual = Array.partition (fun (elem : BVHPrimitive) -> accessPointBySplitAxis (AABB.center elem.aabb) dim < midFloat) bvhInfoSubArray
             let mid = start + smaller.Length
-            struct(mid , smaller, larger)
+            struct(mid , smaller, largerOrEqual)
         | SplitMethods.EqualCounts ->
-            let mid = (start + finish) / 2
-            struct(0, [||], [||])
+            //TODO: test
+            let mid = bvhInfoSubArray.Length / 2
+            let map (e : BVHPrimitive) = accessPointBySplitAxis (AABB.center e.aabb) dim
+            let newPosOfMid = bvhInfoSubArray.PartitionInPlace(map, 0, bvhInfoSubArray.Length-1 , mid)
+            if newPosOfMid = 0 then 
+                struct(start+newPosOfMid+1,[|bvhInfoSubArray.[newPosOfMid]|],bvhInfoSubArray.[newPosOfMid+1..]) 
+            else 
+                struct(start+newPosOfMid, bvhInfoSubArray.[..(newPosOfMid-1)], bvhInfoSubArray.[newPosOfMid..])
+            //let largerOrEqual = if newPosOfMid = bvhInfoSubArray.Length - 1 then [||] else bvhInfoSubArray.[newPosOfMid..]
+            //let smaller = if newPosOfMid = start then [||] else bvhInfoSubArray.[..(newPosOfMid-1)]
+            //let largerOrEqual = bvhInfoSubArray.[newPosOfMid..]
+            //struct(newPosOfMid, smaller, largerOrEqual)
         | x -> failwithf "Recursive splitmethod %u not yet implemented" (LanguagePrimitives.EnumToValue x)
 
     /// Builds a BST of bounding volumes. Primitives are ordered Smallest-To-Largest along the split axis
@@ -43,7 +53,7 @@ type BVHTreeBuilder<'T when 'T :> AxisAlignedBoundable>() =
         else            
             // TODO: investigate Span type for this when upgrading to >= F#4.5
             // TODO: profile this
-            let subArray = bvhInfoArray.[start..finish-1]
+            let subArray = if nPrimitives = bvhInfoArray.Length then bvhInfoArray else bvhInfoArray.[start..finish-1]
             let centroidBounds = Array.fold (fun acc (elem : BVHPrimitive) -> AABB.unionWithPoint acc (AABB.center elem.aabb)) (AABB()) subArray
             let axis = AABB.maximumExtent centroidBounds
             // Unusual case e.g. multiple instances of the same geometry

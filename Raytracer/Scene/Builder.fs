@@ -18,5 +18,5 @@ let sceneNonBoundableArray : Surface [] = List.concat [plane_floor_Unbounded;lig
 
 let constructBVHTree surfaceArray = 
     let bvhTreeBuilder = BVHTreeBuilder<Surface>()
-    bvhTreeBuilder.build surfaceArray SplitMethods.Middle
+    bvhTreeBuilder.build surfaceArray SplitMethods.EqualCounts
     
