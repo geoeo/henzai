@@ -3,6 +3,10 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Folder Include="Extensions\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Extensions/Array.fs" />
     <Compile Include="Utils.fs" />
     <Compile Include="Types.fs" />
     <Compile Include="RaytraceGeometry/Ray.fs" />
@@ -16,7 +20,7 @@
     <Compile Include="RaytraceGeometry/NotHitable.fs" />
     <Compile Include="RaytraceGeometry/Sphere.fs" />
     <Compile Include="RaytraceGeometry/Plane.fs" />
-    <Compile Include="RaytraceGeometry/Triangle.fs" />
+    <Compile Include="RaytraceGeometry/Triangle.fs" />      
     <Compile Include="Acceleration/Culler.fs" />
     <Compile Include="Acceleration/BVHTreeBuilder.fs" />
     <Compile Include="Acceleration/BVHRuntime.fs" />
