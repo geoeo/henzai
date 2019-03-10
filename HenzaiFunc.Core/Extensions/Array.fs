@@ -4,7 +4,6 @@
 module Array =
 
     type 'T``[]`` with
-        //TODO: test
         /// Partitions x such that x[i..k-1] <= x[k] <= x[k+1..j]
         /// Returns k, the new idx of x[pidx]
         member x.PartitionInPlace(map : ('T -> 'U)  when 'U : comparison, i: int, j: int, pidx: int) =
@@ -53,6 +52,7 @@ module Array =
         /// All elements i'' with an index greater than pivot satisfy map(i'') >= map(m).
         /// See https://en.cppreference.com/w/cpp/algorithm/nth_element
         /// Implementation : https://archive.siam.org/meetings/analco04/abstracts/CMartinez.pdf
+        //TODO: test
         member x.PartialSortInPlace(map : ('T -> 'U)  when 'U : comparison, m : int) = 
             assert (m < x.Length)
             let pivot i j = (i+j)/2
