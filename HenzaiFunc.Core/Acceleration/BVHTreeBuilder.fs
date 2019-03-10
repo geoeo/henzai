@@ -1,7 +1,7 @@
 ﻿namespace HenzaiFunc.Core.Acceleration
 
 open HenzaiFunc.Core.Types
-open HenzaiFunc.Core.Extensions
+open HenzaiFunc.Core.Extensions.Array
 open HenzaiFunc.Core.RaytraceGeometry
 
 // Phyisically Based Rendering Third Edition p. 257
