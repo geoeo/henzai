@@ -8,6 +8,7 @@ let a2 = [|1; 5; 10; 0; 2;|]
 let a3 = [|1; 5; 10; 3; 2; 11;|]
 let a4 = [|0; 1; 1; 0; 1; 0;|]
 let a5 = [|0; 0; 0; 0; 0; 0;|]
+let a6 = [|0; 0; 0; 3; 0; 0;|]
 
 [<Fact>]
 let partitionTestA1() =
@@ -59,4 +60,14 @@ let partitionTestA5() =
     Assert.Equal(3, k5)
     Assert.Equal(0, a5.[k5])
 
+
+[<Fact>]
+let partitionTestA6() =
+    let pivot6 = a6.Length / 2
+
+    let k6 = a6.PartitionInPlace((fun x -> x), 0, a6.Length-1, pivot6)
+
+    Assert.Equal(3, pivot6)
+    Assert.Equal(5, k6)
+    Assert.Equal(3, a6.[k6])
 
