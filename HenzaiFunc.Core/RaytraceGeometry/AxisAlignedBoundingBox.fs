@@ -70,4 +70,5 @@ type AABB(pMin : MinPoint, pMax : MaxPoint) =
         member this.IsObstructedBySelf _ = false
 
     new() = AABB(Vector4(System.Single.MaxValue), Vector4(System.Single.MinValue))
+    new(pMin : Vector3, pMax: Vector3) = AABB(Vector4(pMin,1.0f), Vector4(pMax, 1.0f))
 

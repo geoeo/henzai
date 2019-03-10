@@ -10,7 +10,7 @@ open HenzaiFunc.Core.Types
 [<Fact>]
 let PlaneZAABBTest() =
     let p 
-        = Plane(new System.Numerics.Plane((Henzai.Core.Numerics.Vector.CreateUnitVector3(0.0f, 0.0f, 1.0f)),30.0f),Some ((Vector3(10.0f,10.0f,-30.0f))),Some 20.0f,Some 20.0f)
+        = Plane(new System.Numerics.Plane((Henzai.Core.Numerics.Vector.CreateUnitVector3(0.0f, 0.0f, 1.0f)),30.0f), Vector3(10.0f,10.0f,-30.0f), 20.0f, 20.0f)
 
     let aabb = (p :> AxisAlignedBoundable).GetBounds
 
@@ -26,7 +26,7 @@ let PlaneZAABBTest() =
 [<Fact>]
 let PlaneYAABBTest() =
     let p 
-        = Plane(new System.Numerics.Plane((Henzai.Core.Numerics.Vector.CreateUnitVector3(0.0f, 1.0f, 0.0f)),30.0f),Some ((Vector3(10.0f,10.0f,-30.0f))),Some 20.0f,Some 20.0f)
+        = Plane(new System.Numerics.Plane((Henzai.Core.Numerics.Vector.CreateUnitVector3(0.0f, 1.0f, 0.0f)),30.0f), Vector3(10.0f,10.0f,-30.0f), 20.0f, 20.0f)
 
     let aabb = (p :> AxisAlignedBoundable).GetBounds
 
@@ -44,7 +44,7 @@ let PlaneYAABBTest() =
 [<Fact>]
 let PlaneXAABBTest() =
     let p 
-        = Plane(new System.Numerics.Plane((Henzai.Core.Numerics.Vector.CreateUnitVector3(1.0f, 0.0f, 0.0f)),30.0f),Some ((Vector3(30.0f,10.0f,-30.0f))),Some 20.0f,Some 20.0f)
+        = Plane(new System.Numerics.Plane((Henzai.Core.Numerics.Vector.CreateUnitVector3(1.0f, 0.0f, 0.0f)),30.0f), Vector3(30.0f,10.0f,-30.0f), 20.0f, 20.0f)
 
     let aabb = (p :> AxisAlignedBoundable).GetBounds
 
@@ -66,7 +66,7 @@ let PlaneXYZAABBTest() =
     let n = Henzai.Core.Numerics.Vector.CreateUnitVector3(-1.0f, -1.0f, 1.0f)
 
     let p 
-     = Plane(new System.Numerics.Plane(n, 20.0f),Some (Vector3(20.0f, 20.0f, -20.0f)),Some 10.0f,Some 5.0f)
+     = Plane(new System.Numerics.Plane(n, 20.0f), Vector3(20.0f, 20.0f, -20.0f), 10.0f, 5.0f)
     let aabb = (p :> AxisAlignedBoundable).GetBounds
 
     let mutable vObj = Henzai.Core.Numerics.Vector.ToVec3(Vector4.Transform(Vector4(0.0f, 0.0f, 1.0f, 0.0f),p.Get_R_canoical_orientation))
@@ -82,7 +82,7 @@ let PlaneXYZTest() =
     let n = Henzai.Core.Numerics.Vector.CreateUnitVector3(-1.0f, -1.0f, 1.0f)
 
     let p 
-     = Plane(new System.Numerics.Plane(n, 0.0f),Some (Vector3(0.0f)),Some 10.0f,Some 5.0f)
+     = Plane(new System.Numerics.Plane(n, 0.0f), Vector3(0.0f), 10.0f, 5.0f)
     let aabb = (p :> AxisAlignedBoundable).GetBounds
 
     let mutable vObj = Henzai.Core.Numerics.Vector.ToVec3(Vector4.Transform(Vector4(0.0f, 0.0f, 1.0f, 0.0f),p.Get_R_canoical_orientation))

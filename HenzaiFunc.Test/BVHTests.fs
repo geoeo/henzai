@@ -5,6 +5,7 @@ open Xunit
 open HenzaiFunc.Core.RaytraceGeometry
 open HenzaiFunc.Core.Acceleration
 open HenzaiFunc.Core.Types
+open HenzaiFunc.Core
 
 
 let simpleSphereGeomertryArray : RaytracingGeometry []  = 
@@ -143,13 +144,13 @@ let flattenBVHSimpleSphereTest () =
     let bvhRuntime = BVHRuntime<RaytracingGeometry>()
     let (bvhTree, orderedPrimitiveList, nodeCount) = bvhTreeBuilder.build simpleSphereGeomertryArray SplitMethods.Middle
     let bvhArray = bvhRuntime.allocateMemoryForBVHRuntime nodeCount
-    let out = bvhRuntime.flattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYNegZ
+    let out = bvhRuntime.flattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYZ
     let bvhRuntimeNode = bvhArray.[0]
     let leafNode = bvhRuntimeNode.leafNode 
     let primitive = simpleSphereGeomertryArray.[leafNode.primitivesOffset]
     let sphere = primitive :?> Sphere
 
-    Assert.Equal(Vector3(4.0f,-1.0f,-15.0f), sphere.Center)
+    Assert.Equal(Vector4(4.0f,-1.0f,-15.0f,1.0f), sphere.Center)
     Assert.Equal(1, nodeCount)
     Assert.Equal(1, bvhRuntimeNode.nPrimitives)
 
@@ -160,7 +161,7 @@ let flattenBVHIdenticalSphereTest () =
     let bvhRuntime = BVHRuntime<RaytracingGeometry>()
     let (bvhTree, orderedPrimitiveArray, nodeCount) = bvhTreeBuilder.build identicalSphereGeomertryArray SplitMethods.Middle
     let bvhArray = bvhRuntime.allocateMemoryForBVHRuntime nodeCount
-    let out = bvhRuntime.flattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYNegZ
+    let out = bvhRuntime.flattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYZ
     let bvhRuntimeNode_Zero = bvhArray.[0]
     let leafNode_Zero = bvhRuntimeNode_Zero.leafNode
     let primitive_Zero = orderedPrimitiveArray.[leafNode_Zero.primitivesOffset]
@@ -168,7 +169,7 @@ let flattenBVHIdenticalSphereTest () =
 
     Assert.Equal(1, nodeCount)
     Assert.Equal(bvhRuntimeNode_Zero.nPrimitives, 3)
-    Assert.Equal(Vector3(2.0f,-4.5f,-7.0f), sphere_Zero.Center)
+    Assert.Equal(Vector4(2.0f,-4.5f,-7.0f,1.0f), sphere_Zero.Center)
 
 
         
@@ -178,7 +179,7 @@ let flattenBVHOverlappingSphereTest () =
     let bvhRuntime = BVHRuntime<RaytracingGeometry>()
     let (bvhTree, orderedPrimitiveArray, nodeCount) = bvhTreeBuilder.build overlappingSphereGeomertryArray SplitMethods.Middle
     let bvhArray = bvhRuntime.allocateMemoryForBVHRuntime nodeCount
-    let out = bvhRuntime.flattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYNegZ
+    let out = bvhRuntime.flattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYZ
     let bvhRuntimeNode_Zero = bvhArray.[0]
     let bvhRuntimeNode_One = bvhArray.[1]
     let bvhRuntimeNode_Two = bvhArray.[2]
@@ -202,9 +203,9 @@ let flattenBVHOverlappingSphereTest () =
     Assert.Equal(bvhRuntimeNode_Three.nPrimitives, 1)
     Assert.Equal(bvhRuntimeNode_Four.nPrimitives, 1)
 
-    Assert.Equal(Vector3(4.0f,-1.0f,-15.0f), sphere_Zero.Center)
-    Assert.Equal(Vector3(2.0f,-4.5f,-7.0f), sphere_One.Center)  
-    Assert.Equal(Vector3(2.5f,-4.5f,-7.0f), sphere_Two.Center)
+    Assert.Equal(Vector4(4.0f,-1.0f,-15.0f,1.0f), sphere_Zero.Center)
+    Assert.Equal(Vector4(2.0f,-4.5f,-7.0f,1.0f), sphere_One.Center)  
+    Assert.Equal(Vector4(2.5f,-4.5f,-7.0f,1.0f), sphere_Two.Center)
     
     
 [<Fact>]
@@ -213,7 +214,7 @@ let flattenBVHSphereTest () =
     let bvhRuntime = BVHRuntime<RaytracingGeometry>()
     let (bvhTree, orderedPrimitiveArray, nodeCount) = bvhTreeBuilder.build standardSphereGeomertryArray SplitMethods.Middle
     let bvhArray = bvhRuntime.allocateMemoryForBVHRuntime nodeCount
-    let out = bvhRuntime.flattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYNegZ
+    let out = bvhRuntime.flattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYZ
     let bvhRuntimeNode_Zero = bvhArray.[0]
     let bvhRuntimeNode_One = bvhArray.[1]
     let bvhRuntimeNode_Two = bvhArray.[2]
@@ -238,9 +239,9 @@ let flattenBVHSphereTest () =
     Assert.Equal(bvhRuntimeNode_Four.nPrimitives, 1)
 
 
-    Assert.Equal(Vector3(4.0f,-1.0f,-15.0f), sphere_Zero.Center)
-    Assert.Equal(Vector3(2.0f,-4.5f,-7.0f), sphere_One.Center)  
-    Assert.Equal(Vector3(10.0f,-4.5f,-7.0f), sphere_Two.Center)
+    Assert.Equal(Vector4(4.0f,-1.0f,-15.0f,1.0f), sphere_Zero.Center)
+    Assert.Equal(Vector4(2.0f,-4.5f,-7.0f,1.0f), sphere_One.Center)  
+    Assert.Equal(Vector4(10.0f,-4.5f,-7.0f,1.0f), sphere_Two.Center)
 
 
 [<Fact>]
@@ -249,7 +250,7 @@ let flattenBVHLargeSphereTest () =
     let bvhRuntime= BVHRuntime<RaytracingGeometry>()
     let (bvhTree, orderedPrimitiveArray, nodeCount) = bvhTreeBuilder.build largeSphereGeomertryArray SplitMethods.Middle
     let bvhArray = bvhRuntime.allocateMemoryForBVHRuntime nodeCount
-    let out = bvhRuntime.flattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYNegZ
+    let out = bvhRuntime.flattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYZ
 
     let bvhRuntimeNode_Zero = bvhArray.[0]
     let bvhRuntimeNode_One = bvhArray.[1]
@@ -291,11 +292,11 @@ let flattenBVHLargeSphereTest () =
     Assert.Equal(bvhRuntimeNode_Seven.nPrimitives, 1)
     Assert.Equal(bvhRuntimeNode_Eight.nPrimitives, 1)
 
-    Assert.Equal(Vector3(4.0f,-2.0f,-16.0f), sphere_Zero.Center)
-    Assert.Equal(Vector3(4.0f,-2.0f,-16.0f), sphere_One.Center)  
-    Assert.Equal(Vector3(4.0f,-2.0f,-16.0f), sphere_Two.Center)
-    Assert.Equal(Vector3(2.0f,-4.5f,-7.0f), sphere_Three.Center)
-    Assert.Equal(Vector3(5.0f,-4.5f,-7.0f), sphere_Four.Center)
+    Assert.Equal(Vector4(4.0f,-2.0f,-16.0f,1.0f), sphere_Zero.Center)
+    Assert.Equal(Vector4(4.0f,-2.0f,-16.0f,1.0f), sphere_One.Center)  
+    Assert.Equal(Vector4(4.0f,-2.0f,-16.0f,1.0f), sphere_Two.Center)
+    Assert.Equal(Vector4(2.0f,-4.5f,-7.0f,1.0f), sphere_Three.Center)
+    Assert.Equal(Vector4(5.0f,-4.5f,-7.0f,1.0f), sphere_Four.Center)
 
 
 [<Fact>]
@@ -304,7 +305,7 @@ let flattenBVHSmallLargeSphereTest () =
     let bvhRuntime = BVHRuntime<RaytracingGeometry>()
     let (bvhTree, orderedPrimitiveList, nodeCount) = bvhTreeBuilder.build smallLargeSphereGeometryArrray SplitMethods.Middle
     let bvhArray = bvhRuntime.allocateMemoryForBVHRuntime nodeCount
-    let out = bvhRuntime.flattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYNegZ
+    let out = bvhRuntime.flattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYZ
     let bvhRuntimeNode = bvhArray.[0]
     let leafNode = bvhRuntimeNode.leafNode 
     let primitive = simpleSphereGeomertryArray.[leafNode.primitivesOffset]
@@ -319,7 +320,7 @@ let flattenBVHALotSphereTest () =
     let bvhRuntime = BVHRuntime<RaytracingGeometry>()
     let (bvhTree, orderedPrimitiveList, nodeCount) = bvhTreeBuilder.build aLotOfSpheresGeometryArray SplitMethods.Middle
     let bvhArray = bvhRuntime.allocateMemoryForBVHRuntime nodeCount
-    let out = bvhRuntime.flattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYNegZ
+    let out = bvhRuntime.flattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYZ
     let bvhRuntimeNode = bvhArray.[0]
     let leafNode = bvhRuntimeNode.leafNode 
     let primitive = simpleSphereGeomertryArray.[leafNode.primitivesOffset]
@@ -335,16 +336,16 @@ let intersectBVHSimpleSphereTest () =
     let (bvhTree, orderedPrimitiveArray, nodeCount) = bvhTreeBuilder.build simpleSphereGeomertryArray SplitMethods.Middle
     let bvhArray = bvhRuntime.allocateMemoryForBVHRuntime nodeCount
     let bvhRuntimeStack = Array.zeroCreate bvhArray.Length
-    let out = bvhRuntime.flattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYNegZ
-    let ray = Ray(Vector3(4.0f, -1.0f, -10.0f), Vector3(0.0f, 0.0f, -1.0f))
+    let out = bvhRuntime.flattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYZ
+    let ray = Ray(Vector4(4.0f, -1.0f, -10.0f,1.0f), Vector4(0.0f, 0.0f, -1.0f,0.0f))
     let struct(hasIntersection, tHit, geometryOption) = bvhRuntime.traverse bvhArray orderedPrimitiveArray bvhRuntimeStack ray
 
-    let geometry = RaytraceGeometryUtils.forceExtract geometryOption
+    let geometry = Utils.forceExtract geometryOption
     let sphere = geometry :?> Sphere
 
 
     Assert.True(hasIntersection)
-    Assert.Equal(Vector3(4.0f,-1.0f,-15.0f), sphere.Center)
+    Assert.Equal(Vector4(4.0f,-1.0f,-15.0f,1.0f), sphere.Center)
     Assert.Equal(3.5f, sphere.Radius)
     Assert.Equal(tHit, 1.5f)
 
@@ -356,16 +357,16 @@ let intersectBVHStandardSphereTest () =
     let (bvhTree, orderedPrimitiveArray, nodeCount) = bvhTreeBuilder.build standardSphereGeomertryArray SplitMethods.Middle
     let bvhArray = bvhRuntime.allocateMemoryForBVHRuntime nodeCount
     let bvhRuntimeStack = Array.zeroCreate bvhArray.Length
-    let out = bvhRuntime.flattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYNegZ
-    let ray = Ray(Vector3(12.0f, -4.5f, -7.0f), Vector3(-1.0f, 0.0f, 0.0f))
+    let out = bvhRuntime.flattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYZ
+    let ray = Ray(Vector4(12.0f, -4.5f, -7.0f,1.0f), Vector4(-1.0f, 0.0f, 0.0f,0.0f))
     let struct(hasIntersection, tHit, geometryOption) = bvhRuntime.traverse bvhArray orderedPrimitiveArray bvhRuntimeStack ray
 
-    let geometry = RaytraceGeometryUtils.forceExtract geometryOption
+    let geometry = Utils.forceExtract geometryOption
     let sphere = geometry :?> Sphere
 
 
     Assert.True(hasIntersection)
-    Assert.Equal(Vector3(10.0f,-4.5f,-7.0f), sphere.Center)
+    Assert.Equal(Vector4(10.0f,-4.5f,-7.0f,1.0f), sphere.Center)
     Assert.Equal(1.5f, sphere.Radius)
     Assert.Equal(tHit, 0.5f)
 
@@ -377,16 +378,16 @@ let intersectBVHIdenticalSphereTest () =
     let (bvhTree, orderedPrimitiveArray, nodeCount) = bvhTreeBuilder.build identicalSphereGeomertryArray SplitMethods.Middle
     let bvhArray = bvhRuntime.allocateMemoryForBVHRuntime nodeCount
     let bvhRuntimeStack = Array.zeroCreate bvhArray.Length
-    let out = bvhRuntime.flattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYNegZ
-    let ray = Ray(Vector3(2.0f, -10.5f, -7.0f), Vector3(0.0f, 1.0f, 0.0f))
+    let out = bvhRuntime.flattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYZ
+    let ray = Ray(Vector4(2.0f, -10.5f, -7.0f,1.0f), Vector4(0.0f, 1.0f, 0.0f, 0.0f))
     let struct(hasIntersection, tHit, geometryOption) = bvhRuntime.traverse bvhArray orderedPrimitiveArray bvhRuntimeStack ray
 
-    let geometry = RaytraceGeometryUtils.forceExtract geometryOption
+    let geometry = Utils.forceExtract geometryOption
     let sphere = geometry :?> Sphere
 
 
     Assert.True(hasIntersection)
-    Assert.Equal(Vector3(2.0f,-4.5f,-7.0f), sphere.Center)
+    Assert.Equal(Vector4(2.0f,-4.5f,-7.0f, 1.0f), sphere.Center)
     Assert.Equal(1.5f, sphere.Radius)
     Assert.Equal(tHit, 4.5f)
 
@@ -399,16 +400,16 @@ let intersectBVHLargeSphereTest () =
     let (bvhTree, orderedPrimitiveArray, nodeCount) = bvhTreeBuilder.build largeSphereGeomertryArray SplitMethods.Middle
     let bvhArray = bvhRuntime.allocateMemoryForBVHRuntime nodeCount
     let bvhRuntimeStack = Array.zeroCreate bvhArray.Length
-    let out = bvhRuntime.flattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYNegZ
-    let ray = Ray(Vector3(4.0f, 5.0f, -22.0f), Vector3(0.0f, 0.0f, 1.0f))
+    let out = bvhRuntime.flattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYZ
+    let ray = Ray(Vector4(4.0f, 5.0f, -22.0f,1.0f), Vector4(0.0f, 0.0f, 1.0f, 0.0f))
     let struct(hasIntersection, tHit, geometryOption) = bvhRuntime.traverse bvhArray orderedPrimitiveArray bvhRuntimeStack ray
 
-    let geometry = RaytraceGeometryUtils.forceExtract geometryOption
+    let geometry = Utils.forceExtract geometryOption
     let sphere = geometry :?> Sphere
 
 
     Assert.True(hasIntersection)
-    Assert.Equal(Vector3(4.0f,5.0f,-16.5f), sphere.Center)
+    Assert.Equal(Vector4(4.0f, 5.0f, -16.5f, 1.0f), sphere.Center)
     Assert.Equal(3.5f, sphere.Radius)
     Assert.Equal(tHit, 2.0f)
 
@@ -420,9 +421,9 @@ let intersectBVHSmallLargeSphereTest () =
     let (bvhTree, orderedPrimitiveArray, nodeCount) = bvhTreeBuilder.build smallLargeSphereGeometryArrray SplitMethods.Middle
     let bvhArray = bvhRuntime.allocateMemoryForBVHRuntime nodeCount
     let bvhRuntimeStack = Array.zeroCreate bvhArray.Length
-    let out = bvhRuntime.flattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYNegZ
-    let ray = Ray(Vector3(-1.0f, 0.0f, 15.0f), Vector3(-1.0f, 0.0f, -10.0f))
-    let ray2 = Ray(Vector3(1.0f, 0.0f, 15.0f), Vector3(1.0f, 0.0f, -10.0f))
+    let out = bvhRuntime.flattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYZ
+    let ray = Ray(Vector4(-1.0f, 0.0f, 15.0f,1.0f), Vector4(-1.0f, 0.0f, -10.0f,0.0f))
+    let ray2 = Ray(Vector4(1.0f, 0.0f, 15.0f,1.0f), Vector4(1.0f, 0.0f, -10.0f,0.0f))
 
     let struct(hasIntersection, tHit, geometryOption) = bvhRuntime.traverse bvhArray orderedPrimitiveArray bvhRuntimeStack ray
     let struct(hasIntersection2, tHit2, geometryOption2) = bvhRuntime.traverse bvhArray orderedPrimitiveArray bvhRuntimeStack ray2
@@ -439,16 +440,16 @@ let intersectBVHSmallLargeSphereInfrontTest () =
     let (bvhTree, orderedPrimitiveArray, nodeCount) = bvhTreeBuilder.build smallLargeInFrontSphereGeometryArray SplitMethods.Middle
     let bvhArray = bvhRuntime.allocateMemoryForBVHRuntime nodeCount
     let bvhRuntimeStack = Array.zeroCreate bvhArray.Length
-    let out = bvhRuntime.flattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYNegZ
+    let out = bvhRuntime.flattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYZ
     let ray = Ray(Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, -1.0f))
     let ray2 = Ray(Vector3(1.0f, 0.0f, 15.0f), Vector3(1.0f, 0.0f, -10.0f))
 
     let struct(hasIntersection, tHit, geometryOption) = bvhRuntime.traverse bvhArray orderedPrimitiveArray bvhRuntimeStack ray
 
-    let geometry = RaytraceGeometryUtils.forceExtract geometryOption
+    let geometry = Utils.forceExtract geometryOption
     let sphere = geometry :?> Sphere
 
-    Assert.Equal(Vector3(1.5f,-1.5f,-3.5f), sphere.Center)
+    Assert.Equal(Vector4(1.5f,-1.5f,-3.5f,1.0f), sphere.Center)
     Assert.Equal(5.5f, sphere.Radius)
 
 
@@ -463,7 +464,7 @@ let intersectBVHALotLargeSphereInfrontTest () =
     let (bvhTree, orderedPrimitiveArray, nodeCount) = bvhTreeBuilder.build aLotOfSpheresGeometryArray SplitMethods.Middle
     let bvhArray = bvhRuntime.allocateMemoryForBVHRuntime nodeCount
     let bvhRuntimeStack = Array.zeroCreate bvhArray.Length
-    let out = bvhRuntime.flattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYNegZ
+    let out = bvhRuntime.flattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYZ
 
     let ray = Ray(Vector3(4.0f, -1.0f, 0.0f), Vector3(0.0f, 0.0f, -1.0f))
     let ray2 = Ray(Vector3(0.0f, 0.0f, 0.0f), Vector3(4.0f, -1.0f, -15.0f))
@@ -475,16 +476,16 @@ let intersectBVHALotLargeSphereInfrontTest () =
     let struct(hasIntersection3, tHit3, geometryOption3) = bvhRuntime.traverse bvhArray orderedPrimitiveArray bvhRuntimeStack ray3
     let struct(hasIntersection4, tHit4, geometryOption4) = bvhRuntime.traverse bvhArray orderedPrimitiveArray bvhRuntimeStack ray4
 
-    let geometry = RaytraceGeometryUtils.forceExtract geometryOption
+    let geometry = Utils.forceExtract geometryOption
     let sphere = geometry :?> Sphere
 
-    let geometry2 = RaytraceGeometryUtils.forceExtract geometryOption2
+    let geometry2 = Utils.forceExtract geometryOption2
     let sphere2 = geometry2 :?> Sphere
 
-    let geometry3 = RaytraceGeometryUtils.forceExtract geometryOption3
+    let geometry3 = Utils.forceExtract geometryOption3
     let sphere3 = geometry3 :?> Sphere
 
-    let geometry4 = RaytraceGeometryUtils.forceExtract geometryOption4
+    let geometry4 = Utils.forceExtract geometryOption4
     let sphere4 = geometry4 :?> Sphere
 
     Assert.True(hasIntersection)
@@ -493,16 +494,16 @@ let intersectBVHALotLargeSphereInfrontTest () =
     Assert.True(hasIntersection4)
     
 
-    Assert.Equal(Vector3(4.0f,-1.0f,-15.0f), sphere2.Center)
+    Assert.Equal(Vector4(4.0f,-1.0f,-15.0f,1.0f), sphere2.Center)
     Assert.Equal(3.5f, sphere2.Radius)
 
-    Assert.Equal(Vector3(4.0f,-1.0f,-15.0f), sphere.Center)
+    Assert.Equal(Vector4(4.0f,-1.0f,-15.0f,1.0f), sphere.Center)
     Assert.Equal(3.5f, sphere.Radius)
 
-    Assert.Equal(Vector3(4.0f,-1.0f,-15.0f), sphere3.Center)
+    Assert.Equal(Vector4(4.0f,-1.0f,-15.0f,1.0f), sphere3.Center)
     Assert.Equal(3.5f, sphere3.Radius)
 
-    Assert.Equal(Vector3(4.0f,-1.0f,-15.0f), sphere3.Center)
+    Assert.Equal(Vector4(4.0f,-1.0f,-15.0f,1.0f), sphere3.Center)
     Assert.Equal(3.5f, sphere3.Radius)
 
     Assert.Equal(11.5f, tHit)
