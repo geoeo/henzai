@@ -3,9 +3,27 @@
 module Array =
 
     type 'T``[]`` with
+        /// element x[m] holds the value as if it were sorted via map
+        /// See https://en.cppreference.com/w/cpp/algorithm/nth_element
+        member x.nthElement(map : ('T -> 'U)  when 'U : comparison, m : int) =
+            let length = x.Length
+            assert (m < length)
+
+            for i in 0..m do
+                if map(x.[i]) > map(x.[m]) then
+                    let temp = x.[i]
+                    x.[i] <- x.[m]
+                    x.[m] <- temp
+
+            for i in length-1..m do
+                if map(x.[i]) < map(x.[m]) then
+                    let temp = x.[i]
+                    x.[i] <- x.[m]
+                    x.[m] <- temp
+
+
         /// Partitions x such that x[i..k-1] <= x[k] <= x[k+1..j]
         /// Returns k, the new idx of x[pidx]
-        /// See https://en.cppreference.com/w/cpp/algorithm/nth_element
         member x.PartitionInPlace(map : ('T -> 'U)  when 'U : comparison, i: int, j: int, pidx: int) =
             assert (j < x.Length)
 

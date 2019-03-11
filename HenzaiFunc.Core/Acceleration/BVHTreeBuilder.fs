@@ -18,6 +18,7 @@ type BVHTreeBuilder<'T when 'T :> AxisAlignedBoundable>() =
         | SplitAxis.Z -> p.Z
         | x -> failwithf "Accessed point by %u. Should not happen!" (LanguagePrimitives.EnumToValue x)
 
+    /// start and finish are offsets indexing the global bvhInfoArray. bvhInfoSubArray is just a slice of that array and not indexed by start and finish
     let calculateSplitPoint (bvhInfoSubArray : BVHPrimitive []) (start : int) (finish : int) (centroidBounds : AABB) (dim : SplitAxis) (splitMethod : SplitMethods) =
         match splitMethod with
         | SplitMethods.Middle ->
@@ -27,18 +28,12 @@ type BVHTreeBuilder<'T when 'T :> AxisAlignedBoundable>() =
             let mid = start + smaller.Length
             struct(mid , smaller, largerOrEqual)
         | SplitMethods.EqualCounts ->
-            //TODO: test
             let mid = bvhInfoSubArray.Length / 2
             let map (e : BVHPrimitive) = accessPointBySplitAxis (AABB.center e.aabb) dim
-            let newPosOfMid = bvhInfoSubArray.PartitionInPlace(map, 0, bvhInfoSubArray.Length-1 , mid)
-            if newPosOfMid = 0 then 
-                struct(start+newPosOfMid+1,[|bvhInfoSubArray.[newPosOfMid]|],bvhInfoSubArray.[newPosOfMid+1..]) 
-            else 
-                struct(start+newPosOfMid, bvhInfoSubArray.[..(newPosOfMid-1)], bvhInfoSubArray.[newPosOfMid..])
-            //let largerOrEqual = if newPosOfMid = bvhInfoSubArray.Length - 1 then [||] else bvhInfoSubArray.[newPosOfMid..]
-            //let smaller = if newPosOfMid = start then [||] else bvhInfoSubArray.[..(newPosOfMid-1)]
-            //let largerOrEqual = bvhInfoSubArray.[newPosOfMid..]
-            //struct(newPosOfMid, smaller, largerOrEqual)
+            bvhInfoSubArray.nthElement(map, mid)
+            let smaller = bvhInfoSubArray.[..(mid-1)]
+            let largetOrEqual = bvhInfoSubArray.[mid..]
+            struct(start+mid, smaller, largetOrEqual)
         | x -> failwithf "Recursive splitmethod %u not yet implemented" (LanguagePrimitives.EnumToValue x)
 
     /// Builds a BST of bounding volumes. Primitives are ordered Smallest-To-Largest along the split axis
