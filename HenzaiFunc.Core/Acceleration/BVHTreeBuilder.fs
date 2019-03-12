@@ -19,7 +19,7 @@ type BVHTreeBuilder<'T when 'T :> AxisAlignedBoundable>() =
         | x -> failwithf "Accessed point by %u. Should not happen!" (LanguagePrimitives.EnumToValue x)
 
     /// start and finish are offsets indexing the global bvhInfoArray. bvhInfoSubArray is just a slice of that array and not indexed by start and finish
-    let calculateSplitPoint (bvhInfoSubArray : BVHPrimitive []) (start : int) (finish : int) (centroidBounds : AABB) (dim : SplitAxis) (splitMethod : SplitMethods) =
+    let rec calculateSplitPoint (bvhInfoSubArray : BVHPrimitive []) (start : int) (finish : int) (centroidBounds : AABB) (dim : SplitAxis) (splitMethod : SplitMethods) =
         match splitMethod with
         | SplitMethods.Middle ->
             let midFloat = (accessPointBySplitAxis centroidBounds.PMin dim + accessPointBySplitAxis centroidBounds.PMax dim) / 2.0f
@@ -35,8 +35,45 @@ type BVHTreeBuilder<'T when 'T :> AxisAlignedBoundable>() =
             let largetOrEqual = bvhInfoSubArray.[mid..]
             struct(start+mid, smaller, largetOrEqual)
         | SplitMethods.SAH ->
-            let nBuckets = 12
-            struct(0, [||], [||])
+            let nPrimitives = finish - start
+            if nPrimitives <= 4 then
+                calculateSplitPoint bvhInfoSubArray start finish centroidBounds dim SplitMethods.EqualCounts
+            else
+                let nBuckets = 12
+                let intersectionCost = 1.0f
+                let traversalCost = 0.125f
+                let bucketCounts : int [] = Array.zeroCreate nBuckets
+                let bucketBounds : AABB [] = Array.zeroCreate nBuckets
+                let bucketCosts : float32 [] = Array.zeroCreate nBuckets-1
+                let offsetFromIndex aabb = accessPointBySplitAxis (AABB.offset centroidBounds (AABB.center aabb)) dim
+                // Init
+                for i in start..finish-1 do
+                    let aabbOfIndex = bvhInfoSubArray.[i].aabb
+                    let offset = offsetFromIndex aabbOfIndex
+                    let b = if offset = 1.0f then nBuckets - 1 else nBuckets*(int offset)
+                    bucketCounts.[b] <- bucketCounts.[b] + 1
+                    bucketBounds.[b] <- AABB.unionWithAABB bucketBounds.[b] aabbOfIndex
+
+                // Computing Cost O(N*N) can be optimized to linear time p.267
+                for i in 0..nBuckets-2 do
+                    let mutable b0 = AABB()
+                    let mutable b1 = AABB()
+
+                    let mutable count0 = 0
+                    let mutable count1 = 0
+                    for j in 0..i do
+                        b0 <- AABB.unionWithAABB b0 bucketBounds.[j]
+                        count0 <- count0 + bucketCounts.[j]
+                    for j in i+1..nBuckets-1 do
+                        b1 <- AABB.unionWithAABB b1 bucketBounds.[j]
+                        count1 <- count1 + bucketCounts.[j]  
+                    bucketCosts.[i] <- 
+                        traversalCost + 
+                        ((float32 count0)*AABB.surfaceArea b0 + (float32 count1)*AABB.surfaceArea b1) / (AABB.surfaceArea centroidBounds)     
+
+                // Select the bucket with minimal cost
+                //TODO
+                struct(0, [||], [||])
         | x -> failwithf "Recursive splitmethod %u not yet implemented" (LanguagePrimitives.EnumToValue x)
 
     /// Builds a BST of bounding volumes. Primitives are ordered Smallest-To-Largest along the split axis

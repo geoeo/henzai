@@ -72,7 +72,7 @@ module AABB =
       let interpX = Utils.Lerp(parameterVector.X, aabb.PMin.X, aabb.PMax.X)
       let interpY = Utils.Lerp(parameterVector.Y, aabb.PMin.Y, aabb.PMax.Y)
       let interpZ = Utils.Lerp(parameterVector.Z, aabb.PMin.Z, aabb.PMax.Z)
-      Vector4(interpX, interpY, interpZ, 0.0f)
+      Vector4(interpX, interpY, interpZ, 1.0f) : Point
 
 
    /// Returns a poisition between pMin (0, 0, 0) and pMax (1, 1, 1)
@@ -82,7 +82,7 @@ module AABB =
       if (aabb.PMax.X > aabb.PMin.X) then offset.X <- offset.X / (aabb.PMax.X - aabb.PMin.X)
       if (aabb.PMax.Y > aabb.PMin.Y) then offset.Y <- offset.Y / (aabb.PMax.Y - aabb.PMin.Y)
       if (aabb.PMax.Z > aabb.PMin.Z) then offset.Z <- offset.Z / (aabb.PMax.Z - aabb.PMin.Z)
-      offset
+      offset : Point
 
 
 
