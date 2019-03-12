@@ -34,6 +34,9 @@ type BVHTreeBuilder<'T when 'T :> AxisAlignedBoundable>() =
             let smaller = bvhInfoSubArray.[..(mid-1)]
             let largetOrEqual = bvhInfoSubArray.[mid..]
             struct(start+mid, smaller, largetOrEqual)
+        | SplitMethods.SAH ->
+            let nBuckets = 12
+            struct(0, [||], [||])
         | x -> failwithf "Recursive splitmethod %u not yet implemented" (LanguagePrimitives.EnumToValue x)
 
     /// Builds a BST of bounding volumes. Primitives are ordered Smallest-To-Largest along the split axis

@@ -91,7 +91,7 @@ type Lambertian(id: ID, geometry : RaytracingGeometry, material : Raytracer.Mate
         let normalSample = Vector4.Transform(rand_norm, changeOfBaseMatrix)
 
         let outDir = Vector4.Normalize(normalSample)
-        let outRay = Ray(positionOnSurface, outDir, this.ID)
+        let outRay = Ray(positionOnSurface, outDir)
         (true, outRay, cosOfIncidence)
 
 type Metal(id: ID, geometry : RaytracingGeometry, material : Raytracer.Material.Material, fuzz : float32) =
@@ -118,7 +118,7 @@ type Metal(id: ID, geometry : RaytracingGeometry, material : Raytracer.Material.
         let modifiedNormal = Vector4.Normalize((1.0f - this.Fuzz)*normal + this.Fuzz*normalSample)
 
         let outDir = Vector4.Normalize(this.Reflect incommingRay modifiedNormal)
-        let outRay =  Ray(positionOnSurface, outDir, this.ID)    
+        let outRay =  Ray(positionOnSurface, outDir)    
         (true,outRay,1.0f)
 
 // https://www.scratchapixel.com/lessons/3d-basic-rendering/introduction-to-shading/reflection-refraction-fresnel
@@ -170,7 +170,7 @@ type Dielectric(id: ID, geometry : RaytracingGeometry, material : Raytracer.Mate
         let randomFloat = RandomSampling.RandomFloat_Sync()
         if randomFloat <= reflectProb 
         then 
-            let reflectRay = Ray(positionOnSurface, reflectDir, this.ID)
+            let reflectRay = Ray(positionOnSurface, reflectDir)
             (true, reflectRay, 1.0f)
         else // refraction has to have been successful
             let refractRay = Ray(positionOnSurface, refractionDir)
@@ -178,7 +178,7 @@ type Dielectric(id: ID, geometry : RaytracingGeometry, material : Raytracer.Mate
 
     override this.GenerateSamples (incommingRay : Ray) (t : LineParameter) (depthLevel : int) samplesArray =
         let (reflectProb, positionOnSurface, reflectDir, refractionDir) = this.CalcFresnel incommingRay t depthLevel
-        let reflectRay = Ray(positionOnSurface, reflectDir, this.ID)
+        let reflectRay = Ray(positionOnSurface, reflectDir)
         let reflectShading : Material.Color = this.BRDF*reflectProb
         if MathF.Round(reflectProb, 3) = 1.0f then 
             samplesArray.SetValue((reflectRay, reflectShading), 0)
