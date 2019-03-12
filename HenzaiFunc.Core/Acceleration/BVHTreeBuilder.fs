@@ -44,7 +44,7 @@ type BVHTreeBuilder<'T when 'T :> AxisAlignedBoundable>() =
                 let traversalCost = 0.125f
                 let bucketCounts : int [] = Array.zeroCreate nBuckets
                 let bucketBounds : AABB [] = Array.zeroCreate nBuckets
-                let bucketCosts : float32 [] = Array.zeroCreate nBuckets-1
+                let bucketCosts : float32 [] = Array.zeroCreate (nBuckets-1)
                 let offsetFromIndex aabb = accessPointBySplitAxis (AABB.offset centroidBounds (AABB.center aabb)) dim
                 // Init
                 for i in start..finish-1 do
