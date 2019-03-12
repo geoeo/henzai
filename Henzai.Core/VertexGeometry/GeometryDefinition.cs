@@ -21,11 +21,7 @@ namespace Henzai.Core.VertexGeometry
         /// The array may be larger than actual index count.
         /// </summary>
         private ushort[] _culledMeshIndices;
-        /// <summary>
-        /// A datastrcture used for geometry pre/post processing
-        /// Used for culling operations
-        /// </summary>
-        private static Dictionary<ushort, bool> _processedIndicesMap;
+
         /// <summary>
         /// The number of indices that passed the frustum test.
         /// Gives the blit range of <see cref="culledMeshIndices"/>
@@ -44,9 +40,10 @@ namespace Henzai.Core.VertexGeometry
         public int GetNumberOfValidIndices => NumberOfValidIndicies;
         public bool IsCulled => NumberOfValidIndicies == 0;
         /// <summary>
-        /// See <see cref="_processedIndicesMap"/> 
+        /// A datastrcture used for geometry pre/post processing
+        /// Used for culling operations
         /// </summary>
-        public Dictionary<ushort, bool> ProcessedIndicesMap => _processedIndicesMap;
+        public Dictionary<ushort, bool> ProcessedIndicesMap { get; }
 
         public GeometryDefinition(T[] vertices, ushort[] meshIndices){
             Debug.Assert(vertices != null);
@@ -62,7 +59,7 @@ namespace Henzai.Core.VertexGeometry
             Buffer.BlockCopy(meshIndices,0,_culledMeshIndices,0,meshIndices.Length * sizeof(ushort));
             NumberOfValidIndicies = meshIndices.Length;
 
-            _processedIndicesMap = new Dictionary<ushort, bool>();
+            ProcessedIndicesMap = new Dictionary<ushort, bool>();
         }
 
         public GeometryDefinition(T[] vertices){
@@ -77,7 +74,7 @@ namespace Henzai.Core.VertexGeometry
             NumberOfValidIndicies = 0;
             _culledMeshIndices = null;
 
-            _processedIndicesMap = new Dictionary<ushort, bool>();
+            ProcessedIndicesMap = new Dictionary<ushort, bool>();
         }
 
         public void SetMeshIndices(ushort[] meshIndices){
