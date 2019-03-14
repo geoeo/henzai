@@ -140,11 +140,13 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
         let ray = Ray(Vector4(cameraWS.Translation, 1.0f), dirWS)
         //V2 - Fastest
         for batchIndex in 0..batches-1 do
+            //TODO: move ray generation into the async block
             //TODO: Remove this map for / Preallocate array
             let colorSamplesBatch = Array.map (fun i -> async {return rayTraceBase ray px py (i-1) batchIndex}) batchIndices
             let colorsBatch =  colorSamplesBatch |> Async.Parallel |> Async.RunSynchronously
             Array.blit colorsBatch 0 colorSamples (batchIndex*batchSize) batchSize 
         let avgColor = if Array.isEmpty colorSamples then Vector3.Zero else (Array.reduce (+) colorSamples)/(float32)samplesPerPixel
+        // Clear colorSamples 
         Array.blit colorSamplesClear 0 colorSamples 0 samplesPerPixel 
         //printfn "Completed Ray for pixels (%i,%i)" px py
         //async {printfn "Completed Ray for pixels (%i,%i)" px py} |> Async.StartAsTask |> ignore

@@ -55,7 +55,7 @@ type BVHTreeBuilder<'T when 'T :> AxisAlignedBoundable>() =
                     bucketCounts.[b] <- bucketCounts.[b] + 1
                     bucketBounds.[b] <- AABB.unionWithAABB bucketBounds.[b] aabbOfIndex
 
-                // Computing Costp.267 
+                // Computing Cost p.267 
                 //O(N*N) 
                 (*
                 for i in 0..nBuckets-2 do
