@@ -103,20 +103,21 @@ namespace Henzai.Examples
             
             _lightResourceSet = _factory.CreateResourceSet(resourceSetDescriptionLight);
 
-            for(int i = 0; i < _model.meshCount; i++){
+            for(int i = 0; i < _model.MeshCount; i++){
 
+                var mesh = _model.GetMesh(i);
                 DeviceBuffer vertexBuffer 
-                    =  _factory.CreateBuffer(new BufferDescription(_model.meshes[i].Vertices.LengthUnsigned() * VertexPositionNormalTextureTangent.SizeInBytes, BufferUsage.VertexBuffer)); 
+                    =  _factory.CreateBuffer(new BufferDescription(mesh.Vertices.LengthUnsigned() * VertexPositionNormalTextureTangent.SizeInBytes, BufferUsage.VertexBuffer)); 
 
                 DeviceBuffer indexBuffer
-                    = _factory.CreateBuffer(new BufferDescription(_model.meshes[i].MeshIndices.LengthUnsigned()*sizeof(ushort),BufferUsage.IndexBuffer));
+                    = _factory.CreateBuffer(new BufferDescription(mesh.MeshIndices.LengthUnsigned()*sizeof(ushort),BufferUsage.IndexBuffer));
                     
 
                 _vertexBuffers.Add(vertexBuffer);
                 _indexBuffers.Add(indexBuffer);
 
-                GraphicsDevice.UpdateBuffer(vertexBuffer,0,_model.meshes[i].Vertices);
-                GraphicsDevice.UpdateBuffer(indexBuffer,0,_model.meshes[i].MeshIndices);
+                GraphicsDevice.UpdateBuffer(vertexBuffer,0, mesh.Vertices);
+                GraphicsDevice.UpdateBuffer(indexBuffer,0, mesh.MeshIndices);
             }
 
             //Texture Samper
@@ -200,8 +201,9 @@ namespace Henzai.Examples
             _commandList.SetFullViewports();
             _commandList.ClearColorTarget(0,RgbaFloat.White);
             _commandList.ClearDepthStencil(1f);
-            for(int i = 0; i < _model.meshCount; i++){
-                Material material = _model.meshes[i].TryGetMaterial();
+            for(int i = 0; i < _model.MeshCount; i++){
+                var mesh = _model.GetMesh(i);
+                Material material = mesh.TryGetMaterial();
 
                 _commandList.SetVertexBuffer(0,_vertexBuffers[i]);
                 _commandList.SetIndexBuffer(_indexBuffers[i],IndexFormat.UInt16);
@@ -218,7 +220,7 @@ namespace Henzai.Examples
                 _commandList.SetGraphicsResourceSet(2,_materialResourceSet);
                 _commandList.SetGraphicsResourceSet(3,_textureResourceSet);
                 _commandList.DrawIndexed(
-                    indexCount: _model.meshes[i].MeshIndices.Length.ToUnsigned(),
+                    indexCount: mesh.MeshIndices.Length.ToUnsigned(),
                     instanceCount: 1,
                     indexStart: 0,
                     vertexOffset: 0,

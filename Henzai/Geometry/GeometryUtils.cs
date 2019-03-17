@@ -73,10 +73,11 @@ namespace Henzai.Geometry
         // http://www.terathon.com/code/tangent.html
         public static void GenerateTangentSpaceFor(Model<VertexPositionNormalTextureTangent> model){
 
-            int numberOfMeshes = model.meshes.Length;
+            int numberOfMeshes = model.MeshCount;
             for(int j = 0; j < numberOfMeshes; j++){
-                var vertices = model.meshes[j].Vertices;
-                var indicies = model.meshes[j].MeshIndices;
+                var mesh = model.GetMesh(j);
+                var vertices = mesh.Vertices;
+                var indicies = mesh.MeshIndices;
                 var numberOfIndicies = indicies.Length;
                 var numberOfVertices = vertices.Length;
                 var tangentCountPerVertex = new uint[numberOfVertices];
@@ -147,10 +148,11 @@ namespace Henzai.Geometry
 
         public static void GenerateTangentAndBitagentSpaceFor(Model<VertexPositionNormalTextureTangentBitangent> model){
 
-            int numberOfMeshes = model.meshes.Length;
+            int numberOfMeshes = model.MeshCount;
             for(int j = 0; j < numberOfMeshes; j++){
-                var vertices = model.meshes[j].Vertices;
-                var indicies = model.meshes[j].MeshIndices;
+                var mesh = model.GetMesh(j);
+                var vertices = mesh.Vertices;
+                var indicies = mesh.MeshIndices;
                 var numberOfIndicies = indicies.Length;
                 var numberOfVerticies = vertices.Length;
                 var tangentCountPerVertex = new uint[numberOfVerticies];
@@ -258,9 +260,9 @@ namespace Henzai.Geometry
 
         public static void CheckTBN(Model<VertexPositionNormalTextureTangentBitangent> model){
 
-            int numberOfMeshes = model.meshes.Length;
+            int numberOfMeshes = model.MeshCount;
             for(int j = 0; j < numberOfMeshes; j++){
-                var vertices = model.meshes[j].Vertices;
+                var vertices = model.GetMesh(j).Vertices;
                                 
                 for(uint i = 0; i < vertices.Length; i++){
                     if(Vector3.Dot(Vector3.Cross(vertices[i].Tangent,vertices[i].Bitangent),vertices[i].Normal) < 0.0f){

@@ -19,22 +19,22 @@ namespace Henzai.Runtime
         ///</summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void GenerateCommandsForModel_Inline<T>(
-                                                    CommandList commandList, 
+                                                    CommandList commandList,
                                                     Pipeline pipeline,
                                                     DeviceBuffer cameraProjViewBuffer,
                                                     DeviceBuffer lightBuffer,
                                                     Camera camera,
                                                     Light light,
                                                     Model<T> model) where T : struct, VertexLocateable
-                                                    {
+        {
 
-                commandList.SetPipeline(pipeline);
+            commandList.SetPipeline(pipeline);
 
-                commandList.UpdateBuffer(cameraProjViewBuffer,0,camera.ViewMatrix);
-                commandList.UpdateBuffer(cameraProjViewBuffer,64,camera.ProjectionMatrix);
-                commandList.UpdateBuffer(lightBuffer,0,ref light.LightPos_DontMutate);
-                commandList.UpdateBuffer(lightBuffer,16,ref light.Color_DontMutate);
-                commandList.UpdateBuffer(lightBuffer,32,ref light.Attentuation_DontMutate);
+            commandList.UpdateBuffer(cameraProjViewBuffer, 0, camera.ViewMatrix);
+            commandList.UpdateBuffer(cameraProjViewBuffer, 64, camera.ProjectionMatrix);
+            commandList.UpdateBuffer(lightBuffer, 0, ref light.LightPos_DontMutate);
+            commandList.UpdateBuffer(lightBuffer, 16, ref light.Color_DontMutate);
+            commandList.UpdateBuffer(lightBuffer, 32, ref light.Attentuation_DontMutate);
 
 
         }
@@ -45,7 +45,7 @@ namespace Henzai.Runtime
         ///</summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void GenerateCommandsForModel_Inline<T>(
-                                                    CommandList commandList, 
+                                                    CommandList commandList,
                                                     Pipeline pipeline,
                                                     DeviceBuffer cameraProjViewBuffer,
                                                     DeviceBuffer lightBuffer,
@@ -54,19 +54,19 @@ namespace Henzai.Runtime
                                                     Light light,
                                                     Light pointLight,
                                                     Model<T> model) where T : struct, VertexLocateable
-                                                    {
+        {
 
-                commandList.SetPipeline(pipeline);
+            commandList.SetPipeline(pipeline);
 
-                commandList.UpdateBuffer(cameraProjViewBuffer,0,camera.ViewMatrix);
-                commandList.UpdateBuffer(cameraProjViewBuffer,64,camera.ProjectionMatrix);
-                commandList.UpdateBuffer(lightBuffer,0,ref light.LightPos_DontMutate);
-                commandList.UpdateBuffer(lightBuffer,16,ref light.Color_DontMutate);
-                commandList.UpdateBuffer(lightBuffer,32,ref light.Attentuation_DontMutate);
-                commandList.UpdateBuffer(pointLightBuffer,0,ref pointLight.LightPos_DontMutate);
-                commandList.UpdateBuffer(pointLightBuffer,16,ref pointLight.Color_DontMutate);
-                commandList.UpdateBuffer(pointLightBuffer,32,ref pointLight.Direction_DontMutate);
-                commandList.UpdateBuffer(pointLightBuffer,48,ref pointLight.Parameters_DontMutate);
+            commandList.UpdateBuffer(cameraProjViewBuffer, 0, camera.ViewMatrix);
+            commandList.UpdateBuffer(cameraProjViewBuffer, 64, camera.ProjectionMatrix);
+            commandList.UpdateBuffer(lightBuffer, 0, ref light.LightPos_DontMutate);
+            commandList.UpdateBuffer(lightBuffer, 16, ref light.Color_DontMutate);
+            commandList.UpdateBuffer(lightBuffer, 32, ref light.Attentuation_DontMutate);
+            commandList.UpdateBuffer(pointLightBuffer, 0, ref pointLight.LightPos_DontMutate);
+            commandList.UpdateBuffer(pointLightBuffer, 16, ref pointLight.Color_DontMutate);
+            commandList.UpdateBuffer(pointLightBuffer, 32, ref pointLight.Direction_DontMutate);
+            commandList.UpdateBuffer(pointLightBuffer, 48, ref pointLight.Parameters_DontMutate);
 
 
         }
@@ -77,17 +77,17 @@ namespace Henzai.Runtime
         ///</summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void GenerateCommandsForModel_Inline<T>(
-                                                    CommandList commandList, 
+                                                    CommandList commandList,
                                                     Pipeline pipeline,
                                                     DeviceBuffer cameraProjViewBuffer,
                                                     Camera camera,
                                                     Model<T> model) where T : struct, VertexLocateable
-                                                    {
+        {
 
-                commandList.SetPipeline(pipeline);
+            commandList.SetPipeline(pipeline);
 
-                commandList.UpdateBuffer(cameraProjViewBuffer,0,camera.ViewMatrix);
-                commandList.UpdateBuffer(cameraProjViewBuffer,64,camera.ProjectionMatrix);
+            commandList.UpdateBuffer(cameraProjViewBuffer, 0, camera.ViewMatrix);
+            commandList.UpdateBuffer(cameraProjViewBuffer, 64, camera.ProjectionMatrix);
 
 
         }
@@ -98,8 +98,8 @@ namespace Henzai.Runtime
         ///</summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void GenerateCommandsForMesh_Inline(
-                                                    CommandList commandList, 
-                                                    DeviceBuffer vertexBuffer, 
+                                                    CommandList commandList,
+                                                    DeviceBuffer vertexBuffer,
                                                     DeviceBuffer indexBuffer,
                                                     DeviceBuffer cameraProjViewBuffer,
                                                     DeviceBuffer materialBuffer,
@@ -110,23 +110,23 @@ namespace Henzai.Runtime
                                                     ResourceSet textureResourceSet,
                                                     Mesh<VertexPositionNormalTextureTangentBitangent> mesh,
                                                     uint modelInstanceCount)
-                                                    {
+        {
 
 
             Material material = mesh.GetMaterialRuntime();
 
-            commandList.SetVertexBuffer(0,vertexBuffer);
-            commandList.SetIndexBuffer(indexBuffer,IndexFormat.UInt16);
-            commandList.UpdateBuffer(cameraProjViewBuffer,128,mesh.World);
-            commandList.SetGraphicsResourceSet(0,cameraResourceSet); // Always after SetPipeline
-            commandList.SetGraphicsResourceSet(1,lightResourceSet);
-            commandList.SetGraphicsResourceSet(2,pointlightResourceSet);
-            commandList.UpdateBuffer(materialBuffer,0,material.diffuse);
-            commandList.UpdateBuffer(materialBuffer,16,material.specular);
-            commandList.UpdateBuffer(materialBuffer,32,material.ambient);
-            commandList.UpdateBuffer(materialBuffer,48,material.coefficients);
-            commandList.SetGraphicsResourceSet(3,materialResourceSet);
-            commandList.SetGraphicsResourceSet(4,textureResourceSet);
+            commandList.SetVertexBuffer(0, vertexBuffer);
+            commandList.SetIndexBuffer(indexBuffer, IndexFormat.UInt16);
+            commandList.UpdateBuffer(cameraProjViewBuffer, 128, mesh.World);
+            commandList.SetGraphicsResourceSet(0, cameraResourceSet); // Always after SetPipeline
+            commandList.SetGraphicsResourceSet(1, lightResourceSet);
+            commandList.SetGraphicsResourceSet(2, pointlightResourceSet);
+            commandList.UpdateBuffer(materialBuffer, 0, material.diffuse);
+            commandList.UpdateBuffer(materialBuffer, 16, material.specular);
+            commandList.UpdateBuffer(materialBuffer, 32, material.ambient);
+            commandList.UpdateBuffer(materialBuffer, 48, material.coefficients);
+            commandList.SetGraphicsResourceSet(3, materialResourceSet);
+            commandList.SetGraphicsResourceSet(4, textureResourceSet);
             commandList.DrawIndexed(
                 indexCount: mesh.MeshIndices.Length.ToUnsigned(),
                 instanceCount: modelInstanceCount,
@@ -143,8 +143,8 @@ namespace Henzai.Runtime
         ///</summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void GenerateCommandsForMesh_Inline(
-                                                    CommandList commandList, 
-                                                    DeviceBuffer vertexBuffer, 
+                                                    CommandList commandList,
+                                                    DeviceBuffer vertexBuffer,
                                                     DeviceBuffer indexBuffer,
                                                     DeviceBuffer cameraProjViewBuffer,
                                                     DeviceBuffer materialBuffer,
@@ -153,21 +153,21 @@ namespace Henzai.Runtime
                                                     ResourceSet materialResourceSet,
                                                     Mesh<VertexPositionNormal> mesh,
                                                     uint modelInstanceCount)
-                                                    {
+        {
 
 
             Material material = mesh.GetMaterialRuntime();
 
-            commandList.SetVertexBuffer(0,vertexBuffer);
-            commandList.SetIndexBuffer(indexBuffer,IndexFormat.UInt16);
-            commandList.UpdateBuffer(cameraProjViewBuffer,128,mesh.World);
-            commandList.SetGraphicsResourceSet(0,cameraResourceSet); // Always after SetPipeline
-            commandList.SetGraphicsResourceSet(1,lightResourceSet);
-            commandList.UpdateBuffer(materialBuffer,0,material.diffuse);
-            commandList.UpdateBuffer(materialBuffer,16,material.specular);
-            commandList.UpdateBuffer(materialBuffer,32,material.ambient);
-            commandList.UpdateBuffer(materialBuffer,48,material.coefficients);
-            commandList.SetGraphicsResourceSet(2,materialResourceSet);
+            commandList.SetVertexBuffer(0, vertexBuffer);
+            commandList.SetIndexBuffer(indexBuffer, IndexFormat.UInt16);
+            commandList.UpdateBuffer(cameraProjViewBuffer, 128, mesh.World);
+            commandList.SetGraphicsResourceSet(0, cameraResourceSet); // Always after SetPipeline
+            commandList.SetGraphicsResourceSet(1, lightResourceSet);
+            commandList.UpdateBuffer(materialBuffer, 0, material.diffuse);
+            commandList.UpdateBuffer(materialBuffer, 16, material.specular);
+            commandList.UpdateBuffer(materialBuffer, 32, material.ambient);
+            commandList.UpdateBuffer(materialBuffer, 48, material.coefficients);
+            commandList.SetGraphicsResourceSet(2, materialResourceSet);
             commandList.DrawIndexed(
                 indexCount: mesh.MeshIndices.Length.ToUnsigned(),
                 instanceCount: modelInstanceCount,
@@ -184,24 +184,24 @@ namespace Henzai.Runtime
         ///</summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void GenerateCommandsForMesh_Inline(
-                                                    CommandList commandList, 
-                                                    DeviceBuffer vertexBuffer, 
+                                                    CommandList commandList,
+                                                    DeviceBuffer vertexBuffer,
                                                     DeviceBuffer indexBuffer,
                                                     DeviceBuffer cameraProjViewBuffer,
                                                     ResourceSet cameraResourceSet,
                                                     ResourceSet textureResourceSet,
                                                     Mesh<VertexPositionTexture> mesh,
                                                     uint modelInstanceCount)
-                                                    {
+        {
 
 
             Material material = mesh.GetMaterialRuntime();
 
-            commandList.SetVertexBuffer(0,vertexBuffer);
-            commandList.SetIndexBuffer(indexBuffer,IndexFormat.UInt16);
-            commandList.UpdateBuffer(cameraProjViewBuffer,128,mesh.World);
-            commandList.SetGraphicsResourceSet(0,cameraResourceSet); // Always after SetPipeline
-            commandList.SetGraphicsResourceSet(1,textureResourceSet);
+            commandList.SetVertexBuffer(0, vertexBuffer);
+            commandList.SetIndexBuffer(indexBuffer, IndexFormat.UInt16);
+            commandList.UpdateBuffer(cameraProjViewBuffer, 128, mesh.World);
+            commandList.SetGraphicsResourceSet(0, cameraResourceSet); // Always after SetPipeline
+            commandList.SetGraphicsResourceSet(1, textureResourceSet);
             commandList.DrawIndexed(
                 indexCount: mesh.MeshIndices.Length.ToUnsigned(),
                 instanceCount: modelInstanceCount,
@@ -218,22 +218,22 @@ namespace Henzai.Runtime
         ///</summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void GenerateCommandsForMesh_Inline(
-                                                    CommandList commandList, 
-                                                    DeviceBuffer vertexBuffer, 
+                                                    CommandList commandList,
+                                                    DeviceBuffer vertexBuffer,
                                                     DeviceBuffer indexBuffer,
                                                     DeviceBuffer cameraProjViewBuffer,
                                                     ResourceSet cameraResourceSet,
                                                     Mesh<VertexPositionColor> mesh,
                                                     uint modelInstanceCount)
-                                                    {
+        {
 
 
             Material material = mesh.GetMaterialRuntime();
 
-            commandList.SetVertexBuffer(0,vertexBuffer);
-            commandList.SetIndexBuffer(indexBuffer,IndexFormat.UInt16);
-            commandList.UpdateBuffer(cameraProjViewBuffer,128,mesh.World);
-            commandList.SetGraphicsResourceSet(0,cameraResourceSet); // Always after SetPipeline
+            commandList.SetVertexBuffer(0, vertexBuffer);
+            commandList.SetIndexBuffer(indexBuffer, IndexFormat.UInt16);
+            commandList.UpdateBuffer(cameraProjViewBuffer, 128, mesh.World);
+            commandList.SetGraphicsResourceSet(0, cameraResourceSet); // Always after SetPipeline
             commandList.DrawIndexed(
                 indexCount: mesh.MeshIndices.Length.ToUnsigned(),
                 instanceCount: modelInstanceCount,
@@ -251,24 +251,24 @@ namespace Henzai.Runtime
         ///</summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void GenerateCommandsForMesh_Inline(
-                                                    CommandList commandList, 
-                                                    DeviceBuffer vertexBuffer, 
+                                                    CommandList commandList,
+                                                    DeviceBuffer vertexBuffer,
                                                     DeviceBuffer indexBuffer,
                                                     DeviceBuffer cameraProjViewBuffer,
                                                     ResourceSet cameraResourceSet,
                                                     ResourceSet textureResourceSet,
                                                     Mesh<VertexPosition> mesh,
                                                     uint modelInstanceCount)
-                                                    {
+        {
 
 
             Material material = mesh.GetMaterialRuntime();
 
-            commandList.SetVertexBuffer(0,vertexBuffer);
-            commandList.SetIndexBuffer(indexBuffer,IndexFormat.UInt16);
-            commandList.UpdateBuffer(cameraProjViewBuffer,128,mesh.World);
-            commandList.SetGraphicsResourceSet(0,cameraResourceSet); // Always after SetPipeline
-            commandList.SetGraphicsResourceSet(1,textureResourceSet); 
+            commandList.SetVertexBuffer(0, vertexBuffer);
+            commandList.SetIndexBuffer(indexBuffer, IndexFormat.UInt16);
+            commandList.UpdateBuffer(cameraProjViewBuffer, 128, mesh.World);
+            commandList.SetGraphicsResourceSet(0, cameraResourceSet); // Always after SetPipeline
+            commandList.SetGraphicsResourceSet(1, textureResourceSet);
             commandList.DrawIndexed(
                 indexCount: mesh.MeshIndices.Length.ToUnsigned(),
                 instanceCount: modelInstanceCount,
@@ -285,23 +285,23 @@ namespace Henzai.Runtime
         ///</summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void GenerateCommandsForMesh_InlineInstancing(
-                                                    CommandList commandList, 
-                                                    DeviceBuffer vertexBuffer, 
+                                                    CommandList commandList,
+                                                    DeviceBuffer vertexBuffer,
                                                     DeviceBuffer indexBuffer,
                                                     DeviceBuffer instanceBuffer,
                                                     DeviceBuffer cameraProjViewBuffer,
                                                     ResourceSet cameraResourceSet,
                                                     Mesh<VertexPositionColor> mesh,
                                                     uint modelInstanceCount)
-                                                    {
+        {
 
 
             Material material = mesh.GetMaterialRuntime();
 
-            commandList.SetVertexBuffer(0,vertexBuffer);
-            commandList.SetIndexBuffer(indexBuffer,IndexFormat.UInt16);
-            commandList.UpdateBuffer(cameraProjViewBuffer,128,mesh.World);
-            commandList.SetGraphicsResourceSet(0,cameraResourceSet); // Always after SetPipeline
+            commandList.SetVertexBuffer(0, vertexBuffer);
+            commandList.SetIndexBuffer(indexBuffer, IndexFormat.UInt16);
+            commandList.UpdateBuffer(cameraProjViewBuffer, 128, mesh.World);
+            commandList.SetGraphicsResourceSet(0, cameraResourceSet); // Always after SetPipeline
             commandList.DrawIndexed(
                 indexCount: mesh.MeshIndices.Length.ToUnsigned(),
                 instanceCount: modelInstanceCount,
@@ -312,18 +312,20 @@ namespace Henzai.Runtime
 
         }
 
-        public static void GenerateRenderCommandsForCubeMapModelDescriptor(CommandList commandList, 
+        public static void GenerateRenderCommandsForCubeMapModelDescriptor(CommandList commandList,
                                                                     ModelRuntimeDescriptor<VertexPosition> cubeMapRuntimeDescriptor,
-                                                                    SceneRuntimeDescriptor sceneRuntimeDescriptor){
+                                                                    SceneRuntimeDescriptor sceneRuntimeDescriptor)
+        {
             var model = cubeMapRuntimeDescriptor.Model;
             RenderCommandGenerator.GenerateCommandsForModel_Inline(
                 commandList,
                 cubeMapRuntimeDescriptor.Pipeline,
                 sceneRuntimeDescriptor.CameraProjViewBuffer,
                 sceneRuntimeDescriptor.Camera,
-                model);  
-            for(int i = 0; i < model.meshCount; i++){
-                var mesh = model.meshes[i];
+                model);
+            for (int i = 0; i < model.MeshCount; i++)
+            {
+                var mesh = model.GetMesh(i);
                 RenderCommandGenerator.GenerateCommandsForMesh_Inline(
                     commandList,
                     cubeMapRuntimeDescriptor.VertexBuffers[i],
@@ -335,15 +337,17 @@ namespace Henzai.Runtime
                     cubeMapRuntimeDescriptor.TotalInstanceCount
                 );
             }
-            
+
         }
 
-        public static void GenerateRenderCommandsForModelDescriptor(CommandList commandList, 
+        public static void GenerateRenderCommandsForModelDescriptor(CommandList commandList,
                                                                     ModelRuntimeDescriptor<VertexPositionNormal>[] descriptorArray,
-                                                                    SceneRuntimeDescriptor sceneRuntimeDescriptor){
-            for(int j = 0; j < descriptorArray.Length; j++){
+                                                                    SceneRuntimeDescriptor sceneRuntimeDescriptor)
+        {
+            for (int j = 0; j < descriptorArray.Length; j++)
+            {
                 var modelState = descriptorArray[j];
-                if(modelState.IsCulled)
+                if (modelState.IsCulled)
                     continue;
                 var model = modelState.Model;
                 RenderCommandGenerator.GenerateCommandsForModel_Inline(
@@ -354,9 +358,10 @@ namespace Henzai.Runtime
                     sceneRuntimeDescriptor.Camera,
                     sceneRuntimeDescriptor.Light,
                     model);
-                for(int i = 0; i < model.meshCount; i++){
-                    var mesh = model.meshes[i];
-                    if(mesh.IsCulled)
+                for (int i = 0; i < model.MeshCount; i++)
+                {
+                    var mesh = model.GetMesh(i);
+                    if (mesh.IsCulled)
                         continue;
                     RenderCommandGenerator.GenerateCommandsForMesh_Inline(
                         commandList,
@@ -373,12 +378,14 @@ namespace Henzai.Runtime
                 }
             }
         }
-     public static void GenerateRenderCommandsForModelDescriptor(CommandList commandList, 
-                                                                    ModelRuntimeDescriptor<VertexPositionColor>[] descriptorArray,
-                                                                    SceneRuntimeDescriptor sceneRuntimeDescriptor){
-            for(int j = 0; j < descriptorArray.Length; j++){
+        public static void GenerateRenderCommandsForModelDescriptor(CommandList commandList,
+                                                                       ModelRuntimeDescriptor<VertexPositionColor>[] descriptorArray,
+                                                                       SceneRuntimeDescriptor sceneRuntimeDescriptor)
+        {
+            for (int j = 0; j < descriptorArray.Length; j++)
+            {
                 var modelState = descriptorArray[j];
-                if(modelState.IsCulled)
+                if (modelState.IsCulled)
                     continue;
                 var model = modelState.Model;
                 RenderCommandGenerator.GenerateCommandsForModel_Inline(
@@ -386,10 +393,11 @@ namespace Henzai.Runtime
                     modelState.Pipeline,
                     sceneRuntimeDescriptor.CameraProjViewBuffer,
                     sceneRuntimeDescriptor.Camera,
-                    model);  
-                for(int i = 0; i < model.meshCount; i++){
-                    var mesh = model.meshes[i];
-                    if(mesh.IsCulled)
+                    model);
+                for (int i = 0; i < model.MeshCount; i++)
+                {
+                    var mesh = model.GetMesh(i);
+                    if (mesh.IsCulled)
                         continue;
                     RenderCommandGenerator.GenerateCommandsForMesh_Inline(
                         commandList,
@@ -404,12 +412,14 @@ namespace Henzai.Runtime
             }
         }
 
-     public static void GenerateRenderCommandsForModelDescriptor_Instancing(CommandList commandList, 
-                                                                    ModelRuntimeDescriptor<VertexPositionColor>[] descriptorArray,
-                                                                    SceneRuntimeDescriptor sceneRuntimeDescriptor){
-            for(int j = 0; j < descriptorArray.Length; j++){
+        public static void GenerateRenderCommandsForModelDescriptor_Instancing(CommandList commandList,
+                                                                       ModelRuntimeDescriptor<VertexPositionColor>[] descriptorArray,
+                                                                       SceneRuntimeDescriptor sceneRuntimeDescriptor)
+        {
+            for (int j = 0; j < descriptorArray.Length; j++)
+            {
                 var modelState = descriptorArray[j];
-                if(modelState.IsCulled)
+                if (modelState.IsCulled)
                     continue;
                 var model = modelState.Model;
                 RenderCommandGenerator.GenerateCommandsForModel_Inline(
@@ -419,11 +429,12 @@ namespace Henzai.Runtime
                     sceneRuntimeDescriptor.Camera,
                     model);
                 //TODO:Inline this if more instance buffers are ever used
-                for(int i = 0; i<modelState.InstanceBuffers.Length; i++)
-                    commandList.SetVertexBuffer(i.ToUnsigned()+1,modelState.InstanceBuffers[i]);
-                for(int i = 0; i < model.meshCount; i++){
-                    var mesh = model.meshes[i];
-                    if(mesh.IsCulled)
+                for (int i = 0; i < modelState.InstanceBuffers.Length; i++)
+                    commandList.SetVertexBuffer(i.ToUnsigned() + 1, modelState.InstanceBuffers[i]);
+                for (int i = 0; i < model.MeshCount; i++)
+                {
+                    var mesh = model.GetMesh(i);
+                    if (mesh.IsCulled)
                         continue;
                     RenderCommandGenerator.GenerateCommandsForMesh_Inline(
                         commandList,
@@ -439,12 +450,14 @@ namespace Henzai.Runtime
         }
 
 
-     public static void GenerateRenderCommandsForModelDescriptor(CommandList commandList, 
-                                                                    ModelRuntimeDescriptor<VertexPositionTexture>[] descriptorArray,
-                                                                    SceneRuntimeDescriptor sceneRuntimeDescriptor){
-            for(int j = 0; j < descriptorArray.Length; j++){
+        public static void GenerateRenderCommandsForModelDescriptor(CommandList commandList,
+                                                                       ModelRuntimeDescriptor<VertexPositionTexture>[] descriptorArray,
+                                                                       SceneRuntimeDescriptor sceneRuntimeDescriptor)
+        {
+            for (int j = 0; j < descriptorArray.Length; j++)
+            {
                 var modelState = descriptorArray[j];
-                if(modelState.IsCulled)
+                if (modelState.IsCulled)
                     continue;
                 var model = modelState.Model;
                 RenderCommandGenerator.GenerateCommandsForModel_Inline(
@@ -452,10 +465,11 @@ namespace Henzai.Runtime
                     modelState.Pipeline,
                     sceneRuntimeDescriptor.CameraProjViewBuffer,
                     sceneRuntimeDescriptor.Camera,
-                    model);  
-                for(int i = 0; i < model.meshCount; i++){
-                    var mesh = model.meshes[i];
-                    if(mesh.IsCulled)
+                    model);
+                for (int i = 0; i < model.MeshCount; i++)
+                {
+                    var mesh = model.GetMesh(i);
+                    if (mesh.IsCulled)
                         continue;
                     RenderCommandGenerator.GenerateCommandsForMesh_Inline(
                         commandList,
@@ -472,12 +486,14 @@ namespace Henzai.Runtime
         }
 
 
-     public static void GenerateRenderCommandsForModelDescriptor_Instancing(CommandList commandList, 
-                                                                    ModelRuntimeDescriptor<VertexPositionTexture>[] descriptorArray,
-                                                                    SceneRuntimeDescriptor sceneRuntimeDescriptor){
-            for(int j = 0; j < descriptorArray.Length; j++){
+        public static void GenerateRenderCommandsForModelDescriptor_Instancing(CommandList commandList,
+                                                                       ModelRuntimeDescriptor<VertexPositionTexture>[] descriptorArray,
+                                                                       SceneRuntimeDescriptor sceneRuntimeDescriptor)
+        {
+            for (int j = 0; j < descriptorArray.Length; j++)
+            {
                 var modelState = descriptorArray[j];
-                if(modelState.IsCulled)
+                if (modelState.IsCulled)
                     continue;
                 var model = modelState.Model;
                 RenderCommandGenerator.GenerateCommandsForModel_Inline(
@@ -487,11 +503,12 @@ namespace Henzai.Runtime
                     sceneRuntimeDescriptor.Camera,
                     model);
                 //TODO:Inline this if more instance buffers are ever used
-                for(int i = 0; i<modelState.InstanceBuffers.Length; i++)
-                    commandList.SetVertexBuffer(i.ToUnsigned()+1,modelState.InstanceBuffers[i]);
-                for(int i = 0; i < model.meshCount; i++){
-                    var mesh = model.meshes[i];
-                    if(mesh.IsCulled)
+                for (int i = 0; i < modelState.InstanceBuffers.Length; i++)
+                    commandList.SetVertexBuffer(i.ToUnsigned() + 1, modelState.InstanceBuffers[i]);
+                for (int i = 0; i < model.MeshCount; i++)
+                {
+                    var mesh = model.GetMesh(i);
+                    if (mesh.IsCulled)
                         continue;
                     RenderCommandGenerator.GenerateCommandsForMesh_Inline(
                         commandList,
@@ -507,12 +524,14 @@ namespace Henzai.Runtime
             }
         }
 
-        public static void GenerateRenderCommandsForModelDescriptor_Instancing(CommandList commandList, 
+        public static void GenerateRenderCommandsForModelDescriptor_Instancing(CommandList commandList,
                                                                     ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] descriptorArray,
-                                                                    SceneRuntimeDescriptor sceneRuntimeDescriptor){
-            for(int j = 0; j < descriptorArray.Length; j++){
+                                                                    SceneRuntimeDescriptor sceneRuntimeDescriptor)
+        {
+            for (int j = 0; j < descriptorArray.Length; j++)
+            {
                 var modelState = descriptorArray[j];
-                if(modelState.IsCulled)
+                if (modelState.IsCulled)
                     continue;
                 var model = modelState.Model;
                 RenderCommandGenerator.GenerateCommandsForModel_Inline(
@@ -525,11 +544,12 @@ namespace Henzai.Runtime
                     sceneRuntimeDescriptor.Light,
                     sceneRuntimeDescriptor.SpotLight,
                     model);
-                for(int i = 0; i<modelState.InstanceBuffers.Length; i++)
-                    commandList.SetVertexBuffer(i.ToUnsigned()+1,modelState.InstanceBuffers[i]);
-                for(int i = 0; i < model.meshCount; i++){
-                    var mesh = model.meshes[i];
-                    if(mesh.IsCulled)
+                for (int i = 0; i < modelState.InstanceBuffers.Length; i++)
+                    commandList.SetVertexBuffer(i.ToUnsigned() + 1, modelState.InstanceBuffers[i]);
+                for (int i = 0; i < model.MeshCount; i++)
+                {
+                    var mesh = model.GetMesh(i);
+                    if (mesh.IsCulled)
                         continue;
                     RenderCommandGenerator.GenerateCommandsForMesh_Inline(
                         commandList,
@@ -550,12 +570,14 @@ namespace Henzai.Runtime
         }
 
 
-        public static void GenerateRenderCommandsForModelDescriptor(CommandList commandList, 
+        public static void GenerateRenderCommandsForModelDescriptor(CommandList commandList,
                                                                     ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] descriptorArray,
-                                                                    SceneRuntimeDescriptor sceneRuntimeDescriptor){
-            for(int j = 0; j < descriptorArray.Length; j++){
+                                                                    SceneRuntimeDescriptor sceneRuntimeDescriptor)
+        {
+            for (int j = 0; j < descriptorArray.Length; j++)
+            {
                 var modelState = descriptorArray[j];
-                if(modelState.IsCulled)
+                if (modelState.IsCulled)
                     continue;
                 var model = modelState.Model;
                 RenderCommandGenerator.GenerateCommandsForModel_Inline(
@@ -568,9 +590,10 @@ namespace Henzai.Runtime
                     sceneRuntimeDescriptor.Light,
                     sceneRuntimeDescriptor.SpotLight,
                     model);
-                for(int i = 0; i < model.meshCount; i++){
-                    var mesh = model.meshes[i];
-                    if(mesh.IsCulled)
+                for (int i = 0; i < model.MeshCount; i++)
+                {
+                    var mesh = model.GetMesh(i);
+                    if (mesh.IsCulled)
                         continue;
                     RenderCommandGenerator.GenerateCommandsForMesh_Inline(
                         commandList,

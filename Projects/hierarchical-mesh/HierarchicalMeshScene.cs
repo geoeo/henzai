@@ -70,9 +70,10 @@ namespace Henzai.Examples
             // GeometryUtils.CheckTBN(_model);
             // var sun = new Model<VertexPositionNormalTextureTangentBitangent>("water",GeometryFactory.generateSphereTangentBitangent(100,100,1));
             _sun = new Model<VertexPositionNormal>(String.Empty,GeometryFactory.GenerateSphereNormal(100,100,1));
-            _sun.meshes[0].TryGetMaterial().textureDiffuse = "Water.jpg";
-            _sun.meshes[0].TryGetMaterial().textureNormal = "WaterNorm.jpg";
-            _sun.meshes[0].TryGetMaterial().ambient = lightColor.ToVector4();
+            var meshZero = _sun.GetMesh(0);
+            meshZero.TryGetMaterial().textureDiffuse = "Water.jpg";
+            meshZero.TryGetMaterial().textureNormal = "WaterNorm.jpg";
+            meshZero.TryGetMaterial().ambient = lightColor.ToVector4();
             // _sun.meshes[0].TryGetMaterial().ambient = lightColor.ToVector4();
             ref Vector4 lightPos = ref _sceneRuntimeState.Light.LightPos_DontMutate;
             Vector3 newTranslation = new Vector3(lightPos.X,lightPos.Y,lightPos.Z);

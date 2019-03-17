@@ -10,9 +10,9 @@ namespace Henzai.Geometry
     /// </summary>
     public sealed class Model<T> where T : struct, VertexLocateable
     {
-        public Mesh<T>[] meshes;
+        private readonly Mesh<T>[] _meshes;
         private Matrix4x4 _world = Matrix4x4.Identity;
-        public int meshCount => meshes.Length;
+        public int MeshCount => _meshes.Length;
 
         /// <summary>
         /// Should be get only! But this is not possible to enforce with refs
@@ -22,27 +22,32 @@ namespace Henzai.Geometry
 
         public Model(string directory, Mesh<T>[] meshes, ushort[][] indicies){
             BaseDir = directory;
-            this.meshes = meshes;
-            for(int i = 0; i < meshCount; i++){
-                this.meshes[i].MeshIndices = indicies[i];
+            this._meshes = meshes;
+            for(int i = 0; i < MeshCount; i++){
+                this._meshes[i].MeshIndices = indicies[i];
             }
         }
 
         public Model(Mesh<T>[] meshesIn){
-            BaseDir = String.Empty;
-            meshes = meshesIn;
+            BaseDir = string.Empty;
+            _meshes = meshesIn;
         }
 
         public Model(string directoy,Mesh<T> meshIn){
             BaseDir = directoy;
-            meshes = new Mesh<T>[1];
-            meshes[0] = meshIn;
+            _meshes = new Mesh<T>[1];
+            _meshes[0] = meshIn;
+        }
+
+        public Mesh<T> GetMesh(int index)
+        {
+            return _meshes[index];
         }
 
         public void SetNewWorldTransformation(ref Matrix4x4 world, bool applyToAllMeshes){
             _world = world;
             if(applyToAllMeshes){
-                foreach(var mesh in meshes)
+                foreach(var mesh in _meshes)
                     mesh.SetNewWorldTransformation(ref world);
             }
         }
@@ -50,13 +55,13 @@ namespace Henzai.Geometry
         public void SetNewWorldTranslation(ref Vector3 translation, bool applyToAllMeshes){
             _world.Translation = translation;
             if(applyToAllMeshes){
-                foreach(var mesh in meshes)
+                foreach(var mesh in _meshes)
                     mesh.SetNewWorldTranslation(ref translation);
             }
         }
 
         public void SetAmbientForAllMeshes(Vector4 ambient){
-            foreach(var mesh in meshes)
+            foreach(var mesh in _meshes)
                 mesh.TryGetMaterial().ambient = ambient;
         }
 

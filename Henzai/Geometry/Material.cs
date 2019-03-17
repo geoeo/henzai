@@ -42,6 +42,7 @@ namespace Henzai.Geometry
         public Vector4 emissive = Vector4.Zero;
         public Vector4 transparent = Vector4.Zero;
         public Vector4 coefficients = Vector4.Zero; // shininess,shininess_str,opacity,reflectivity
+
         public string textureDiffuse = string.Empty;
         public string textureNormal = string.Empty;
         public string textureBump = string.Empty;

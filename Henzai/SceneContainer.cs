@@ -31,11 +31,14 @@ namespace Henzai
                 var model = modelDescriptor.Model;
                 var vertexBuffer = modelDescriptor.VertexBuffers[0];
                 var indexBuffer = modelDescriptor.IndexBuffers[0];
-                byte vertexSizeInBytes = model.meshes[0].Vertices[0].GetSizeInBytes();
+                byte vertexSizeInBytes = model.GetMesh(0).Vertices[0].GetSizeInBytes();
 
                 commandList.Begin();
 
-                foreach(var mesh in model.meshes){
+                var meshCount = model.MeshCount;
+                for(int i = 0; i < meshCount; i++)
+                {
+                    var mesh = model.GetMesh(i);
                     var worldMatrix = mesh.World;
                     var MVP = worldMatrix*camera.ViewProjectionMatirx;
                     Culler.FrustumCullGeometryDefinition(ref MVP, mesh.GeometryDefinition);
@@ -51,9 +54,12 @@ namespace Henzai
                 var model = modelDescriptor.Model;
                 var vertexBuffer = modelDescriptor.VertexBuffers[0];
                 var indexBuffer = modelDescriptor.IndexBuffers[0];                
-                byte vertexSizeInBytes = model.meshes[0].Vertices[0].GetSizeInBytes();
+                byte vertexSizeInBytes = model.GetMesh(0).Vertices[0].GetSizeInBytes();
 
-                foreach(var mesh in model.meshes){
+                var meshCount = model.MeshCount;
+                for (int i = 0; i < meshCount; i++)
+                {
+                    var mesh = model.GetMesh(i);
                     var worldMatrix = mesh.World;
                     var MVP = worldMatrix*camera.ViewProjectionMatirx;
                     Culler.FrustumCullGeometryDefinition(ref MVP, mesh.GeometryDefinition); 
@@ -69,9 +75,12 @@ namespace Henzai
                 var model = modelDescriptor.Model;
                 var vertexBuffer = modelDescriptor.VertexBuffers[0];
                 var indexBuffer = modelDescriptor.IndexBuffers[0];
-                byte vertexSizeInBytes = model.meshes[0].Vertices[0].GetSizeInBytes();
+                byte vertexSizeInBytes = model.GetMesh(0).Vertices[0].GetSizeInBytes();
 
-                foreach(var mesh in model.meshes){
+                var meshCount = model.MeshCount;
+                for (int i = 0; i < meshCount; i++)
+                {
+                    var mesh = model.GetMesh(i);
                     var worldMatrix = mesh.World;
                     var MVP = worldMatrix*camera.ViewProjectionMatirx;               
                     Culler.FrustumCullGeometryDefinition(ref MVP, mesh.GeometryDefinition); 
@@ -87,9 +96,12 @@ namespace Henzai
                 var model = modelDescriptor.Model;
                 var vertexBuffer = modelDescriptor.VertexBuffers[0];
                 var indexBuffer = modelDescriptor.IndexBuffers[0];
-                byte vertexSizeInBytes = model.meshes[0].Vertices[0].GetSizeInBytes();
+                byte vertexSizeInBytes = model.GetMesh(0).Vertices[0].GetSizeInBytes();
 
-                foreach(var mesh in model.meshes){
+                var meshCount = model.MeshCount;
+                for (int i = 0; i < meshCount; i++)
+                {
+                    var mesh = model.GetMesh(i);
                     var worldMatrix = mesh.World;
                     var MVP = worldMatrix*camera.ViewProjectionMatirx;
                     Culler.FrustumCullGeometryDefinition(ref MVP, mesh.GeometryDefinition); 
@@ -105,9 +117,12 @@ namespace Henzai
                 var model = modelDescriptor.Model;
                 var vertexBuffer = modelDescriptor.VertexBuffers[0];
                 var indexBuffer = modelDescriptor.IndexBuffers[0];
-                byte vertexSizeInBytes = model.meshes[0].Vertices[0].GetSizeInBytes();
+                byte vertexSizeInBytes = model.GetMesh(0).Vertices[0].GetSizeInBytes();
 
-                foreach(var mesh in model.meshes){
+                var meshCount = model.MeshCount;
+                for (int i = 0; i < meshCount; i++)
+                {
+                    var mesh = model.GetMesh(i);
                     var worldMatrix = mesh.World;
                     var MVP = worldMatrix*camera.ViewProjectionMatirx;
                     Culler.FrustumCullGeometryDefinition(ref MVP, mesh.GeometryDefinition); 

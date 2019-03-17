@@ -69,7 +69,7 @@ namespace Henzai.Examples
             // sunRuntimeState.CallTextureResourceSetGeneration+=ResourceGenerator.GenerateTextureResourceSetForNormalMapping;
 
             var skyBox = new Model<VertexPosition>("cloudtop", GeometryFactory.GenerateCube(true));
-            var skyBoxMaterial = skyBox.meshes[0].TryGetMaterial();
+            var skyBoxMaterial = skyBox.GetMesh(0).TryGetMaterial();
             skyBoxMaterial.cubeMapFront = "cloudtop_ft.png";
             skyBoxMaterial.cubeMapBack = "cloudtop_bk.png";
             skyBoxMaterial.cubeMapLeft = "cloudtop_lf.png";
@@ -84,7 +84,7 @@ namespace Henzai.Examples
             _skyBoxRuntimeState.CallTextureResourceSetGeneration += ResourceGenerator.GenerateTextureResourceSetForCubeMapping;
 
             _sun = new Model<VertexPositionNormal>(String.Empty,GeometryFactory.GenerateSphereNormal(100,100,1));
-            _sun.meshes[0].TryGetMaterial().ambient = lightColor.ToVector4();
+            _sun.GetMesh(0).TryGetMaterial().ambient = lightColor.ToVector4();
             // _sun.meshes[0].TryGetMaterial().ambient = lightColor.ToVector4();
             ref Vector4 lightPos = ref _sceneRuntimeState.Light.LightPos_DontMutate;
             Vector3 newTranslation = new Vector3(lightPos.X,lightPos.Y,lightPos.Z);
