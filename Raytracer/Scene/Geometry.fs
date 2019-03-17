@@ -108,21 +108,21 @@ let spheres_glass : Surface list = [
 ]
 
 let planes : Surface list = [
-    Lambertian(assignIDAndIncrement id,Plane(System.Numerics.Plane.CreateFromVertices(Vector3(-1.0f,-6.0f,0.0f),Vector3(1.0f,-6.0f,0.0f),Vector3(0.0f,-6.0f,-1.0f)),None,None,None),Material(Vector3(1.0f,1.0f,1.0f)));
+    Lambertian(assignIDAndIncrement id,Plane(System.Numerics.Plane.CreateFromVertices(Vector3(-1.0f,-6.0f,0.0f),Vector3(1.0f,-6.0f,0.0f),Vector3(0.0f,-6.0f,-1.0f)),None,None,None),Material(Vector4(1.0f,1.0f,1.0f,1.0f)));
     Lambertian(assignIDAndIncrement id,Plane(new System.Numerics.Plane((Henzai.Core.Numerics.Vector.CreateUnitVector3(0.0f, 0.0f, -1.0f)),17.0f),((Vector3(0.0f,0.0f,17.0f))), 30.0f, 10.0f), Material(Rgba32.White));
     Lambertian(assignIDAndIncrement id,Plane(new System.Numerics.Plane((Henzai.Core.Numerics.Vector.CreateUnitVector3(0.0f, 0.0f, 1.0f)),30.0f),((Vector3(-5.0f,10.0f,-30.0f))), 25.0f, 20.0f), Material(Rgba32.IndianRed));
     Metal(assignIDAndIncrement id, Plane(new System.Numerics.Plane((Henzai.Core.Numerics.Vector.CreateUnitVector3(-1.0f, 0.0f, 1.0f)),15.0f),((Vector3(15.0f,3.0f,-15.0f))), 10.0f, 6.0f), Material(Rgba32.AntiqueWhite),0.01f)
     ]
 
 let planes_submission : Surface list = [
-    Lambertian(assignIDAndIncrement id,Plane(System.Numerics.Plane.CreateFromVertices(Vector3(-1.0f,-6.0f,0.0f),Vector3(1.0f,-6.0f,0.0f),Vector3(0.0f,-6.0f,-1.0f)),None,None,None),Material(Vector3(1.0f,1.0f,1.0f)));
+    Lambertian(assignIDAndIncrement id,Plane(System.Numerics.Plane.CreateFromVertices(Vector3(-1.0f,-6.0f,0.0f),Vector3(1.0f,-6.0f,0.0f),Vector3(0.0f,-6.0f,-1.0f)),None,None,None),Material(Vector4(1.0f,1.0f,1.0f,1.0f)));
     Lambertian(assignIDAndIncrement id,Plane(new System.Numerics.Plane((Henzai.Core.Numerics.Vector.CreateUnitVector3(0.0f, 0.0f, -1.0f)),17.0f), ((Vector3(0.0f,0.0f,17.0f))), 30.0f, 10.0f), Material(Rgba32.White));
     Lambertian(assignIDAndIncrement id,Plane(new System.Numerics.Plane((Henzai.Core.Numerics.Vector.CreateUnitVector3(0.0f, 0.0f, 1.0f)),30.0f), ((Vector3(-5.0f,10.0f,-30.0f))), 25.0f, 20.0f), Material(Rgba32.IndianRed));
     Metal(assignIDAndIncrement id, Plane(new System.Numerics.Plane((Henzai.Core.Numerics.Vector.CreateUnitVector3(-1.0f, 0.0f, 1.0f)),15.0f), ((Vector3(15.0f,3.0f,-15.0f))), 10.0f, 6.0f), Material(Rgba32.AntiqueWhite),0.0f)
     ]
    
 let planes_simple : Surface list = [
-    Lambertian(assignIDAndIncrement id,Plane(System.Numerics.Plane.CreateFromVertices(Vector3(-1.0f,-6.0f,0.0f),Vector3(1.0f,-6.0f,0.0f),Vector3(0.0f,-6.0f,-1.0f)),None,None,None),Material(Vector3(1.0f,1.0f,1.0f)));
+    Lambertian(assignIDAndIncrement id,Plane(System.Numerics.Plane.CreateFromVertices(Vector3(-1.0f,-6.0f,0.0f),Vector3(1.0f,-6.0f,0.0f),Vector3(0.0f,-6.0f,-1.0f)),None,None,None),Material(Vector4(1.0f,1.0f,1.0f,1.0f)));
     //Lambertian(assignIDAndIncrement id,Plane(new System.Numerics.Plane((SurfaceNormal 0.0f 0.0f -1.0f),17.0f),Some ((Vector3(0.0f,0.0f,17.0f))),Some 30.0f,Some 10.0f), Material(Rgba32.White));
     ]
 
@@ -136,11 +136,11 @@ let planes_scene_2_NonAA : Surface list = [
     ]
 
 let plane_floor_Unbounded : Surface list = [
-    Lambertian(assignIDAndIncrement id,Plane(System.Numerics.Plane.CreateFromVertices(Vector3(-1.0f,-6.0f,0.0f),Vector3(1.0f,-6.0f,0.0f),Vector3(0.0f,-6.0f,-1.0f)),None,None,None),Material(Vector3(1.0f,1.0f,1.0f)));    
+    Lambertian(assignIDAndIncrement id,Plane(System.Numerics.Plane.CreateFromVertices(Vector3(-1.0f,-6.0f,0.0f),Vector3(1.0f,-6.0f,0.0f),Vector3(0.0f,-6.0f,-1.0f)),None,None,None),Material(Vector4(1.0f,1.0f,1.0f,1.0f)));    
     ]
 
 let plane_floor_bounded : Surface list = [
-    Lambertian(assignIDAndIncrement id,Plane(System.Numerics.Plane.CreateFromVertices(Vector3(-1.0f,-6.0f,0.0f), Vector3(1.0f,-6.0f,0.0f), Vector3(0.0f,-6.0f,-1.0f)),( (Vector3(0.0f,0.0f,0.0f))), 100.0f,  100.0f),Material(Vector3(1.0f,1.0f,1.0f)));    
+    Lambertian(assignIDAndIncrement id,Plane(System.Numerics.Plane.CreateFromVertices(Vector3(-1.0f,-6.0f,0.0f), Vector3(1.0f,-6.0f,0.0f), Vector3(0.0f,-6.0f,-1.0f)),( (Vector3(0.0f,0.0f,0.0f))), 100.0f,  100.0f),Material(Vector4(1.0f,1.0f,1.0f,1.0f)));    
     ]
 
 let triangle_scene : Surface list = [

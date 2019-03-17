@@ -122,11 +122,13 @@ namespace Henzai.Core.Numerics
             var omega_x_squared = Matrix4x4.Multiply(omega_x,omega_x);
             var angle = AngleAroundOmega(ref omega);
             var c = Math.Cos(angle);
-            var factor = 1.0 / (1.0 + c);
+            var s = Math.Sin(angle);
+            var A = s / angle;
+            var B = 1.0f / (1.0f + c);
 
             //TODO: Optimize this for less allocations
             //TODO: try this with double precision
-            return Matrix4x4.Identity + omega_x + Matrix4x4.Multiply(omega_x_squared, (float)factor);
+            return Matrix4x4.Identity + Matrix4x4.Multiply(omega_x_squared, (float)A) + Matrix4x4.Multiply(omega_x_squared, (float)B);
         }
 
         public static Matrix4x4 RotationBetweenUnitVectors(ref Vector4 a, ref Vector4 b)

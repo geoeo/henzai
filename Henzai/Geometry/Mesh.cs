@@ -9,7 +9,7 @@ namespace Henzai.Geometry
     /// </summary>
     public sealed class Mesh<T> where T : struct, VertexLocateable
     {
-        private GeometryDefinition<T> _geometryDefinition;
+        private readonly GeometryDefinition<T> _geometryDefinition;
         public GeometryDefinition<T> GeometryDefinition => _geometryDefinition;
         public T[] Vertices => _geometryDefinition.GetValidVertices;
         public ushort[] MeshIndices {

@@ -60,7 +60,7 @@ type NoSurface(id: ID, geometry : RaytracingGeometry, material : Raytracer.Mater
     override this.GenerateSamples _ _ _ _ = (noSampleCount, this.SamplesArray)
 
 let findClosestIntersection (ray : Ray) (surfaces : Surface[]) =
-    let mutable (bMin,tMin, vMin : Surface) = (false, Single.MaxValue, upcast (NoSurface(0UL, NotHitable(), Raytracer.Material.Material(Vector3.Zero))))
+    let mutable (bMin,tMin, vMin : Surface) = (false, Single.MaxValue, upcast (NoSurface(0UL, NotHitable(), Raytracer.Material.Material(Vector4.Zero))))
     for surface in surfaces do
         let (b,t) = surface.Geometry.AsHitable.Intersect ray
         if surface.Geometry.AsHitable.IntersectionAcceptable b t 1.0f (RaytraceGeometryUtils.PointForRay ray t) &&  t < tMin then

@@ -20,14 +20,14 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
     let bvhTraversalStack2D = Array2D.zeroCreate batchSize bvhRuntimeArray.Length
     let batches = samplesPerPixel / batchSize
     let batchIndices = [|1..batchSize|]
-    let colorSamples = Array.create samplesPerPixel Vector3.Zero
-    let colorSamplesClear = Array.create samplesPerPixel Vector3.Zero
+    let colorSamples = Array.create samplesPerPixel Vector4.Zero
+    let colorSamplesClear = Array.create samplesPerPixel Vector4.Zero
 
     // let frameBuffer = Array2D.create width height defaultColor
     let frameBuffer = Array2D.create width height Vector4.Zero
     let depthBuffer = Array2D.create width height System.Single.MaxValue
     let mutable maxFrameBufferDepth = 0.0f
-    let backgroundColor = Vector3.Zero
+    let backgroundColor = Vector4.Zero
 
     //TODO: Refactor this into camera
     let cameraOriginWS = Vector3(-3.0f, 6.0f, 15.0f)
@@ -79,7 +79,7 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
                     if validSamples = 0 then
                         emittedRadiance
                     else 
-                        let mutable totalReflectedLight = Vector3.Zero
+                        let mutable totalReflectedLight = Vector4.Zero
                         for i in 0..validSamples-1 do
                             let (ray,shading) = raySamples.[i]
                             totalReflectedLight <- totalReflectedLight + shading*rayTrace currentTraceDepth ray batchID
@@ -121,7 +121,7 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
                 if validSamples = 0 then
                     emittedRadiance
                 else 
-                    let mutable totalReflectedLight = Vector3.Zero
+                    let mutable totalReflectedLight = Vector4.Zero
                     for i in 0..validSamples-1 do
                         let (ray,shading) = raySamples.[i]
                         totalReflectedLight <- totalReflectedLight + shading*rayTrace currentTraceDepth ray batchID
@@ -145,13 +145,13 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
             let colorSamplesBatch = Array.map (fun i -> async {return rayTraceBase ray px py (i-1) batchIndex}) batchIndices
             let colorsBatch =  colorSamplesBatch |> Async.Parallel |> Async.RunSynchronously
             Array.blit colorsBatch 0 colorSamples (batchIndex*batchSize) batchSize 
-        let avgColor = if Array.isEmpty colorSamples then Vector3.Zero else (Array.reduce (+) colorSamples)/(float32)samplesPerPixel
+        let avgColor = if Array.isEmpty colorSamples then Vector4.Zero else (Array.reduce (+) colorSamples)/(float32)samplesPerPixel
         // Clear colorSamples 
         Array.blit colorSamplesClear 0 colorSamples 0 samplesPerPixel 
         //printfn "Completed Ray for pixels (%i,%i)" px py
         //async {printfn "Completed Ray for pixels (%i,%i)" px py} |> Async.StartAsTask |> ignore
         //Gamma correct TODO: refactor
-        frameBuffer.[px,py] <- Vector4(Vector3.SquareRoot(avgColor), 1.0f)
+        frameBuffer.[px,py] <- Vector4.SquareRoot(avgColor)
         // frameBuffer.[px,py] <- Vector4(avgColor,1.0f)
 
     [<Benchmark>]
