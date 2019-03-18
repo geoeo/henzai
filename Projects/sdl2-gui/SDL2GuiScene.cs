@@ -3,13 +3,11 @@ using System.Numerics;
 using System.Collections.Generic;
 using System.IO;
 using Veldrid;
-using Veldrid.StartupUtilities;
-using Veldrid.Sdl2;
 using Veldrid.ImageSharp;
-using Henzai;
 using Henzai.Extensions;
 using Henzai.Geometry;
 using Henzai.Runtime;
+using Henzai.Core.VertexGeometry;
 
 namespace Henzai.Examples
 {

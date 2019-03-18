@@ -9,6 +9,7 @@ using Henzai;
 using Henzai.Extensions;
 using Henzai.Geometry;
 using Henzai.Runtime;
+using Henzai.Core.VertexGeometry;
 
 namespace Henzai.Examples
 {

@@ -38,7 +38,7 @@ namespace Henzai.Examples
             Vector3 sunPos = _sun.GetWorld_DontMutate.Translation;
             Quaternion rotationAroundY = Quaternion.CreateFromAxisAngle(Vector3.UnitY,radian_slow);
             pos -= sunPos;
-            pos = Vector3.Transform(pos,rotationAroundY);
+            pos = Vector3.Transform(pos, rotationAroundY);
             pos += sunPos;
 
             // add the translating rotation to the orientation defining rotation

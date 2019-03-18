@@ -187,7 +187,7 @@ namespace Henzai
 
             int meshCount = pScene.MeshCount;
 
-            Geometry.Mesh<T>[] meshes = new Geometry.Mesh<T>[meshCount];
+            Henzai.Core.VertexGeometry.Mesh<T>[] meshes = new Henzai.Core.VertexGeometry.Mesh<T>[meshCount];
             Henzai.Geometry.Material[] materials = new Henzai.Geometry.Material[meshCount];
             ushort[][] meshIndicies = new ushort[meshCount][];
 
@@ -208,7 +208,7 @@ namespace Henzai
                     meshDefinition[j] = ByteMarshal.ByteArrayToStructure<T>(bytes);
                 }
 
-                meshes[i] = new Geometry.Mesh<T>(meshDefinition);
+                meshes[i] = new Henzai.Core.VertexGeometry.Mesh<T>(meshDefinition);
                 materials[i] = material;
 
                 var faceCount = aiMesh.FaceCount;
@@ -256,11 +256,11 @@ namespace Henzai
             int meshCountPNTTB = loadedMeshCounts.meshCountPNTTB;
 
             // Geometry.Mesh<VertexPosition>[] meshesP = new Geometry.Mesh<VertexPosition>[meshCountP];
-            Geometry.Mesh<VertexPositionColor>[] meshesPC = new Geometry.Mesh<VertexPositionColor>[meshCountPC];
-            Geometry.Mesh<VertexPositionNormal>[] meshesPN = new Geometry.Mesh<VertexPositionNormal>[meshCountPN];
-            Geometry.Mesh<VertexPositionTexture>[] meshesPT = new Geometry.Mesh<VertexPositionTexture>[meshCountPT];
-            Geometry.Mesh<VertexPositionNormalTexture>[] meshesPNT = new Geometry.Mesh<VertexPositionNormalTexture>[meshCountPNT];
-            Geometry.Mesh<VertexPositionNormalTextureTangentBitangent>[] meshesPNTTB = new Geometry.Mesh<VertexPositionNormalTextureTangentBitangent>[meshCountPNTTB];
+            Henzai.Core.VertexGeometry.Mesh<VertexPositionColor>[] meshesPC = new Henzai.Core.VertexGeometry.Mesh<VertexPositionColor>[meshCountPC];
+            Henzai.Core.VertexGeometry.Mesh<VertexPositionNormal>[] meshesPN = new Henzai.Core.VertexGeometry.Mesh<VertexPositionNormal>[meshCountPN];
+            Henzai.Core.VertexGeometry.Mesh<VertexPositionTexture>[] meshesPT = new Henzai.Core.VertexGeometry.Mesh<VertexPositionTexture>[meshCountPT];
+            Henzai.Core.VertexGeometry.Mesh<VertexPositionNormalTexture>[] meshesPNT = new Henzai.Core.VertexGeometry.Mesh<VertexPositionNormalTexture>[meshCountPNT];
+            Henzai.Core.VertexGeometry.Mesh<VertexPositionNormalTextureTangentBitangent>[] meshesPNTTB = new Henzai.Core.VertexGeometry.Mesh<VertexPositionNormalTextureTangentBitangent>[meshCountPNTTB];
 
             Henzai.Geometry.Material[] materialsPC = new Henzai.Geometry.Material[meshCountPC];
             Henzai.Geometry.Material[] materialsPN = new Henzai.Geometry.Material[meshCountPN];
@@ -352,7 +352,7 @@ namespace Henzai
                 var faceCount = aiMesh.FaceCount;
                 switch(henzaiVertexType){
                     case VertexTypes.VertexPositionColor:
-                        meshesPC[meshIndiciesPC_Counter] = new Geometry.Mesh<VertexPositionColor>(meshDefinitionPC);
+                        meshesPC[meshIndiciesPC_Counter] = new Henzai.Core.VertexGeometry.Mesh<VertexPositionColor>(meshDefinitionPC);
                         materialsPC[meshIndiciesPC_Counter] = material;
                         meshIndiciesPC[meshIndiciesPC_Counter] = new ushort[3*faceCount];
 
@@ -372,7 +372,7 @@ namespace Henzai
                         meshIndiciesPC_Counter++;
                         break;                    
                     case VertexTypes.VertexPositionTexture:
-                        meshesPT[meshIndiciesPT_Counter] = new Geometry.Mesh<VertexPositionTexture>(meshDefinitionPT);
+                        meshesPT[meshIndiciesPT_Counter] = new Henzai.Core.VertexGeometry.Mesh<VertexPositionTexture>(meshDefinitionPT);
                         materialsPT[meshIndiciesPT_Counter] = material;
                         meshIndiciesPT[meshIndiciesPT_Counter] = new ushort[3*faceCount];
 
@@ -392,7 +392,7 @@ namespace Henzai
                         meshIndiciesPT_Counter++;
                         break;
                     case VertexTypes.VertexPositionNormalTexture:
-                        meshesPNT[meshIndiciesPNT_Counter] = new Geometry.Mesh<VertexPositionNormalTexture>(meshDefinitionPNT);
+                        meshesPNT[meshIndiciesPNT_Counter] = new Henzai.Core.VertexGeometry.Mesh<VertexPositionNormalTexture>(meshDefinitionPNT);
                         materialsPNT[meshIndiciesPNT_Counter] = material; 
                         meshIndiciesPNT[meshIndiciesPNT_Counter] = new ushort[3*faceCount];
 
@@ -412,7 +412,7 @@ namespace Henzai
                         meshIndiciesPNT_Counter++;
                         break;
                     case VertexTypes.VertexPositionNormal:
-                        meshesPN[meshIndiciesPN_Counter] = new Geometry.Mesh<VertexPositionNormal>(meshDefinitionPN);
+                        meshesPN[meshIndiciesPN_Counter] = new Henzai.Core.VertexGeometry.Mesh<VertexPositionNormal>(meshDefinitionPN);
                         materialsPN[meshIndiciesPN_Counter] = material;
                         meshIndiciesPN[meshIndiciesPN_Counter] = new ushort[3*faceCount];
 
@@ -432,7 +432,7 @@ namespace Henzai
                         meshIndiciesPN_Counter++;
                         break;
                     case VertexTypes.VertexPositionNormalTextureTangentBitangent:
-                        meshesPNTTB[meshIndiciesPNTTB_Counter] = new Geometry.Mesh<VertexPositionNormalTextureTangentBitangent>(meshDefinitionPNTTB);
+                        meshesPNTTB[meshIndiciesPNTTB_Counter] = new Henzai.Core.VertexGeometry.Mesh<VertexPositionNormalTextureTangentBitangent>(meshDefinitionPNTTB);
                         materialsPNTTB[meshIndiciesPNTTB_Counter] = material;
                         meshIndiciesPNTTB[meshIndiciesPNTTB_Counter] = new ushort[3*faceCount];
 

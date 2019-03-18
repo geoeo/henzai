@@ -1,8 +1,6 @@
-using System;
 using System.Numerics;
-using Henzai.Core.VertexGeometry;
 
-namespace Henzai.Geometry
+namespace Henzai.Core.VertexGeometry
 {
     /// <summary>
     /// Mesh holds Vertex and Texture/Color information
