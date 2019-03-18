@@ -76,25 +76,19 @@ namespace Henzai.Geometry
             string textureBump,
             string textureSpecular){
 
-                if(diffuse != null)
-                    this.diffuse = diffuse;
-                if(specular != null)
-                    this.specular = specular;
-                if(ambient != null)
-                    this.ambient = ambient;
-                if(emissive != null)
-                    this.emissive = emissive;
-                if(transparent != null)
-                    this.transparent = transparent;
-                if(coefficients != null)
-                    this.coefficients = coefficients;
-                if(!String.IsNullOrEmpty(textureDiffuse))
+                this.diffuse = diffuse;
+                this.specular = specular;
+                this.ambient = ambient;
+                this.emissive = emissive;
+                this.transparent = transparent;
+                this.coefficients = coefficients;
+                if(!string.IsNullOrEmpty(textureDiffuse))
                     this.textureDiffuse = textureDiffuse;
-                if(!String.IsNullOrEmpty(textureNormal))
+                if(!string.IsNullOrEmpty(textureNormal))
                     this.textureNormal = textureNormal;
-                if(!String.IsNullOrEmpty(textureBump))
+                if(!string.IsNullOrEmpty(textureBump))
                     this.textureBump = textureBump;
-                if(!String.IsNullOrEmpty(textureSpecular))
+                if(!string.IsNullOrEmpty(textureSpecular))
                     this.textureSpecular = textureSpecular;
              
             }

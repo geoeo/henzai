@@ -74,10 +74,6 @@ namespace Henzai.Geometry
         /// </summary>
         public Material TryGetMaterial(int index)
         {
-
-            //if (material == null)
-            //    throw new NullReferenceException("The material you are trying to access is null");
-            //return material;
             return _materials[index] ?? throw new NullReferenceException("The material you are trying to access is null");
         }
 
