@@ -203,7 +203,7 @@ namespace Henzai.Examples
             _commandList.ClearDepthStencil(1f);
             for(int i = 0; i < _model.MeshCount; i++){
                 var mesh = _model.GetMesh(i);
-                Material material = mesh.TryGetMaterial();
+                var material = _model.TryGetMaterial(i);
 
                 _commandList.SetVertexBuffer(0,_vertexBuffers[i]);
                 _commandList.SetIndexBuffer(_indexBuffers[i],IndexFormat.UInt16);

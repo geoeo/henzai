@@ -46,10 +46,11 @@ namespace Henzai.Examples
                     new Vector4(Math.Cos(17.5f.ToRadians()).ToFloat(),Math.Cos(12.5f.ToRadians()).ToFloat(),0.0f,1.0f));
 
             // Sun //TODO: Make this VertexPositionNormalColor
-            _sun = new Model<VertexPositionNormal>(String.Empty,GeometryFactory.GenerateSphereNormal(100,100,1));
+            _sun = new Model<VertexPositionNormal>(String.Empty, GeometryFactory.GenerateSphereNormal(100,100,1), new Material());
             var sunMeshZero = _sun.GetMesh(0);
+            var sunMaterialZero = _sun.TryGetMaterial(0);
             // _sun.meshes[0].TryGetMaterial().ambient = new Vector4(0.0f,0.0f,0.0f,0.0f);
-            sunMeshZero.TryGetMaterial().ambient = lightColor.ToVector4();
+            sunMaterialZero.ambient = lightColor.ToVector4();
             ref Vector4 lightPos = ref _sceneRuntimeState.Light.LightPos_DontMutate;
             Vector3 newTranslation = new Vector3(lightPos.X,lightPos.Y,lightPos.Z);
             _sun.SetNewWorldTranslation(ref newTranslation, true);
@@ -58,9 +59,10 @@ namespace Henzai.Examples
             sunRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPN;
             _modelPNDescriptorList.Add(sunRuntimeState);
 
-            var spotlight = new Model<VertexPositionNormal>(String.Empty,GeometryFactory.GenerateSphereNormal(100,100,1));
+            var spotlight = new Model<VertexPositionNormal>(String.Empty,GeometryFactory.GenerateSphereNormal(100,100,1), new Material());
             var spotlightMeshZero = spotlight.GetMesh(0);
-            spotlightMeshZero.TryGetMaterial().ambient = _sceneRuntimeState.SpotLight.Color_DontMutate;
+            var spotlightMaterialZero = spotlight.TryGetMaterial(0);
+            spotlightMaterialZero.ambient = _sceneRuntimeState.SpotLight.Color_DontMutate;
             // spotlight.meshes[0].TryGetMaterial().ambient = new Vector4(1.0f,1.0f,1.0f,1.0f);
             // _sun.meshes[0].TryGetMaterial().ambient = lightColor.ToVector4();
             ref Vector4 lightPosSpot = ref _sceneRuntimeState.SpotLight.LightPos_DontMutate;
@@ -104,11 +106,12 @@ namespace Henzai.Examples
             var offsets = GeometryUtils.CreateTilingList_XZ(-20,20,-10,10,0,GeometryFactory.QUAD_WIDTH,GeometryFactory.QUAD_HEIGHT);
             // var offsets = GeometryUtils.CreateTilingList_XZ(-1,1,0,0,0,GeometryFactory.QUAD_WIDTH,GeometryFactory.QUAD_HEIGHT);
             var instancingData = new InstancingData {Positions = offsets};
-            var floor = new Model<VertexPositionNormalTextureTangentBitangent>("paving/",GeometryFactory.GenerateQuadPNTTB_XZ());
+            var floor = new Model<VertexPositionNormalTextureTangentBitangent>("paving/",GeometryFactory.GenerateQuadPNTTB_XZ(), new Material());
             var floorMeshZero = floor.GetMesh(0);
-            floorMeshZero.TryGetMaterial().textureDiffuse="pavingColor.jpg";
-            floorMeshZero.TryGetMaterial().textureNormal="pavingNorm.jpg";
-            floorMeshZero.TryGetMaterial().ambient=new Vector4(0.3f,0.3f,0.3f,1.0f);
+            var flootMaterialZero = floor.TryGetMaterial(0);
+            flootMaterialZero.textureDiffuse="pavingColor.jpg";
+            flootMaterialZero.textureNormal="pavingNorm.jpg";
+            flootMaterialZero.ambient=new Vector4(0.3f,0.3f,0.3f,1.0f);
             var floorTranslation = new Vector3(0.0f,-2.0f,0.0f);
             floor.SetNewWorldTranslation(ref floorTranslation,true);
             var floorRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>(floor,"PositionOffsetPhongBitangentTexture","PhongBitangentTexture",VertexTypes.VertexPositionNormalTextureTangentBitangent,PrimitiveTopology.TriangleStrip);

@@ -69,11 +69,12 @@ namespace Henzai.Examples
             GeometryUtils.GenerateTangentAndBitagentSpaceFor(_nanosuit);
             // GeometryUtils.CheckTBN(_model);
             // var sun = new Model<VertexPositionNormalTextureTangentBitangent>("water",GeometryFactory.generateSphereTangentBitangent(100,100,1));
-            _sun = new Model<VertexPositionNormal>(String.Empty,GeometryFactory.GenerateSphereNormal(100,100,1));
+            _sun = new Model<VertexPositionNormal>(String.Empty, GeometryFactory.GenerateSphereNormal(100,100,1), new Material());
             var meshZero = _sun.GetMesh(0);
-            meshZero.TryGetMaterial().textureDiffuse = "Water.jpg";
-            meshZero.TryGetMaterial().textureNormal = "WaterNorm.jpg";
-            meshZero.TryGetMaterial().ambient = lightColor.ToVector4();
+            var materialZero = _sun.TryGetMaterial(0);
+            materialZero.textureDiffuse = "Water.jpg";
+            materialZero.textureNormal = "WaterNorm.jpg";
+            materialZero.ambient = lightColor.ToVector4();
             // _sun.meshes[0].TryGetMaterial().ambient = lightColor.ToVector4();
             ref Vector4 lightPos = ref _sceneRuntimeState.Light.LightPos_DontMutate;
             Vector3 newTranslation = new Vector3(lightPos.X,lightPos.Y,lightPos.Z);

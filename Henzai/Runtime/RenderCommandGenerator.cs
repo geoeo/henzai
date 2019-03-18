@@ -108,13 +108,10 @@ namespace Henzai.Runtime
                                                     ResourceSet pointlightResourceSet,
                                                     ResourceSet materialResourceSet,
                                                     ResourceSet textureResourceSet,
+                                                    Material material,
                                                     Mesh<VertexPositionNormalTextureTangentBitangent> mesh,
                                                     uint modelInstanceCount)
         {
-
-
-            Material material = mesh.GetMaterialRuntime();
-
             commandList.SetVertexBuffer(0, vertexBuffer);
             commandList.SetIndexBuffer(indexBuffer, IndexFormat.UInt16);
             commandList.UpdateBuffer(cameraProjViewBuffer, 128, mesh.World);
@@ -151,13 +148,10 @@ namespace Henzai.Runtime
                                                     ResourceSet cameraResourceSet,
                                                     ResourceSet lightResourceSet,
                                                     ResourceSet materialResourceSet,
+                                                    Material material,
                                                     Mesh<VertexPositionNormal> mesh,
                                                     uint modelInstanceCount)
         {
-
-
-            Material material = mesh.GetMaterialRuntime();
-
             commandList.SetVertexBuffer(0, vertexBuffer);
             commandList.SetIndexBuffer(indexBuffer, IndexFormat.UInt16);
             commandList.UpdateBuffer(cameraProjViewBuffer, 128, mesh.World);
@@ -193,10 +187,6 @@ namespace Henzai.Runtime
                                                     Mesh<VertexPositionTexture> mesh,
                                                     uint modelInstanceCount)
         {
-
-
-            Material material = mesh.GetMaterialRuntime();
-
             commandList.SetVertexBuffer(0, vertexBuffer);
             commandList.SetIndexBuffer(indexBuffer, IndexFormat.UInt16);
             commandList.UpdateBuffer(cameraProjViewBuffer, 128, mesh.World);
@@ -226,10 +216,6 @@ namespace Henzai.Runtime
                                                     Mesh<VertexPositionColor> mesh,
                                                     uint modelInstanceCount)
         {
-
-
-            Material material = mesh.GetMaterialRuntime();
-
             commandList.SetVertexBuffer(0, vertexBuffer);
             commandList.SetIndexBuffer(indexBuffer, IndexFormat.UInt16);
             commandList.UpdateBuffer(cameraProjViewBuffer, 128, mesh.World);
@@ -260,10 +246,6 @@ namespace Henzai.Runtime
                                                     Mesh<VertexPosition> mesh,
                                                     uint modelInstanceCount)
         {
-
-
-            Material material = mesh.GetMaterialRuntime();
-
             commandList.SetVertexBuffer(0, vertexBuffer);
             commandList.SetIndexBuffer(indexBuffer, IndexFormat.UInt16);
             commandList.UpdateBuffer(cameraProjViewBuffer, 128, mesh.World);
@@ -294,10 +276,6 @@ namespace Henzai.Runtime
                                                     Mesh<VertexPositionColor> mesh,
                                                     uint modelInstanceCount)
         {
-
-
-            Material material = mesh.GetMaterialRuntime();
-
             commandList.SetVertexBuffer(0, vertexBuffer);
             commandList.SetIndexBuffer(indexBuffer, IndexFormat.UInt16);
             commandList.UpdateBuffer(cameraProjViewBuffer, 128, mesh.World);
@@ -363,6 +341,7 @@ namespace Henzai.Runtime
                     var mesh = model.GetMesh(i);
                     if (mesh.IsCulled)
                         continue;
+                    var material = model.GetMaterialRuntime(i);
                     RenderCommandGenerator.GenerateCommandsForMesh_Inline(
                         commandList,
                         modelState.VertexBuffers[i],
@@ -372,6 +351,7 @@ namespace Henzai.Runtime
                         sceneRuntimeDescriptor.CameraResourceSet,
                         sceneRuntimeDescriptor.LightResourceSet,
                         sceneRuntimeDescriptor.MaterialResourceSet,
+                        material,
                         mesh,
                         modelState.TotalInstanceCount
                     );
@@ -551,6 +531,7 @@ namespace Henzai.Runtime
                     var mesh = model.GetMesh(i);
                     if (mesh.IsCulled)
                         continue;
+                    var material = model.GetMaterialRuntime(i);
                     RenderCommandGenerator.GenerateCommandsForMesh_Inline(
                         commandList,
                         modelState.VertexBuffers[i],
@@ -562,6 +543,7 @@ namespace Henzai.Runtime
                         sceneRuntimeDescriptor.SpotLightResourceSet,
                         sceneRuntimeDescriptor.MaterialResourceSet,
                         modelState.TextureResourceSets[i],
+                        material,
                         mesh,
                         modelState.TotalInstanceCount
                     );
@@ -595,6 +577,7 @@ namespace Henzai.Runtime
                     var mesh = model.GetMesh(i);
                     if (mesh.IsCulled)
                         continue;
+                    var material = model.GetMaterialRuntime(i);
                     RenderCommandGenerator.GenerateCommandsForMesh_Inline(
                         commandList,
                         modelState.VertexBuffers[i],
@@ -606,6 +589,7 @@ namespace Henzai.Runtime
                         sceneRuntimeDescriptor.SpotLightResourceSet,
                         sceneRuntimeDescriptor.MaterialResourceSet,
                         modelState.TextureResourceSets[i],
+                        material,
                         mesh,
                         modelState.TotalInstanceCount
                     );

@@ -103,7 +103,7 @@ namespace Henzai
         }
 
         public static ResourceSet GenerateTextureResourceSetForNormalMapping<T>(ModelRuntimeDescriptor<T> modelRuntimeState,int meshIndex, DisposeCollectorResourceFactory factory, GraphicsDevice graphicsDevice) where T : struct , VertexLocateable{
-            Material material = modelRuntimeState.Model.GetMesh(meshIndex).TryGetMaterial();
+            Material material = modelRuntimeState.Model.TryGetMaterial(meshIndex);
 
             ImageSharpTexture diffuseTextureIS = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, modelRuntimeState.Model.BaseDir, material.textureDiffuse));
             Texture diffuseTexture = diffuseTextureIS.CreateDeviceTexture(graphicsDevice, factory);
@@ -126,7 +126,7 @@ namespace Henzai
         }
 
         public static ResourceSet GenerateTextureResourceSetForDiffuseMapping<T>(ModelRuntimeDescriptor<T> modelRuntimeState,int meshIndex, DisposeCollectorResourceFactory factory, GraphicsDevice graphicsDevice) where T : struct, VertexLocateable {
-            Material material = modelRuntimeState.Model.GetMesh(meshIndex).TryGetMaterial();
+            Material material = modelRuntimeState.Model.TryGetMaterial(meshIndex);
 
             ImageSharpTexture diffuseTextureIS = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, modelRuntimeState.Model.BaseDir, material.textureDiffuse));
             Texture diffuseTexture = diffuseTextureIS.CreateDeviceTexture(graphicsDevice, factory);
@@ -142,7 +142,7 @@ namespace Henzai
 
         public static ResourceSet GenerateTextureResourceSetForCubeMapping<T>(ModelRuntimeDescriptor<T> modelRuntimeState,int meshIndex, DisposeCollectorResourceFactory factory, GraphicsDevice graphicsDevice) where T : struct, VertexLocateable {
 
-            Material material = modelRuntimeState.Model.GetMesh(meshIndex).TryGetMaterial();
+            Material material = modelRuntimeState.Model.TryGetMaterial(meshIndex);
 
             var t = Path.Combine(AppContext.BaseDirectory, modelRuntimeState.Model.BaseDir, material.cubeMapFront);
 

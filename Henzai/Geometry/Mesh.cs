@@ -30,37 +30,27 @@ namespace Henzai.Geometry
         public ref Matrix4x4 World => ref _world;
         //TODO move this to Model class as a list of Materials with 1:1 correspondence
         //TODO make mesh to hold a list of Geometry Definiions (?)
-        public Material material {private get; set;}
+        //public Material material {private get; set;}
         public bool IsCulled => _geometryDefinition.IsCulled;
 
         public Mesh(T[] meshDefinition)
         {
             _geometryDefinition = new GeometryDefinition<T>(meshDefinition);
-            this.material = new Material();
+            //material = new Material();
         }
 
         public Mesh(T[] meshDefinition, ushort[] indices)
         {
-            _geometryDefinition = new GeometryDefinition<T>(meshDefinition,indices);
-            this.material = new Material();
+            _geometryDefinition = new GeometryDefinition<T>(meshDefinition, indices);
+            //material = new Material();
         }
 
-        public Mesh(T[] meshDefinition, Material material)
-        {
+        //public Mesh(T[] meshDefinition)
+        //{
 
-            _geometryDefinition = new GeometryDefinition<T>(meshDefinition);
-            this.material = material;
-        }
-
-        public Material TryGetMaterial(){
-            if(material == null)
-                throw new NullReferenceException("The material you are trying to access is null");
-            return material;
-        }
-
-        public Material GetMaterialRuntime(){
-            return material;
-        }
+        //    _geometryDefinition = new GeometryDefinition<T>(meshDefinition);
+        //    //material = material;
+        //}
 
         public void SetNewWorldTransformation(ref Matrix4x4 world){
             _world = world;
