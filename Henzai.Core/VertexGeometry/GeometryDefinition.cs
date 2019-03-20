@@ -9,18 +9,18 @@ namespace Henzai.Core.VertexGeometry
     
     public sealed class GeometryDefinition<T> where T : struct, VertexLocateable
     {
-        private T[] _vertices;
+        private readonly T[] _vertices;
         /// <summary>
         /// Holds a continuous list of verticies which pass the frustum test.
         /// The array may be larger than actual vertex count.
         /// </summary>
-        private T[] _culledVertices;
-        private ushort[] _meshIndices;
+        private readonly T[] _culledVertices;
+        private readonly ushort[] _meshIndices;
         /// <summary>
         /// Holds a continuous list of indices which pass the frustum test.
         /// The array may be larger than actual index count.
         /// </summary>
-        private ushort[] _culledMeshIndices;
+        private readonly ushort[] _culledMeshIndices;
 
         /// <summary>
         /// The number of indices that passed the frustum test.
@@ -75,17 +75,6 @@ namespace Henzai.Core.VertexGeometry
             _culledMeshIndices = null;
 
             ProcessedIndicesMap = new Dictionary<ushort, bool>();
-        }
-
-        public void SetMeshIndices(ushort[] meshIndices){
-            Debug.Assert(meshIndices != null);
-
-            if(_culledMeshIndices == null)
-                _culledMeshIndices = new ushort[meshIndices.Length];
-
-            _meshIndices = meshIndices;
-            NumberOfValidIndicies = meshIndices.Length;
-            Buffer.BlockCopy(meshIndices,0,_culledMeshIndices,0,meshIndices.Length * sizeof(ushort));
         }
 
         //TODO: Look into optimizing this

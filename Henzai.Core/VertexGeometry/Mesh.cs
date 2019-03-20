@@ -10,17 +10,7 @@ namespace Henzai.Core.VertexGeometry
         private readonly GeometryDefinition<T> _geometryDefinition;
         public GeometryDefinition<T> GeometryDefinition => _geometryDefinition;
         public T[] Vertices => _geometryDefinition.GetValidVertices;
-        public ushort[] MeshIndices {
-            get
-            {
-                return _geometryDefinition.GetValidIndices;
-            }
-
-            set
-            {
-                _geometryDefinition.SetMeshIndices(value);
-            }
-        }
+        public ushort[] MeshIndices => _geometryDefinition.GetValidIndices;
 
         public int NumberOfValidVertices => _geometryDefinition.GetNumberOfValidVertices;
         public int NumberOfValidIndices => _geometryDefinition.GetNumberOfValidIndices;

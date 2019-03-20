@@ -208,9 +208,7 @@ namespace Henzai
                     meshDefinition[j] = ByteMarshal.ByteArrayToStructure<T>(bytes);
                 }
 
-                meshes[i] = new Henzai.Core.VertexGeometry.Mesh<T>(meshDefinition);
                 materials[i] = material;
-
                 var faceCount = aiMesh.FaceCount;
                 meshIndicies[i] = new ushort[3*faceCount];
 
@@ -228,9 +226,10 @@ namespace Henzai
                     meshIndicies[i][3*j+2] = face.Indices[2].ToUnsignedShort();
 
                 }
+                meshes[i] = new Henzai.Core.VertexGeometry.Mesh<T>(meshDefinition, meshIndicies[i]);
             }
 
-            return new Model<T>(modelDir, meshes, meshIndicies, materials);
+            return new Model<T>(modelDir, meshes, materials);
         }
 
         public static LoadedModels LoadModelsFromFile(string baseDirectory,string localPath, PostProcessSteps flags = DefaultPostProcessSteps)
@@ -350,69 +349,65 @@ namespace Henzai
                 }
 
                 var faceCount = aiMesh.FaceCount;
-                switch(henzaiVertexType){
+                switch (henzaiVertexType) {
                     case VertexTypes.VertexPositionColor:
-                        meshesPC[meshIndiciesPC_Counter] = new Henzai.Core.VertexGeometry.Mesh<VertexPositionColor>(meshDefinitionPC);
                         materialsPC[meshIndiciesPC_Counter] = material;
-                        meshIndiciesPC[meshIndiciesPC_Counter] = new ushort[3*faceCount];
+                        meshIndiciesPC[meshIndiciesPC_Counter] = new ushort[3 * faceCount];
 
-                        for(int j = 0; j < faceCount; j++){
+                        for (int j = 0; j < faceCount; j++) {
                             var face = aiMesh.Faces[j];
 
-                            if (face.IndexCount != 3){
+                            if (face.IndexCount != 3) {
                                 Console.Error.WriteLine("Loading Assimp: Face index count != 3!");
                                 continue;
-
                             }
 
-                            meshIndiciesPC[meshIndiciesPC_Counter][3*j+0] = face.Indices[0].ToUnsignedShort();
-                            meshIndiciesPC[meshIndiciesPC_Counter][3*j+1] = face.Indices[1].ToUnsignedShort();
-                            meshIndiciesPC[meshIndiciesPC_Counter][3*j+2] = face.Indices[2].ToUnsignedShort();
-                        }     
+                            meshIndiciesPC[meshIndiciesPC_Counter][3 * j + 0] = face.Indices[0].ToUnsignedShort();
+                            meshIndiciesPC[meshIndiciesPC_Counter][3 * j + 1] = face.Indices[1].ToUnsignedShort();
+                            meshIndiciesPC[meshIndiciesPC_Counter][3 * j + 2] = face.Indices[2].ToUnsignedShort();
+                        }
+                        meshesPC[meshIndiciesPC_Counter] = new Henzai.Core.VertexGeometry.Mesh<VertexPositionColor>(meshDefinitionPC, meshIndiciesPC[meshIndiciesPC_Counter]);
                         meshIndiciesPC_Counter++;
-                        break;                    
+                        break;
                     case VertexTypes.VertexPositionTexture:
-                        meshesPT[meshIndiciesPT_Counter] = new Henzai.Core.VertexGeometry.Mesh<VertexPositionTexture>(meshDefinitionPT);
                         materialsPT[meshIndiciesPT_Counter] = material;
-                        meshIndiciesPT[meshIndiciesPT_Counter] = new ushort[3*faceCount];
+                        meshIndiciesPT[meshIndiciesPT_Counter] = new ushort[3 * faceCount];
 
-                        for(int j = 0; j < faceCount; j++){
+                        for (int j = 0; j < faceCount; j++) {
                             var face = aiMesh.Faces[j];
 
-                            if (face.IndexCount != 3){
+                            if (face.IndexCount != 3) {
                                 Console.Error.WriteLine("Loading Assimp: Face index count != 3!");
                                 continue;
-
                             }
 
-                            meshIndiciesPT[meshIndiciesPT_Counter][3*j+0] = face.Indices[0].ToUnsignedShort();
-                            meshIndiciesPT[meshIndiciesPT_Counter][3*j+1] = face.Indices[1].ToUnsignedShort();
-                            meshIndiciesPT[meshIndiciesPT_Counter][3*j+2] = face.Indices[2].ToUnsignedShort();
-                        }     
+                            meshIndiciesPT[meshIndiciesPT_Counter][3 * j + 0] = face.Indices[0].ToUnsignedShort();
+                            meshIndiciesPT[meshIndiciesPT_Counter][3 * j + 1] = face.Indices[1].ToUnsignedShort();
+                            meshIndiciesPT[meshIndiciesPT_Counter][3 * j + 2] = face.Indices[2].ToUnsignedShort();
+                        }
+                        meshesPT[meshIndiciesPT_Counter] = new Henzai.Core.VertexGeometry.Mesh<VertexPositionTexture>(meshDefinitionPT, meshIndiciesPT[meshIndiciesPT_Counter]);
                         meshIndiciesPT_Counter++;
                         break;
                     case VertexTypes.VertexPositionNormalTexture:
-                        meshesPNT[meshIndiciesPNT_Counter] = new Henzai.Core.VertexGeometry.Mesh<VertexPositionNormalTexture>(meshDefinitionPNT);
-                        materialsPNT[meshIndiciesPNT_Counter] = material; 
-                        meshIndiciesPNT[meshIndiciesPNT_Counter] = new ushort[3*faceCount];
+                        materialsPNT[meshIndiciesPNT_Counter] = material;
+                        meshIndiciesPNT[meshIndiciesPNT_Counter] = new ushort[3 * faceCount];
 
-                        for(int j = 0; j < faceCount; j++){
+                        for (int j = 0; j < faceCount; j++) {
                             var face = aiMesh.Faces[j];
 
-                            if (face.IndexCount != 3){
+                            if (face.IndexCount != 3) {
                                 Console.Error.WriteLine("Loading Assimp: Face index count != 3!");
                                 continue;
-
                             }
 
-                            meshIndiciesPNT[meshIndiciesPNT_Counter][3*j+0] = face.Indices[0].ToUnsignedShort();
-                            meshIndiciesPNT[meshIndiciesPNT_Counter][3*j+1] = face.Indices[1].ToUnsignedShort();
-                            meshIndiciesPNT[meshIndiciesPNT_Counter][3*j+2] = face.Indices[2].ToUnsignedShort();
-                        }                           
+                            meshIndiciesPNT[meshIndiciesPNT_Counter][3 * j + 0] = face.Indices[0].ToUnsignedShort();
+                            meshIndiciesPNT[meshIndiciesPNT_Counter][3 * j + 1] = face.Indices[1].ToUnsignedShort();
+                            meshIndiciesPNT[meshIndiciesPNT_Counter][3 * j + 2] = face.Indices[2].ToUnsignedShort();
+                        }
+                        meshesPNT[meshIndiciesPNT_Counter] = new Henzai.Core.VertexGeometry.Mesh<VertexPositionNormalTexture>(meshDefinitionPNT, meshIndiciesPNT[meshIndiciesPNT_Counter]);
                         meshIndiciesPNT_Counter++;
                         break;
                     case VertexTypes.VertexPositionNormal:
-                        meshesPN[meshIndiciesPN_Counter] = new Henzai.Core.VertexGeometry.Mesh<VertexPositionNormal>(meshDefinitionPN);
                         materialsPN[meshIndiciesPN_Counter] = material;
                         meshIndiciesPN[meshIndiciesPN_Counter] = new ushort[3*faceCount];
 
@@ -422,17 +417,16 @@ namespace Henzai
                             if (face.IndexCount != 3){
                                 Console.Error.WriteLine("Loading Assimp: Face index count != 3!");
                                 continue;
-
                             }
 
                             meshIndiciesPN[meshIndiciesPN_Counter][3*j+0] = face.Indices[0].ToUnsignedShort();
                             meshIndiciesPN[meshIndiciesPN_Counter][3*j+1] = face.Indices[1].ToUnsignedShort();
                             meshIndiciesPN[meshIndiciesPN_Counter][3*j+2] = face.Indices[2].ToUnsignedShort();
-                        }                            
+                        }
+                        meshesPN[meshIndiciesPN_Counter] = new Henzai.Core.VertexGeometry.Mesh<VertexPositionNormal>(meshDefinitionPN, meshIndiciesPN[meshIndiciesPN_Counter]);
                         meshIndiciesPN_Counter++;
                         break;
                     case VertexTypes.VertexPositionNormalTextureTangentBitangent:
-                        meshesPNTTB[meshIndiciesPNTTB_Counter] = new Henzai.Core.VertexGeometry.Mesh<VertexPositionNormalTextureTangentBitangent>(meshDefinitionPNTTB);
                         materialsPNTTB[meshIndiciesPNTTB_Counter] = material;
                         meshIndiciesPNTTB[meshIndiciesPNTTB_Counter] = new ushort[3*faceCount];
 
@@ -442,13 +436,13 @@ namespace Henzai
                             if (face.IndexCount != 3){
                                 Console.Error.WriteLine("Loading Assimp: Face index count != 3!");
                                 continue;
-
                             }
 
                             meshIndiciesPNTTB[meshIndiciesPNTTB_Counter][3*j+0] = face.Indices[0].ToUnsignedShort();
                             meshIndiciesPNTTB[meshIndiciesPNTTB_Counter][3*j+1] = face.Indices[1].ToUnsignedShort();
                             meshIndiciesPNTTB[meshIndiciesPNTTB_Counter][3*j+2] = face.Indices[2].ToUnsignedShort();
-                        }                            
+                        }
+                        meshesPNTTB[meshIndiciesPNTTB_Counter] = new Henzai.Core.VertexGeometry.Mesh<VertexPositionNormalTextureTangentBitangent>(meshDefinitionPNTTB, meshIndiciesPNTTB[meshIndiciesPNTTB_Counter]);
                         meshIndiciesPNTTB_Counter++;
                         break;
                     default:
@@ -460,15 +454,15 @@ namespace Henzai
             // if(meshCountP > 0)
                 // loadedModels.modelP = new Model<VertexPosition>(modelDir,meshesP,meshIndiciesP);
             if(meshCountPC > 0 )
-                loadedModels.modelPC = new Model<VertexPositionColor>(modelDir, meshesPC, meshIndiciesPC, materialsPC);
+                loadedModels.modelPC = new Model<VertexPositionColor>(modelDir, meshesPC, materialsPC);
             if(meshCountPN > 0)
-                loadedModels.modelPN = new Model<VertexPositionNormal>(modelDir, meshesPN, meshIndiciesPN, materialsPN);
+                loadedModels.modelPN = new Model<VertexPositionNormal>(modelDir, meshesPN, materialsPN);
             if(meshCountPT > 0)
-                loadedModels.modelPT = new Model<VertexPositionTexture>(modelDir, meshesPT, meshIndiciesPT, materialsPT);                
+                loadedModels.modelPT = new Model<VertexPositionTexture>(modelDir, meshesPT, materialsPT);                
             if(meshCountPNT > 0)
-                loadedModels.modelPNT = new Model<VertexPositionNormalTexture>(modelDir, meshesPNT, meshIndiciesPNT, materialsPNT);
+                loadedModels.modelPNT = new Model<VertexPositionNormalTexture>(modelDir, meshesPNT, materialsPNT);
             if(meshCountPNTTB > 0) 
-                loadedModels.modelPNTTB = new Model<VertexPositionNormalTextureTangentBitangent>(modelDir, meshesPNTTB, meshIndiciesPNTTB, materialsPNTTB);
+                loadedModels.modelPNTTB = new Model<VertexPositionNormalTextureTangentBitangent>(modelDir, meshesPNTTB, materialsPNTTB);
 
             return loadedModels;
         }

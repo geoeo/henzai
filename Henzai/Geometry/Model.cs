@@ -23,11 +23,9 @@ namespace Henzai.Geometry
         public ref Matrix4x4 GetWorld_DontMutate => ref _world;
         public string BaseDir {get;private set;}
 
-        public Model(string directory, Mesh<T>[] meshes, ushort[][] indicies, Material[] materials){
+        public Model(string directory, Mesh<T>[] meshes, Material[] materials){
             BaseDir = directory;
             _meshes = meshes;
-            for(int i = 0; i < MeshCount; i++)
-                _meshes[i].MeshIndices = indicies[i];
             _materials = materials;
 
         }
