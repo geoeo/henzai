@@ -2,6 +2,7 @@ using System.Numerics;
 
 namespace Henzai.Core.VertexGeometry
 {
+    //TODO Could remove this class entierly. World has to move into GeometryDefinition
     /// <summary>
     /// Mesh holds Vertex and Texture/Color information
     /// </summary>
