@@ -20,7 +20,8 @@
     <Compile Include="RaytraceGeometry/NotHitable.fs" />
     <Compile Include="RaytraceGeometry/Sphere.fs" />
     <Compile Include="RaytraceGeometry/Plane.fs" />
-    <Compile Include="RaytraceGeometry/Triangle.fs" />      
+    <Compile Include="RaytraceGeometry/Triangle.fs" />
+    <Compile Include="RaytraceGeometry/IndexedTriangle.fs" />
     <Compile Include="Acceleration/Culler.fs" />
     <Compile Include="Acceleration/BVHTreeBuilder.fs" />
     <Compile Include="Acceleration/BVHRuntime.fs" />
