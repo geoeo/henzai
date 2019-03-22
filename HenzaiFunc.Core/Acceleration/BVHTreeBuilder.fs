@@ -139,7 +139,7 @@ type BVHTreeBuilder<'T when 'T :> AxisAlignedBoundable>() =
                 buildLeafFromMultiplePrimitives bvhInfoArray geometryArray subArray orderedGeometryList centroidBounds nPrimitives axis
             else
                 let struct(splitPoint , smallerThanMidArray, largerThanMidArray) = calculateSplitPoint subArray start finish centroidBounds axis splitMethod
-                if largerThanMidArray.Length = 0 then
+                if largerThanMidArray.Length = 0 || smallerThanMidArray.Length = 0 then
                     buildLeafFromMultiplePrimitives bvhInfoArray geometryArray subArray orderedGeometryList centroidBounds nPrimitives axis
                 else
                     Array.blit smallerThanMidArray 0 bvhInfoArray start smallerThanMidArray.Length

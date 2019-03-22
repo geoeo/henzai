@@ -1,6 +1,6 @@
 using System;
 using System.Numerics;
-using System.Runtime.CompilerServices;
+using System.Diagnostics;
 
 namespace Henzai.Core.Numerics
 {
@@ -117,25 +117,23 @@ namespace Henzai.Core.Numerics
         /// Problems with references from member variables make "a" be a pass-by-value
         /// </summary>
         public static Matrix4x4 RotationBetweenUnitVectors(ref Vector3 a, ref Vector3 b){
-            var omega = Vector3.Cross(a,b);
+            var omega = Vector3.Cross(a, b);
             var omega_x = SkewSymmetric(ref omega);
             var omega_x_squared = Matrix4x4.Multiply(omega_x,omega_x);
             var angle = AngleAroundOmega(ref omega);
             var c = Math.Cos(angle);
-            var s = Math.Sin(angle);
-            var A = s / angle;
-            var B = 1.0f / (1.0f + c);
+            var factor = 1.0 / (1.0 + c);
 
             //TODO: Optimize this for less allocations
             //TODO: try this with double precision
-            return Matrix4x4.Identity + Matrix4x4.Multiply(omega_x_squared, (float)A) + Matrix4x4.Multiply(omega_x_squared, (float)B);
+            return Matrix4x4.Identity + omega_x + Matrix4x4.Multiply(omega_x_squared, (float)factor);
         }
 
         public static Matrix4x4 RotationBetweenUnitVectors(ref Vector4 a, ref Vector4 b)
         {
             var a_v3 = Vector.ToVec3(a);
             var b_v3 = Vector.ToVec3(b);
-            var omega = Vector3.Cross(a_v3, b_v3);
+            var omega =Vector3.Cross(a_v3, b_v3);
             var omega_x = SkewSymmetric(ref omega);
             var omega_x_squared = Matrix4x4.Multiply(omega_x, omega_x);
             var angle = AngleAroundOmega(ref omega);
