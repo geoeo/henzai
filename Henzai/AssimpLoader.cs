@@ -1,8 +1,8 @@
 using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Numerics;
 using Henzai.Geometry;
+using Henzai.Core;
 using Henzai.Core.VertexGeometry;
 using Henzai.Extensions;
 using Henzai.Runtime;

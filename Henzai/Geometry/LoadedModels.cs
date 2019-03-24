@@ -1,3 +1,5 @@
+using Henzai.Core;
+
 namespace Henzai.Geometry{
     public class LoadedModels{
         public Model<VertexPosition, Material> modelP {

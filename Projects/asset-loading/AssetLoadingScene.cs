@@ -1,12 +1,9 @@
 using System;
 using System.Numerics;
 using System.Collections.Generic;
-using System.IO;
 using Veldrid;
-using Veldrid.StartupUtilities;
 using Veldrid.Sdl2;
-using Veldrid.OpenGL;
-using Henzai;
+using Henzai.Core;
 using Henzai.Extensions;
 using Henzai.Geometry;
 using Henzai.Runtime;
@@ -15,7 +12,6 @@ namespace Henzai.Examples
 {
     internal class AssetLoadingScene : Renderable
     {
-
         private List<DeviceBuffer> _vertexBuffers;
         private List<DeviceBuffer> _indexBuffers;
         private Shader _vertexShader;

@@ -2,6 +2,7 @@ using System;
 using System.Numerics;
 using Henzai.Extensions;
 using Henzai.Runtime;
+using Henzai.Core;
 using Henzai.Core.VertexGeometry;
 
 
