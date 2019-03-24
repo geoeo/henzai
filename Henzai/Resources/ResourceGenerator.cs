@@ -102,7 +102,7 @@ namespace Henzai
                 });
         }
 
-        public static ResourceSet GenerateTextureResourceSetForNormalMapping<T>(ModelRuntimeDescriptor<T> modelRuntimeState,int meshIndex, DisposeCollectorResourceFactory factory, GraphicsDevice graphicsDevice) where T : struct , VertexLocateable{
+        public static ResourceSet GenerateTextureResourceSetForNormalMapping<T>(ModelRuntimeDescriptor<T> modelRuntimeState,int meshIndex, DisposeCollectorResourceFactory factory, GraphicsDevice graphicsDevice) where T : struct , VertexLocateable {
             Material material = modelRuntimeState.Model.TryGetMaterial(meshIndex);
 
             ImageSharpTexture diffuseTextureIS = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, modelRuntimeState.Model.BaseDir, material.textureDiffuse));
@@ -144,8 +144,6 @@ namespace Henzai
 
             Material material = modelRuntimeState.Model.TryGetMaterial(meshIndex);
 
-            var t = Path.Combine(AppContext.BaseDirectory, modelRuntimeState.Model.BaseDir, material.cubeMapFront);
-
             Image<Rgba32> front = Image.Load(Path.Combine(AppContext.BaseDirectory, modelRuntimeState.Model.BaseDir, material.cubeMapFront));
             Image<Rgba32> back = Image.Load(Path.Combine(AppContext.BaseDirectory, modelRuntimeState.Model.BaseDir, material.cubeMapBack));
             Image<Rgba32> left = Image.Load(Path.Combine(AppContext.BaseDirectory, modelRuntimeState.Model.BaseDir, material.cubeMapLeft));
@@ -153,10 +151,6 @@ namespace Henzai
             Image<Rgba32> top = Image.Load(Path.Combine(AppContext.BaseDirectory, modelRuntimeState.Model.BaseDir, material.cubeMapTop));
             Image<Rgba32> bottom = Image.Load(Path.Combine(AppContext.BaseDirectory, modelRuntimeState.Model.BaseDir, material.cubeMapBottom));
 
-
-            
-
-            // Texture diffuseTexture = diffuseTextureIS.CreateDeviceTexture(graphicsDevice, factory);
             TextureView diffuseTextureView = ResourceGenerator.CreateCubeMapTextureView(front,
                                                                                         back,
                                                                                         left,

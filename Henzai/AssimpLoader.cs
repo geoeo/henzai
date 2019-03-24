@@ -2,11 +2,11 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Numerics;
-using Assimp;
 using Henzai.Geometry;
 using Henzai.Core.VertexGeometry;
 using Henzai.Extensions;
 using Henzai.Runtime;
+using Assimp;
 
 namespace Henzai
 {   
@@ -171,7 +171,7 @@ namespace Henzai
 
         }
 
-        public static Model<T> LoadFromFile<T>(string baseDirectory,string localPath, VertexTypes vertexType, PostProcessSteps flags = DefaultPostProcessSteps) where T : struct, VertexLocateable
+        public static Model<T, Geometry.Material> LoadFromFile<T>(string baseDirectory,string localPath, VertexTypes vertexType, PostProcessSteps flags = DefaultPostProcessSteps) where T : struct, VertexLocateable
         {
 
             if(!Verifier.verifyVertexStruct<T>(vertexType))
@@ -229,7 +229,7 @@ namespace Henzai
                 meshes[i] = new Mesh<T>(meshDefinition, meshIndicies[i]);
             }
 
-            return new Model<T>(modelDir, meshes, materials);
+            return new Model<T, Geometry.Material>(modelDir, meshes, materials);
         }
 
         public static LoadedModels LoadModelsFromFile(string baseDirectory, string localPath, PostProcessSteps flags = DefaultPostProcessSteps)
@@ -454,15 +454,15 @@ namespace Henzai
             // if(meshCountP > 0)
                 // loadedModels.modelP = new Model<VertexPosition>(modelDir,meshesP,meshIndiciesP);
             if(meshCountPC > 0 )
-                loadedModels.modelPC = new Model<VertexPositionColor>(modelDir, meshesPC, materialsPC);
+                loadedModels.modelPC = new Model<VertexPositionColor, Geometry.Material>(modelDir, meshesPC, materialsPC);
             if(meshCountPN > 0)
-                loadedModels.modelPN = new Model<VertexPositionNormal>(modelDir, meshesPN, materialsPN);
+                loadedModels.modelPN = new Model<VertexPositionNormal, Geometry.Material>(modelDir, meshesPN, materialsPN);
             if(meshCountPT > 0)
-                loadedModels.modelPT = new Model<VertexPositionTexture>(modelDir, meshesPT, materialsPT);                
+                loadedModels.modelPT = new Model<VertexPositionTexture, Geometry.Material>(modelDir, meshesPT, materialsPT);                
             if(meshCountPNT > 0)
-                loadedModels.modelPNT = new Model<VertexPositionNormalTexture>(modelDir, meshesPNT, materialsPNT);
+                loadedModels.modelPNT = new Model<VertexPositionNormalTexture, Geometry.Material>(modelDir, meshesPNT, materialsPNT);
             if(meshCountPNTTB > 0) 
-                loadedModels.modelPNTTB = new Model<VertexPositionNormalTextureTangentBitangent>(modelDir, meshesPNTTB, materialsPNTTB);
+                loadedModels.modelPNTTB = new Model<VertexPositionNormalTextureTangentBitangent, Geometry.Material>(modelDir, meshesPNTTB, materialsPNTTB);
 
             return loadedModels;
         }

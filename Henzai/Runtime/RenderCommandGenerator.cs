@@ -25,7 +25,7 @@ namespace Henzai.Runtime
                                                     DeviceBuffer lightBuffer,
                                                     Camera camera,
                                                     Light light,
-                                                    Model<T> model) where T : struct, VertexLocateable
+                                                    Model<T, Material> model) where T : struct, VertexLocateable
         {
 
             commandList.SetPipeline(pipeline);
@@ -53,7 +53,7 @@ namespace Henzai.Runtime
                                                     Camera camera,
                                                     Light light,
                                                     Light pointLight,
-                                                    Model<T> model) where T : struct, VertexLocateable
+                                                    Model<T, Material> model) where T : struct, VertexLocateable
         {
 
             commandList.SetPipeline(pipeline);
@@ -81,7 +81,7 @@ namespace Henzai.Runtime
                                                     Pipeline pipeline,
                                                     DeviceBuffer cameraProjViewBuffer,
                                                     Camera camera,
-                                                    Model<T> model) where T : struct, VertexLocateable
+                                                    Model<T, Material> model) where T : struct, VertexLocateable
         {
 
             commandList.SetPipeline(pipeline);

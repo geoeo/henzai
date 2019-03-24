@@ -5,11 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../Henzai.Core/Henzai.Core.csproj" />
-    <ProjectReference Include="../HenzaiFunc.Core/HenzaiFunc.Core.fsproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Include="RuntimeParameters.fs" />
     <Compile Include="Camera.fs" />
     <Compile Include="Material.fs" />
@@ -18,9 +13,9 @@
     <Compile Include="Scene/Builder.fs" />
     <Compile Include="Scene/Runtime.fs" />
     <Compile Include="Program.fs" />
-  </ItemGroup>
-  
-  <ItemGroup>
+    <None Include="AssimpLoader.fs" />
+    <ProjectReference Include="../Henzai.Core/Henzai.Core.csproj" />
+    <ProjectReference Include="../HenzaiFunc.Core/HenzaiFunc.Core.fsproj" />
     <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0006" />
     <PackageReference Include="BenchmarkDotNet" Version="0.10.14" />
   </ItemGroup>

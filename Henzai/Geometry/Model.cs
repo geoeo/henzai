@@ -1,5 +1,6 @@
 using System;
 using System.Numerics;
+using Henzai.Core;
 using Henzai.Core.VertexGeometry;
 
 namespace Henzai.Geometry
@@ -8,10 +9,10 @@ namespace Henzai.Geometry
     /// Usually used with loaded Meshes/Models
     /// Such as with Assimp
     /// </summary>
-    public sealed class Model<T> where T : struct, VertexLocateable
+    public sealed class Model<T,U> where T : struct, VertexLocateable where U : class, CoreMaterial
     {
         private readonly Mesh<T>[] _meshes;
-        private readonly Material[] _materials;
+        private readonly U[] _materials;
         private Matrix4x4 _world = Matrix4x4.Identity;
 
         public int MeshCount => _meshes.Length;
@@ -23,25 +24,24 @@ namespace Henzai.Geometry
         public ref Matrix4x4 GetWorld_DontMutate => ref _world;
         public string BaseDir {get;private set;}
 
-        public Model(string directory, Mesh<T>[] meshes, Material[] materials){
+        public Model(string directory, Mesh<T>[] meshes, U[] materials){
             BaseDir = directory;
             _meshes = meshes;
             _materials = materials;
-
         }
 
-        public Model(Mesh<T>[] meshesIn, Material[] materials){
+        public Model(Mesh<T>[] meshesIn, U[] materials){
             BaseDir = string.Empty;
             _meshes = meshesIn;
             _materials = materials;
         }
 
-        public Model(string directoy, Mesh<T> meshIn, Material material){
+        public Model(string directoy, Mesh<T> meshIn, U material){
             BaseDir = directoy;
             _meshes = new Mesh<T>[1];
             _meshes[0] = meshIn;
 
-            _materials = new Material[1];
+            _materials = new U[1];
             _materials[0] = material;
         }
 
@@ -70,23 +70,18 @@ namespace Henzai.Geometry
         /// This returns the material associated with a mesh.
         /// It can be indexed via the mesh index
         /// </summary>
-        public Material TryGetMaterial(int index)
+        public U TryGetMaterial(int index)
         {
-            return _materials[index] ?? throw new NullReferenceException("The material you are trying to access is null");
+            return _materials[index] ?? throw new NullReferenceException("The material you are trying to access is null"); 
         }
 
-        public Material GetMaterialRuntime(int index)
+        public U GetMaterialRuntime(int index)
         {
             return _materials[index];
         }
 
-        public void SetAmbientForAllMeshes(Vector4 ambient) {
-            for (int i = 0; i < _materials.Length; i++)
-                TryGetMaterial(i).ambient = ambient;
-        }
-
         //TODO: Retrieve a subset of the meshes encapsulated by this model class
-        public Model<T> SplitByString(string id){
+        public Model<T,U> SplitByString(string id){
             return null;
         }
 

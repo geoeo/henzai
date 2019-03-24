@@ -18,7 +18,7 @@ namespace Henzai.Examples
     sealed class SponzaScene : Renderable
     {
 
-        private Model<VertexPositionNormal> _sun;
+        private Model<VertexPositionNormal, Material> _sun;
         private ModelRuntimeDescriptor<VertexPosition> _skyBoxRuntimeState;
 
         public SponzaScene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
@@ -45,7 +45,9 @@ namespace Henzai.Examples
             var sponzaPNTTB = sponzaModels.modelPNTTB;
             var sponzaPC = sponzaModels.modelPC;
 
-            sponzaPNTTB.SetAmbientForAllMeshes(Vector4.Zero);
+            for (int i = 0; i < sponzaPNTTB.MaterialCount; i++)
+                sponzaPNTTB.TryGetMaterial(i).ambient = Vector4.Zero;
+
 
             var sponzaRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>(sponzaPNTTB,"PhongBitangentTexture","PhongBitangentTexture", VertexTypes.VertexPositionNormalTextureTangentBitangent,PrimitiveTopology.TriangleList);
             sponzaRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPNTTB;
@@ -68,22 +70,23 @@ namespace Henzai.Examples
             // sunRuntimeState.CallTextureResourceLayoutGeneration+=ResourceGenerator.GenerateTextureResourceLayoutForNormalMapping;
             // sunRuntimeState.CallTextureResourceSetGeneration+=ResourceGenerator.GenerateTextureResourceSetForNormalMapping;
 
-            var skyBox = new Model<VertexPosition>("cloudtop", GeometryFactory.GenerateCube(true), new Material());
+            var skyBox = new Model<VertexPosition, Material>("cloudtop", GeometryFactory.GenerateCube(true), new Material());
             var skyBoxMaterial = skyBox.TryGetMaterial(0);
-            skyBoxMaterial.cubeMapFront = "cloudtop_ft.png";
-            skyBoxMaterial.cubeMapBack = "cloudtop_bk.png";
-            skyBoxMaterial.cubeMapLeft = "cloudtop_lf.png";
-            skyBoxMaterial.cubeMapRight = "cloudtop_rt.png";
-            skyBoxMaterial.cubeMapTop = "cloudtop_up.png";
-            skyBoxMaterial.cubeMapBottom = "cloudtop_dn.png";
-            
+            //skyBoxMaterial.cubeMapFront = "cloudtop_ft.png";
+            //skyBoxMaterial.cubeMapBack = "cloudtop_bk.png";
+            //skyBoxMaterial.cubeMapLeft = "cloudtop_lf.png";
+            //skyBoxMaterial.cubeMapRight = "cloudtop_rt.png";
+            //skyBoxMaterial.cubeMapTop = "cloudtop_up.png";
+            //skyBoxMaterial.cubeMapBottom = "cloudtop_dn.png";
+            skyBoxMaterial.AssignCubemapPaths("cloudtop_ft.png", "cloudtop_bk.png", "cloudtop_lf.png", "cloudtop_rt.png", "cloudtop_up.png", "cloudtop_dn.png");
+
             _skyBoxRuntimeState = new ModelRuntimeDescriptor<VertexPosition>(skyBox,"Skybox","Skybox",VertexTypes.VertexPosition,PrimitiveTopology.TriangleList);
             _skyBoxRuntimeState.CallVertexLayoutGeneration += ResourceGenerator.GenerateVertexLayoutForP;
             _skyBoxRuntimeState.CallSamplerGeneration += ResourceGenerator.GenerateBiLinearSampler;
             _skyBoxRuntimeState.CallTextureResourceLayoutGeneration += ResourceGenerator.GenerateTextureResourceLayoutForCubeMapping;
             _skyBoxRuntimeState.CallTextureResourceSetGeneration += ResourceGenerator.GenerateTextureResourceSetForCubeMapping;
 
-            _sun = new Model<VertexPositionNormal>(String.Empty, GeometryFactory.GenerateSphereNormal(100,100,1), new Material());
+            _sun = new Model<VertexPositionNormal, Material>(string.Empty, GeometryFactory.GenerateSphereNormal(100,100,1), new Material());
             _sun.TryGetMaterial(0).ambient = lightColor.ToVector4();
             // _sun.meshes[0].TryGetMaterial().ambient = lightColor.ToVector4();
             ref Vector4 lightPos = ref _sceneRuntimeState.Light.LightPos_DontMutate;

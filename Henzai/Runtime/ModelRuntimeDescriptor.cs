@@ -6,6 +6,7 @@ using Veldrid.ImageSharp;
 using Henzai;
 using Henzai.Runtime;
 using Henzai.Geometry;
+using Henzai.Core;
 using Henzai.Core.VertexGeometry;
 
 namespace Henzai.Runtime
@@ -63,7 +64,7 @@ namespace Henzai.Runtime
         /// Contains Geometry and Material Properties
         /// See: <see cref="Henzai.Geometry.Model{T}"/>
         /// </summary>
-        public Model<T> Model {get;set;}
+        public Model<T,Material> Model {get;set;}
         public VertexTypes VertexType {get; private set;}
         public PrimitiveTopology PrimitiveTopology {get; private set;}
         public uint TotalInstanceCount{get;set;}
@@ -76,7 +77,7 @@ namespace Henzai.Runtime
         // TODO: Investigate Texture Cache for already loaded textures
         public event Func<ModelRuntimeDescriptor<T>,int,DisposeCollectorResourceFactory,GraphicsDevice,ResourceSet> CallTextureResourceSetGeneration;
 
-        public ModelRuntimeDescriptor(Model<T> modelIn, string vShaderName, string fShaderName, VertexTypes vertexType, PrimitiveTopology primitiveTopology){
+        public ModelRuntimeDescriptor(Model<T, Material> modelIn, string vShaderName, string fShaderName, VertexTypes vertexType, PrimitiveTopology primitiveTopology){
 
             if(!Verifier.verifyVertexStruct<T>(vertexType))
                 throw new ArgumentException($"Type Mismatch ModelRuntimeDescriptor");

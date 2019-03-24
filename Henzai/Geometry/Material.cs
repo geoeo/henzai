@@ -1,37 +1,18 @@
-using System;
 using System.Numerics;
+using Henzai.Core;
 using Veldrid;
 
 // TODO: Add Material coefficients, more textures, Make Color own struct (or use Veldrid.RGBA)
 namespace Henzai.Geometry
 {
 
-    // Not used atm
-    public static class MaterialExtensions
-    {
-
-        public static Vector4 GetRepresentationFor(this Vector4 color, GraphicsBackend backend){
-            Vector4 value = color;
-            switch(backend){
-                case GraphicsBackend.OpenGL:
-                    break;
-                case GraphicsBackend.Metal:
-                    break;
-                case GraphicsBackend.Direct3D11:
-                    throw new NotImplementedException();
-                case GraphicsBackend.Vulkan:
-                    throw new NotImplementedException();
-            }
-            return value;
-        }
-    }
-
     ///<summary>
     // Based on http://assimp.sourceforge.net/lib_html/materials.html
     // colors Vector4 are RGBA
     ///</summary>
-    public sealed class Material
+    public sealed class Material : CoreMaterial
     {
+        //TODO refactor using Getters and Setters
         /// <summary>
         /// Currently ambient,diffuse,specular and coefficients are passed to shaders
         /// </summary>
@@ -74,28 +55,57 @@ namespace Henzai.Geometry
             string textureDiffuse,
             string textureNormal,
             string textureBump,
-            string textureSpecular){
+            string textureSpecular)
+        {
+            AssignVectorData(ambient, diffuse, specular, emissive, transparent, coefficients);
+            AssignTexturePaths(textureDiffuse, textureNormal, textureBump, textureSpecular);
 
-                this.diffuse = diffuse;
-                this.specular = specular;
-                this.ambient = ambient;
-                this.emissive = emissive;
-                this.transparent = transparent;
-                this.coefficients = coefficients;
-                if(!string.IsNullOrEmpty(textureDiffuse))
-                    this.textureDiffuse = textureDiffuse;
-                if(!string.IsNullOrEmpty(textureNormal))
-                    this.textureNormal = textureNormal;
-                if(!string.IsNullOrEmpty(textureBump))
-                    this.textureBump = textureBump;
-                if(!string.IsNullOrEmpty(textureSpecular))
-                    this.textureSpecular = textureSpecular;
-             
-            }
+        }
+
+        //TODO refactor using refs
+        private void AssignVectorData(Vector4 ambientIn, Vector4 diffuseIn, Vector4 specularIn, Vector4 emissiveIn, Vector4 transparentIn, Vector4 coefficientsIn)
+        {
+            diffuse = diffuseIn;
+            specular = specularIn;
+            ambient = ambientIn;
+            emissive = emissiveIn;
+            transparent = transparentIn;
+            coefficients = coefficientsIn;
+        }
+
+        private void AssignTexturePaths(string textureDiffuseIn, string textureNormalIn, string textureBumpIn, string textureSpecularIn)
+        {
+            if (!string.IsNullOrEmpty(textureDiffuseIn))
+                textureDiffuse = textureDiffuseIn;
+            if (!string.IsNullOrEmpty(textureNormalIn))
+                textureNormal = textureNormalIn;
+            if (!string.IsNullOrEmpty(textureBumpIn))
+                textureBump = textureBumpIn;
+            if (!string.IsNullOrEmpty(textureSpecularIn))
+                textureSpecular = textureSpecularIn;
+        }
+
+        public void AssignCubemapPaths(string front, string back, string left, string right, string up, string down)
+        {
+            cubeMapFront = front;
+            cubeMapBack = back;
+            cubeMapLeft = left;
+            cubeMapRight = right;
+            cubeMapTop = up;
+            cubeMapBottom = down;
+        }
 
         public static RgbaFloat ToRgbaFloat(Vector4 value){
             return new RgbaFloat(value.X,value.Y,value.Z,value.W);
         }
 
+        public void ApplyMaterialDataInto(Vector4[] colors, string[] textureStrings, string[] cubemapStrings)
+        {
+            AssignVectorData(colors[0], colors[1], colors[2], colors[3], colors[4], colors[5]);
+            AssignTexturePaths(textureStrings[0], textureStrings[1], textureStrings[2], textureStrings[3]);
+            AssignCubemapPaths(cubemapStrings[0], cubemapStrings[1], cubemapStrings[2], cubemapStrings[3], cubemapStrings[4], cubemapStrings[0]);
+            if (cubemapStrings.Length > 0)
+                AssignCubemapPaths(cubemapStrings[0], cubemapStrings[1], cubemapStrings[2], cubemapStrings[3], cubemapStrings[4], cubemapStrings[5]);
+        }
     }
 }

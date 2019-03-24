@@ -1,6 +1,6 @@
 using System;
 using System.Numerics;
-using System.Collections.Generic;
+using Veldrid;
 
 namespace Henzai.Extensions
 {
@@ -92,6 +92,28 @@ namespace Henzai.Extensions
 
         public static Vector3 ToVec3NormalizeW(this Vector4 val){
             return new Vector3(val.X/val.W,val.Y/val.W,val.Z/val.W);
+        }
+    }
+
+    // Not used atm
+    public static class MaterialExtensions
+    {
+
+        public static Vector4 GetRepresentationFor(this Vector4 color, GraphicsBackend backend)
+        {
+            Vector4 value = color;
+            switch (backend)
+            {
+                case GraphicsBackend.OpenGL:
+                    break;
+                case GraphicsBackend.Metal:
+                    break;
+                case GraphicsBackend.Direct3D11:
+                    throw new NotImplementedException();
+                case GraphicsBackend.Vulkan:
+                    throw new NotImplementedException();
+            }
+            return value;
         }
     }
 

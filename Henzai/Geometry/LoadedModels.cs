@@ -1,56 +1,47 @@
 namespace Henzai.Geometry{
     public class LoadedModels{
-        public Model<VertexPosition> modelP {
-            get{return _modelP;} set{_modelP = value;_hasVertexPosition=true;}
+        public Model<VertexPosition, Material> modelP {
+            get{return _modelP;} set{_modelP = value;HasVertexPosition=true;}
             }
-        public Model<VertexPositionTexture> modelPT {
-            get{return _modelPT;} set{_modelPT = value;_hasVertexPositionTexture=true;}
+        public Model<VertexPositionTexture, Material> modelPT {
+            get{return _modelPT;} set{_modelPT = value;HasVertexPositionTexture=true;}
             }
-        public Model<VertexPositionNormal> modelPN {
-            get{return _modelPN;} set{_modelPN = value;_hasVertexPositionNormal=true;}
+        public Model<VertexPositionNormal, Material> modelPN {
+            get{return _modelPN;} set{_modelPN = value;HasVertexPositionNormal=true;}
             }
-        public Model<VertexPositionColor> modelPC {
-            get{return _modelPC;} set{_modelPC = value;_hasVertexPositionColor=true;}
+        public Model<VertexPositionColor, Material> modelPC {
+            get{return _modelPC;} set{_modelPC = value;HasVertexPositionColor=true;}
             }
-        public Model<VertexPositionNDCColor> modelP_NDC_C {
-           get{return _modelP_NDC_C;} set{_modelP_NDC_C = value;_hasVertexPositionNDCColor=true;}
+        public Model<VertexPositionNDCColor, Material> modelP_NDC_C {
+           get{return _modelP_NDC_C;} set{_modelP_NDC_C = value;HasVertexPositionNDCColor=true;}
             }
-        public Model<VertexPositionNormalTexture> modelPNT {
-           get{return _modelPNT;} set{_modelPNT = value;_hasVertexPositionNormalTexture=true;}
+        public Model<VertexPositionNormalTexture, Material> modelPNT {
+           get{return _modelPNT;} set{_modelPNT = value;HasVertexPositionNormalTexture=true;}
             }
-        public Model<VertexPositionNormalTextureTangent> modelPNTT {
-           get{return _modelPNTT;} set{_modelPNTT = value;_hasVertexPositionNormalTextureTangent=true;}
+        public Model<VertexPositionNormalTextureTangent, Material> modelPNTT {
+           get{return _modelPNTT;} set{_modelPNTT = value;HasVertexPositionNormalTextureTangent=true;}
             }
-        public Model<VertexPositionNormalTextureTangentBitangent> modelPNTTB {
-           get{return _modelPNTTB;} set{_modelPNTTB = value;_hasVertexPositionNormalTextureTangentBitangent=true;}
+        public Model<VertexPositionNormalTextureTangentBitangent, Material> modelPNTTB {
+           get{return _modelPNTTB;} set{_modelPNTTB = value;HasVertexPositionNormalTextureTangentBitangentt=true;}
             }
 
-        private Model<VertexPosition> _modelP;
-        private Model<VertexPositionColor> _modelPC;
-        private Model<VertexPositionNDCColor> _modelP_NDC_C;
-        private Model<VertexPositionTexture> _modelPT;
-        private Model<VertexPositionNormal> _modelPN;
-        private Model<VertexPositionNormalTexture> _modelPNT;
-        private Model<VertexPositionNormalTextureTangent> _modelPNTT;
-        private Model<VertexPositionNormalTextureTangentBitangent> _modelPNTTB;
+        private Model<VertexPosition, Material> _modelP;
+        private Model<VertexPositionColor, Material> _modelPC;
+        private Model<VertexPositionNDCColor, Material> _modelP_NDC_C;
+        private Model<VertexPositionTexture, Material> _modelPT;
+        private Model<VertexPositionNormal, Material> _modelPN;
+        private Model<VertexPositionNormalTexture, Material> _modelPNT;
+        private Model<VertexPositionNormalTextureTangent, Material> _modelPNTT;
+        private Model<VertexPositionNormalTextureTangentBitangent, Material> _modelPNTTB;
 
-        private bool _hasVertexPosition = false;
-        private bool _hasVertexPositionTexture = false;
-        private bool _hasVertexPositionNormal = false;
-        private bool _hasVertexPositionColor = false;
-        private bool _hasVertexPositionNDCColor = false;
-        private bool _hasVertexPositionNormalTexture = false;
-        private bool _hasVertexPositionNormalTextureTangent = false;
-        private bool _hasVertexPositionNormalTextureTangentBitangent = false;
-
-        public bool HasVertexPosition => _hasVertexPosition;
-        public bool HasVertexPositionTexture => _hasVertexPositionTexture;
-        public bool HasVertexPositionNormal => _hasVertexPositionNormal;
-        public bool HasVertexPositionColor => _hasVertexPositionColor;
-        public bool HasVertexPositionNDCColor => _hasVertexPositionNDCColor;
-        public bool HasVertexPositionNormalTexture => _hasVertexPositionNormalTexture;
-        public bool HasVertexPositionNormalTextureTangent => _hasVertexPositionNormalTextureTangent;
-        public bool HasVertexPositionNormalTextureTangentBitangentt => _hasVertexPositionNormalTextureTangentBitangent;
+        public bool HasVertexPosition { get; private set; } = false;
+        public bool HasVertexPositionTexture { get; private set; } = false;
+        public bool HasVertexPositionNormal { get; private set; } = false;
+        public bool HasVertexPositionColor { get; private set; } = false;
+        public bool HasVertexPositionNDCColor { get; private set; } = false;
+        public bool HasVertexPositionNormalTexture { get; private set; } = false;
+        public bool HasVertexPositionNormalTextureTangent { get; private set; } = false;
+        public bool HasVertexPositionNormalTextureTangentBitangentt { get; private set; } = false;
 
     }
 }

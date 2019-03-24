@@ -33,7 +33,7 @@ namespace Henzai.Examples
         // TODO: Refactor this into a class with color
         private Vector4 LIGHT_POS = new Vector4(0, 10, 15, 0);
 
-        Model<VertexPositionNormal> _model;
+        Model<VertexPositionNormal, Material> _model;
 
         public AssetLoadingScene(string title, Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
             : base(title, windowSize, graphicsDeviceOptions, renderOptions)
