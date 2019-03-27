@@ -1,5 +1,5 @@
 using System.Numerics;
-using Henzai.Core;
+using Henzai.Core.Materials;
 using Veldrid;
 
 // TODO: Add Material coefficients, more textures, Make Color own struct (or use Veldrid.RGBA)
