@@ -1,8 +1,7 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Numerics;
-using Henzai.Extensions;
+using Henzai.Core.Extensions;
 using Henzai.Core.VertexGeometry;
 using Veldrid;
 

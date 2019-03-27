@@ -1,12 +1,5 @@
-﻿using System;
-using System.Numerics;
-using System.Collections.Generic;
-using Veldrid;
-using Veldrid.StartupUtilities;
-using Veldrid.Sdl2;
-using Veldrid.OpenGL;
-using Henzai;
-using Henzai.Extensions;
+﻿using Veldrid;
+using Henzai.Core.Extensions;
 using Henzai.Geometry;
 using Henzai.Runtime;
 using Henzai.Core.VertexGeometry;

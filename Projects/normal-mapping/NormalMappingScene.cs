@@ -5,7 +5,7 @@ using System.IO;
 using Veldrid;
 using Veldrid.ImageSharp;
 using Henzai.Core;
-using Henzai.Extensions;
+using Henzai.Core.Extensions;
 using Henzai.Geometry;
 using Henzai.Runtime;
 

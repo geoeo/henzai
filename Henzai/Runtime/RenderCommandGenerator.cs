@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
 using Veldrid;
-using Henzai.Extensions;
+using Henzai.Core.Extensions;
 using Henzai.Geometry;
 using Henzai.Core;
 using Henzai.Core.VertexGeometry;

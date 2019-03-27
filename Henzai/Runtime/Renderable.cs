@@ -8,7 +8,7 @@ using Veldrid.StartupUtilities;
 using Veldrid.Sdl2;
 using Henzai.Geometry;
 using Henzai.Core.VertexGeometry;
-using Henzai.Extensions;
+using Henzai.Core.Extensions;
 
 namespace Henzai.Runtime
 {

@@ -3,7 +3,7 @@ using System.Numerics;
 using System.IO;
 using Veldrid;
 using Veldrid.ImageSharp;
-using Henzai.Extensions;
+using Henzai.Core.Extensions;
 using Henzai.Geometry;
 using Henzai.Runtime;
 using Henzai.Core.VertexGeometry;

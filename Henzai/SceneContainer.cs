@@ -1,13 +1,10 @@
-using System;
 using Veldrid;
 using Veldrid.Sdl2;
-using Henzai;
-using Henzai.Extensions;
+using HenzaiFunc.Core.Acceleration;
+using Henzai.Core.Extensions;
 using Henzai.UI;
 using Henzai.Runtime;
 using Henzai.Geometry;
-using Henzai.Core.Acceleration;
-using HenzaiFunc.Core.Acceleration;
 
 namespace Henzai
 {

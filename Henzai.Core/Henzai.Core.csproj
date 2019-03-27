@@ -8,5 +8,6 @@
   <ItemGroup>
     <Folder Include="Materials\" />
     <Folder Include="Reflection\" />
+    <Folder Include="Extensions\" />
   </ItemGroup>
 </Project>

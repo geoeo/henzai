@@ -2,7 +2,7 @@ using System;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using Veldrid;
-using Henzai.Extensions;
+using Henzai.Core.Extensions;
 
 namespace Henzai
 {
