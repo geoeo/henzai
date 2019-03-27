@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Numerics;
-namespace Henzai.Core
+namespace Henzai.Core.Materials
 {
     public interface CoreMaterial
     {
