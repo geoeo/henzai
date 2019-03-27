@@ -1,7 +1,4 @@
-using System;
 using System.Runtime.InteropServices;
-using Henzai;
-using Henzai.Geometry;
 
 namespace Henzai.Runtime
 {
@@ -58,8 +55,8 @@ namespace Henzai.Runtime
 
         // https://social.msdn.microsoft.com/Forums/en-US/f3ac392a-43e4-4688-83bc-8caffc9a4105/convert-struct-to-byte?forum=csharplanguage
         public static byte[] ToBytes<T>(T value) where T : struct  
-        {  
-            Byte[] bytes = new Byte[Marshal.SizeOf(typeof(T))];  
+        {
+            byte[] bytes = new byte[Marshal.SizeOf(typeof(T))];  
             GCHandle handle = GCHandle.Alloc(value, GCHandleType.Pinned); 
             try 
             {  
