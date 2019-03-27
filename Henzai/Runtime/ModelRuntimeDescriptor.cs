@@ -4,6 +4,7 @@ using Veldrid;
 using Henzai.Geometry;
 using Henzai.Core;
 using Henzai.Core.VertexGeometry;
+using Henzai.Core.Reflection;
 
 namespace Henzai.Runtime
 {

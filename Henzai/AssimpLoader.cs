@@ -5,7 +5,7 @@ using Henzai.Geometry;
 using Henzai.Core;
 using Henzai.Core.VertexGeometry;
 using Henzai.Extensions;
-using Henzai.Runtime;
+using Henzai.Core.Reflection;
 using Assimp;
 
 namespace Henzai
