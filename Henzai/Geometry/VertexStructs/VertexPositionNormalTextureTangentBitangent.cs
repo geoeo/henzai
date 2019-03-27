@@ -1,5 +1,4 @@
 using System.Numerics;
-using Henzai.Runtime;
 using Henzai.Core.VertexGeometry;
 
 namespace Henzai.Geometry
@@ -13,7 +12,7 @@ namespace Henzai.Geometry
         public const byte TangentOffset = 32;
         public const byte BitangentOffset = 44;
         public const byte ElementCount = 5;
-        public const VertexTypes HenzaiType = VertexTypes.VertexPositionNormalTextureTangentBitangent;
+        public const VertexRuntimeTypes HenzaiType = VertexRuntimeTypes.VertexPositionNormalTextureTangentBitangent;
 
         public Vector3 Position;
         public Vector3 Normal;

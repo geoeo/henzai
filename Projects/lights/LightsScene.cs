@@ -3,6 +3,7 @@ using System.Numerics;
 using Veldrid;
 using Veldrid.Sdl2;
 using Henzai.Core;
+using Henzai.Core.VertexGeometry;
 using Henzai.Extensions;
 using Henzai.Geometry;
 using Henzai.Runtime;
@@ -50,7 +51,7 @@ namespace Henzai.Examples
             Vector3 newTranslation = new Vector3(lightPos.X,lightPos.Y,lightPos.Z);
             _sun.SetNewWorldTranslation(ref newTranslation, true);
 
-            var sunRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormal>(_sun,"Phong","Phong",VertexTypes.VertexPositionNormal,PrimitiveTopology.TriangleList);
+            var sunRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormal>(_sun,"Phong","Phong", VertexRuntimeTypes.VertexPositionNormal,PrimitiveTopology.TriangleList);
             sunRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPN;
             _modelPNDescriptorList.Add(sunRuntimeState);
 
@@ -64,7 +65,7 @@ namespace Henzai.Examples
             Vector3 newTranslationSpot = new Vector3(lightPosSpot.X,lightPosSpot.Y,lightPosSpot.Z);
             spotlight.SetNewWorldTranslation(ref newTranslationSpot, true);
 
-            var spotLightRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormal>(spotlight,"Phong","Phong",VertexTypes.VertexPositionNormal,PrimitiveTopology.TriangleList);
+            var spotLightRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormal>(spotlight,"Phong","Phong", VertexRuntimeTypes.VertexPositionNormal,PrimitiveTopology.TriangleList);
             spotLightRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPN;
             _modelPNDescriptorList.Add(spotLightRuntimeState);
 
@@ -109,7 +110,7 @@ namespace Henzai.Examples
             flootMaterialZero.ambient=new Vector4(0.3f,0.3f,0.3f,1.0f);
             var floorTranslation = new Vector3(0.0f,-2.0f,0.0f);
             floor.SetNewWorldTranslation(ref floorTranslation,true);
-            var floorRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>(floor,"PositionOffsetPhongBitangentTexture","PhongBitangentTexture",VertexTypes.VertexPositionNormalTextureTangentBitangent,PrimitiveTopology.TriangleStrip);
+            var floorRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>(floor, "PositionOffsetPhongBitangentTexture", "PhongBitangentTexture", VertexRuntimeTypes.VertexPositionNormalTextureTangentBitangent, PrimitiveTopology.TriangleStrip);
             floorRuntimeState.TotalInstanceCount = offsets.Length.ToUnsigned();
 
             floorRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPNTTB;

@@ -1,18 +1,8 @@
 using System.Runtime.InteropServices;
+using Henzai.Core.VertexGeometry;
 
 namespace Henzai.Runtime
 {
-
-    public enum VertexTypes { 
-        VertexPosition, 
-        VertexPositionNDCColor, 
-        VertexPositionColor, 
-        VertexPositionNormal,
-        VertexPositionTexture, 
-        VertexPositionNormalTexture,
-        VertexPositionNormalTextureTangent,
-        VertexPositionNormalTextureTangentBitangent
-    };
 
     public enum UVMappingTypes {
         // http://mathworld.wolfram.com/SphericalCoordinates.html
@@ -25,7 +15,7 @@ namespace Henzai.Runtime
 
     public static class Verifier {
         
-        public static bool verifyVertexStruct<T>(VertexTypes vertexType) where T : struct {
+        public static bool verifyVertexStruct<T>(VertexRuntimeTypes vertexType) where T : struct {
 
             string typeName = typeof(T).Name;
             string enumName = vertexType.ToString();

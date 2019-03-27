@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Numerics;
-using Henzai.Runtime;
 using Henzai.Core.VertexGeometry;
 using Veldrid;
 
@@ -11,7 +10,7 @@ namespace Henzai.Geometry
     {
         // 8 Bytes for Position + 16 Bytes for color
         public const byte SizeInBytes = 24;
-        public const VertexTypes HenzaiType = VertexTypes.VertexPositionNDCColor;
+        public const VertexRuntimeTypes HenzaiType = VertexRuntimeTypes.VertexPositionNDCColor;
 
         public readonly Vector2 Position; // Position in NDC
         public Vector4 color;

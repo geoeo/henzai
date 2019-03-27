@@ -1,5 +1,4 @@
 using System.Numerics;
-using Henzai.Runtime;
 using Henzai.Core.VertexGeometry;
 
 namespace Henzai.Geometry
@@ -9,7 +8,7 @@ namespace Henzai.Geometry
         //TODO: Investigate better aligment of bytes for all Vertex structs
         public const byte SizeInBytes = 12;
         public const byte ElementCount = 1;
-        public const VertexTypes HenzaiType = VertexTypes.VertexPosition;
+        public const VertexRuntimeTypes HenzaiType = VertexRuntimeTypes.VertexPosition;
 
         public readonly Vector3 Position;
 

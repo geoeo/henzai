@@ -40,7 +40,7 @@ namespace Henzai
         }
 
         //TODO: Refine this
-        public static VertexTypes ToHenzaiVertexType(this Assimp.Material aiMaterial){
+        public static VertexRuntimeTypes ToHenzaiVertexType(this Assimp.Material aiMaterial){
             // var hasColor = aiMesh.HasVertexColors(0);
             // var hasUVs = aiMesh.HasTextureCoords(0);
             // var hasNormals = aiMesh.HasNormals;
@@ -51,17 +51,17 @@ namespace Henzai
              var hasNormals = aiMaterial.HasTextureHeight || aiMaterial.HasTextureNormal;       
 
             if(hasNormals && hasUVs)
-                return VertexTypes.VertexPositionNormalTextureTangentBitangent;
+                return VertexRuntimeTypes.VertexPositionNormalTextureTangentBitangent;
             // else if(hasNormals && hasUVs)
-            //     return VertexTypes.VertexPositionNormalTexture;
+            //     return VertexRuntimeTypes.VertexPositionNormalTexture;
             else if(hasNormals && !hasColor)
-                return VertexTypes.VertexPositionNormal;
+                return VertexRuntimeTypes.VertexPositionNormal;
             else if(hasUVs)
-                return VertexTypes.VertexPositionTexture;
+                return VertexRuntimeTypes.VertexPositionTexture;
             else if(hasColor)
-                return VertexTypes.VertexPositionColor;
+                return VertexRuntimeTypes.VertexPositionColor;
             else 
-                return VertexTypes.VertexPosition;
+                return VertexRuntimeTypes.VertexPosition;
         }
 
         public static LoadedMeshCounts GetHenzaiMeshCounts(this Assimp.Scene  aiScene){
@@ -72,19 +72,19 @@ namespace Henzai
                 var henzaiVertexType = material.ToHenzaiVertexType();
 
                 switch(henzaiVertexType){
-                    case VertexTypes.VertexPositionColor:
+                    case VertexRuntimeTypes.VertexPositionColor:
                         loadedMeshCounts.meshCountPC++; 
                         break;
-                    case VertexTypes.VertexPositionTexture:
+                    case VertexRuntimeTypes.VertexPositionTexture:
                         loadedMeshCounts.meshCountPT++; 
                         break;
-                    case VertexTypes.VertexPositionNormalTexture:
+                    case VertexRuntimeTypes.VertexPositionNormalTexture:
                         loadedMeshCounts.meshCountPNT++;
                         break;
-                    case VertexTypes.VertexPositionNormal:
+                    case VertexRuntimeTypes.VertexPositionNormal:
                         loadedMeshCounts.meshCountPN++;
                         break;
-                    case VertexTypes.VertexPositionNormalTextureTangentBitangent:
+                    case VertexRuntimeTypes.VertexPositionNormalTextureTangentBitangent:
                         loadedMeshCounts.meshCountPNTTB++;
                         break;
                     default:
@@ -109,7 +109,7 @@ namespace Henzai
             = PostProcessSteps.FlipWindingOrder | PostProcessSteps.Triangulate | PostProcessSteps.PreTransformVertices | PostProcessSteps.FlipUVs
             | PostProcessSteps.CalculateTangentSpace | PostProcessSteps.GenerateSmoothNormals | PostProcessSteps.JoinIdenticalVertices ;
 
-        public static byte[] GenerateBytesArrayFromAssimp(VertexTypes henzaiVertexType, Assimp.Mesh aiMesh, int index){
+        public static byte[] GenerateBytesArrayFromAssimp(VertexRuntimeTypes henzaiVertexType, Assimp.Mesh aiMesh, int index){
 
             Vector3D pPos = aiMesh.Vertices[index];
             Vector3D pNormal = aiMesh.Normals[index];
@@ -127,35 +127,35 @@ namespace Henzai
             byte[] bitangentAsBytes = ByteMarshal.ToBytes(pBiTangent);
 
             switch(henzaiVertexType){
-                case VertexTypes.VertexPositionColor:
+                case VertexRuntimeTypes.VertexPositionColor:
                     bytes = new byte[VertexPositionColor.SizeInBytes];
                     Array.Copy(posAsBytes,0,bytes,VertexPositionColor.PositionOffset,posAsBytes.Length);
                     Array.Copy(colorAsBytes,0,bytes,VertexPositionColor.ColorOffset,colorAsBytes.Length);
                     break;
-                case VertexTypes.VertexPositionTexture:
+                case VertexRuntimeTypes.VertexPositionTexture:
                     bytes = new byte[VertexPositionTexture.SizeInBytes];
                     Array.Copy(posAsBytes,0,bytes,VertexPositionTexture.PositionOffset,posAsBytes.Length);
                     Array.Copy(texCoordAsBytes,0,bytes,VertexPositionTexture.TextureCoordinatesOffset,texCoordAsBytes.Length);
                     break;
-                case VertexTypes.VertexPositionNormalTexture:
+                case VertexRuntimeTypes.VertexPositionNormalTexture:
                     bytes = new byte[VertexPositionNormalTexture.SizeInBytes];
                     Array.Copy(posAsBytes,0,bytes,VertexPositionNormalTexture.PositionOffset,posAsBytes.Length);
                     Array.Copy(normalAsBytes,0,bytes,VertexPositionNormalTexture.NormalOffset,normalAsBytes.Length);
                     Array.Copy(texCoordAsBytes,0,bytes,VertexPositionNormalTexture.TextureCoordinatesOffset,texCoordAsBytes.Length);
                     break;
-                case VertexTypes.VertexPositionNormal:
+                case VertexRuntimeTypes.VertexPositionNormal:
                     bytes = new byte[VertexPositionNormal.SizeInBytes];
                     Array.Copy(posAsBytes,0,bytes,VertexPositionNormal.PositionOffset,posAsBytes.Length);
                     Array.Copy(normalAsBytes,0,bytes,VertexPositionNormal.NormalOffset,normalAsBytes.Length);
                     break;
-                case VertexTypes.VertexPositionNormalTextureTangent:
+                case VertexRuntimeTypes.VertexPositionNormalTextureTangent:
                     bytes = new byte[VertexPositionNormalTextureTangent.SizeInBytes];
                     Array.Copy(posAsBytes,0,bytes,VertexPositionNormalTextureTangent.PositionOffset,posAsBytes.Length);
                     Array.Copy(normalAsBytes,0,bytes,VertexPositionNormalTextureTangent.NormalOffset,normalAsBytes.Length);
                     Array.Copy(texCoordAsBytes,0,bytes,VertexPositionNormalTextureTangent.TextureCoordinatesOffset,texCoordAsBytes.Length);
                     Array.Copy(tangentAsBytes,0,bytes,VertexPositionNormalTextureTangent.TangentOffset,tangentAsBytes.Length);
                     break;
-                case VertexTypes.VertexPositionNormalTextureTangentBitangent:
+                case VertexRuntimeTypes.VertexPositionNormalTextureTangentBitangent:
                     bytes = new byte[VertexPositionNormalTextureTangentBitangent.SizeInBytes];
                     Array.Copy(posAsBytes,0,bytes,VertexPositionNormalTextureTangentBitangent.PositionOffset,posAsBytes.Length);
                     Array.Copy(normalAsBytes,0,bytes,VertexPositionNormalTextureTangentBitangent.NormalOffset,normalAsBytes.Length);
@@ -171,7 +171,7 @@ namespace Henzai
 
         }
 
-        public static Model<T, Geometry.Material> LoadFromFile<T>(string baseDirectory,string localPath, VertexTypes vertexType, PostProcessSteps flags = DefaultPostProcessSteps) where T : struct, VertexLocateable
+        public static Model<T, Geometry.Material> LoadFromFile<T>(string baseDirectory,string localPath, VertexRuntimeTypes vertexType, PostProcessSteps flags = DefaultPostProcessSteps) where T : struct, VertexLocateable
         {
 
             if(!Verifier.verifyVertexStruct<T>(vertexType))
@@ -301,21 +301,21 @@ namespace Henzai
 
                 Assimp.Material aiMaterial = pScene.Materials[aiMesh.MaterialIndex];
                 Geometry.Material material = aiMaterial.ToHenzaiMaterial();
-                VertexTypes henzaiVertexType = aiMaterial.ToHenzaiVertexType();
+                VertexRuntimeTypes henzaiVertexType = aiMaterial.ToHenzaiVertexType();
                 switch(henzaiVertexType){
-                        case VertexTypes.VertexPositionColor:
+                        case VertexRuntimeTypes.VertexPositionColor:
                             meshDefinitionPC = new VertexPositionColor[vertexCount]; 
                             break;
-                        case VertexTypes.VertexPositionTexture:
+                        case VertexRuntimeTypes.VertexPositionTexture:
                             meshDefinitionPT = new VertexPositionTexture[vertexCount]; 
                             break;
-                        case VertexTypes.VertexPositionNormalTexture:
+                        case VertexRuntimeTypes.VertexPositionNormalTexture:
                             meshDefinitionPNT = new VertexPositionNormalTexture[vertexCount];
                             break;
-                        case VertexTypes.VertexPositionNormal:
+                        case VertexRuntimeTypes.VertexPositionNormal:
                             meshDefinitionPN = new VertexPositionNormal[vertexCount];
                             break;
-                        case VertexTypes.VertexPositionNormalTextureTangentBitangent:
+                        case VertexRuntimeTypes.VertexPositionNormalTextureTangentBitangent:
                             meshDefinitionPNTTB = new VertexPositionNormalTextureTangentBitangent[vertexCount];
                             break;
                         default:
@@ -327,19 +327,19 @@ namespace Henzai
                     byte[] bytes = GenerateBytesArrayFromAssimp(henzaiVertexType,aiMesh,j);
 
                     switch(henzaiVertexType){
-                        case VertexTypes.VertexPositionColor:
+                        case VertexRuntimeTypes.VertexPositionColor:
                             meshDefinitionPC[j] = ByteMarshal.ByteArrayToStructure<VertexPositionColor>(bytes); 
                             break;
-                        case VertexTypes.VertexPositionTexture:
+                        case VertexRuntimeTypes.VertexPositionTexture:
                             meshDefinitionPT[j] = ByteMarshal.ByteArrayToStructure<VertexPositionTexture>(bytes); 
                             break;
-                        case VertexTypes.VertexPositionNormalTexture:
+                        case VertexRuntimeTypes.VertexPositionNormalTexture:
                             meshDefinitionPNT[j] = ByteMarshal.ByteArrayToStructure<VertexPositionNormalTexture>(bytes); 
                             break;
-                        case VertexTypes.VertexPositionNormal:
+                        case VertexRuntimeTypes.VertexPositionNormal:
                             meshDefinitionPN[j] = ByteMarshal.ByteArrayToStructure<VertexPositionNormal>(bytes);
                             break;
-                        case VertexTypes.VertexPositionNormalTextureTangentBitangent:
+                        case VertexRuntimeTypes.VertexPositionNormalTextureTangentBitangent:
                             meshDefinitionPNTTB[j] = ByteMarshal.ByteArrayToStructure<VertexPositionNormalTextureTangentBitangent>(bytes); 
                             break;
                         default:
@@ -350,7 +350,7 @@ namespace Henzai
 
                 var faceCount = aiMesh.FaceCount;
                 switch (henzaiVertexType) {
-                    case VertexTypes.VertexPositionColor:
+                    case VertexRuntimeTypes.VertexPositionColor:
                         materialsPC[meshIndiciesPC_Counter] = material;
                         meshIndiciesPC[meshIndiciesPC_Counter] = new ushort[3 * faceCount];
 
@@ -369,7 +369,7 @@ namespace Henzai
                         meshesPC[meshIndiciesPC_Counter] = new Mesh<VertexPositionColor>(meshDefinitionPC, meshIndiciesPC[meshIndiciesPC_Counter]);
                         meshIndiciesPC_Counter++;
                         break;
-                    case VertexTypes.VertexPositionTexture:
+                    case VertexRuntimeTypes.VertexPositionTexture:
                         materialsPT[meshIndiciesPT_Counter] = material;
                         meshIndiciesPT[meshIndiciesPT_Counter] = new ushort[3 * faceCount];
 
@@ -388,7 +388,7 @@ namespace Henzai
                         meshesPT[meshIndiciesPT_Counter] = new Mesh<VertexPositionTexture>(meshDefinitionPT, meshIndiciesPT[meshIndiciesPT_Counter]);
                         meshIndiciesPT_Counter++;
                         break;
-                    case VertexTypes.VertexPositionNormalTexture:
+                    case VertexRuntimeTypes.VertexPositionNormalTexture:
                         materialsPNT[meshIndiciesPNT_Counter] = material;
                         meshIndiciesPNT[meshIndiciesPNT_Counter] = new ushort[3 * faceCount];
 
@@ -407,7 +407,7 @@ namespace Henzai
                         meshesPNT[meshIndiciesPNT_Counter] = new Mesh<VertexPositionNormalTexture>(meshDefinitionPNT, meshIndiciesPNT[meshIndiciesPNT_Counter]);
                         meshIndiciesPNT_Counter++;
                         break;
-                    case VertexTypes.VertexPositionNormal:
+                    case VertexRuntimeTypes.VertexPositionNormal:
                         materialsPN[meshIndiciesPN_Counter] = material;
                         meshIndiciesPN[meshIndiciesPN_Counter] = new ushort[3*faceCount];
 
@@ -426,7 +426,7 @@ namespace Henzai
                         meshesPN[meshIndiciesPN_Counter] = new Mesh<VertexPositionNormal>(meshDefinitionPN, meshIndiciesPN[meshIndiciesPN_Counter]);
                         meshIndiciesPN_Counter++;
                         break;
-                    case VertexTypes.VertexPositionNormalTextureTangentBitangent:
+                    case VertexRuntimeTypes.VertexPositionNormalTextureTangentBitangent:
                         materialsPNTTB[meshIndiciesPNTTB_Counter] = material;
                         meshIndiciesPNTTB[meshIndiciesPNTTB_Counter] = new ushort[3*faceCount];
 

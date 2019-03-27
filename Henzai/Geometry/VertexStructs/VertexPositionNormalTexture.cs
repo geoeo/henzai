@@ -1,5 +1,4 @@
 using System.Numerics;
-using Henzai.Runtime;
 using Henzai.Core.VertexGeometry;
 
 namespace Henzai.Geometry
@@ -11,7 +10,7 @@ namespace Henzai.Geometry
         public const byte NormalOffset = 12;
         public const byte TextureCoordinatesOffset = 24;
         public const byte ElementCount = 3;
-        public const VertexTypes HenzaiType = VertexTypes.VertexPositionNormalTexture;
+        public const VertexRuntimeTypes HenzaiType = VertexRuntimeTypes.VertexPositionNormalTexture;
 
         public readonly Vector3 Position;
         public readonly Vector3 Normal;

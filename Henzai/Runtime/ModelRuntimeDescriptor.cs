@@ -1,10 +1,6 @@
 using System;
-using System.IO;
 using System.Collections.Generic;
 using Veldrid;
-using Veldrid.ImageSharp;
-using Henzai;
-using Henzai.Runtime;
 using Henzai.Geometry;
 using Henzai.Core;
 using Henzai.Core.VertexGeometry;
@@ -65,7 +61,7 @@ namespace Henzai.Runtime
         /// See: <see cref="Henzai.Geometry.Model{T}"/>
         /// </summary>
         public Model<T,Material> Model {get;set;}
-        public VertexTypes VertexType {get; private set;}
+        public VertexRuntimeTypes VertexRuntimeType {get; private set;}
         public PrimitiveTopology PrimitiveTopology {get; private set;}
         public uint TotalInstanceCount{get;set;}
         public bool IsCulled {get; set;}
@@ -77,9 +73,9 @@ namespace Henzai.Runtime
         // TODO: Investigate Texture Cache for already loaded textures
         public event Func<ModelRuntimeDescriptor<T>,int,DisposeCollectorResourceFactory,GraphicsDevice,ResourceSet> CallTextureResourceSetGeneration;
 
-        public ModelRuntimeDescriptor(Model<T, Material> modelIn, string vShaderName, string fShaderName, VertexTypes vertexType, PrimitiveTopology primitiveTopology){
+        public ModelRuntimeDescriptor(Model<T, Material> modelIn, string vShaderName, string fShaderName, VertexRuntimeTypes vertexRuntimeType, PrimitiveTopology primitiveTopology){
 
-            if(!Verifier.verifyVertexStruct<T>(vertexType))
+            if(!Verifier.verifyVertexStruct<T>(vertexRuntimeType))
                 throw new ArgumentException($"Type Mismatch ModelRuntimeDescriptor");
 
             Model = modelIn;
@@ -89,7 +85,7 @@ namespace Henzai.Runtime
             _vertexShaderName = vShaderName;
             _fragmentShaderName = fShaderName;
 
-            VertexType = vertexType;
+            VertexRuntimeType = vertexRuntimeType;
             PrimitiveTopology = primitiveTopology;
 
             IsCulled = false;

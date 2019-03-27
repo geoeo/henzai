@@ -6,7 +6,6 @@ using System.Diagnostics;
 using Veldrid;
 using Veldrid.StartupUtilities;
 using Veldrid.Sdl2;
-using Henzai.UI;
 using Henzai.Geometry;
 using Henzai.Core.VertexGeometry;
 using Henzai.Extensions;
@@ -361,25 +360,25 @@ namespace Henzai.Runtime
 
             modelDescriptor.FormatResourcesForPipelineGeneration();
 
-            switch (modelDescriptor.VertexType)
+            switch (modelDescriptor.VertexRuntimeType)
             {
-                case VertexTypes.VertexPosition:
+                case VertexRuntimeTypes.VertexPosition:
                     modelDescriptor.Pipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GeneratePipelineP(modelDescriptor, sceneRuntimeDescriptor, _graphicsDevice));
                     break;
-                case VertexTypes.VertexPositionNormal:
+                case VertexRuntimeTypes.VertexPositionNormal:
                     modelDescriptor.Pipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GeneratePipelinePN(modelDescriptor, sceneRuntimeDescriptor, _graphicsDevice));
                     break;
-                case VertexTypes.VertexPositionNormalTextureTangentBitangent:
+                case VertexRuntimeTypes.VertexPositionNormalTextureTangentBitangent:
                     modelDescriptor.Pipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GeneratePipelinePNTTB(modelDescriptor, sceneRuntimeDescriptor, _graphicsDevice));
                     break;
-                case VertexTypes.VertexPositionColor:
+                case VertexRuntimeTypes.VertexPositionColor:
                     modelDescriptor.Pipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GeneratePipelinePC(modelDescriptor, sceneRuntimeDescriptor, _graphicsDevice));
                     break;
-                case VertexTypes.VertexPositionTexture:
+                case VertexRuntimeTypes.VertexPositionTexture:
                     modelDescriptor.Pipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GeneratePipelinePT(modelDescriptor, sceneRuntimeDescriptor, _graphicsDevice));
                     break;
                 default:
-                    throw new NotImplementedException($"{modelDescriptor.VertexType.ToString("g")} not implemented");
+                    throw new NotImplementedException($"{modelDescriptor.VertexRuntimeType.ToString("g")} not implemented");
             }
         }
 

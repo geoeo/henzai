@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Numerics;
-using Henzai.Runtime;
 using Henzai.Core.VertexGeometry;
 using Veldrid;
 
@@ -13,7 +12,7 @@ namespace Henzai.Geometry
         public const byte SizeInBytes = 28;
         public const byte PositionOffset = 0;
         public const byte ColorOffset = 12;
-        public const VertexTypes HenzaiType = VertexTypes.VertexPositionColor;
+        public const VertexRuntimeTypes HenzaiType = VertexRuntimeTypes.VertexPositionColor;
         public readonly Vector3 Position;
         public Vector4 color;
         public VertexPositionColor(Vector3 position, Vector4 colorIn)
