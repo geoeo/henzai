@@ -3,6 +3,7 @@ using Veldrid;
 using Henzai.Core.Extensions;
 using Henzai.Geometry;
 using Henzai.Core;
+using Henzai.Core.Materials;
 using Henzai.Core.VertexGeometry;
 
 namespace Henzai.Runtime

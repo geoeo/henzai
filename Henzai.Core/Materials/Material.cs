@@ -1,9 +1,7 @@
-using System.Numerics;
-using Henzai.Core.Materials;
-using Veldrid;
+﻿using System.Numerics;
 
 // TODO: Add Material coefficients, more textures, Make Color own struct (or use Veldrid.RGBA)
-namespace Henzai.Geometry
+namespace Henzai.Core.Materials
 {
 
     ///<summary>
@@ -35,10 +33,11 @@ namespace Henzai.Geometry
         public string cubeMapRight = string.Empty;
         public string cubeMapTop = string.Empty;
         public string cubeMapBottom = string.Empty;
-        
 
-        public Material(){
-            diffuse = new Vector4(1.0f,1.0f,1.0f,1.0f);
+
+        public Material()
+        {
+            diffuse = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
         }
 
 
@@ -46,12 +45,12 @@ namespace Henzai.Geometry
         // If null reference is passed as an argument assignment will be skipped
         //</summary>
         public Material(
-            Vector4 ambient, 
-            Vector4 diffuse, 
-            Vector4 specular, 
-            Vector4 emissive, 
-            Vector4 transparent, 
-            Vector4 coefficients, 
+            Vector4 ambient,
+            Vector4 diffuse,
+            Vector4 specular,
+            Vector4 emissive,
+            Vector4 transparent,
+            Vector4 coefficients,
             string textureDiffuse,
             string textureNormal,
             string textureBump,
@@ -93,10 +92,6 @@ namespace Henzai.Geometry
             cubeMapRight = right;
             cubeMapTop = up;
             cubeMapBottom = down;
-        }
-
-        public static RgbaFloat ToRgbaFloat(Vector4 value){
-            return new RgbaFloat(value.X,value.Y,value.Z,value.W);
         }
 
         public void ApplyMaterialDataInto(Vector4[] colors, string[] textureStrings, string[] cubemapStrings)

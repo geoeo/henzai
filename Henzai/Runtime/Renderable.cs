@@ -7,6 +7,7 @@ using Veldrid;
 using Veldrid.StartupUtilities;
 using Veldrid.Sdl2;
 using Henzai.Geometry;
+using Henzai.Core.Materials;
 using Henzai.Core.VertexGeometry;
 using Henzai.Core.Extensions;
 

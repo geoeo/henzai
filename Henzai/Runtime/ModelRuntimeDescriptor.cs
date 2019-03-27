@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using Veldrid;
-using Henzai.Geometry;
 using Henzai.Core;
+using Henzai.Core.Materials;
 using Henzai.Core.VertexGeometry;
 using Henzai.Core.Reflection;
 

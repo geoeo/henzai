@@ -1,4 +1,5 @@
 using Henzai.Core;
+using Henzai.Core.Materials;
 
 namespace Henzai.Geometry{
     public class LoadedModels{

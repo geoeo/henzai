@@ -7,10 +7,9 @@ using SixLabors.ImageSharp.Advanced;
 using SixLabors.ImageSharp.PixelFormats;
 using Veldrid;
 using Veldrid.ImageSharp;
-using Henzai;
-using Henzai.Geometry;
 using Henzai.Runtime;
 using Henzai.Core.VertexGeometry;
+using Henzai.Core.Materials;
 
 namespace Henzai
 {

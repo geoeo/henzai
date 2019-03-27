@@ -6,8 +6,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AssimpNet-netstandard" Version="3.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Materials\" />
     <Folder Include="Reflection\" />
     <Folder Include="Extensions\" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)/../Dependencies/libassimp.dylib">
+      <Link>libassimp.dylib</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  
 </Project>
