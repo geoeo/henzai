@@ -25,7 +25,7 @@ namespace Henzai.Runtime
                                                     DeviceBuffer lightBuffer,
                                                     Camera camera,
                                                     Light light,
-                                                    Model<T, Material> model) where T : struct, VertexLocateable
+                                                    Model<T, RealtimeMaterial> model) where T : struct, VertexLocateable
         {
 
             commandList.SetPipeline(pipeline);
@@ -53,7 +53,7 @@ namespace Henzai.Runtime
                                                     Camera camera,
                                                     Light light,
                                                     Light pointLight,
-                                                    Model<T, Material> model) where T : struct, VertexLocateable
+                                                    Model<T, RealtimeMaterial> model) where T : struct, VertexLocateable
         {
 
             commandList.SetPipeline(pipeline);
@@ -81,7 +81,7 @@ namespace Henzai.Runtime
                                                     Pipeline pipeline,
                                                     DeviceBuffer cameraProjViewBuffer,
                                                     Camera camera,
-                                                    Model<T, Material> model) where T : struct, VertexLocateable
+                                                    Model<T, RealtimeMaterial> model) where T : struct, VertexLocateable
         {
 
             commandList.SetPipeline(pipeline);
@@ -108,7 +108,7 @@ namespace Henzai.Runtime
                                                     ResourceSet pointlightResourceSet,
                                                     ResourceSet materialResourceSet,
                                                     ResourceSet textureResourceSet,
-                                                    Material material,
+                                                    RealtimeMaterial material,
                                                     Mesh<VertexPositionNormalTextureTangentBitangent> mesh,
                                                     uint modelInstanceCount)
         {
@@ -148,7 +148,7 @@ namespace Henzai.Runtime
                                                     ResourceSet cameraResourceSet,
                                                     ResourceSet lightResourceSet,
                                                     ResourceSet materialResourceSet,
-                                                    Material material,
+                                                    RealtimeMaterial material,
                                                     Mesh<VertexPositionNormal> mesh,
                                                     uint modelInstanceCount)
         {

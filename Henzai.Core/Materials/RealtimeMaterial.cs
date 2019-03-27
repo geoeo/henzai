@@ -8,7 +8,7 @@ namespace Henzai.Core.Materials
     // Based on http://assimp.sourceforge.net/lib_html/materials.html
     // colors Vector4 are RGBA
     ///</summary>
-    public sealed class Material : CoreMaterial
+    public sealed class RealtimeMaterial : CoreMaterial
     {
         //TODO refactor using Getters and Setters
         /// <summary>
@@ -35,7 +35,7 @@ namespace Henzai.Core.Materials
         public string cubeMapBottom = string.Empty;
 
 
-        public Material()
+        public RealtimeMaterial()
         {
             diffuse = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
         }
@@ -44,7 +44,7 @@ namespace Henzai.Core.Materials
         //<summary>
         // If null reference is passed as an argument assignment will be skipped
         //</summary>
-        public Material(
+        public RealtimeMaterial(
             Vector4 ambient,
             Vector4 diffuse,
             Vector4 specular,

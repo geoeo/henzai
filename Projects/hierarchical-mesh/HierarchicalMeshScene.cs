@@ -13,8 +13,8 @@ namespace Henzai.Examples
     sealed class HierarchicalMeshScene : Renderable
     {
 
-        Model<VertexPositionNormalTextureTangentBitangent, Material> _nanosuit;
-        Model<VertexPositionNormal, Material> _sun;
+        Model<VertexPositionNormalTextureTangentBitangent, RealtimeMaterial> _nanosuit;
+        Model<VertexPositionNormal, RealtimeMaterial> _sun;
 
         public HierarchicalMeshScene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
             : base(title,windowSize,graphicsDeviceOptions,renderOptions){
@@ -65,7 +65,7 @@ namespace Henzai.Examples
             GeometryUtils.GenerateTangentAndBitagentSpaceFor(_nanosuit);
             // GeometryUtils.CheckTBN(_model);
             // var sun = new Model<VertexPositionNormalTextureTangentBitangent>("water",GeometryFactory.generateSphereTangentBitangent(100,100,1));
-            _sun = new Model<VertexPositionNormal, Material>(string.Empty, GeometryFactory.GenerateSphereNormal(100,100,1), new Material());
+            _sun = new Model<VertexPositionNormal, RealtimeMaterial>(string.Empty, GeometryFactory.GenerateSphereNormal(100,100,1), new RealtimeMaterial());
             var meshZero = _sun.GetMesh(0);
             var materialZero = _sun.TryGetMaterial(0);
             materialZero.textureDiffuse = "Water.jpg";

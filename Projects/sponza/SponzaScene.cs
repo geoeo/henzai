@@ -13,7 +13,7 @@ namespace Henzai.Examples
     sealed class SponzaScene : Renderable
     {
 
-        private Model<VertexPositionNormal, Material> _sun;
+        private Model<VertexPositionNormal, RealtimeMaterial> _sun;
         private ModelRuntimeDescriptor<VertexPosition> _skyBoxRuntimeState;
 
         public SponzaScene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
@@ -65,7 +65,7 @@ namespace Henzai.Examples
             // sunRuntimeState.CallTextureResourceLayoutGeneration+=ResourceGenerator.GenerateTextureResourceLayoutForNormalMapping;
             // sunRuntimeState.CallTextureResourceSetGeneration+=ResourceGenerator.GenerateTextureResourceSetForNormalMapping;
 
-            var skyBox = new Model<VertexPosition, Material>("cloudtop", GeometryFactory.GenerateCube(true), new Material());
+            var skyBox = new Model<VertexPosition, RealtimeMaterial>("cloudtop", GeometryFactory.GenerateCube(true), new RealtimeMaterial());
             var skyBoxMaterial = skyBox.TryGetMaterial(0);
             //skyBoxMaterial.cubeMapFront = "cloudtop_ft.png";
             //skyBoxMaterial.cubeMapBack = "cloudtop_bk.png";
@@ -81,7 +81,7 @@ namespace Henzai.Examples
             _skyBoxRuntimeState.CallTextureResourceLayoutGeneration += ResourceGenerator.GenerateTextureResourceLayoutForCubeMapping;
             _skyBoxRuntimeState.CallTextureResourceSetGeneration += ResourceGenerator.GenerateTextureResourceSetForCubeMapping;
 
-            _sun = new Model<VertexPositionNormal, Material>(string.Empty, GeometryFactory.GenerateSphereNormal(100,100,1), new Material());
+            _sun = new Model<VertexPositionNormal, RealtimeMaterial>(string.Empty, GeometryFactory.GenerateSphereNormal(100,100,1), new RealtimeMaterial());
             _sun.TryGetMaterial(0).ambient = lightColor.ToVector4();
             // _sun.meshes[0].TryGetMaterial().ambient = lightColor.ToVector4();
             ref Vector4 lightPos = ref _sceneRuntimeState.Light.LightPos_DontMutate;

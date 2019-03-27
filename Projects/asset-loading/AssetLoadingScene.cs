@@ -30,7 +30,7 @@ namespace Henzai.Examples
         // TODO: Refactor this into a class with color
         private Vector4 LIGHT_POS = new Vector4(0, 10, 15, 0);
 
-        Model<VertexPositionNormal, Material> _model;
+        Model<VertexPositionNormal, RealtimeMaterial> _model;
 
         public AssetLoadingScene(string title, Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
             : base(title, windowSize, graphicsDeviceOptions, renderOptions)
@@ -72,7 +72,7 @@ namespace Henzai.Examples
             _cameraResourceSet = _factory.CreateResourceSet(resourceSetDescription);
 
             // Uniform 2 - Material
-            _materialBuffer = _factory.CreateBuffer(new BufferDescription(Material.SizeInBytes, BufferUsage.UniformBuffer));
+            _materialBuffer = _factory.CreateBuffer(new BufferDescription(RealtimeMaterial.SizeInBytes, BufferUsage.UniformBuffer));
 
             var resourceLayoutElementDescriptionMaterial = new ResourceLayoutElementDescription("material", ResourceKind.UniformBuffer, ShaderStages.Fragment);
             ResourceLayoutElementDescription[] resourceLayoutElementDescriptionsMaterial = { resourceLayoutElementDescriptionMaterial };

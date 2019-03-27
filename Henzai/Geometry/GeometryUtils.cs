@@ -73,7 +73,7 @@ namespace Henzai.Geometry
         }
 
         // http://www.terathon.com/code/tangent.html
-        public static void GenerateTangentSpaceFor(Model<VertexPositionNormalTextureTangent, Material> model){
+        public static void GenerateTangentSpaceFor(Model<VertexPositionNormalTextureTangent, RealtimeMaterial> model){
 
             int numberOfMeshes = model.MeshCount;
             for(int j = 0; j < numberOfMeshes; j++){
@@ -148,7 +148,7 @@ namespace Henzai.Geometry
             }
         }
 
-        public static void GenerateTangentAndBitagentSpaceFor(Model<VertexPositionNormalTextureTangentBitangent, Material> model){
+        public static void GenerateTangentAndBitagentSpaceFor(Model<VertexPositionNormalTextureTangentBitangent, RealtimeMaterial> model){
 
             int numberOfMeshes = model.MeshCount;
             for(int j = 0; j < numberOfMeshes; j++){
@@ -260,7 +260,7 @@ namespace Henzai.Geometry
             }
         }
 
-        public static void CheckTBN(Model<VertexPositionNormalTextureTangentBitangent, Material> model){
+        public static void CheckTBN(Model<VertexPositionNormalTextureTangentBitangent, RealtimeMaterial> model){
 
             int numberOfMeshes = model.MeshCount;
             for(int j = 0; j < numberOfMeshes; j++){

@@ -418,7 +418,7 @@ namespace Henzai.Runtime
                     new BindableResource[] { _sceneRuntimeState.CameraProjViewBuffer });
 
             // Uniform 2 - Material
-            _sceneRuntimeState.MaterialBuffer = _factory.CreateBuffer(new BufferDescription(Material.SizeInBytes, BufferUsage.UniformBuffer));
+            _sceneRuntimeState.MaterialBuffer = _factory.CreateBuffer(new BufferDescription(RealtimeMaterial.SizeInBytes, BufferUsage.UniformBuffer));
             _sceneRuntimeState.MaterialResourceLayout
                 = ResourceGenerator.GenerateResourceLayout(
                     _factory,

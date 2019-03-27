@@ -1,5 +1,6 @@
 
 namespace Henzai.Geometry{
+    //TODO maybe make struct?
     public class LoadedMeshCounts{
         public int meshCountP {get;set;}
         public int meshCountPC {get;set;}

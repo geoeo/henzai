@@ -14,7 +14,7 @@ namespace Henzai.Examples
     sealed class LightsScene : Renderable
     {
 
-        Model<VertexPositionNormal, Material> _sun;
+        Model<VertexPositionNormal, RealtimeMaterial> _sun;
         // Model<VertexPositionColor> _floor;
 
         public LightsScene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
@@ -43,7 +43,7 @@ namespace Henzai.Examples
                     new Vector4(Math.Cos(17.5f.ToRadians()).ToFloat(),Math.Cos(12.5f.ToRadians()).ToFloat(),0.0f,1.0f));
 
             // Sun //TODO: Make this VertexPositionNormalColor
-            _sun = new Model<VertexPositionNormal,Material>(String.Empty, GeometryFactory.GenerateSphereNormal(100,100,1), new Material());
+            _sun = new Model<VertexPositionNormal,RealtimeMaterial>(String.Empty, GeometryFactory.GenerateSphereNormal(100,100,1), new RealtimeMaterial());
             var sunMeshZero = _sun.GetMesh(0);
             var sunMaterialZero = _sun.TryGetMaterial(0);
             // _sun.meshes[0].TryGetMaterial().ambient = new Vector4(0.0f,0.0f,0.0f,0.0f);
@@ -56,7 +56,7 @@ namespace Henzai.Examples
             sunRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPN;
             _modelPNDescriptorList.Add(sunRuntimeState);
 
-            var spotlight = new Model<VertexPositionNormal, Material>(String.Empty,GeometryFactory.GenerateSphereNormal(100,100,1), new Material());
+            var spotlight = new Model<VertexPositionNormal, RealtimeMaterial>(String.Empty,GeometryFactory.GenerateSphereNormal(100,100,1), new RealtimeMaterial());
             var spotlightMeshZero = spotlight.GetMesh(0);
             var spotlightMaterialZero = spotlight.TryGetMaterial(0);
             spotlightMaterialZero.ambient = _sceneRuntimeState.SpotLight.Color_DontMutate;
@@ -103,7 +103,7 @@ namespace Henzai.Examples
             var offsets = GeometryUtils.CreateTilingList_XZ(-20,20,-10,10,0,GeometryFactory.QUAD_WIDTH,GeometryFactory.QUAD_HEIGHT);
             // var offsets = GeometryUtils.CreateTilingList_XZ(-1,1,0,0,0,GeometryFactory.QUAD_WIDTH,GeometryFactory.QUAD_HEIGHT);
             var instancingData = new InstancingData {Positions = offsets};
-            var floor = new Model<VertexPositionNormalTextureTangentBitangent, Material>("paving/",GeometryFactory.GenerateQuadPNTTB_XZ(), new Material());
+            var floor = new Model<VertexPositionNormalTextureTangentBitangent, RealtimeMaterial>("paving/",GeometryFactory.GenerateQuadPNTTB_XZ(), new RealtimeMaterial());
             var floorMeshZero = floor.GetMesh(0);
             var flootMaterialZero = floor.TryGetMaterial(0);
             flootMaterialZero.textureDiffuse="pavingColor.jpg";

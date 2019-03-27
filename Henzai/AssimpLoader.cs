@@ -3,7 +3,7 @@ using System.IO;
 using System.Numerics;
 using Henzai.Geometry;
 using Henzai.Core;
-using Henzai.Core.Materials;
+//using Henzai.Core.Materials;
 using Henzai.Core.VertexGeometry;
 using Henzai.Core.Extensions;
 using Henzai.Core.Reflection;
@@ -25,8 +25,8 @@ namespace Henzai
             return new Vector4(color.R,color.G,color.B,color.A);
         }
 
-        public static Core.Materials.Material ToHenzaiMaterial(this Assimp.Material material){
-            return new Core.Materials.Material(
+        public static Core.Materials.RealtimeMaterial ToHenzaiMaterial(this Assimp.Material material){
+            return new Core.Materials.RealtimeMaterial(
                 material.ColorAmbient.ToVector4(),
                 material.ColorDiffuse.ToVector4(),
                 material.ColorSpecular.ToVector4(),
@@ -172,7 +172,7 @@ namespace Henzai
 
         }
 
-        public static Model<T, Core.Materials.Material> LoadFromFile<T>(string baseDirectory,string localPath, VertexRuntimeTypes vertexType, PostProcessSteps flags = DefaultPostProcessSteps) where T : struct, VertexLocateable
+        public static Model<T, Core.Materials.RealtimeMaterial> LoadFromFile<T>(string baseDirectory,string localPath, VertexRuntimeTypes vertexType, PostProcessSteps flags = DefaultPostProcessSteps) where T : struct, VertexLocateable
         {
 
             if(!Verifier.verifyVertexStruct<T>(vertexType))
@@ -189,7 +189,7 @@ namespace Henzai
             int meshCount = pScene.MeshCount;
 
             Mesh<T>[] meshes = new Mesh<T>[meshCount];
-            Core.Materials.Material[] materials = new Core.Materials.Material[meshCount];
+            Core.Materials.RealtimeMaterial[] materials = new Core.Materials.RealtimeMaterial[meshCount];
             ushort[][] meshIndicies = new ushort[meshCount][];
 
             for(int i = 0; i < meshCount; i++){
@@ -200,7 +200,7 @@ namespace Henzai
                     continue;
 
                 Assimp.Material aiMaterial = pScene.Materials[aiMesh.MaterialIndex];
-                Core.Materials.Material material = aiMaterial.ToHenzaiMaterial();
+                Core.Materials.RealtimeMaterial material = aiMaterial.ToHenzaiMaterial();
 
                 T[] meshDefinition = new T[vertexCount];
 
@@ -230,7 +230,7 @@ namespace Henzai
                 meshes[i] = new Mesh<T>(meshDefinition, meshIndicies[i]);
             }
 
-            return new Model<T, Core.Materials.Material>(modelDir, meshes, materials);
+            return new Model<T, Core.Materials.RealtimeMaterial>(modelDir, meshes, materials);
         }
 
         public static LoadedModels LoadModelsFromFile(string baseDirectory, string localPath, PostProcessSteps flags = DefaultPostProcessSteps)
@@ -262,11 +262,11 @@ namespace Henzai
             Mesh<VertexPositionNormalTexture>[] meshesPNT = new Mesh<VertexPositionNormalTexture>[meshCountPNT];
             Mesh<VertexPositionNormalTextureTangentBitangent>[] meshesPNTTB = new Mesh<VertexPositionNormalTextureTangentBitangent>[meshCountPNTTB];
 
-            Core.Materials.Material[] materialsPC = new Core.Materials.Material[meshCountPC];
-            Core.Materials.Material[] materialsPN = new Core.Materials.Material[meshCountPN];
-            Core.Materials.Material[] materialsPT = new Core.Materials.Material[meshCountPT];
-            Core.Materials.Material[] materialsPNT = new Core.Materials.Material[meshCountPNT];
-            Core.Materials.Material[] materialsPNTTB = new Core.Materials.Material[meshCountPNTTB];
+            Core.Materials.RealtimeMaterial[] materialsPC = new Core.Materials.RealtimeMaterial[meshCountPC];
+            Core.Materials.RealtimeMaterial[] materialsPN = new Core.Materials.RealtimeMaterial[meshCountPN];
+            Core.Materials.RealtimeMaterial[] materialsPT = new Core.Materials.RealtimeMaterial[meshCountPT];
+            Core.Materials.RealtimeMaterial[] materialsPNT = new Core.Materials.RealtimeMaterial[meshCountPNT];
+            Core.Materials.RealtimeMaterial[] materialsPNTTB = new Core.Materials.RealtimeMaterial[meshCountPNTTB];
 
             // ushort[][] meshIndiciesP = new ushort[meshCountP][];
             ushort[][] meshIndiciesPC = new ushort[meshCountPC][];
@@ -301,7 +301,7 @@ namespace Henzai
                 }
 
                 Assimp.Material aiMaterial = pScene.Materials[aiMesh.MaterialIndex];
-                Core.Materials.Material material = aiMaterial.ToHenzaiMaterial();
+                Core.Materials.RealtimeMaterial material = aiMaterial.ToHenzaiMaterial();
                 VertexRuntimeTypes henzaiVertexType = aiMaterial.ToHenzaiVertexType();
                 switch(henzaiVertexType){
                         case VertexRuntimeTypes.VertexPositionColor:
@@ -455,15 +455,15 @@ namespace Henzai
             // if(meshCountP > 0)
                 // loadedModels.modelP = new Model<VertexPosition>(modelDir,meshesP,meshIndiciesP);
             if(meshCountPC > 0 )
-                loadedModels.modelPC = new Model<VertexPositionColor, Core.Materials.Material>(modelDir, meshesPC, materialsPC);
+                loadedModels.modelPC = new Model<VertexPositionColor, Core.Materials.RealtimeMaterial>(modelDir, meshesPC, materialsPC);
             if(meshCountPN > 0)
-                loadedModels.modelPN = new Model<VertexPositionNormal, Core.Materials.Material>(modelDir, meshesPN, materialsPN);
+                loadedModels.modelPN = new Model<VertexPositionNormal, Core.Materials.RealtimeMaterial>(modelDir, meshesPN, materialsPN);
             if(meshCountPT > 0)
-                loadedModels.modelPT = new Model<VertexPositionTexture, Core.Materials.Material>(modelDir, meshesPT, materialsPT);                
+                loadedModels.modelPT = new Model<VertexPositionTexture, Core.Materials.RealtimeMaterial>(modelDir, meshesPT, materialsPT);                
             if(meshCountPNT > 0)
-                loadedModels.modelPNT = new Model<VertexPositionNormalTexture, Core.Materials.Material>(modelDir, meshesPNT, materialsPNT);
+                loadedModels.modelPNT = new Model<VertexPositionNormalTexture, Core.Materials.RealtimeMaterial>(modelDir, meshesPNT, materialsPNT);
             if(meshCountPNTTB > 0) 
-                loadedModels.modelPNTTB = new Model<VertexPositionNormalTextureTangentBitangent, Core.Materials.Material>(modelDir, meshesPNTTB, materialsPNTTB);
+                loadedModels.modelPNTTB = new Model<VertexPositionNormalTextureTangentBitangent, Core.Materials.RealtimeMaterial>(modelDir, meshesPNTTB, materialsPNTTB);
 
             return loadedModels;
         }

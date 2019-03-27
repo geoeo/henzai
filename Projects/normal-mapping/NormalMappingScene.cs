@@ -32,7 +32,7 @@ namespace Henzai.Examples
         // TODO: Refactor this into a class with color
         private Vector4 LIGHT_POS = new Vector4(0,30,30,0);
 
-        Model<VertexPositionNormalTextureTangent, Material> _model;
+        Model<VertexPositionNormalTextureTangent, RealtimeMaterial> _model;
 
         public NormalMappingScene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
             : base(title,windowSize,graphicsDeviceOptions,renderOptions){
