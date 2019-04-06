@@ -13,10 +13,22 @@
     <Compile Include="Scene/Builder.fs" />
     <Compile Include="Scene/Runtime.fs" />
     <Compile Include="Program.fs" />
-    <None Include="AssimpLoader.fs" />
     <ProjectReference Include="../Henzai.Core/Henzai.Core.csproj" />
     <ProjectReference Include="../HenzaiFunc.Core/HenzaiFunc.Core.fsproj" />
     <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0006" />
     <PackageReference Include="BenchmarkDotNet" Version="0.10.14" />
   </ItemGroup>
+
+    <ItemGroup>
+    <Content Include="../Assets/Models/chinesedragon.dae">
+      <Link>Models/chinesedragon.dae</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content> 
+
+    <Content Include="../Dependencies/libassimp.dylib">
+      <Link>libassimp.dylib</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

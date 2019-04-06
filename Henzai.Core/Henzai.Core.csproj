@@ -16,11 +16,11 @@
     <Folder Include="VertexGeometry\VertexStructs\" />
   </ItemGroup>
 
-  <ItemGroup>
+  <!-- <ItemGroup>
     <Content Include="$(MSBuildThisFileDirectory)/../Dependencies/libassimp.dylib">
       <Link>libassimp.dylib</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
+  </ItemGroup> -->
   
 </Project>
