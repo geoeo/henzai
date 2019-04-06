@@ -7,6 +7,7 @@ using Veldrid.ImageSharp;
 using Henzai.Core;
 using Henzai.Core.Extensions;
 using Henzai.Core.Materials;
+using Henzai.Core.VertexGeometry;
 using Henzai.Geometry;
 using Henzai.Runtime;
 

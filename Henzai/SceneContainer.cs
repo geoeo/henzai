@@ -4,7 +4,7 @@ using HenzaiFunc.Core.Acceleration;
 using Henzai.Core.Extensions;
 using Henzai.UI;
 using Henzai.Runtime;
-using Henzai.Geometry;
+using Henzai.Core.VertexGeometry;
 
 namespace Henzai
 {

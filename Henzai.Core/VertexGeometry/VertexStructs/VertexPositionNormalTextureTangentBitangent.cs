@@ -1,7 +1,6 @@
 using System.Numerics;
-using Henzai.Core.VertexGeometry;
 
-namespace Henzai.Geometry
+namespace Henzai.Core.VertexGeometry
 {
     public struct VertexPositionNormalTextureTangentBitangent : VertexRuntime, VertexLocateable
     {

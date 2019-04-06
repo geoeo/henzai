@@ -1,9 +1,6 @@
-﻿using System;
-using System.Numerics;
-using Henzai.Core.VertexGeometry;
-using Veldrid;
+﻿using System.Numerics;
 
-namespace Henzai.Geometry
+namespace Henzai.Core.VertexGeometry
 {
 
     public struct VertexPositionColor : VertexRuntime, VertexLocateable
@@ -15,16 +12,11 @@ namespace Henzai.Geometry
         public const VertexRuntimeTypes HenzaiType = VertexRuntimeTypes.VertexPositionColor;
         public readonly Vector3 Position;
         public Vector4 color;
+
         public VertexPositionColor(Vector3 position, Vector4 colorIn)
         {
             Position = position;
             color = colorIn;
-        }
-
-        public VertexPositionColor(Vector3 position, RgbaFloat colorIn)
-        {
-            Position = position;
-            color = colorIn.ToVector4();
         }
 
         public byte GetSizeInBytes(){

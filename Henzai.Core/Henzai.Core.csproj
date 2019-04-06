@@ -13,6 +13,7 @@
     <Folder Include="Materials\" />
     <Folder Include="Reflection\" />
     <Folder Include="Extensions\" />
+    <Folder Include="VertexGeometry\VertexStructs\" />
   </ItemGroup>
 
   <ItemGroup>

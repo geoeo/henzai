@@ -1,7 +1,7 @@
-using Henzai.Core;
 using Henzai.Core.Materials;
 
-namespace Henzai.Geometry{
+namespace Henzai.Core.VertexGeometry
+{
     public class LoadedModels{
         public Model<VertexPosition, RealtimeMaterial> modelP {
             get{return _modelP;} set{_modelP = value;HasVertexPosition=true;}

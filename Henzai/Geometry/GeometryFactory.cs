@@ -112,10 +112,10 @@ namespace Henzai.Geometry
                 throw new ArgumentException("At least 4 color values are needed for a Quad");
 
             VertexPositionNDCColor[] quadVerticies = {
-                new VertexPositionNDCColor(new Vector2(-1.0f,1.0f),colors[0]),
-                new VertexPositionNDCColor(new Vector2(1.0f,1.0f),colors[1]),
-                new VertexPositionNDCColor(new Vector2(-1.0f,-1.0f),colors[2]),
-                new VertexPositionNDCColor(new Vector2(1.0f,-1.0f),colors[3])
+                new VertexPositionNDCColor(new Vector2(-1.0f,1.0f),colors[0].ToVector4()),
+                new VertexPositionNDCColor(new Vector2(1.0f,1.0f),colors[1].ToVector4()),
+                new VertexPositionNDCColor(new Vector2(-1.0f,-1.0f),colors[2].ToVector4()),
+                new VertexPositionNDCColor(new Vector2(1.0f,-1.0f),colors[3].ToVector4())
             };
 
             return new Mesh<VertexPositionNDCColor>(quadVerticies);
@@ -166,10 +166,10 @@ namespace Henzai.Geometry
                 throw new ArgumentException("At least 4 color values are needed for a Quad");
 
             VertexPositionColor[] quadVerticies = {
-                new VertexPositionColor(new Vector3(-1.0f,1.0f,0.0f),colors[0]),
-                new VertexPositionColor(new Vector3(1.0f,1.0f,0.0f),colors[1]),
-                new VertexPositionColor(new Vector3(-1.0f,-1.0f,0.0f),colors[2]),
-                new VertexPositionColor(new Vector3(1.0f,-1.0f,0.0f),colors[3])
+                new VertexPositionColor(new Vector3(-1.0f,1.0f,0.0f),colors[0].ToVector4()),
+                new VertexPositionColor(new Vector3(1.0f,1.0f,0.0f),colors[1].ToVector4()),
+                new VertexPositionColor(new Vector3(-1.0f,-1.0f,0.0f),colors[2].ToVector4()),
+                new VertexPositionColor(new Vector3(1.0f,-1.0f,0.0f),colors[3].ToVector4())
             };
 
             return new Mesh<VertexPositionColor>(quadVerticies,GenerateQuadIndicies_TriangleStrip_CW());
