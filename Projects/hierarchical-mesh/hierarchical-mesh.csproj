@@ -51,11 +51,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <GLSL Include="../../Shaders/*.glsl" />
+    <GLSL Include="../../Shaders/*.glsl">
+      <Link>Shaders/Glsl/%(Filename)%(Extension)</Link>
+    </GLSL>
   </ItemGroup>
 
   <ItemGroup>
-    <METAL Include="../../Shaders/*.metallib" />
+    <METAL Include="../../Shaders/*.metallib">
+      <Link>Shaders/Metal/%(Filename)%(Extension)</Link>
+    </METAL>
   </ItemGroup>
 
   <ItemGroup>
