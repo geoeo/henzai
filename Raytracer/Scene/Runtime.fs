@@ -11,7 +11,6 @@ open Henzai.Core.Numerics
 open HenzaiFunc.Core.Types
 open HenzaiFunc.Core.Acceleration
 open Raytracer.Surface
-open Raytracer.Scene.Builder
 open Raytracer.RuntimeParameters
 open BenchmarkDotNet.Attributes
 
@@ -161,7 +160,7 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
                 renderPass px py
 
     member self.SaveFrameBuffer() =
-        using (File.OpenWrite(sceneImageName)) (fun output ->
+        using (File.OpenWrite(sceneImagePath)) (fun output ->
             using(new Image<Rgba32>(width, height))(fun image -> 
                 for px in 0..width-1 do
                     for py in 0..height-1 do
@@ -172,7 +171,7 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
         )
 
     member self.SaveDepthBuffer() =
-        using (File.OpenWrite(depthImageName)) (fun output ->
+        using (File.OpenWrite(depthImagePath)) (fun output ->
             using(new Image<Rgba32>(width, height))(fun image -> 
                 for px in 0..width-1 do
                     for py in 0..height-1 do

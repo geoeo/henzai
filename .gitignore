@@ -275,12 +275,7 @@ Assets/**/*.jpg
 *.tga
 *.tif
 
-scene.jpg
-depth.jpg
-sphere.jpg
-scene_full.jpg
-scene_cw.jpg
-scene_*.jpg
+Output/*
 
 #licenses
 

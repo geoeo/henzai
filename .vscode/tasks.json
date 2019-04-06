@@ -114,6 +114,16 @@
             "problemMatcher": "$msCompile"
         },
         {
+            "label": "build raytracer",
+            "command": "dotnet build Raytracer/raytracer.csproj",
+            "type": "shell",
+            "group": "build",
+            "presentation": {
+                "reveal": "silent"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
             "label": "compile metal shaders (Henzai)",
             "type": "shell",
             "group": "build",
@@ -194,6 +204,13 @@
             "type": "shell",
             "group": "build",
             "command": "dotnet run --project Projects/sponza/",
+            "problemMatcher":"$msCompile"
+        },
+        {
+            "label": "run raytracer",
+            "type": "shell",
+            "group": "build",
+            "command": "dotnet run --project Raytracer/",
             "problemMatcher":"$msCompile"
         }
     ]

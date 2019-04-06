@@ -1,1 +1,0 @@
-﻿//TODO Port assimploader code from Henzai to a Raytracer specific implementation
