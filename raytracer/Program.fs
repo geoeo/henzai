@@ -13,7 +13,7 @@ let main argv =
     //let input = Console.ReadLine()
     let stopWatch = System.Diagnostics.Stopwatch.StartNew()
     printfn "Starting.." 
-    printfn "Loading Assets"
+    printfn "Loading Assets.."
     let (sceneArray, sceneNonBoundableArray) = loadAssets
     stopWatch.Stop()
     printfn "Loaded Assets in %f ms" stopWatch.Elapsed.TotalMilliseconds
