@@ -6,6 +6,7 @@
     <Folder Include="Extensions\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="../Henzai.Core/Henzai.Core.csproj" />
     <Compile Include="Extensions/Array.fs" />
     <Compile Include="Utils.fs" />
     <Compile Include="Types.fs" />
@@ -27,6 +28,5 @@
     <Compile Include="Acceleration/Culler.fs" />
     <Compile Include="Acceleration/BVHTreeBuilder.fs" />
     <Compile Include="Acceleration/BVHRuntime.fs" />
-    <ProjectReference Include="../Henzai.Core/Henzai.Core.csproj" />
   </ItemGroup>
 </Project>

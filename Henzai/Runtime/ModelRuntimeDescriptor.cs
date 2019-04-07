@@ -76,7 +76,7 @@ namespace Henzai.Runtime
 
         public ModelRuntimeDescriptor(Model<T, RealtimeMaterial> modelIn, string vShaderName, string fShaderName, VertexRuntimeTypes vertexRuntimeType, PrimitiveTopology primitiveTopology){
 
-            if(!Verifier.verifyVertexStruct<T>(vertexRuntimeType))
+            if(!Verifier.VerifyVertexStruct<T>(vertexRuntimeType))
                 throw new ArgumentException($"Type Mismatch ModelRuntimeDescriptor");
 
             Model = modelIn;

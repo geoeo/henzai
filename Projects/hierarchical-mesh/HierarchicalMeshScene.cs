@@ -59,7 +59,7 @@ namespace Henzai.Examples
 
             // string filePath = Path.Combine(AppContext.BaseDirectory, "armor/armor.dae"); 
             // string filePath = Path.Combine(AppContext.BaseDirectory, "nanosuit/nanosuit.obj"); 
-            _nanosuit = AssimpLoader.LoadFromFile<VertexPositionNormalTextureTangentBitangent>(AppContext.BaseDirectory,"nanosuit/nanosuit.obj", VertexPositionNormalTextureTangentBitangent.HenzaiType);
+            _nanosuit = AssimpLoader.LoadFromFileWithRealtimeMaterial<VertexPositionNormalTextureTangentBitangent>(AppContext.BaseDirectory,"nanosuit/nanosuit.obj", VertexPositionNormalTextureTangentBitangent.HenzaiType);
             // _nanosuit.SetAmbientForAllMeshes(new Vector4(0.1f,0.1f,0.1f,1.0f));
             // _model = AssimpLoader.LoadFromFile<VertexPositionNormalTextureTangentBitangent>(AppContext.BaseDirectory,"sponza/sponza.obj",VertexPositionNormalTextureTangentBitangent.HenzaiType);
             GeometryUtils.GenerateTangentAndBitagentSpaceFor(_nanosuit);

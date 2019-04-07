@@ -36,7 +36,7 @@ namespace Henzai.Examples
             // string filePath = Path.Combine(AppContext.BaseDirectory, "nanosuit/nanosuit.obj"); 
             
             //TODO: Write method to remove ambient terms
-            var sponzaModels = AssimpLoader.LoadModelsFromFile(AppContext.BaseDirectory,"sponza/sponza.obj");
+            var sponzaModels = AssimpLoader.LoadRealtimeModelsFromFile(AppContext.BaseDirectory,"sponza/sponza.obj");
             var sponzaPNTTB = sponzaModels.modelPNTTB;
             var sponzaPC = sponzaModels.modelPC;
 

@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using Henzai.Core.VertexGeometry;
+using Henzai.Core.Materials;
 
 namespace Henzai.Core
 {
@@ -82,6 +83,17 @@ namespace Henzai.Core
             return null;
         }
 
-
+        //TODO add a way to specifiy emmissive components
+        public static Model<T, RaytraceMaterial> ConvertToRaytracingModel(Model<T, RealtimeMaterial> rtModel)
+        {
+            var materialCount = rtModel.MaterialCount;
+            var raytraceMaterials = new RaytraceMaterial[materialCount];
+            for(int i = 0; i < rtModel.MaterialCount; i++)
+            {
+                var rtMat = rtModel.GetMaterial(i);
+                raytraceMaterials[i] = new RaytraceMaterial(rtMat.diffuse);
+            }
+            return new Model<T, RaytraceMaterial>(rtModel._meshes, raytraceMaterials);
+        }
     }
 }
