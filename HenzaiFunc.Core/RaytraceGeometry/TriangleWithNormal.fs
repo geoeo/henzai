@@ -1,4 +1,4 @@
-﻿namespace HenzaiFunc.Core.RaytraceGeometry
+namespace HenzaiFunc.Core.RaytraceGeometry
 
 open System
 open System.Numerics
@@ -6,32 +6,28 @@ open HenzaiFunc.Core.Types
 open Henzai.Core.Numerics
 open Henzai.Core.VertexGeometry
 
+//TODO investigate reducing memory footprint my storing less variables i.e. e1, e2, normal
 // Baldwin-Weber ray-triangle intersection algorithm: http://jcgt.org/published/0005/03/03/
 /// Vertices are CCW
-type IndexedTriangle<'T when 'T : struct and 'T :> VertexLocateable>(i0 : int, i1 : int, i2 : int, vertices : 'T[]) =
+type TriangleWithNormal(v0 : Vector3, v1 : Vector3, v2 : Vector3, n : Vector3) =
     inherit RaytracingGeometry() with
 
-        let normal = 
-            let e1 = vertices.[i1].GetPosition() - vertices.[i0].GetPosition()
-            let e2 = vertices.[i2].GetPosition() - vertices.[i0].GetPosition()
-            Vector4(Vector3.Cross(e1, e2), 0.0f)
+        new(v0 : Point, v1: Point, v2 : Point) =
+            TriangleWithNormal(Vector.ToVec3(v0), Vector.ToVec3(v1), Vector.ToVec3(v2), Vector3.Zero)
+
+        let e1 = v1 - v0
+
+        let e2 = v2 - v0
+
+        let normal = Vector4(n, 0.0f)
 
         let localToWorld =
-            let v0 = vertices.[i0].GetPosition()
-            let e1 = vertices.[i1].GetPosition() - v0
-            let e2 = vertices.[i2].GetPosition() - v0
             Matrix4x4(e1.X, e1.Y, e1.Z, 0.0f,
-                        e2.X, e2.Y, e2.Z, 0.0f,
-                        1.0f, 0.0f, 0.0f, 0.0f,
-                        v0.X, v0.Y, v0.Z, 1.0f)
+                    e2.X, e2.Y, e2.Z, 0.0f,
+                    1.0f, 0.0f, 0.0f, 0.0f,
+                    v0.X, v0.Y, v0.Z, 1.0f)
 
         let worldToLocal = 
-            let v0 = vertices.[i0].GetPosition()
-            let v1 = vertices.[i1].GetPosition()
-            let v2 = vertices.[i2].GetPosition()
-            let e1 = v1 - v0
-            let e2 = v2 - v0
-
             let crossV2V0 = Vector3.Cross(v2, v0)
             let crossV1V0 = Vector3.Cross(v1, v0)
             let normalXAbs = MathF.Abs(normal.X)
@@ -83,10 +79,6 @@ type IndexedTriangle<'T when 'T : struct and 'T :> VertexLocateable>(i0 : int, i
 
         interface AxisAlignedBoundable with
             override this.GetBounds =
-
-                let v0 = vertices.[i0].GetPosition()
-                let v1 = vertices.[i1].GetPosition()
-                let v2 = vertices.[i2].GetPosition()
 
                 let pMin = Vector4(MathF.Min(v0.X, MathF.Min(v1.X, v2.X)), MathF.Min(v0.Y, MathF.Min(v1.Y, v2.Y)), MathF.Min(v0.Z, MathF.Min(v1.Z, v2.Z)), 0.0f)
 

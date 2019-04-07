@@ -13,8 +13,10 @@ namespace Henzai.Core.VertexGeometry
         public T[] Vertices => _geometryDefinition.GetValidVertices;
         public ushort[] MeshIndices => _geometryDefinition.GetValidIndices;
 
-        public int NumberOfValidVertices => _geometryDefinition.GetNumberOfValidVertices;
-        public int NumberOfValidIndices => _geometryDefinition.GetNumberOfValidIndices;
+        public int VertexCount => _geometryDefinition.VertexCount;
+        public int IndicesCount => _geometryDefinition.IndicesCount;
+        public int ValidVertexCount => _geometryDefinition.ValidVertexCount;
+        public int ValidIndicesCount => _geometryDefinition.ValidIndicesCount;
         private Matrix4x4 _world = Matrix4x4.Identity;
         public ref Matrix4x4 World => ref _world;
         public bool IsCulled => _geometryDefinition.IsCulled;

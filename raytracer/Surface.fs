@@ -7,7 +7,6 @@ open HenzaiFunc.Core.Types
 open HenzaiFunc.Core.RaytraceGeometry
 open Henzai.Core.Materials;
 open Henzai.Core.Numerics
-open Raytracer
 
 let randomState = Random()
    
@@ -193,7 +192,7 @@ type Dielectric(id: ID, geometry : RaytracingGeometry, material : RaytraceMateri
             (2, samplesArray)
 
 
-
+       
 
 //https://learnopengl.com/Lighting/Light-casters
 //TODO refactor constants

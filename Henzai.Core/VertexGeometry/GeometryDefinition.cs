@@ -32,10 +32,13 @@ namespace Henzai.Core.VertexGeometry
         public int NumberOfValidVertices {get; set;}
         public T[] GetVertices => _vertices;
         public ushort[] GetIndices => _meshIndices;
+        //TODO: Change naming. These are NOT culled vertices but non-culled!
         public T[] GetValidVertices => _culledVertices;
         public ushort[] GetValidIndices => _culledMeshIndices;
-        public int GetNumberOfValidVertices => NumberOfValidVertices;
-        public int GetNumberOfValidIndices => NumberOfValidIndicies;
+        public int VertexCount => _vertices.Length;
+        public int IndicesCount => _meshIndices.Length;
+        public int ValidVertexCount => NumberOfValidVertices;
+        public int ValidIndicesCount => NumberOfValidIndicies;
         public bool IsCulled => NumberOfValidIndicies == 0;
         /// <summary>
         /// A datastrcture used for geometry pre/post processing

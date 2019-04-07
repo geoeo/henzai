@@ -14,6 +14,11 @@ namespace Henzai.Core.Materials
             Albedo = color; Emittance = Vector4.Zero;
         }
 
+        public RaytraceMaterial(Vector4 color, Vector4 emittance)
+        {
+            Albedo = color; Emittance = emittance;
+        }
+
         public RaytraceMaterial(Rgba32 color)
         {
             Albedo = color.ToVector4();

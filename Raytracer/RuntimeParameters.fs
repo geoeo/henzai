@@ -1,5 +1,7 @@
 module Raytracer.RuntimeParameters
 
+open HenzaiFunc.Core.Types
+
 let lambertianSampleCount = 4
 let noSampleCount = 0
 let dialectricSampleCount = 2
@@ -17,3 +19,10 @@ let depthImageName = "depth.jpg"
 
 let sceneImagePath = outputDir+sceneImageName
 let depthImagePath = outputDir+depthImageName
+
+let mutable id : ID = 1UL
+
+let assignIDAndIncrement idIn : ID =
+    let toBeAssigned = idIn
+    id <- id + 1UL
+    toBeAssigned

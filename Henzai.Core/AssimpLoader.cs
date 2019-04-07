@@ -115,75 +115,12 @@ namespace Henzai.Core
         // http://assimp.sourceforge.net/lib_html/postprocess_8h.html#a64795260b95f5a4b3f3dc1be4f52e410a9c3de834f0307f31fa2b1b6d05dd592b
         private const PostProcessSteps DefaultPostProcessSteps
             = PostProcessSteps.FlipWindingOrder | PostProcessSteps.Triangulate | PostProcessSteps.PreTransformVertices | PostProcessSteps.FlipUVs
-            | PostProcessSteps.CalculateTangentSpace | PostProcessSteps.GenerateSmoothNormals | PostProcessSteps.JoinIdenticalVertices;
+            | PostProcessSteps.CalculateTangentSpace | PostProcessSteps.GenerateSmoothNormals | PostProcessSteps.JoinIdenticalVertices | PostProcessSteps.FixInFacingNormals;
 
-        //public static byte[] GenerateMaterialBytesArrayFromAssimp(MaterialTypes henzaiMaterialType, Assimp.Material aiMaterial)
-        //{
+        //private const PostProcessSteps DefaultPostProcessSteps
+        //    = PostProcessSteps.None;
 
-        //    Vector4 ambient = aiMaterial.ColorAmbient.ToVector4();
-        //    Vector4 diffuse = aiMaterial.ColorDiffuse.ToVector4();
-        //    Vector4 specular = aiMaterial.ColorSpecular.ToVector4();
-        //    Vector4 emissive = aiMaterial.ColorEmissive.ToVector4();
-        //    Vector4 transparent = aiMaterial.ColorTransparent.ToVector4();
-        //    Vector4 coefficients = new Vector4(aiMaterial.Shininess, aiMaterial.ShininessStrength, aiMaterial.Opacity, aiMaterial.Reflectivity);
-        //    string diffuseTexturePath = aiMaterial.TextureDiffuse.FilePath;
-        //    string normalTexturePath = aiMaterial.TextureNormal.FilePath;
-        //    string heightTexturePath = aiMaterial.TextureHeight.FilePath;
-        //    string specularTexturePath = aiMaterial.TextureSpecular.FilePath;
-
-        //    byte[] bytes;
-        //    byte[] ambientAsBytes = ByteMarshal.StructToBytes(ambient);
-        //    byte[] diffuseAsBytes = ByteMarshal.StructToBytes(diffuse);
-        //    byte[] specularAsBytes = ByteMarshal.StructToBytes(specular);
-        //    byte[] emissiveAsBytes = ByteMarshal.StructToBytes(emissive);
-        //    byte[] transparentAsBytes = ByteMarshal.StructToBytes(transparent);
-        //    byte[] coefficientAsBytes = ByteMarshal.StructToBytes(coefficients);
-
-        //    byte[] diffusePathAsBytes = ByteMarshal.UTF8ToBytes(diffuseTexturePath);
-        //    byte[] normalPathAsBytes = ByteMarshal.UTF8ToBytes(normalTexturePath);
-        //    byte[] bumpPathAsBytes = ByteMarshal.UTF8ToBytes(heightTexturePath);
-        //    byte[] specularPathAsBytes = ByteMarshal.UTF8ToBytes(specularTexturePath);
-
-        //    byte[] cubeFrontPathAsBytes = ByteMarshal.UTF8ToBytes(specularTexturePath);
-        //    byte[] cubeBackPathAsBytes = ByteMarshal.UTF8ToBytes(specularTexturePath);
-        //    byte[] cubeLeftPathAsBytes = ByteMarshal.UTF8ToBytes(specularTexturePath);
-        //    byte[] cubeRightPathAsBytes = ByteMarshal.UTF8ToBytes(specularTexturePath);
-        //    byte[] cubeTopPathAsBytes = ByteMarshal.UTF8ToBytes(specularTexturePath);
-        //    byte[] cubeBottomPathAsBytes = ByteMarshal.UTF8ToBytes(specularTexturePath);
-
-
-        //    switch (henzaiMaterialType)
-        //    {
-        //        case MaterialTypes.Realtime:
-        //            bytes = new byte[RealtimeMaterial.SizeInBytes];
-        //            Array.Copy(ambientAsBytes, 0, bytes, RealtimeMaterial.AmbientOffset, ambientAsBytes.Length);
-        //            Array.Copy(diffuseAsBytes, 0, bytes, RealtimeMaterial.DiffuseOffset, ambientAsBytes.Length);
-        //            Array.Copy(specularAsBytes, 0, bytes, RealtimeMaterial.SpecularOffset, ambientAsBytes.Length);
-        //            Array.Copy(emissiveAsBytes, 0, bytes, RealtimeMaterial.EmissiveOffset, ambientAsBytes.Length);
-        //            Array.Copy(transparentAsBytes, 0, bytes, RealtimeMaterial.TransparentOffset, ambientAsBytes.Length);
-        //            Array.Copy(coefficientAsBytes, 0, bytes, RealtimeMaterial.CoefficientOffset, ambientAsBytes.Length);
-
-        //            Array.Copy(diffusePathAsBytes, 0, bytes, RealtimeMaterial.DiffuseTexOffset, ambientAsBytes.Length);
-        //            Array.Copy(normalPathAsBytes, 0, bytes, RealtimeMaterial.NormalTexOffset, ambientAsBytes.Length);
-        //            Array.Copy(bumpPathAsBytes, 0, bytes, RealtimeMaterial.BumpTexOffset, ambientAsBytes.Length);
-        //            Array.Copy(specularPathAsBytes, 0, bytes, RealtimeMaterial.SpecularTexOffset, ambientAsBytes.Length);
-
-        //            Array.Copy(cubeFrontPathAsBytes, 0, bytes, RealtimeMaterial.CubeFrontOffset, ambientAsBytes.Length);
-        //            Array.Copy(cubeBackPathAsBytes, 0, bytes, RealtimeMaterial.CubeBackOffset, ambientAsBytes.Length);
-        //            Array.Copy(cubeLeftPathAsBytes, 0, bytes, RealtimeMaterial.CubeLeftOffset, ambientAsBytes.Length);
-        //            Array.Copy(cubeRightPathAsBytes, 0, bytes, RealtimeMaterial.CubeRightOffset, ambientAsBytes.Length);
-        //            Array.Copy(cubeTopPathAsBytes, 0, bytes, RealtimeMaterial.CubeTopOffset, ambientAsBytes.Length);
-        //            Array.Copy(cubeBottomPathAsBytes, 0, bytes, RealtimeMaterial.CubeBottomOffset, ambientAsBytes.Length);
-        //            break;
-
-        //        default:
-        //            throw new NotImplementedException($"{henzaiMaterialType.ToString("g")} not implemented");
-        //    }
-
-        //    return bytes;
-
-        //}
-
+        //TODO: add support for VertexPosition Type
         public static byte[] GenerateVertexBytesArrayFromAssimp(VertexRuntimeTypes henzaiVertexType, Assimp.Mesh aiMesh, int index)
         {
 
@@ -248,7 +185,6 @@ namespace Henzai.Core
 
         }
 
-        //TODO add material enum, remove unused code
         public static Model<T, RealtimeMaterial> LoadFromFileWithRealtimeMaterial<T>(string baseDirectory, string localPath, VertexRuntimeTypes vertexType, PostProcessSteps flags = DefaultPostProcessSteps) where T : struct, VertexLocateable
         {
 
@@ -547,8 +483,8 @@ namespace Henzai.Core
 
             }
 
-            // if(meshCountP > 0)
-            // loadedModels.modelP = new Model<VertexPosition>(modelDir,meshesP,meshIndiciesP);
+             //if(meshCountP > 0)
+                 //loadedModels.modelP = new Model<VertexPosition>(modelDir,meshesP,meshIndiciesP);
             if (meshCountPC > 0)
                 loadedModels.modelPC = new Model<VertexPositionColor, RealtimeMaterial>(modelDir, meshesPC, materialsPC);
             if (meshCountPN > 0)

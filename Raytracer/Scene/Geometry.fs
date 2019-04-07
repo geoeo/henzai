@@ -3,17 +3,9 @@ module Raytracer.Scene.Geometry
 open System.Numerics
 open SixLabors.ImageSharp.PixelFormats
 open Raytracer.Surface
-open HenzaiFunc.Core.Types
-open Henzai.Core.Materials;
+open Henzai.Core.Materials
 open HenzaiFunc.Core.RaytraceGeometry
-//open Raytracer.RaytraceMaterial
-
-let mutable id : ID = 1UL
-
-let assignIDAndIncrement idIn : ID =
-    let toBeAssigned = idIn
-    id <- id + 1UL
-    toBeAssigned
+open Raytracer.RuntimeParameters
 
 let lightsNonAA : Surface list 
     =  [
@@ -131,7 +123,7 @@ let planes_scene_2_AA : Surface list = [
     Lambertian(assignIDAndIncrement id,Plane(new System.Numerics.Plane((Henzai.Core.Numerics.Vector.CreateUnitVector3(0.0f, 0.0f, 1.0f)),30.0f), ((Vector3(0.0f,10.0f,-30.0f))), 25.0f, 20.0f), RaytraceMaterial(Rgba32.IndianRed))
     ]
 
-let planes_scene_2_NonAA : Surface list = [
+let plane_mirror_NonAA : Surface list = [
     Metal(assignIDAndIncrement id, Plane(new System.Numerics.Plane((Henzai.Core.Numerics.Vector.CreateUnitVector3(-1.0f, 0.0f, 1.0f)),15.0f), ((Vector3(15.0f,3.0f,-15.0f))), 10.0f, 6.0f), RaytraceMaterial(Rgba32.AntiqueWhite),0.0f);
     ]
 

@@ -91,7 +91,7 @@ namespace Henzai.Core
             for(int i = 0; i < rtModel.MaterialCount; i++)
             {
                 var rtMat = rtModel.GetMaterial(i);
-                raytraceMaterials[i] = new RaytraceMaterial(rtMat.diffuse);
+                raytraceMaterials[i] = new RaytraceMaterial(rtMat.diffuse, Vector4.One);
             }
             return new Model<T, RaytraceMaterial>(rtModel._meshes, raytraceMaterials);
         }

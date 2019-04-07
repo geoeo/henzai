@@ -348,8 +348,8 @@ namespace Henzai.Runtime
                     _graphicsDevice.UpdateBuffer(instancingBuffer, 0, instancingData.Positions);
                 }
 
-                _graphicsDevice.UpdateBuffer<T>(vertexBuffer, 0, ref mesh.Vertices[0], (vertexSizeInBytes * mesh.NumberOfValidVertices).ToUnsigned());
-                _graphicsDevice.UpdateBuffer<ushort>(indexBuffer, 0, ref mesh.MeshIndices[0], (sizeof(ushort) * mesh.NumberOfValidIndices).ToUnsigned());
+                _graphicsDevice.UpdateBuffer<T>(vertexBuffer, 0, ref mesh.Vertices[0], (vertexSizeInBytes * mesh.ValidVertexCount).ToUnsigned());
+                _graphicsDevice.UpdateBuffer<ushort>(indexBuffer, 0, ref mesh.MeshIndices[0], (sizeof(ushort) * mesh.ValidIndicesCount).ToUnsigned());
 
                 var resourceSet = modelDescriptor.InvokeTextureResourceSetGeneration(i, _factory, _graphicsDevice);
                 if (resourceSet != null)

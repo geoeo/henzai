@@ -2,7 +2,7 @@ using System.Numerics;
 
 namespace Henzai.Core.VertexGeometry
 {
-    public struct VertexPositionNormal : VertexRuntime, VertexLocateable
+    public struct VertexPositionNormal : VertexRuntime, VertexTangentspace
     {
         public const byte SizeInBytes = 24;
         public const byte PositionOffset = 0;
@@ -25,6 +25,11 @@ namespace Henzai.Core.VertexGeometry
 
         public Vector3 GetPosition(){
             return Position;
+        }
+
+        public Vector3 GetNormal()
+        {
+            return Normal;
         }
     }
 }
