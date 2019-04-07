@@ -13,12 +13,19 @@ let main argv =
     //let input = Console.ReadLine()
     let stopWatch = System.Diagnostics.Stopwatch.StartNew()
     printfn "Starting.." 
+    printfn "Loading Assets"
+    let (sceneArray, sceneNonBoundableArray) = loadAssets
+    stopWatch.Stop()
+    printfn "Loaded Assets in %f ms" stopWatch.Elapsed.TotalMilliseconds
+
     printfn "Constructing BVH Tree.."
+    stopWatch.Restart()
     let (bvhTree, orderedSurfaceArray, totalNodeCount) = constructBVHTree sceneArray
     let bvhRuntime = BVHRuntime<Surface>()
     let bvhRuntimeArray = bvhRuntime.constructBVHRuntime bvhTree totalNodeCount
     stopWatch.Stop()
     printfn "Constructed BVH Tree in %f ms" stopWatch.Elapsed.TotalMilliseconds
+
     printfn "Rendering.."
     stopWatch.Restart()
     let mainScene = RuntimeScene (orderedSurfaceArray, sceneNonBoundableArray, bvhRuntime, bvhRuntimeArray)

@@ -6,7 +6,6 @@ open Raytracer.Surface
 open HenzaiFunc.Core.Types
 open HenzaiFunc.Core.RaytraceGeometry
 open Raytracer.Material
-open Henzai.Core.Numerics
 
 let mutable id : ID = 1UL
 
