@@ -341,7 +341,7 @@ namespace Henzai.Runtime
                     var mesh = model.GetMesh(i);
                     if (mesh.IsCulled)
                         continue;
-                    var material = model.GetMaterialRuntime(i);
+                    var material = model.GetMaterial(i);
                     RenderCommandGenerator.GenerateCommandsForMesh_Inline(
                         commandList,
                         modelState.VertexBuffers[i],
@@ -531,7 +531,7 @@ namespace Henzai.Runtime
                     var mesh = model.GetMesh(i);
                     if (mesh.IsCulled)
                         continue;
-                    var material = model.GetMaterialRuntime(i);
+                    var material = model.GetMaterial(i);
                     RenderCommandGenerator.GenerateCommandsForMesh_Inline(
                         commandList,
                         modelState.VertexBuffers[i],
@@ -577,7 +577,7 @@ namespace Henzai.Runtime
                     var mesh = model.GetMesh(i);
                     if (mesh.IsCulled)
                         continue;
-                    var material = model.GetMaterialRuntime(i);
+                    var material = model.GetMaterial(i);
                     RenderCommandGenerator.GenerateCommandsForMesh_Inline(
                         commandList,
                         modelState.VertexBuffers[i],

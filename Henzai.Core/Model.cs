@@ -1,7 +1,5 @@
-﻿using System;
-using System.Numerics;
+﻿using System.Numerics;
 using Henzai.Core.VertexGeometry;
-using Henzai.Core.Materials;
 
 namespace Henzai.Core
 {
@@ -9,7 +7,7 @@ namespace Henzai.Core
     /// Usually used with loaded Meshes/Models
     /// Such as with Assimp
     /// </summary>
-    public sealed class Model<T, U> where T : struct, VertexLocateable where U : class, CoreMaterial
+    public sealed class Model<T, U> where T : struct, VertexLocateable
     {
         private readonly Mesh<T>[] _meshes;
         private readonly U[] _materials;
@@ -17,6 +15,11 @@ namespace Henzai.Core
 
         public int MeshCount => _meshes.Length;
         public int MaterialCount => _materials.Length;
+        /// <summary>
+        /// This returns the material associated with a mesh.
+        /// It can be indexed via the mesh index
+        /// </summary>
+        public U GetMaterial(int index) => _materials[index];
 
         /// <summary>
         /// Should be get only! But this is not possible to enforce with refs
@@ -71,20 +74,6 @@ namespace Henzai.Core
                 foreach (var mesh in _meshes)
                     mesh.SetNewWorldTranslation(ref translation);
             }
-        }
-
-        /// <summary>
-        /// This returns the material associated with a mesh.
-        /// It can be indexed via the mesh index
-        /// </summary>
-        public U TryGetMaterial(int index)
-        {
-            return _materials[index] ?? throw new NullReferenceException("The material you are trying to access is null");
-        }
-
-        public U GetMaterialRuntime(int index)
-        {
-            return _materials[index];
         }
 
         //TODO: Retrieve a subset of the meshes encapsulated by this model class

@@ -67,7 +67,7 @@ namespace Henzai.Examples
             // var sun = new Model<VertexPositionNormalTextureTangentBitangent>("water",GeometryFactory.generateSphereTangentBitangent(100,100,1));
             _sun = new Model<VertexPositionNormal, RealtimeMaterial>(string.Empty, GeometryFactory.GenerateSphereNormal(100,100,1), new RealtimeMaterial());
             var meshZero = _sun.GetMesh(0);
-            var materialZero = _sun.TryGetMaterial(0);
+            var materialZero = _sun.GetMaterial(0);
             materialZero.textureDiffuse = "Water.jpg";
             materialZero.textureNormal = "WaterNorm.jpg";
             materialZero.ambient = lightColor.ToVector4();

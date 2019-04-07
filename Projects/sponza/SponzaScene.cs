@@ -41,7 +41,7 @@ namespace Henzai.Examples
             var sponzaPC = sponzaModels.modelPC;
 
             for (int i = 0; i < sponzaPNTTB.MaterialCount; i++)
-                sponzaPNTTB.TryGetMaterial(i).ambient = Vector4.Zero;
+                sponzaPNTTB.GetMaterial(i).ambient = Vector4.Zero;
 
 
             var sponzaRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>(sponzaPNTTB,"PhongBitangentTexture","PhongBitangentTexture", VertexRuntimeTypes.VertexPositionNormalTextureTangentBitangent,PrimitiveTopology.TriangleList);
@@ -66,7 +66,7 @@ namespace Henzai.Examples
             // sunRuntimeState.CallTextureResourceSetGeneration+=ResourceGenerator.GenerateTextureResourceSetForNormalMapping;
 
             var skyBox = new Model<VertexPosition, RealtimeMaterial>("cloudtop", GeometryFactory.GenerateCube(true), new RealtimeMaterial());
-            var skyBoxMaterial = skyBox.TryGetMaterial(0);
+            var skyBoxMaterial = skyBox.GetMaterial(0);
             //skyBoxMaterial.cubeMapFront = "cloudtop_ft.png";
             //skyBoxMaterial.cubeMapBack = "cloudtop_bk.png";
             //skyBoxMaterial.cubeMapLeft = "cloudtop_lf.png";
@@ -82,7 +82,7 @@ namespace Henzai.Examples
             _skyBoxRuntimeState.CallTextureResourceSetGeneration += ResourceGenerator.GenerateTextureResourceSetForCubeMapping;
 
             _sun = new Model<VertexPositionNormal, RealtimeMaterial>(string.Empty, GeometryFactory.GenerateSphereNormal(100,100,1), new RealtimeMaterial());
-            _sun.TryGetMaterial(0).ambient = lightColor.ToVector4();
+            _sun.GetMaterial(0).ambient = lightColor.ToVector4();
             // _sun.meshes[0].TryGetMaterial().ambient = lightColor.ToVector4();
             ref Vector4 lightPos = ref _sceneRuntimeState.Light.LightPos_DontMutate;
             Vector3 newTranslation = new Vector3(lightPos.X,lightPos.Y,lightPos.Z);

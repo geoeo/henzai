@@ -45,7 +45,7 @@ namespace Henzai.Examples
             // Sun //TODO: Make this VertexPositionNormalColor
             _sun = new Model<VertexPositionNormal,RealtimeMaterial>(String.Empty, GeometryFactory.GenerateSphereNormal(100,100,1), new RealtimeMaterial());
             var sunMeshZero = _sun.GetMesh(0);
-            var sunMaterialZero = _sun.TryGetMaterial(0);
+            var sunMaterialZero = _sun.GetMaterial(0);
             // _sun.meshes[0].TryGetMaterial().ambient = new Vector4(0.0f,0.0f,0.0f,0.0f);
             sunMaterialZero.ambient = lightColor.ToVector4();
             ref Vector4 lightPos = ref _sceneRuntimeState.Light.LightPos_DontMutate;
@@ -58,7 +58,7 @@ namespace Henzai.Examples
 
             var spotlight = new Model<VertexPositionNormal, RealtimeMaterial>(String.Empty,GeometryFactory.GenerateSphereNormal(100,100,1), new RealtimeMaterial());
             var spotlightMeshZero = spotlight.GetMesh(0);
-            var spotlightMaterialZero = spotlight.TryGetMaterial(0);
+            var spotlightMaterialZero = spotlight.GetMaterial(0);
             spotlightMaterialZero.ambient = _sceneRuntimeState.SpotLight.Color_DontMutate;
             // spotlight.meshes[0].TryGetMaterial().ambient = new Vector4(1.0f,1.0f,1.0f,1.0f);
             // _sun.meshes[0].TryGetMaterial().ambient = lightColor.ToVector4();
@@ -105,7 +105,7 @@ namespace Henzai.Examples
             var instancingData = new InstancingData {Positions = offsets};
             var floor = new Model<VertexPositionNormalTextureTangentBitangent, RealtimeMaterial>("paving/",GeometryFactory.GenerateQuadPNTTB_XZ(), new RealtimeMaterial());
             var floorMeshZero = floor.GetMesh(0);
-            var flootMaterialZero = floor.TryGetMaterial(0);
+            var flootMaterialZero = floor.GetMaterial(0);
             flootMaterialZero.textureDiffuse="pavingColor.jpg";
             flootMaterialZero.textureNormal="pavingNorm.jpg";
             flootMaterialZero.ambient=new Vector4(0.3f,0.3f,0.3f,1.0f);

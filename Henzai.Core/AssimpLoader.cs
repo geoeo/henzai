@@ -179,6 +179,7 @@ namespace Henzai.Core
 
         }
 
+        //TODO add material enum, remove unused code
         public static Model<T, Core.Materials.RealtimeMaterial> LoadFromFile<T>(string baseDirectory, string localPath, VertexRuntimeTypes vertexType, PostProcessSteps flags = DefaultPostProcessSteps) where T : struct, VertexLocateable
         {
 
