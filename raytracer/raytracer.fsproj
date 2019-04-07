@@ -7,7 +7,6 @@
   <ItemGroup>
     <Compile Include="RuntimeParameters.fs" />
     <Compile Include="Camera.fs" />
-    <Compile Include="Material.fs" />
     <Compile Include="Surface.fs" />
     <Compile Include="Scene/Geometry.fs" />
     <Compile Include="Scene/Builder.fs" />

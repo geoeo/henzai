@@ -14,6 +14,7 @@ type Cosine = float32
 type Angle = float32
 type Radians = float32
 type ID = uint64
+type Color = Vector4
 
 /// Defines the basis along the viewing direction
 type CoordinateSystem = 

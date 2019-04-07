@@ -5,6 +5,7 @@ open System.Numerics
 open Raytracer.RuntimeParameters
 open HenzaiFunc.Core.Types
 open HenzaiFunc.Core.RaytraceGeometry
+open Henzai.Core.Materials;
 open Henzai.Core.Numerics
 open Raytracer
 
@@ -12,25 +13,25 @@ let randomState = Random()
    
 //TODO: Refactor namespace + Split this up    
 [<AbstractClass>]
-type Surface(id: ID, geometry : RaytracingGeometry, material : Raytracer.Material.Material) =
+type Surface(id: ID, geometry : RaytracingGeometry, material : RaytraceMaterial) =
     //let mutable samplesArray  = Array.zeroCreate<Ray*Raytracer.Material.Color> this.SampleCount
 
     abstract member Scatter: Ray -> LineParameter -> int -> bool*Ray*Cosine
-    abstract member Emitted : Material.Color 
+    abstract member Emitted : Color 
     abstract member SampleCount : int
     abstract member PDF : float32
-    abstract member BRDF : Raytracer.Material.Color
-    abstract member GenerateSamples : Ray -> LineParameter -> int -> (Ray* Material.Color)[]->(int*(Ray* Material.Color)[])
+    abstract member BRDF : Color
+    abstract member GenerateSamples : Ray -> LineParameter -> int -> (Ray* Color)[]->(int*(Ray* Color)[])
 
     member this.ID = id
     member this.Geometry = geometry
     member this.Material = material
     member this.MCComputeBRDF cosOfIncidence = this.BRDF*(cosOfIncidence/this.PDF)
     member this.ComputeSample (b : bool , ray : Ray , cosOfIncidience : Cosine) = (ray, this.MCComputeBRDF cosOfIncidience)
-    member this.SamplesArray  = Array.zeroCreate<Ray*Raytracer.Material.Color> this.SampleCount 
+    member this.SamplesArray  = Array.zeroCreate<Ray*Color> this.SampleCount 
 
     default this.Scatter _ _ _ = (true, Ray(Vector4.UnitX, Vector4.UnitX), 1.0f)
-    default this.Emitted = this.Material.Emmitance
+    default this.Emitted = this.Material.Emittance
     default this.SampleCount = noSampleCount
     default this.PDF = 1.0f
     default this.BRDF = this.Material.Albedo
@@ -54,13 +55,13 @@ type Surface(id: ID, geometry : RaytracingGeometry, material : Raytracer.Materia
         member this.IsBoundable = this.Geometry.AsBoundable.IsBoundable
 
 
-type NoSurface(id: ID, geometry : RaytracingGeometry, material : Raytracer.Material.Material) =
+type NoSurface(id: ID, geometry : RaytracingGeometry, material : RaytraceMaterial) =
     inherit Surface(id, geometry, material)
 
     override this.GenerateSamples _ _ _ _ = (noSampleCount, this.SamplesArray)
 
 let findClosestIntersection (ray : Ray) (surfaces : Surface[]) =
-    let mutable (bMin,tMin, vMin : Surface) = (false, Single.MaxValue, upcast (NoSurface(0UL, NotHitable(), Raytracer.Material.Material(Vector4.Zero))))
+    let mutable (bMin,tMin, vMin : Surface) = (false, Single.MaxValue, upcast (NoSurface(0UL, NotHitable(), RaytraceMaterial(Vector4.Zero))))
     for surface in surfaces do
         let (b,t) = surface.Geometry.AsHitable.Intersect ray
         if surface.Geometry.AsHitable.IntersectionAcceptable b t 1.0f (RaytraceGeometryUtils.PointForRay ray t) &&  t < tMin then
@@ -70,7 +71,7 @@ let findClosestIntersection (ray : Ray) (surfaces : Surface[]) =
 
     struct(bMin, tMin, vMin)
 
-type Lambertian(id: ID, geometry : RaytracingGeometry, material : Raytracer.Material.Material) =
+type Lambertian(id: ID, geometry : RaytracingGeometry, material : RaytraceMaterial) =
     inherit Surface(id, geometry, material)
 
     override this.SampleCount = lambertianSampleCount
@@ -94,7 +95,7 @@ type Lambertian(id: ID, geometry : RaytracingGeometry, material : Raytracer.Mate
         let outRay = Ray(positionOnSurface, outDir)
         (true, outRay, cosOfIncidence)
 
-type Metal(id: ID, geometry : RaytracingGeometry, material : Raytracer.Material.Material, fuzz : float32) =
+type Metal(id: ID, geometry : RaytracingGeometry, material : RaytraceMaterial, fuzz : float32) =
     inherit Surface(id, geometry, material)
 
     member this.Fuzz = MathF.Max(MathF.Min(1.0f, fuzz), 0.0f)
@@ -122,7 +123,7 @@ type Metal(id: ID, geometry : RaytracingGeometry, material : Raytracer.Material.
         (true,outRay,1.0f)
 
 // https://www.scratchapixel.com/lessons/3d-basic-rendering/introduction-to-shading/reflection-refraction-fresnel
-type Dielectric(id: ID, geometry : RaytracingGeometry, material : Raytracer.Material.Material, refractiveIndex : float32) =
+type Dielectric(id: ID, geometry : RaytracingGeometry, material : RaytraceMaterial, refractiveIndex : float32) =
     inherit Surface(id, geometry, material)
 
     override this.SampleCount = dialectricSampleCount
@@ -179,13 +180,13 @@ type Dielectric(id: ID, geometry : RaytracingGeometry, material : Raytracer.Mate
     override this.GenerateSamples (incommingRay : Ray) (t : LineParameter) (depthLevel : int) samplesArray =
         let (reflectProb, positionOnSurface, reflectDir, refractionDir) = this.CalcFresnel incommingRay t depthLevel
         let reflectRay = Ray(positionOnSurface, reflectDir)
-        let reflectShading : Material.Color = this.BRDF*reflectProb
+        let reflectShading : Color = this.BRDF*reflectProb
         if MathF.Round(reflectProb, 3) = 1.0f then 
             samplesArray.SetValue((reflectRay, reflectShading), 0)
             (1, samplesArray)
         else
             let refractRay = Ray(positionOnSurface, refractionDir)
-            let refractShading : Material.Color = this.BRDF*(1.0f - reflectProb)
+            let refractShading : Color = this.BRDF*(1.0f - reflectProb)
             // Since this is a "fake brdf" we need to multiply by 2 since we are diving by the sample count
             samplesArray.SetValue((reflectRay, 2.0f*reflectShading), 0)
             samplesArray.SetValue((refractRay, 2.0f*refractShading), 1)
