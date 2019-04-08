@@ -12,13 +12,13 @@ namespace Henzai.Core.VertexGeometry
         /// Holds a continuous list of verticies which pass the frustum test.
         /// The array may be larger than actual vertex count.
         /// </summary>
-        private readonly T[] _culledVertices;
+        private readonly T[] _validVertices;
         private readonly ushort[] _meshIndices;
         /// <summary>
         /// Holds a continuous list of indices which pass the frustum test.
         /// The array may be larger than actual index count.
         /// </summary>
-        private readonly ushort[] _culledMeshIndices;
+        private readonly ushort[] _validMeshIndices;
 
         /// <summary>
         /// The number of indices that passed the frustum test.
@@ -32,9 +32,8 @@ namespace Henzai.Core.VertexGeometry
         public int NumberOfValidVertices {get; set;}
         public T[] GetVertices => _vertices;
         public ushort[] GetIndices => _meshIndices;
-        //TODO: Change naming. These are NOT culled vertices but non-culled!
-        public T[] GetValidVertices => _culledVertices;
-        public ushort[] GetValidIndices => _culledMeshIndices;
+        public T[] GetValidVertices => _validVertices;
+        public ushort[] GetValidIndices => _validMeshIndices;
         public int VertexCount => _vertices.Length;
         public int IndicesCount => _meshIndices.Length;
         public int ValidVertexCount => NumberOfValidVertices;
@@ -51,13 +50,13 @@ namespace Henzai.Core.VertexGeometry
             Debug.Assert(meshIndices != null);
 
             _vertices = vertices;
-            _culledVertices = new T[vertices.Length];
-            CopyArrayOfStructs(_vertices, _culledVertices);
+            _validVertices = new T[vertices.Length];
+            CopyArrayOfStructs(_vertices, _validVertices);
             NumberOfValidVertices = vertices.Length;
 
             _meshIndices = meshIndices;
-            _culledMeshIndices = new ushort[meshIndices.Length];
-            Buffer.BlockCopy(meshIndices,0,_culledMeshIndices,0,meshIndices.Length * sizeof(ushort));
+            _validMeshIndices = new ushort[meshIndices.Length];
+            Buffer.BlockCopy(meshIndices,0,_validMeshIndices,0,meshIndices.Length * sizeof(ushort));
             NumberOfValidIndicies = meshIndices.Length;
 
             ProcessedIndicesMap = new Dictionary<ushort, bool>();
@@ -67,13 +66,13 @@ namespace Henzai.Core.VertexGeometry
             Debug.Assert(vertices != null);
 
             _vertices = vertices;
-            _culledVertices = new T[vertices.Length];
-            CopyArrayOfStructs(_vertices, _culledVertices);
+            _validVertices = new T[vertices.Length];
+            CopyArrayOfStructs(_vertices, _validVertices);
             NumberOfValidVertices = vertices.Length;
 
             _meshIndices = null;
             NumberOfValidIndicies = 0;
-            _culledMeshIndices = null;
+            _validMeshIndices = null;
 
             ProcessedIndicesMap = new Dictionary<ushort, bool>();
         }
