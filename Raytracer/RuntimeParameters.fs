@@ -11,7 +11,7 @@ let width = 800
 let height = 640
 let samplesPerPixel = 1
 let batchSize = 1
-let maxTraceDepth = 5us
+let maxTraceDepth = 1us
 
 let outputDir = "Output/"
 let sceneImageName = "scene.jpg"
