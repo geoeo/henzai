@@ -48,6 +48,7 @@ type Triangle(v0 : Vector3, v1 : Vector3, v2 : Vector3) =
                            -e2.X/normal.Z, e1.X/normal.Z, normal.Y/normal.Z, 0.0f,
                            0.0f, 0.0f, 1.0f, 0.0f,
                            crossV2V0.Z/normal.Z, -crossV1V0.Z/normal.Z, -nDotV0/normal.Z, 1.0f)
+                           
 
         interface Hitable with
             override this.TMin = 0.000001f
@@ -86,6 +87,8 @@ type Triangle(v0 : Vector3, v1 : Vector3, v2 : Vector3) =
                 AABB(pMin, pMax)
 
             override this.IsBoundable = true
+
+        member this.GetVertices = [v0;v1;v2]
             
         static member CreateTriangleFromVertexStructs<'T when 'T : struct and 'T :> VertexLocateable>(a : 'T, b : 'T, c : 'T)
            = Triangle(a.GetPosition(), b.GetPosition(), c.GetPosition())
