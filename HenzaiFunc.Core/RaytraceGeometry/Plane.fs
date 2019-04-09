@@ -86,8 +86,8 @@ type Plane(plane : System.Numerics.Plane, center : Point option, width : float32
                 let yMax = MathF.Max(p1ObjSpace.Y, MathF.Max(p2ObjSpace.Y, MathF.Max(p3ObjSpace.Y, MathF.Max(p4ObjSpace.Y, MathF.Max(p5ObjSpace.Y, MathF.Max(p6ObjSpace.Y, MathF.Max(p7ObjSpace.Y, p8ObjSpace.Y)))))))
                 let zMax = MathF.Max(p1ObjSpace.Z, MathF.Max(p2ObjSpace.Z, MathF.Max(p3ObjSpace.Z, MathF.Max(p4ObjSpace.Z, MathF.Max(p5ObjSpace.Z, MathF.Max(p6ObjSpace.Z, MathF.Max(p7ObjSpace.Z, p8ObjSpace.Z)))))))
 
-                let pMin = Vector4(MathF.Round(xMin), MathF.Round(yMin), MathF.Round(zMin), 0.0f)
-                let pMax = Vector4(MathF.Round(xMax), MathF.Round(yMax), MathF.Round(zMax), 0.0f)
+                let pMin = Vector4(MathF.Round(xMin), MathF.Round(yMin), MathF.Round(zMin), 1.0f)
+                let pMax = Vector4(MathF.Round(xMax), MathF.Round(yMax), MathF.Round(zMax), 1.0f)
 
 
                                  

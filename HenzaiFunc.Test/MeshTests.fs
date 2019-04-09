@@ -64,7 +64,7 @@ let intersectBVHBoxTest () =
     let struct(isHit_XPos, tHit_XPos, surfaceOption_XPos) = bvhRuntime.traverse bvhRuntimeArray orderedSurfaceArray bvhTraversalStack rayXPos
 
     let struct(isHit_YNeg, tHit_YNeg, surfaceOption_YNeg) = bvhRuntime.traverse bvhRuntimeArray orderedSurfaceArray bvhTraversalStack rayYNeg
-    let struct(isHit_YPos, tHit_YNeg, surfaceOption_YNeg) = bvhRuntime.traverse bvhRuntimeArray orderedSurfaceArray bvhTraversalStack rayYPos
+    let struct(isHit_YPos, tHit_YPos, surfaceOption_YPos) = bvhRuntime.traverse bvhRuntimeArray orderedSurfaceArray bvhTraversalStack rayYPos
 
     Assert.Equal(true, isHit_ZNeg)
     Assert.Equal(true, isHit_ZPos)

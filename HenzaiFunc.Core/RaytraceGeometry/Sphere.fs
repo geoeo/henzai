@@ -85,8 +85,8 @@ type Sphere(sphereCenter : Point, radius : Radius) =
         interface AxisAlignedBoundable with
             override this.GetBounds =
 
-                let pMin = center + Vector4(-radius, -radius, -radius, 0.0f)
-                let pMax = center + Vector4(radius, radius, radius, 0.0f)
+                let pMin = center + Vector4(-radius, -radius, -radius, 1.0f)
+                let pMax = center + Vector4(radius, radius, radius, 1.0f)
 
                 AABB(pMin, pMax)
 
