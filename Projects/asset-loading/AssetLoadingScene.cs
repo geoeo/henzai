@@ -55,7 +55,7 @@ namespace Henzai.Examples
             //string filePath = Path.Combine(AppContext.BaseDirectory, "Models/300_polygon_sphere_100mm.STL");
             // string filePath =  "Models/sphere_centered.obj";
             //string filePath = "Models/chinesedragon.dae";
-            string filePath = "Models/sphere_centered.obj";
+            string filePath = "Models/Box.dae";
             _model = AssimpLoader.LoadFromFileWithRealtimeMaterial<VertexPositionNormal>(AppContext.BaseDirectory, filePath, VertexPositionNormal.HenzaiType);
             //GeometryUtils.GenerateSphericalTextureCoordinatesFor(_model.meshes[0]);
 

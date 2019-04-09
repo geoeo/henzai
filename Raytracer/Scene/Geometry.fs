@@ -141,3 +141,8 @@ let triangle_scene : Surface list = [
             Lambertian(assignIDAndIncrement id,Triangle(Vector3(-14.0f,-6.0f,-18.0f),Vector3(-10.0f,-6.0f,-18.0f),Vector3(-12.0f,0.0f,-18.0f)),RaytraceMaterial(Rgba32.RoyalBlue));
 ]
 
+let triangle_scene_y : Surface list = [
+            //Lambertian(assignIDAndIncrement id,Triangle(Vector3(-13.0f,-6.0f,-16.0f),Vector3(-17.0f,-6.0f,-16.0f),Vector3(-15.0f,-3.0f,-16.0f)),RaytraceMaterial(Rgba32.White));
+            Lambertian(assignIDAndIncrement id,Triangle(Vector3(-14.0f,-4.0f,-10.0f),Vector3(-10.0f,-4.0f,-10.0f),Vector3(-14.0f,-4.0f,-14.0f)),RaytraceMaterial(Rgba32.RoyalBlue));
+]
+

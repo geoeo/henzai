@@ -30,7 +30,9 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
 
     //TODO: Refactor this into camera
     let cameraOriginWS = Vector3(-3.0f, 6.0f, 15.0f)
-    let lookAt = Vector3(-1.0f, 1.0f, -10.0f)
+    //let cameraOriginWS = Vector3(-10.0f, 0.0f, 0.0f)
+    let lookAt = Vector3(-1.0f, -1.0f, -10.0f)
+    //let lookAt = Vector3(1.0f, 0.0f, 0.0f)
     // let lookAt = Vector3(0.0f,0.0f,-10.0f)
 
     let viewMatrix = WorldToCamera cameraOriginWS lookAt Vector3.UnitY

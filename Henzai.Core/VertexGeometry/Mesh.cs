@@ -1,3 +1,4 @@
+using System;
 using System.Numerics;
 
 namespace Henzai.Core.VertexGeometry
@@ -37,6 +38,19 @@ namespace Henzai.Core.VertexGeometry
 
         public void SetNewWorldTranslation(ref Vector3 translation){
             _world.Translation = translation;
+        }
+
+        public void PrintAllVertexPositions(){
+            foreach(T vertex in Vertices){
+                var pos = vertex.GetPosition();
+                Console.WriteLine($"X:{pos.X} Y:{pos.Y} Z:{pos.Z}");
+            }
+
+        }
+
+        public void PrintAllVertexIndices(){
+            foreach (ushort index in MeshIndices)
+                Console.WriteLine($"{index}");
         }
 
     }
