@@ -40,7 +40,7 @@ type IndexedTriangle<'T when 'T : struct and 'T :> VertexLocateable>(i0 : int, i
             let nDotV0 = Vector.InMemoryDotProduct(ref normalVec3, ref v0)
             if normalXAbs > normalYAbs && normalXAbs > normalZAbs then
                 Matrix4x4(0.0f, 0.0f, 1.0f, 0.0f, 
-                          e2.Z/normal.X, -e1.Z/normal.X, normal.Y/normal.Z, 0.0f,
+                          e2.Z/normal.X, -e1.Z/normal.X, normal.Y/normal.X, 0.0f,
                           -e2.Y/normal.X, e1.Y/normal.X, normal.Z/normal.X, 0.0f,
                           crossV2V0.X/normal.X, -crossV1V0.X/normal.X, -nDotV0/normal.X, 1.0f)
             elif normalYAbs > normalZAbs then
