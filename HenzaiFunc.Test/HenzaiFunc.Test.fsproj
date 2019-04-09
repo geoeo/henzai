@@ -12,10 +12,19 @@
     <Compile Include="AABBTests.fs" />
     <Compile Include="BVHPlaneTests.fs" />
     <Compile Include="PlaneTests.fs" />
+    <Compile Include="MeshTests.fs" />
     <Compile Include="Program.fs" />
     <ProjectReference Include="../HenzaiFunc.Core/HenzaiFunc.Core.fsproj" />
+    <ProjectReference Include="../Raytracer/raytracer.fsproj" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
     <PackageReference Include="xunit" Version="2.4.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="../Assets/Models/Box.dae">
+      <Link>Models/Box.dae</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 </Project>

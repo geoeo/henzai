@@ -33,29 +33,37 @@ let convertModelToSurfaceList (model: Model<'T, RaytraceMaterial>) =
             let i2 = (int)indices.[j+1]
             let i3 = (int)indices.[j+2]
 
-            let triangle = new IndexedTriangle<'T>(i1, i2, i3, vertices)
-            let surface = new Lambertian(assignIDAndIncrement id, triangle, material)
+            let p1 = vertices.[i1].GetPosition()
+            let p2 = vertices.[i2].GetPosition()
+            let p3 = vertices.[i3].GetPosition()
+
+
+            //let triangle = new IndexedTriangle<'T>(i1, i2, i3, vertices)
+            let triangle = Triangle(p1, p2, p3)
+            let surface = Lambertian(assignIDAndIncrement id, triangle, material)
             surfaceList <- surface :> Surface :: surfaceList
 
     surfaceList
 
 let loadAssets = 
-    let sceneList = List.concat [lightsAA;triangle_scene_y;spheres_scene_2;light_sphere;planes_scene_2_AA]
-    //let rtModel = AssimpLoader.LoadFromFileWithRealtimeMaterial<VertexPositionNormal>(AppContext.BaseDirectory, "Models/Box.dae", VertexPositionNormal.HenzaiType)
-    let rtModel = AssimpLoader.LoadFromFileWithRealtimeMaterial<VertexPositionNormal>(AppContext.BaseDirectory, "Models/duck.dae", VertexPositionNormal.HenzaiType)
+    let sceneList = List.concat [lightsAA;triangle_scene;spheres_scene_2;light_sphere;planes_scene_2_AA]
+    let rtModel = AssimpLoader.LoadFromFileWithRealtimeMaterial<VertexPositionNormal>(AppContext.BaseDirectory, "Models/Box.dae", VertexPositionNormal.HenzaiType)
+    //let rtModel = AssimpLoader.LoadFromFileWithRealtimeMaterial<VertexPositionNormal>(AppContext.BaseDirectory, "Models/duck.dae", VertexPositionNormal.HenzaiType)
+    //let rtModel = AssimpLoader.LoadFromFileWithRealtimeMaterial<VertexPositionNormal>(AppContext.BaseDirectory, "Models/sphere_centered.obj", VertexPositionNormal.HenzaiType)
     let raytracingModel = Model<VertexPositionNormal,RealtimeMaterial>.ConvertToRaytracingModel(rtModel);
     let modelSurfaceList = convertModelToSurfaceList raytracingModel
-    //let sceneNonBoundableArray : Surface[] = List.concat [modelSurfaceList] |> Array.ofList
+    let sceneNonBoundableArray : Surface[] = List.concat [modelSurfaceList] |> Array.ofList
     //let sceneNonBoundableArray : Surface[] = List.concat [lightsAA;lightsNonAA;triangle_scene_y;plane_floor_Unbounded] |> Array.ofList
     //let sceneNonBoundableArray : Surface[] = List.concat [plane_floor_Unbounded;lightsNonAA;plane_mirror_NonAA] |> Array.ofList
     let sceneArray : Surface[] = modelSurfaceList |> Array.ofList
     //let sceneArray : Surface[] = sceneList |> Array.ofList
     //(sceneArray, sceneNonBoundableArray)
+    //(sceneArray, emptySurfaceArray)
     (sceneArray, emptySurfaceArray)
 
 let constructBVHTree surfaceArray = 
     let bvhTreeBuilder = BVHTreeBuilder<Surface>()
-    bvhTreeBuilder.build surfaceArray SplitMethods.SAH
+    bvhTreeBuilder.build surfaceArray SplitMethods.Middle
 
   
     

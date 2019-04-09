@@ -8,6 +8,11 @@ open HenzaiFunc.Core.RaytraceGeometry
 /// Implements methods to generate a BVH BST
 type BVHTreeBuilder<'T when 'T :> AxisAlignedBoundable>() =
 
+    //TODO: Revert to defaults
+    let minPrimitivesForSplit = 1 //255
+
+    let leafCostForSplit nPrimitives = 1.0f //float32 nPrimitives
+
     let buildBVHInfoArray ( geometryArray : 'T [] ) =
         Array.mapi (fun i (elem : 'T) -> BVHPrimitive(i, elem.GetBounds)) geometryArray
 
@@ -55,26 +60,6 @@ type BVHTreeBuilder<'T when 'T :> AxisAlignedBoundable>() =
                     bucketCounts.[b] <- bucketCounts.[b] + 1
                     bucketBounds.[b] <- AABB.unionWithAABB bucketBounds.[b] aabbOfIndex
 
-                // Computing Cost p.267 
-                //O(N*N) 
-                (*
-                for i in 0..nBuckets-2 do
-                    let mutable b0 = AABB()
-                    let mutable b1 = AABB()
-
-                    let mutable count0 = 0
-                    let mutable count1 = 0
-                    for j in 0..i do
-                        b0 <- AABB.unionWithAABB b0 bucketBounds.[j]
-                        count0 <- count0 + bucketCounts.[j]
-                    for j in i+1..nBuckets-1 do
-                        b1 <- AABB.unionWithAABB b1 bucketBounds.[j]
-                        count1 <- count1 + bucketCounts.[j]  
-                    bucketCosts.[i] <- 
-                        traversalCost + 
-                        ((float32 count0)*AABB.surfaceArea b0 + (float32 count1)*AABB.surfaceArea b1) / (AABB.surfaceArea centroidBounds)
-                *)
-
                 // Using scans O(N)
                 let foldCount countAcc count = count + countAcc
                 let foldBounds boundsAcc bounds = AABB.unionWithAABB boundsAcc bounds
@@ -98,8 +83,7 @@ type BVHTreeBuilder<'T when 'T :> AxisAlignedBoundable>() =
                 let struct(minCost, minCostIndex, accIndex) = Array.fold (fun struct(accCost, minIndex, accIndex) v -> if accCost < v then struct(accCost, minIndex, accIndex+1) else struct(v, accIndex+1, accIndex+1)) struct(System.Single.MaxValue, -1, -1) bucketCosts
 
                 //Create leaf or split
-                let leafCost = float32 nPrimitives
-                if nPrimitives > 255 || minCost < leafCost then
+                if nPrimitives < minPrimitivesForSplit || minCost < leafCostForSplit nPrimitives then 
                     struct(start, bvhInfoSubArray, [||])
                 else
                     let partitionFunc (elem : BVHPrimitive) =

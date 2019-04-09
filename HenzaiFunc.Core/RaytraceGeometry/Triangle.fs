@@ -74,7 +74,7 @@ type Triangle(v0 : Vector3, v1 : Vector3, v2 : Vector3) =
 
                 (0.0f <= barycentric.X && barycentric.X <= 1.0f && 
                  0.0f <= barycentric.Y && barycentric.Y <= 1.0f &&
-                 barycentric.X+barycentric.Y <= 1.0f, t)
+                 barycentric.X+barycentric.Y <= 1.0f, tWorld)
 
         interface AxisAlignedBoundable with
             override this.GetBounds =
