@@ -16,8 +16,10 @@ namespace Henzai.Core.VertexGeometry
 
         public int VertexCount => _geometryDefinition.VertexCount;
         public int IndicesCount => _geometryDefinition.IndicesCount;
+        public int FaceCount => _geometryDefinition.VertexCount / 3;
         public int ValidVertexCount => _geometryDefinition.ValidVertexCount;
         public int ValidIndicesCount => _geometryDefinition.ValidIndicesCount;
+        public int ValidFaceCount => _geometryDefinition.ValidVertexCount / 3;
         private Matrix4x4 _world = Matrix4x4.Identity;
         public ref Matrix4x4 World => ref _world;
         public bool IsCulled => _geometryDefinition.IsCulled;

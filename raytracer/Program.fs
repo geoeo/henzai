@@ -3,6 +3,7 @@ open Raytracer.Scene.Runtime
 open BenchmarkDotNet.Running
 open Raytracer.Surface
 open HenzaiFunc.Core.Acceleration
+open HenzaiFunc.Core.Types
 
 
 let benchmarkScene = lazy BenchmarkRunner.Run<RuntimeScene>()
@@ -20,7 +21,7 @@ let main argv =
 
     printfn "Constructing BVH Tree.."
     stopWatch.Restart()
-    let (bvhTree, orderedSurfaceArray, totalNodeCount) = constructBVHTree sceneArray
+    let (bvhTree, orderedSurfaceArray, totalNodeCount) = constructBVHTree sceneArray SplitMethods.SAH
     let bvhRuntime = BVHRuntime<Surface>()
     let bvhRuntimeArray = bvhRuntime.constructBVHRuntime bvhTree totalNodeCount
     stopWatch.Stop()
