@@ -32,7 +32,6 @@ let vertexArray =
         Vector3(-0.5f,-0.5f,0.5f)
         Vector3(-0.5f,0.5f,-0.5f)
         Vector3(0.5f,-0.5f,-0.5f)
-
     |]
 
 let indexArray = 
@@ -70,25 +69,10 @@ let buildBVHBoxTest () =
     for node in bvhRuntimeArray do
         let nodePrimitives = node.nPrimitives
         nPrimitives <- nPrimitives + nodePrimitives
-        if nodePrimitives > 0 then
-            let offSet = node.leafNode.primitivesOffset
-            for i in offSet..(offSet + nPrimitives - 1) do
-                let triangle = orderedSurfaceArray.[i].Geometry :?> Triangle
-                let vertices = triangle.GetVertices
-                for vertex in vertices do
-                    let index = Array.IndexOf(vertexArray, vertex)
-                    if index <> -1 then
-                        indexMap <- indexMap.Add(index, true)
 
     Assert.Equal(12, nPrimitives)
-    Assert.True(indexMap.Item 0)
-    Assert.True(indexMap.Item 1)
-    Assert.True(indexMap.Item 2)
-    Assert.True(indexMap.Item 3)
-    Assert.True(indexMap.Item 4)
-    Assert.True(indexMap.Item 5)
-    Assert.True(indexMap.Item 6)
-    Assert.True(indexMap.Item 7)
+    Assert.Equal(12, surfaceArray.Length)
+    Assert.Equal(12, orderedSurfaceArray.Length)
 
 [<Fact>]
 let intersectBVHBoxZTest () =
@@ -98,6 +82,7 @@ let intersectBVHBoxZTest () =
     let raytracingModel = Model<VertexPositionNormal,RealtimeMaterial>.ConvertToRaytracingModel(rtModel);
     let modelSurfaceList = convertModelToSurfaceList raytracingModel
     let surfaceArray : Surface[] = modelSurfaceList |> Array.ofList
+
     let (bvhTree, orderedSurfaceArray, totalNodeCount) = bvhTreeBuilder.build surfaceArray SplitMethods.Middle
     let bvhRuntimeArray = bvhRuntime.constructBVHRuntime bvhTree totalNodeCount
     let bvhTraversalStack = Array.zeroCreate bvhRuntimeArray.Length

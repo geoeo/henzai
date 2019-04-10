@@ -9,9 +9,9 @@ open HenzaiFunc.Core.RaytraceGeometry
 type BVHTreeBuilder<'T when 'T :> AxisAlignedBoundable>() =
 
     //TODO: Revert to defaults
-    let minPrimitivesForSplit = 1 //255
+    let minPrimitivesForSplit = 255
 
-    let leafCostForSplit nPrimitives = 1.0f //float32 nPrimitives
+    let leafCostForSplit nPrimitives = float32 nPrimitives
 
     let buildBVHInfoArray ( geometryArray : 'T [] ) =
         Array.mapi (fun i (elem : 'T) -> BVHPrimitive(i, elem.GetBounds)) geometryArray
@@ -99,7 +99,7 @@ type BVHTreeBuilder<'T when 'T :> AxisAlignedBoundable>() =
 
     let buildLeafFromMultiplePrimitives bvhInfoArray (geometryArray: 'T []) subArray orderedGeometryList centroidBounds nPrimitives axis =
         let bounds = Array.fold (fun acc (elem : BVHPrimitive) -> AABB.unionWithAABB acc elem.aabb) (AABB()) subArray
-        let newOrderedList = Array.fold (fun acc (elem : BVHPrimitive) -> (geometryArray.[elem.indexOfBoundable] :: acc)) orderedGeometryList bvhInfoArray
+        let newOrderedList = Array.fold (fun acc (elem : BVHPrimitive) -> (geometryArray.[elem.indexOfBoundable] :: acc)) orderedGeometryList subArray
         let leaf = Node (BVHBuildNode(SplitAxis.None, orderedGeometryList.Length, nPrimitives, bounds), Empty, Empty)
         (leaf, newOrderedList, 1)
 
