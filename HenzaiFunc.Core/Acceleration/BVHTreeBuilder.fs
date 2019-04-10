@@ -9,7 +9,7 @@ open HenzaiFunc.Core.RaytraceGeometry
 type BVHTreeBuilder<'T when 'T :> AxisAlignedBoundable>() =
 
     //TODO: Revert to defaults
-    let minPrimitivesForSplit = 255
+    let minPrimitivesForSplit = 32
 
     let leafCostForSplit nPrimitives = float32 nPrimitives
 
