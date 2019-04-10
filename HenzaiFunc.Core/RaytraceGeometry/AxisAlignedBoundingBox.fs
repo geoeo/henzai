@@ -33,9 +33,8 @@ type AABB(pMin : MinPoint, pMax : MaxPoint) =
         // Optimized Ray Box Intersection Phyisically Based Rendering Third Edition p. 129
         // TODO: investigate performance improvement when passing in invDir
         member this.Intersect ray = 
-            //let mutable isAcceptable = true
-            let invDir = Vector3(1.0f / ray.Direction.X, 1.0f/ ray.Direction.Y, 1.0f / ray.Direction.Z)
-            let struct(isXDirNeg, isYDirNeg, isZDirNeg) = struct(invDir.X < 0.0f, invDir.Y < 0.0f, invDir.Z < 0.0f)
+            let invDir = Vector4(1.0f / ray.Direction.X, 1.0f/ ray.Direction.Y, 1.0f / ray.Direction.Z, 0.0f)
+            let (isXDirNeg, isYDirNeg, isZDirNeg) = (invDir.X < 0.0f, invDir.Y < 0.0f, invDir.Z < 0.0f)
             let gamma3 = (RaytraceGeometryUtils.gamma 3)
 
             let mutable tMin = (this.boundingCorners.[Utils.boolToInt isXDirNeg].X - ray.Origin.X) * invDir.X
@@ -54,15 +53,10 @@ type AABB(pMin : MinPoint, pMax : MaxPoint) =
             if tzMin > tMin then tMin <- tzMin else ()
             if tzMax < tMax then tMax <- tzMax else ()
 
-            // if insinde a box tMin might be negative 
-            // in that case return tMax
-            //if tMin < 0.0f then tMin <- tMax else ()
-
-
-            (tMin < this.AsHitable.TMax && tMax > 0.0f && passed , tMin)
+            struct(tMin < this.AsHitable.TMax && tMax > 0.0f && passed , tMin)
 
         member this.HasIntersection ray =
-            let (hasIntersection, t) = this.AsHitable.Intersect ray 
+            let struct(hasIntersection, t) = this.AsHitable.Intersect ray 
             let p = ray.Origin + t*ray.Direction
             this.AsHitable.IntersectionAcceptable hasIntersection t 0.0f p
         member this.IntersectionAcceptable hasIntersection t _ _ = hasIntersection

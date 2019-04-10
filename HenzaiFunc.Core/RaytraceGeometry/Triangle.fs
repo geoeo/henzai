@@ -59,7 +59,7 @@ type Triangle(v0 : Vector3, v1 : Vector3, v2 : Vector3) =
                 hasIntersection && t > this.AsHitable.TMin
 
             override this.HasIntersection (ray:Ray) = 
-                let (hasIntersection,_) = this.AsHitable.Intersect ray 
+                let struct(hasIntersection,_) = this.AsHitable.Intersect ray 
                 hasIntersection
                 
             override this.Intersect (ray:Ray) =
@@ -73,7 +73,7 @@ type Triangle(v0 : Vector3, v1 : Vector3, v2 : Vector3) =
                 let intersectionWorld = Vector4.Transform(barycentric, localToWorld)
                 let tWorld = Vector4.Distance(intersectionWorld, rayOriginHomogeneous)
 
-                (0.0f <= barycentric.X && barycentric.X <= 1.0f && 
+                struct(0.0f <= barycentric.X && barycentric.X <= 1.0f && 
                  0.0f <= barycentric.Y && barycentric.Y <= 1.0f &&
                  barycentric.X+barycentric.Y <= 1.0f, tWorld)
 

@@ -155,6 +155,7 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
         frameBuffer.[px,py] <- Vector4.SquareRoot(avgColor)
         // frameBuffer.[px,py] <- Vector4(avgColor,1.0f)
 
+    //TODO: Run pixel "squares" concurrently
     [<Benchmark>]
     member self.RenderScene() =
         for px in 0..width-1 do

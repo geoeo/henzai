@@ -62,11 +62,11 @@ type Sphere(sphereCenter : Point, radius : Radius) =
             override this.Intersect (ray : Ray) = 
                 let (hasIntersection,i1,i2) = this.Intersections (ray : Ray)
                 if i1 >= this.AsHitable.TMin && i2 >= this.AsHitable.TMin then
-                    (hasIntersection, MathF.Min(i1, i2))
+                    struct(hasIntersection, MathF.Min(i1, i2))
                 else if i1 < 0.0f then
-                    (hasIntersection, i2)
+                    struct(hasIntersection, i2)
                 else
-                    (hasIntersection, i1)
+                    struct(hasIntersection, i1)
 
             override this.NormalForSurfacePoint (positionOnSphere:Point) =
                 Vector4.Normalize((positionOnSphere - center))

@@ -8,7 +8,7 @@ module RaytraceGeometryUtils =
 
     /// Does the ray penetrating the surface have a t < tCompare
     let IsIntersectionInfrontOf (geometry : Hitable) (ray : Ray) (tCompare : LineParameter) = 
-            let (hasIntersections,t) = geometry.Intersect ray
+            let struct(hasIntersections,t) = geometry.Intersect ray
             if hasIntersections && t > geometry.TMin then t < tCompare else false
 
     let PointForRay (ray : Ray) (t : LineParameter) = ray.Origin + t*ray.Direction

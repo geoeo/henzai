@@ -67,8 +67,8 @@ type BVHRuntime<'T when 'T :> Hitable>() =
 
     /// Finds the closest intersection for the given ray
     member this.traverse (bvhArray : BVHRuntimeNode []) (orderedPrimitives : 'T []) (nodesToVisit : int[]) (ray : Ray) = 
-        let invDir = Vector3(1.0f / ray.Direction.X, 1.0f/ ray.Direction.Y, 1.0f / ray.Direction.Z)
-        let struct(isXDirNeg, isYDirNeg, isZDirNeg) = struct(invDir.X < 0.0f, invDir.Y < 0.0f, invDir.Z < 0.0f)
+        let invDir = Vector4(1.0f / ray.Direction.X, 1.0f/ ray.Direction.Y, 1.0f / ray.Direction.Z, 0.0f)
+        let (isXDirNeg, isYDirNeg, isZDirNeg) = (invDir.X < 0.0f, invDir.Y < 0.0f, invDir.Z < 0.0f)
         let mutable toVisitOffset = 0
         let mutable currentNodeIndex = 0
         let mutable hasIntersection = false
@@ -78,14 +78,14 @@ type BVHRuntime<'T when 'T :> Hitable>() =
 
         while toVisitOffset >= 0 do
             let node = bvhArray.[currentNodeIndex]
-            let id = node.leafNode.primitivesOffset
+            let primitiveOffset = node.leafNode.primitivesOffset
             let nPrimitives = node.nPrimitives
-            if node.aabb.AsHitable.HasIntersection ray then
+            if node.aabb.AsHitable.HasIntersection ray then 
                 // leaf
                 if nPrimitives > 0 then
                     for i in 0..nPrimitives-1 do
-                        let geometry = orderedPrimitives.[node.leafNode.primitivesOffset + i]
-                        let (leafHasIntersection, leafHit) = geometry.Intersect ray
+                        let geometry = orderedPrimitives.[primitiveOffset + i]
+                        let struct(leafHasIntersection, leafHit) = geometry.Intersect ray 
                         let point = ray.Origin + leafHit*ray.Direction
                         let intersectionAcceptable = geometry.IntersectionAcceptable leafHasIntersection leafHit 0.0f point
                         if intersectionAcceptable && leafHit < tHit then

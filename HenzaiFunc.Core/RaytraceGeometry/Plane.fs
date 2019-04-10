@@ -122,16 +122,16 @@ type Plane(plane : System.Numerics.Plane, center : Point option, width : float32
                 // plane store the distance from the plane to the origin i.e. we have to invert
                 let numerator = Plane.DotNormal(plane,  Henzai.Core.Numerics.Vector.ToVec3(-kern - ray.Origin))
                 let denominator = Plane.DotNormal(plane, Henzai.Core.Numerics.Vector.ToVec3(ray.Direction))
-                if Math.Abs(denominator) < this.AsHitable.TMin || Math.Abs(numerator) < this.AsHitable.TMin  then (false, 0.0f)
+                if Math.Abs(denominator) < this.AsHitable.TMin || Math.Abs(numerator) < this.AsHitable.TMin  then struct(false, 0.0f)
                 else 
                     let t = numerator / denominator
-                    if t < 0.0f then (false, 0.0f)
+                    if t < 0.0f then struct(false, 0.0f)
                     else
                         let pointOnSurface = ray.Origin + t*ray.Direction
-                        (pointLiesInRectangle pointOnSurface, t)
+                        struct(pointLiesInRectangle pointOnSurface, t)
 
             override this.HasIntersection (ray:Ray) = 
-                let (hasIntersection, _) = this.AsHitable.Intersect ray 
+                let struct(hasIntersection, _) = this.AsHitable.Intersect ray 
                 hasIntersection
             // dotView factor ensures sampling "straight" at very large distances due to fov
             override this.IntersectionAcceptable hasIntersection t dotViewTrace pointOnSurface =
