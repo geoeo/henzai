@@ -8,6 +8,7 @@ open Henzai.Core.Numerics
 type Plane(plane : System.Numerics.Plane, center : Point option, width : float32 option, height : float32 option) = 
     inherit RaytracingGeometry () with
 
+        //TODO: Make center Vector4 aswell?
         new(plane : System.Numerics.Plane, center : Vector3, width : float32, height : float32) =
             Plane(plane, Some (Vector.ToHomogeneous(ref center, 1.0f)), Some width, Some height)
             
@@ -15,12 +16,6 @@ type Plane(plane : System.Numerics.Plane, center : Point option, width : float32
         let plane = plane
 
         let normal = Vector4.Normalize(Vector4(plane.Normal, 0.0f))
-
-        let center = center
-
-        let width = width
-
-        let height = height
 
         let widthOff = if width.IsNone then 0.0f else width.Value / 2.0f
 

@@ -7,25 +7,13 @@ open HenzaiFunc.Core.Acceleration
 open Henzai.Core.Numerics
    
 
-type Sphere(sphereCenter : Point, radius : Radius) =
+type Sphere(center : Point, radius : Radius) =
     inherit RaytracingGeometry() with
 
         new(sphereCenter : Vector3, radius : Radius) = 
             Sphere(Vector.ToHomogeneous(ref sphereCenter, 1.0f), radius)
 
         // override this.TMin = 0.000001f// 0.0001// 0.000001f
-        let center = sphereCenter
-
-        let radius = radius
-        
-        // values for calculating a bounding box 
-        let minThetaBounding = 14.0f*MathF.PI / 8.0f
-
-        let minPhiBounding = 3.0f*MathF.PI/ 4.0f
-
-        let maxThetaBounding = 6.0f * MathF.PI / 8.0f
-
-        let maxPhiBounding = MathF.PI / 4.0f
 
         // http://mathworld.wolfram.com/Sphere.html
         static member ParametricEquationOfASpehre (r : Radius) (phi : Radians) (theta : Radians) = 
