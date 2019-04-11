@@ -115,7 +115,7 @@
         },
         {
             "label": "build raytracer",
-            "command": "dotnet build Raytracer/raytracer.csproj",
+            "command": "dotnet build Raytracer/raytracer.fsproj",
             "type": "shell",
             "group": "build",
             "presentation": {

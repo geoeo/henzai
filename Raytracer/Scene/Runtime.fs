@@ -15,10 +15,12 @@ open Raytracer.RuntimeParameters
 open BenchmarkDotNet.Attributes
 
 type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvhRuntime : BVHRuntime<Surface>, bvhRuntimeArray : BVHRuntimeNode []) =
-    
+
     let bvhTraversalStack2D = Array2D.zeroCreate batchSize bvhRuntimeArray.Length
+
     let batches = samplesPerPixel / batchSize
-    let batchIndices = [|1..batchSize|]
+    let batchIndices = [|1..batchSize|] 
+
     let colorSamples = Array.create samplesPerPixel Vector4.Zero
     let colorSamplesClear = Array.create samplesPerPixel Vector4.Zero
 
@@ -27,6 +29,7 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
     let depthBuffer = Array2D.create width height System.Single.MaxValue
     let mutable maxFrameBufferDepth = 0.0f
     let backgroundColor = Vector4.Zero
+    //let backgroundColor = Vector4(1.0f,0.0f,0.0f,0.0f)
 
     //TODO: Refactor this into camera
     let cameraOriginWS = Vector3(-3.0f, 6.0f, 15.0f)
@@ -111,7 +114,6 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
 
         if hasIntersection then
             let surface = surfaceOption.Value
-
             let surfaceGeometry = surface.Geometry
             if surfaceGeometry.AsHitable.IntersectionAcceptable hasIntersection t dotLookAtAndTracingRay (RaytraceGeometryUtils.PointForRay ray t) then
                 if batchID = 0 && iteration = 0 then writeToDepthBuffer t px py
@@ -126,14 +128,13 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
                     for i in 0..validSamples-1 do
                         let (ray,shading) = raySamples.[i]
                         totalReflectedLight <- totalReflectedLight + shading*rayTrace currentTraceDepth ray batchID
-                    emittedRadiance + totalReflectedLight/(float32)validSamples
-                
+                    emittedRadiance + totalReflectedLight/(float32)validSamples   
             else
                 backgroundColor 
          else
              backgroundColor
 
-    let renderPass px py = 
+    let renderPassParallel px py = 
         let dirCS = 
             RayDirection (PixelToCamera (float32 px) (float32 py) (float32 width) (float32 height) fov)
         let rot = Henzai.Core.Numerics.Geometry.Rotation(ref cameraWS)
@@ -149,18 +150,47 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
         let avgColor = if Array.isEmpty colorSamples then Vector4.Zero else (Array.reduce (+) colorSamples)/(float32)samplesPerPixel
         // Clear colorSamples 
         Array.blit colorSamplesClear 0 colorSamples 0 samplesPerPixel 
-        //printfn "Completed Ray for pixels (%i,%i)" px py
-        //async {printfn "Completed Ray for pixels (%i,%i)" px py} |> Async.StartAsTask |> ignore
         //Gamma correct TODO: refactor
         frameBuffer.[px,py] <- Vector4.SquareRoot(avgColor)
-        // frameBuffer.[px,py] <- Vector4(avgColor,1.0f)
 
-    //TODO: Run pixel "squares" concurrently
+    let renderPass px py = 
+        let dirCS = 
+            RayDirection (PixelToCamera (float32 px) (float32 py) (float32 width) (float32 height) fov)
+        let rot = Henzai.Core.Numerics.Geometry.Rotation(ref cameraWS)
+        let dirWS = Vector4.Normalize(Vector4.Transform(dirCS, rot))
+        let ray = Ray(Vector4(cameraWS.Translation, 1.0f), dirWS)
+
+        let color = rayTraceBase ray px py 0 0
+
+        frameBuffer.[px,py] <- Vector4.SquareRoot(color)
+
+
+    //TODO: Merge RenderSceneParallel and renderPassParallel.
+    // At the moment they are exclusive because Async.Parallel can not be called within each other
     [<Benchmark>]
     member self.RenderScene() =
         for px in 0..width-1 do
             for py in 0..height-1 do
-                renderPass px py
+                renderPassParallel px py
+
+    member self.RenderSceneParallel() =
+        let renderSquareSize = renderSquareSide*renderSquareSide
+        //Don't have to clear pixels because image size will always be a multiple of renderSquareSide  
+        let pixelsToRender = Array.zeroCreate<int*int> renderSquareSize
+        let renderSquareStartIndexes = Array.zeroCreate<int*int> (width/renderSquareSide * height/renderSquareSide)
+
+        for px in 0..renderSquareSide..width-renderSquareSide do
+            for py in 0..renderSquareSide..height-renderSquareSide do
+                let idx = (height/renderSquareSide)*(px/renderSquareSide)+(py/renderSquareSide)
+                renderSquareStartIndexes.[idx] <- (px, py)
+
+        for (px, py) in renderSquareStartIndexes do
+            for jx in 0..renderSquareSide-1 do
+                for jy in 0..renderSquareSide-1 do
+                    let i = jx*renderSquareSide+jy
+                    pixelsToRender.[i] <- px+jx, py+jy
+            let pixelRenderCalls = Array.map(fun (x, y) -> async {renderPass x y}) pixelsToRender
+            pixelRenderCalls |> Async.Parallel |> Async.RunSynchronously |> ignore 
 
     member self.SaveFrameBuffer() =
         using (File.OpenWrite(sceneImagePath)) (fun output ->
