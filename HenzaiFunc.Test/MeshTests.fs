@@ -47,13 +47,19 @@ let indexArray =
 
     |]
 
-let mutable identityTransform = Matrix4x4.Identity
+let identityTransform = Matrix4x4.Identity
+
+let vertexPositionNormalTransform(transform : Matrix4x4) (v : VertexPositionNormal) = 
+    let transformedVector4 = Vector4.Transform(v.GetPosition(), transform)
+    VertexPositionNormal(transformedVector4, v)
+
+let transformFunc = vertexPositionNormalTransform identityTransform
 
 [<Fact>]
 let loadMeshTest () =
     let rtModel = AssimpLoader.LoadFromFileWithRealtimeMaterial<VertexPositionNormal>(AppContext.BaseDirectory, "Models/Box.dae", VertexPositionNormal.HenzaiType)
     let raytracingModel = Model<VertexPositionNormal,RealtimeMaterial>.ConvertToRaytracingModel(rtModel);
-    let modelSurfaceList = convertModelToSurfaceList(raytracingModel, &identityTransform)
+    let modelSurfaceList = convertModelToSurfaceList(raytracingModel, transformFunc)
     Assert.Equal(12, modelSurfaceList.Length)
 
 [<Fact>]
@@ -63,7 +69,7 @@ let buildBVHBoxTest () =
     let bvhRuntime = BVHRuntime<Surface>()
     let rtModel = AssimpLoader.LoadFromFileWithRealtimeMaterial<VertexPositionNormal>(AppContext.BaseDirectory, "Models/Box.dae", VertexPositionNormal.HenzaiType)
     let raytracingModel = Model<VertexPositionNormal,RealtimeMaterial>.ConvertToRaytracingModel(rtModel);
-    let modelSurfaceList = convertModelToSurfaceList(raytracingModel, &identityTransform)
+    let modelSurfaceList = convertModelToSurfaceList(raytracingModel, transformFunc)
     let surfaceArray : Surface[] = modelSurfaceList |> Array.ofList
     let (bvhTree, orderedSurfaceArray, totalNodeCount) = bvhTreeBuilder.build surfaceArray SplitMethods.Middle
     let bvhRuntimeArray = bvhRuntime.constructBVHRuntime bvhTree totalNodeCount
@@ -82,7 +88,7 @@ let intersectBVHBoxZTest () =
     let bvhRuntime = BVHRuntime<Surface>()
     let rtModel = AssimpLoader.LoadFromFileWithRealtimeMaterial<VertexPositionNormal>(AppContext.BaseDirectory, "Models/Box.dae", VertexPositionNormal.HenzaiType)
     let raytracingModel = Model<VertexPositionNormal,RealtimeMaterial>.ConvertToRaytracingModel(rtModel);
-    let modelSurfaceList = convertModelToSurfaceList(raytracingModel, &identityTransform)
+    let modelSurfaceList = convertModelToSurfaceList(raytracingModel, transformFunc)
     let surfaceArray : Surface[] = modelSurfaceList |> Array.ofList
 
     let (bvhTree, orderedSurfaceArray, totalNodeCount) = bvhTreeBuilder.build surfaceArray SplitMethods.Middle
@@ -101,7 +107,7 @@ let intersectBVHBoxXTest () =
     let bvhRuntime = BVHRuntime<Surface>()
     let rtModel = AssimpLoader.LoadFromFileWithRealtimeMaterial<VertexPositionNormal>(AppContext.BaseDirectory, "Models/Box.dae", VertexPositionNormal.HenzaiType)
     let raytracingModel = Model<VertexPositionNormal,RealtimeMaterial>.ConvertToRaytracingModel(rtModel);
-    let modelSurfaceList = convertModelToSurfaceList(raytracingModel, &identityTransform)
+    let modelSurfaceList = convertModelToSurfaceList(raytracingModel, transformFunc)
     let surfaceArray : Surface[] = modelSurfaceList |> Array.ofList
     let (bvhTree, orderedSurfaceArray, totalNodeCount) = bvhTreeBuilder.build surfaceArray SplitMethods.Middle
     let bvhRuntimeArray = bvhRuntime.constructBVHRuntime bvhTree totalNodeCount
@@ -119,7 +125,7 @@ let intersectBVHBoxYTest () =
     let bvhRuntime = BVHRuntime<Surface>()
     let rtModel = AssimpLoader.LoadFromFileWithRealtimeMaterial<VertexPositionNormal>(AppContext.BaseDirectory, "Models/Box.dae", VertexPositionNormal.HenzaiType)
     let raytracingModel = Model<VertexPositionNormal,RealtimeMaterial>.ConvertToRaytracingModel(rtModel);
-    let modelSurfaceList = convertModelToSurfaceList(raytracingModel, &identityTransform)
+    let modelSurfaceList = convertModelToSurfaceList(raytracingModel, transformFunc)
     let surfaceArray : Surface[] = modelSurfaceList |> Array.ofList
     let (bvhTree, orderedSurfaceArray, totalNodeCount) = bvhTreeBuilder.build surfaceArray SplitMethods.Middle
     let bvhRuntimeArray = bvhRuntime.constructBVHRuntime bvhTree totalNodeCount
