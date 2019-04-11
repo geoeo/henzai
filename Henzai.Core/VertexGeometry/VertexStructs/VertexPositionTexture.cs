@@ -20,7 +20,13 @@ namespace Henzai.Core.VertexGeometry
             TextureCoordinates = texCoords;
         }
 
-        public VertexPositionTexture(ref Vector4 position, VertexPositionTexture v)
+        public VertexPositionTexture(ref Vector4 position, ref VertexPositionTexture v)
+        {
+            Position = Numerics.Vector.ToVec3(position);
+            TextureCoordinates = v.TextureCoordinates;
+        }
+
+        public VertexPositionTexture(Vector4 position, VertexPositionTexture v)
         {
             Position = Numerics.Vector.ToVec3(position);
             TextureCoordinates = v.TextureCoordinates;

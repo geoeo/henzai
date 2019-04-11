@@ -38,7 +38,16 @@ namespace Henzai.Core.VertexGeometry
             Bitangent = bitangent;
         }
 
-        public VertexPositionNormalTextureTangentBitangent(ref Vector4 position, VertexPositionNormalTextureTangentBitangent v)
+        public VertexPositionNormalTextureTangentBitangent(ref Vector4 position, ref VertexPositionNormalTextureTangentBitangent v)
+        {
+            Position = Numerics.Vector.ToVec3(position);
+            Normal = v.Normal;
+            TextureCoordinates = v.TextureCoordinates;
+            Tangent = v.Tangent;
+            Bitangent = v.Bitangent;
+        }
+
+        public VertexPositionNormalTextureTangentBitangent(Vector4 position, VertexPositionNormalTextureTangentBitangent v)
         {
             Position = Numerics.Vector.ToVec3(position);
             Normal = v.Normal;

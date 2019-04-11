@@ -24,6 +24,11 @@ namespace Henzai.Core.VertexGeometry
             color = v.color;
         }
 
+        public VertexPositionNDCColor(Vector4 position, VertexPositionNDCColor v){
+            Position = Numerics.Vector.ToVec2(ref position);
+            color = v.color;
+        }
+
         public byte GetSizeInBytes(){
             return SizeInBytes;
         }  

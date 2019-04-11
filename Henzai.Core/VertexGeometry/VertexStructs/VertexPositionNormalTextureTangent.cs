@@ -34,7 +34,14 @@ namespace Henzai.Core.VertexGeometry
             Tangent = tangent;
         }
 
-        public VertexPositionNormalTextureTangent(ref Vector4 position, VertexPositionNormalTextureTangent v){
+        public VertexPositionNormalTextureTangent(ref Vector4 position, ref VertexPositionNormalTextureTangent v){
+            Position = Numerics.Vector.ToVec3(ref position);
+            Normal = v.Normal;
+            TextureCoordinates = v.TextureCoordinates;
+            Tangent = v.Tangent;
+        }
+
+        public VertexPositionNormalTextureTangent(Vector4 position, VertexPositionNormalTextureTangent v){
             Position = Numerics.Vector.ToVec3(ref position);
             Normal = v.Normal;
             TextureCoordinates = v.TextureCoordinates;

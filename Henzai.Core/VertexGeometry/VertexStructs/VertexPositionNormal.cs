@@ -25,6 +25,11 @@ namespace Henzai.Core.VertexGeometry
             Normal = v.Normal;
         }
 
+        public VertexPositionNormal(Vector4 position, VertexPositionNormal v){
+            Position = Numerics.Vector.ToVec3(ref position);
+            Normal = v.Normal;
+        }
+
         public byte GetSizeInBytes(){
             return SizeInBytes;
         }

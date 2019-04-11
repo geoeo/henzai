@@ -21,6 +21,10 @@ namespace Henzai.Core.VertexGeometry
             Position = Numerics.Vector.ToVec3(ref position);
         }
 
+        public VertexPosition(Vector4 position){
+            Position = Numerics.Vector.ToVec3(ref position);
+        }
+
         public byte GetSizeInBytes(){
             return SizeInBytes;
         }

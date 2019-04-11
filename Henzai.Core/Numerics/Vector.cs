@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace Henzai.Core.Numerics {
 
+    //TODO change all relevant "ref"s to "in"
     public static class Vector {
 
         public static Vector3 Normalize(ref Vector3 vec){
