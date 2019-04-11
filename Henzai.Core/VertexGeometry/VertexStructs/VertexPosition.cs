@@ -1,4 +1,5 @@
 using System.Numerics;
+using Henzai.Core.Numerics;
 
 namespace Henzai.Core.VertexGeometry
 {
@@ -16,12 +17,16 @@ namespace Henzai.Core.VertexGeometry
             Position = position;
         }
 
+        public VertexPosition(ref Vector4 position){
+            Position = Numerics.Vector.ToVec3(ref position);
+        }
+
         public byte GetSizeInBytes(){
             return SizeInBytes;
         }
 
-        public Vector3 GetPosition(){
-            return Position;
+        public Vector4 GetPosition(){
+            return new Vector4(Position, 1.0f);
         }
     }
 }

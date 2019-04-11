@@ -11,8 +11,8 @@ type IndexedTriangle<'T when 'T : struct and 'T :> VertexLocateable>(i0 : int, i
     inherit RaytracingGeometry() with
 
         let normal = 
-            let e1 = vertices.[i1].GetPosition() - vertices.[i0].GetPosition()
-            let e2 = vertices.[i2].GetPosition() - vertices.[i0].GetPosition()
+            let e1 = Vector.ToVec3(vertices.[i1].GetPosition() - vertices.[i0].GetPosition())
+            let e2 = Vector.ToVec3(vertices.[i2].GetPosition() - vertices.[i0].GetPosition())
             Vector4(Vector3.Cross(e1, e2), 0.0f)
 
         let localToWorld =
@@ -25,9 +25,9 @@ type IndexedTriangle<'T when 'T : struct and 'T :> VertexLocateable>(i0 : int, i
                         v0.X, v0.Y, v0.Z, 1.0f)
 
         let worldToLocal = 
-            let v0 = vertices.[i0].GetPosition()
-            let v1 = vertices.[i1].GetPosition()
-            let v2 = vertices.[i2].GetPosition()
+            let v0 = Vector.ToVec3(vertices.[i0].GetPosition())
+            let v1 = Vector.ToVec3(vertices.[i1].GetPosition())
+            let v2 = Vector.ToVec3(vertices.[i2].GetPosition())
             let e1 = v1 - v0
             let e2 = v2 - v0
             

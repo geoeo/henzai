@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using Henzai.Core.Numerics;
 
 namespace Henzai.Core.VertexGeometry
 {
@@ -17,12 +18,18 @@ namespace Henzai.Core.VertexGeometry
             Position = position;
             color = colorIn;
         }
+
+        public VertexPositionNDCColor(ref Vector4 position, ref VertexPositionNDCColor v){
+            Position = Numerics.Vector.ToVec2(ref position);
+            color = v.color;
+        }
+
         public byte GetSizeInBytes(){
             return SizeInBytes;
         }  
 
-        public Vector3 GetPosition() {
-            return new Vector3(Position, 0.0f);
+        public Vector4 GetPosition() {
+            return new Vector4(Position, 0.0f, 1.0f);
         }    
     }
 }

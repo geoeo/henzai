@@ -74,16 +74,15 @@ module Culler =
 
         0.0f < Henzai.Core.Numerics.Vector.InMemoryDotProduct(&frustumRowVector, &vertexHomogeneous)
 
-    let IsVertexWithinFrustum(modelViewProjectionMatrix : byref<Matrix4x4>, vertex : byref<Vector3>) =
+    let IsVertexWithinFrustum(modelViewProjectionMatrix : byref<Matrix4x4>, vertex : byref<Vector4>) =
         let mutable frustumRowVector = Vector4.Zero
-        let mutable vertexHomogeneous = Vector4(vertex.X, vertex.Y, vertex.Z, 1.0f)
 
-        leftHalfSpaceCheck(&modelViewProjectionMatrix, &frustumRowVector, &vertexHomogeneous) &&
-        rightHalfSpaceCheck(&modelViewProjectionMatrix, &frustumRowVector, &vertexHomogeneous) &&
-        topHalfSpaceCheck(&modelViewProjectionMatrix, &frustumRowVector, &vertexHomogeneous) &&
-        bottomHalfSpaceCheck(&modelViewProjectionMatrix, &frustumRowVector, &vertexHomogeneous) &&
-        nearHalfSpaceCheck(&modelViewProjectionMatrix, &frustumRowVector, &vertexHomogeneous) &&
-        farHalfSpaceCheck(&modelViewProjectionMatrix, &frustumRowVector, &vertexHomogeneous)
+        leftHalfSpaceCheck(&modelViewProjectionMatrix, &frustumRowVector, &vertex) &&
+        rightHalfSpaceCheck(&modelViewProjectionMatrix, &frustumRowVector, &vertex) &&
+        topHalfSpaceCheck(&modelViewProjectionMatrix, &frustumRowVector, &vertex) &&
+        bottomHalfSpaceCheck(&modelViewProjectionMatrix, &frustumRowVector, &vertex) &&
+        nearHalfSpaceCheck(&modelViewProjectionMatrix, &frustumRowVector, &vertex) &&
+        farHalfSpaceCheck(&modelViewProjectionMatrix, &frustumRowVector, &vertex)
 
     /// <summary>
     /// Culls a <see cref="Henzai.Core.VertexGeometry.GeometryDefinition"/> by testing every triangle of the mesh

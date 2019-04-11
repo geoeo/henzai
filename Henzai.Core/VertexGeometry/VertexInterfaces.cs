@@ -7,7 +7,7 @@ using System.Numerics;
         }
 
         public interface VertexLocateable {
-            Vector3 GetPosition();
+            Vector4 GetPosition();
         }
 
         public interface VertexTangentspace : VertexLocateable {

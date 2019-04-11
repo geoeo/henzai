@@ -1,4 +1,5 @@
 using System.Numerics;
+using Henzai.Core.Numerics;
 
 namespace Henzai.Core.VertexGeometry
 {
@@ -32,12 +33,20 @@ namespace Henzai.Core.VertexGeometry
             TextureCoordinates = texCoords;
             Tangent = tangent;
         }
+
+        public VertexPositionNormalTextureTangent(ref Vector4 position, VertexPositionNormalTextureTangent v){
+            Position = Numerics.Vector.ToVec3(ref position);
+            Normal = v.Normal;
+            TextureCoordinates = v.TextureCoordinates;
+            Tangent = v.Tangent;
+        }
+
         public byte GetSizeInBytes(){
             return SizeInBytes;
         }
 
-        public Vector3 GetPosition(){
-            return Position;
+        public Vector4 GetPosition(){
+            return new Vector4(Position, 1.0f);
         }
     }
 }

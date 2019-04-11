@@ -1,4 +1,5 @@
 using System.Numerics;
+using Henzai.Core.Numerics;
 
 namespace Henzai.Core.VertexGeometry
 {
@@ -37,12 +38,21 @@ namespace Henzai.Core.VertexGeometry
             Bitangent = bitangent;
         }
 
+        public VertexPositionNormalTextureTangentBitangent(ref Vector4 position, VertexPositionNormalTextureTangentBitangent v)
+        {
+            Position = Numerics.Vector.ToVec3(position);
+            Normal = v.Normal;
+            TextureCoordinates = v.TextureCoordinates;
+            Tangent = v.Tangent;
+            Bitangent = v.Bitangent;
+        }
+
         public byte GetSizeInBytes(){
             return SizeInBytes;
         }
 
-        public Vector3 GetPosition(){
-            return Position;
+        public Vector4 GetPosition(){
+            return new Vector4(Position, 1.0f);
         }
     }
 }

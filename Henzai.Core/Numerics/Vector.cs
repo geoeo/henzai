@@ -39,6 +39,11 @@ namespace Henzai.Core.Numerics {
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector2 ToVec2(ref Vector4 vec4){
+            return new Vector2(vec4.X, vec4.Y);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector3 ToVec3(ref Vector4 vec4){
             return new Vector3(vec4.X, vec4.Y, vec4.Z);
         }

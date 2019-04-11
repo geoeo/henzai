@@ -1,4 +1,5 @@
 using System.Numerics;
+using Henzai.Core.Numerics;
 
 namespace Henzai.Core.VertexGeometry
 {
@@ -19,12 +20,18 @@ namespace Henzai.Core.VertexGeometry
             TextureCoordinates = texCoords;
         }
 
+        public VertexPositionTexture(ref Vector4 position, VertexPositionTexture v)
+        {
+            Position = Numerics.Vector.ToVec3(position);
+            TextureCoordinates = v.TextureCoordinates;
+        }
+
         public byte GetSizeInBytes(){
             return SizeInBytes;
         }
 
-        public Vector3 GetPosition(){
-            return Position;
+        public Vector4 GetPosition(){
+            return new Vector4(Position, 1.0f);
         }
     }
 }

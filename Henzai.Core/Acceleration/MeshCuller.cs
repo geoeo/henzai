@@ -31,9 +31,9 @@ namespace Henzai.Core.Acceleration
                 ushort i2 = indices[i+1];
                 ushort i3 = indices[i+2];
 
-                Vector3 v1 = vertices[i1].GetPosition();
-                Vector3 v2 = vertices[i2].GetPosition();
-                Vector3 v3 = vertices[i3].GetPosition();
+                Vector4 v1 = vertices[i1].GetPosition();
+                Vector4 v2 = vertices[i2].GetPosition();
+                Vector4 v3 = vertices[i3].GetPosition();
 
                 // If at least one vertex is within the frustum, the triangle is not culled.
                 if(IsVertexWithinFrustum(ref modelViewProjectionMatrix,ref v1) 
@@ -65,17 +65,16 @@ namespace Henzai.Core.Acceleration
         }
 
         //TODO: Use "in" keyword when upgraded to C# >= 7.2
-        private static bool IsVertexWithinFrustum(ref Matrix4x4 modelViewProjectionMatrix, ref Vector3 vertex){
+        private static bool IsVertexWithinFrustum(ref Matrix4x4 modelViewProjectionMatrix, ref Vector4 vertex){
 
             Vector4 frustumRowVector = Vector4.Zero;
-            Vector4 vertexHomogeneous = new Vector4(vertex.X,vertex.Y, vertex.Z,1);
 
-            return LeftHalfSpaceCheck(ref modelViewProjectionMatrix, ref frustumRowVector, ref vertexHomogeneous) &&
-                RightHalfSpaceCheck(ref modelViewProjectionMatrix, ref frustumRowVector, ref vertexHomogeneous) &&
-                TopHalfSpaceCheck(ref modelViewProjectionMatrix, ref frustumRowVector, ref vertexHomogeneous) &&
-                BottomHalfSpaceCheck(ref modelViewProjectionMatrix, ref frustumRowVector, ref vertexHomogeneous) &&
-                NearHalfSpaceCheck(ref modelViewProjectionMatrix, ref frustumRowVector, ref vertexHomogeneous) &&
-                FarHalfSpaceCheck(ref modelViewProjectionMatrix, ref frustumRowVector, ref vertexHomogeneous);
+            return LeftHalfSpaceCheck(ref modelViewProjectionMatrix, ref frustumRowVector, ref vertex) &&
+                RightHalfSpaceCheck(ref modelViewProjectionMatrix, ref frustumRowVector, ref vertex) &&
+                TopHalfSpaceCheck(ref modelViewProjectionMatrix, ref frustumRowVector, ref vertex) &&
+                BottomHalfSpaceCheck(ref modelViewProjectionMatrix, ref frustumRowVector, ref vertex) &&
+                NearHalfSpaceCheck(ref modelViewProjectionMatrix, ref frustumRowVector, ref vertex) &&
+                FarHalfSpaceCheck(ref modelViewProjectionMatrix, ref frustumRowVector, ref vertex);
         }
 
         private static bool LeftHalfSpaceCheck(ref Matrix4x4 modelViewProjectionMatrix, ref Vector4 frustumRowVector, ref Vector4 vertexHomogeneous) {
