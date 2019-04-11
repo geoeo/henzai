@@ -8,8 +8,7 @@ open HenzaiFunc.Core.RaytraceGeometry
 /// Implements methods to generate a BVH BST
 type BVHTreeBuilder<'T when 'T :> AxisAlignedBoundable>() =
 
-    //TODO: Revert to defaults
-    let minPrimitivesForSplit = 32
+    let minPrimitivesForSplit = 128
 
     let leafCostForSplit nPrimitives = float32 nPrimitives
 

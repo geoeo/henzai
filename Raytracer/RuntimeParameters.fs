@@ -11,8 +11,8 @@ let width = 800
 let height = 640
 let samplesPerPixel = 1
 let batchSize = 1
-let renderSquareSide = 8
-let maxTraceDepth = 1us
+let renderSquareSide = 4
+let maxTraceDepth = 4us
 
 assert (width%renderSquareSide = 0)
 assert (height%renderSquareSide = 0)

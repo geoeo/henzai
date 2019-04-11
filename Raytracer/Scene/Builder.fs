@@ -38,7 +38,6 @@ let convertModelToSurfaceList (model: Model<'T, RaytraceMaterial>, vertexTypeTra
 
         let indicesCount = mesh.IndicesCount
         let indices = mesh.MeshIndices
-        //let vertices = mesh.Vertices
 
         let vertices : 'T[] = Array.map vertexTypeTransform mesh.Vertices
 
@@ -61,12 +60,12 @@ let convertModelToSurfaceList (model: Model<'T, RaytraceMaterial>, vertexTypeTra
 let loadAssets = 
     let sceneList = List.concat [lightsAA;triangle_scene;spheres_scene_2;light_sphere;planes_scene_2_AA]
     //let rtModel = AssimpLoader.LoadFromFileWithRealtimeMaterial<VertexPositionNormal>(AppContext.BaseDirectory, "Models/Box.dae", VertexPositionNormal.HenzaiType)
-    let rtModel = AssimpLoader.LoadFromFileWithRealtimeMaterial<VertexPositionNormal>(AppContext.BaseDirectory, "Models/duck.dae", VertexPositionNormal.HenzaiType)
-    //let rtModel = AssimpLoader.LoadFromFileWithRealtimeMaterial<VertexPositionNormal>(AppContext.BaseDirectory, "Models/chinesedragon.dae", VertexPositionNormal.HenzaiType)
+    //let rtModel = AssimpLoader.LoadFromFileWithRealtimeMaterial<VertexPositionNormal>(AppContext.BaseDirectory, "Models/duck.dae", VertexPositionNormal.HenzaiType)
+    let rtModel = AssimpLoader.LoadFromFileWithRealtimeMaterial<VertexPositionNormal>(AppContext.BaseDirectory, "Models/chinesedragon.dae", VertexPositionNormal.HenzaiType)
     //let rtModel = AssimpLoader.LoadFromFileWithRealtimeMaterial<VertexPositionNormal>(AppContext.BaseDirectory, "Models/sphere_centered.obj", VertexPositionNormal.HenzaiType)
     let raytracingModel = Model<VertexPositionNormal,RealtimeMaterial>.ConvertToRaytracingModel(rtModel);
     //let transform = Matrix4x4.Identity
-    let transform = Matrix4x4.CreateScale(2.0f)
+    let transform = Matrix4x4.CreateScale(0.1f)
     let modelSurfaceList = convertModelToSurfaceList(raytracingModel, (vertexPositionNormalTransform transform))
     let sceneNonBoundableArray : Surface[] = List.concat [modelSurfaceList] |> Array.ofList
     //let sceneNonBoundableArray : Surface[] = List.concat [lightsAA;lightsNonAA;triangle_scene_y;plane_floor_Unbounded] |> Array.ofList
