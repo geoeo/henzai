@@ -113,9 +113,15 @@ namespace Henzai.Core
         private static Color4D Nocolor = new Color4D(0.0f, 0.0f, 0.0f, 0.0f);
 
         // http://assimp.sourceforge.net/lib_html/postprocess_8h.html#a64795260b95f5a4b3f3dc1be4f52e410a9c3de834f0307f31fa2b1b6d05dd592b
-        private const PostProcessSteps DefaultPostProcessSteps
+        public const PostProcessSteps DefaultPostProcessSteps
             = PostProcessSteps.FlipWindingOrder | PostProcessSteps.Triangulate | PostProcessSteps.PreTransformVertices | PostProcessSteps.FlipUVs
             | PostProcessSteps.CalculateTangentSpace | PostProcessSteps.GenerateSmoothNormals | PostProcessSteps.JoinIdenticalVertices | PostProcessSteps.FixInFacingNormals;
+
+        public const PostProcessSteps RaytracePostProcessSteps
+            = PostProcessSteps.JoinIdenticalVertices | PostProcessSteps.FixInFacingNormals;
+
+        public const PostProcessSteps RaytracePostProcessStepsCW
+            = PostProcessSteps.FlipWindingOrder | PostProcessSteps.JoinIdenticalVertices | PostProcessSteps.FixInFacingNormals;
 
         //private const PostProcessSteps DefaultPostProcessSteps
         //    = PostProcessSteps.None;
