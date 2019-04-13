@@ -83,7 +83,6 @@ namespace Henzai.Core
             return null;
         }
 
-        //TODO add a way to specifiy emmissive components
         public static Model<T, RaytraceMaterial> ConvertToRaytracingModel(Model<T, RealtimeMaterial> rtModel)
         {
             var materialCount = rtModel.MaterialCount;
@@ -92,6 +91,17 @@ namespace Henzai.Core
             {
                 var rtMat = rtModel.GetMaterial(i);
                 raytraceMaterials[i] = new RaytraceMaterial(rtMat.diffuse, rtMat.emissive);
+            }
+            return new Model<T, RaytraceMaterial>(rtModel._meshes, raytraceMaterials);
+        }
+
+        public static Model<T, RaytraceMaterial> ConvertToRaytracingModel(Model<T, RealtimeMaterial> rtModel, Vector4 diffuse, Vector4 emissive)
+        {
+            var materialCount = rtModel.MaterialCount;
+            var raytraceMaterials = new RaytraceMaterial[materialCount];
+            for (int i = 0; i < rtModel.MaterialCount; i++)
+            {
+                raytraceMaterials[i] = new RaytraceMaterial(diffuse, emissive);
             }
             return new Model<T, RaytraceMaterial>(rtModel._meshes, raytraceMaterials);
         }
