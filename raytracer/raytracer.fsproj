@@ -24,10 +24,10 @@
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content> 
 
-      <!--<Content Include="../Assets/Models/sphere_centered.obj">
+      <Content Include="../Assets/Models/sphere_centered.obj">
         <Link>Models/sphere_centered.obj</Link>
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>--> 
+      </Content> 
 
       <!--<Content Include="../Assets/Models/sphere.obj">
         <Link>Models/sphere.obj</Link>
@@ -41,6 +41,11 @@
 
       <Content Include="../Assets/Duck/duck.dae">
         <Link>Models/duck.dae</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>  
+        
+      <Content Include="../Assets/Models/teapot.dae">
+        <Link>Models/teapot.dae</Link>
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>  
 

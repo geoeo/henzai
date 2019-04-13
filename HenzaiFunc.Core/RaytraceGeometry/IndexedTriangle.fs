@@ -10,15 +10,14 @@ open Henzai.Core.VertexGeometry
 type IndexedTriangle<'T when 'T : struct and 'T :> VertexLocateable>(i0 : int, i1 : int, i2 : int, vertices : 'T[]) =
     inherit RaytracingGeometry() with
 
-        let normal = 
-            let e1 = Vector.ToVec3(vertices.[i1].GetPosition() - vertices.[i0].GetPosition())
-            let e2 = Vector.ToVec3(vertices.[i2].GetPosition() - vertices.[i0].GetPosition())
-            Vector4(Vector3.Cross(e1, e2), 0.0f)
+        let e1 = Vector.ToVec3(vertices.[i1].GetPosition() - vertices.[i0].GetPosition())
+        let e2 = Vector.ToVec3(vertices.[i2].GetPosition() - vertices.[i0].GetPosition())
+
+        let normal = Vector4(Vector3.Cross(e1, e2), 0.0f)
+        let unitNormal = Vector4.Normalize(normal)
 
         let localToWorld =
             let v0 = vertices.[i0].GetPosition()
-            let e1 = vertices.[i1].GetPosition() - v0
-            let e2 = vertices.[i2].GetPosition() - v0
             Matrix4x4(e1.X, e1.Y, e1.Z, 0.0f,
                         e2.X, e2.Y, e2.Z, 0.0f,
                         1.0f, 0.0f, 0.0f, 0.0f,
@@ -28,8 +27,6 @@ type IndexedTriangle<'T when 'T : struct and 'T :> VertexLocateable>(i0 : int, i
             let v0 = Vector.ToVec3(vertices.[i0].GetPosition())
             let v1 = Vector.ToVec3(vertices.[i1].GetPosition())
             let v2 = Vector.ToVec3(vertices.[i2].GetPosition())
-            let e1 = v1 - v0
-            let e2 = v2 - v0
             
             let crossV2V0 = Vector3.Cross(v2, v0)
             let crossV1V0 = Vector3.Cross(v1, v0)
@@ -56,7 +53,7 @@ type IndexedTriangle<'T when 'T : struct and 'T :> VertexLocateable>(i0 : int, i
         interface Hitable with
             override this.TMin = 0.000001f
 
-            override this.NormalForSurfacePoint _ = normal
+            override this.NormalForSurfacePoint _ = unitNormal
 
             override this.IntersectionAcceptable hasIntersection t _ _ =
                 hasIntersection && t > this.AsHitable.TMin

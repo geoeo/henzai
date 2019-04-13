@@ -19,6 +19,7 @@ type Triangle(v0 : Vector3, v1 : Vector3, v2 : Vector3) =
         let e2 = v2 - v0
 
         let normal = Vector4(Vector3.Cross(e1, e2), 0.0f)
+        let unitNormal = Vector4.Normalize(normal)
 
         let localToWorld =
             Matrix4x4(e1.X, e1.Y, e1.Z, 0.0f,
@@ -53,7 +54,7 @@ type Triangle(v0 : Vector3, v1 : Vector3, v2 : Vector3) =
         interface Hitable with
             override this.TMin = 0.000001f
 
-            override this.NormalForSurfacePoint _ = normal
+            override this.NormalForSurfacePoint _ = unitNormal
 
             override this.IntersectionAcceptable hasIntersection t _ _ =
                 hasIntersection && t > this.AsHitable.TMin

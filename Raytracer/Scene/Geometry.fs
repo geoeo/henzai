@@ -31,7 +31,8 @@ let lights_simple : Surface list
     ]
 
 let light_sphere : Surface list = [
-        NoSurface(assignIDAndIncrement id, Sphere(Vector3(-13.0f,-6.0f,10.0f),3.0f), RaytraceMaterial(Rgba32.White,0.0f, Rgba32.White,1.0f));  
+        //NoSurface(assignIDAndIncrement id, Sphere(Vector3(-13.0f,-6.0f,10.0f),3.0f), RaytraceMaterial(Rgba32.White,0.0f, Rgba32.White,1.0f));  
+        NoSurface(assignIDAndIncrement id, Sphere(Vector3(-4.0f,10.0f,-1.0f),3.0f), RaytraceMaterial(Rgba32.White,0.0f, Rgba32.White,1.0f));  
 ]
 
 let spheres : Surface list
@@ -88,11 +89,12 @@ let spheres_scene_2 : Surface list
         Dielectric(assignIDAndIncrement id,Sphere(Vector3(2.5f,-3.0f,-3.0f),1.5f), RaytraceMaterial(Rgba32.White),1.5f);
       ]
 
+     
 
 let spheres_scene_3 : Surface list
      = [
          Lambertian(assignIDAndIncrement id,Sphere(Vector3(6.5f,-1.0f,-15.0f),3.5f), RaytraceMaterial(Rgba32.RoyalBlue));
-         Lambertian(assignIDAndIncrement id,Sphere(Vector3(-4.5f,-1.5f,-3.5f),2.5f), RaytraceMaterial(Rgba32.Red));
+         Lambertian(assignIDAndIncrement id,Sphere(Vector3(0.0f,-1.5f,-3.5f),2.5f), RaytraceMaterial(Rgba32.Red));
        ]
 
 let spheres_glass : Surface list = [
