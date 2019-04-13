@@ -137,32 +137,29 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
     let renderPassParallel px py = 
         let dirCS = 
             RayDirection (PixelToCamera (float32 px) (float32 py) (float32 width) (float32 height) fov)
-        let rot = Henzai.Core.Numerics.Geometry.Rotation(ref cameraWS)
+        let rot : Matrix4x4 = Henzai.Core.Numerics.Geometry.Rotation(ref cameraWS)
         let dirWS = Vector4.Normalize(Vector4.Transform(dirCS, rot))
         let ray = Ray(Vector4(cameraWS.Translation, 1.0f), dirWS)
         //V2 - Fastest
         for batchIndex in 0..batches-1 do
             //TODO: move ray generation into the async block
             //TODO: Remove this map for / Preallocate array
-            let colorSamplesBatch = Array.map (fun i -> async {return rayTraceBase ray px py (i-1) batchIndex}) batchIndices
+            let colorSamplesBatch = Array.map (fun i -> async {return rayTraceBase ray px py batchIndex (i-1)}) batchIndices
             let colorsBatch =  colorSamplesBatch |> Async.Parallel |> Async.RunSynchronously
+            // Clear colorSamples 
+            Array.blit colorSamplesClear 0 colorSamples 0 samplesPerPixel 
+            // fill colorSamples
             Array.blit colorsBatch 0 colorSamples (batchIndex*batchSize) batchSize 
-        let avgColor = if Array.isEmpty colorSamples then Vector4.Zero else (Array.reduce (+) colorSamples)/(float32)samplesPerPixel
-        // Clear colorSamples 
-        Array.blit colorSamplesClear 0 colorSamples 0 samplesPerPixel 
-        //Gamma correct TODO: refactor
-        frameBuffer.[px,py] <- Vector4.SquareRoot(avgColor)
+        if Array.isEmpty colorSamples then Vector4.Zero else (Array.reduce (+) colorSamples)/(float32)samplesPerPixel
 
-    let renderPass px py = 
+    let renderPass px py it= 
         let dirCS = 
             RayDirection (PixelToCamera (float32 px) (float32 py) (float32 width) (float32 height) fov)
-        let rot = Henzai.Core.Numerics.Geometry.Rotation(ref cameraWS)
+        let rot : Matrix4x4 = Henzai.Core.Numerics.Geometry.Rotation(ref cameraWS)
         let dirWS = Vector4.Normalize(Vector4.Transform(dirCS, rot))
         let ray = Ray(Vector4(cameraWS.Translation, 1.0f), dirWS)
-
-        let color = rayTraceBase ray px py 0 0
-
-        frameBuffer.[px,py] <- Vector4.SquareRoot(color)
+        
+        rayTraceBase ray px py 0 it
 
 
     //TODO: Merge RenderSceneParallel and renderPassParallel.
@@ -171,13 +168,19 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
     member self.RenderScene() =
         for px in 0..width-1 do
             for py in 0..height-1 do
-                renderPassParallel px py
+                let avgColor = renderPassParallel px py
+                //Gamma correct TODO: refactor
+                frameBuffer.[px,py] <- Vector4.SquareRoot(avgColor)
 
     member self.RenderSceneParallel() =
         let renderSquareSize = renderSquareSide*renderSquareSide
         //Don't have to clear pixels because image size will always be a multiple of renderSquareSide  
         let pixelsToRender = Array.zeroCreate<int*int> renderSquareSize
         let renderSquareStartIndexes = Array.zeroCreate<int*int> (width/renderSquareSide * height/renderSquareSide)
+        let flatIndexTo2D i = i/renderSquareSide, i%renderSquareSide
+        let flatIndexes = [|0..renderSquareSize-1|]
+        let twoDIndexes = Array.map flatIndexTo2D flatIndexes
+        let allIndexes = Array.zip flatIndexes twoDIndexes
 
         for px in 0..renderSquareSide..width-renderSquareSide do
             for py in 0..renderSquareSide..height-renderSquareSide do
@@ -185,12 +188,18 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
                 renderSquareStartIndexes.[idx] <- (px, py)
 
         for (px, py) in renderSquareStartIndexes do
-            for jx in 0..renderSquareSide-1 do
-                for jy in 0..renderSquareSide-1 do
-                    let i = jx*renderSquareSide+jy
-                    pixelsToRender.[i] <- px+jx, py+jy
-            let pixelRenderCalls = Array.map(fun (x, y) -> async {renderPass x y}) pixelsToRender
-            pixelRenderCalls |> Async.Parallel |> Async.RunSynchronously |> ignore 
+            let generatePixelCalls = Array.map(fun (i, (xOff, yOff)) -> async {return pixelsToRender.[i] <- px+xOff, py+yOff}) allIndexes
+            generatePixelCalls |> Async.Parallel |> Async.RunSynchronously |> ignore
+
+            for it in 0..samplesPerPixel-1 do
+                let pixelRenderCalls = Array.map(fun (x, y) -> async {return renderPass x y it}) pixelsToRender
+                let colors = pixelRenderCalls |> Async.Parallel |> Async.RunSynchronously
+
+                let addColorCalls = Array.map(fun (i, (xOff, yOff)) -> async {return frameBuffer.[px+xOff,py+yOff] <- frameBuffer.[px+xOff,py+yOff] + colors.[i]}) allIndexes
+                addColorCalls |> Async.Parallel |> Async.RunSynchronously |> ignore
+
+            let toneMapCalls = Array.map(fun (xOff, yOff) -> async {return frameBuffer.[px+xOff,py+yOff] <- Vector4.SquareRoot(frameBuffer.[px+xOff,py+yOff]/(float32)samplesPerPixel)}) twoDIndexes
+            toneMapCalls |> Async.Parallel |> Async.RunSynchronously |> ignore
 
     member self.SaveFrameBuffer() =
         using (File.OpenWrite(sceneImagePath)) (fun output ->

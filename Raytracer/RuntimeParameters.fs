@@ -16,6 +16,7 @@ let maxTraceDepth = 4us
 
 assert (width%renderSquareSide = 0)
 assert (height%renderSquareSide = 0)
+assert (renderSquareSide%4 = 0)
 
 let outputDir = "Output/"
 let sceneImageName = "scene.jpg"
