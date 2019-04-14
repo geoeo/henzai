@@ -80,6 +80,9 @@ namespace Henzai.Core
 
                 switch (henzaiVertexType)
                 {
+                    case VertexRuntimeTypes.VertexPosition:
+                        loadedMeshCounts.meshCountP++;
+                        break;
                     case VertexRuntimeTypes.VertexPositionColor:
                         loadedMeshCounts.meshCountPC++;
                         break;
@@ -147,6 +150,10 @@ namespace Henzai.Core
 
             switch (henzaiVertexType)
             {
+                case VertexRuntimeTypes.VertexPosition:
+                    bytes = new byte[VertexPosition.SizeInBytes];
+                    Array.Copy(posAsBytes, 0, bytes, VertexPosition.PositionOffset, posAsBytes.Length);
+                    break;
                 case VertexRuntimeTypes.VertexPositionColor:
                     bytes = new byte[VertexPositionColor.SizeInBytes];
                     Array.Copy(posAsBytes, 0, bytes, VertexPositionColor.PositionOffset, posAsBytes.Length);
@@ -270,34 +277,35 @@ namespace Henzai.Core
             int meshCount = pScene.MeshCount;
 
             var loadedMeshCounts = pScene.GetHenzaiMeshCounts();
-            // int meshCountP = loadedMeshCounts.meshCountP;
+            int meshCountP = loadedMeshCounts.meshCountP;
             int meshCountPC = loadedMeshCounts.meshCountPC;
             int meshCountPN = loadedMeshCounts.meshCountPN;
             int meshCountPT = loadedMeshCounts.meshCountPT;
             int meshCountPNT = loadedMeshCounts.meshCountPNT;
             int meshCountPNTTB = loadedMeshCounts.meshCountPNTTB;
 
-            // Geometry.Mesh<VertexPosition>[] meshesP = new Geometry.Mesh<VertexPosition>[meshCountP];
+            Mesh<VertexPosition>[] meshesP = new Mesh<VertexPosition>[meshCountP];
             Mesh<VertexPositionColor>[] meshesPC = new Mesh<VertexPositionColor>[meshCountPC];
             Mesh<VertexPositionNormal>[] meshesPN = new Mesh<VertexPositionNormal>[meshCountPN];
             Mesh<VertexPositionTexture>[] meshesPT = new Mesh<VertexPositionTexture>[meshCountPT];
             Mesh<VertexPositionNormalTexture>[] meshesPNT = new Mesh<VertexPositionNormalTexture>[meshCountPNT];
             Mesh<VertexPositionNormalTextureTangentBitangent>[] meshesPNTTB = new Mesh<VertexPositionNormalTextureTangentBitangent>[meshCountPNTTB];
 
+            RealtimeMaterial[] materialsP = new RealtimeMaterial[meshCountP];
             RealtimeMaterial[] materialsPC = new RealtimeMaterial[meshCountPC];
             RealtimeMaterial[] materialsPN = new RealtimeMaterial[meshCountPN];
             RealtimeMaterial[] materialsPT = new RealtimeMaterial[meshCountPT];
             RealtimeMaterial[] materialsPNT = new RealtimeMaterial[meshCountPNT];
             RealtimeMaterial[] materialsPNTTB = new RealtimeMaterial[meshCountPNTTB];
 
-            // ushort[][] meshIndiciesP = new ushort[meshCountP][];
+            ushort[][] meshIndiciesP = new ushort[meshCountP][];
             ushort[][] meshIndiciesPC = new ushort[meshCountPC][];
             ushort[][] meshIndiciesPN = new ushort[meshCountPN][];
             ushort[][] meshIndiciesPT = new ushort[meshCountPT][];
             ushort[][] meshIndiciesPNT = new ushort[meshCountPNT][];
             ushort[][] meshIndiciesPNTTB = new ushort[meshCountPNTTB][];
 
-            // int meshIndiciesP_Counter = 0;
+            int meshIndiciesP_Counter = 0;
             int meshIndiciesPC_Counter = 0;
             int meshIndiciesPN_Counter = 0;
             int meshIndiciesPT_Counter = 0;
@@ -306,6 +314,7 @@ namespace Henzai.Core
 
             var loadedModels = new LoadedModels<RealtimeMaterial>();
 
+            VertexPosition[] meshDefinitionP = new VertexPosition[0];
             VertexPositionColor[] meshDefinitionPC = new VertexPositionColor[0];
             VertexPositionNormal[] meshDefinitionPN = new VertexPositionNormal[0];
             VertexPositionTexture[] meshDefinitionPT = new VertexPositionTexture[0];
@@ -328,6 +337,9 @@ namespace Henzai.Core
                 VertexRuntimeTypes henzaiVertexType = aiMaterial.ToHenzaiVertexType();
                 switch (henzaiVertexType)
                 {
+                    case VertexRuntimeTypes.VertexPosition:
+                        meshDefinitionP = new VertexPosition[vertexCount];
+                        break;
                     case VertexRuntimeTypes.VertexPositionColor:
                         meshDefinitionPC = new VertexPositionColor[vertexCount];
                         break;
@@ -354,6 +366,9 @@ namespace Henzai.Core
 
                     switch (henzaiVertexType)
                     {
+                        case VertexRuntimeTypes.VertexPosition:
+                            meshDefinitionP[j] = ByteMarshal.ByteArrayToStructure<VertexPosition>(bytes);
+                            break;
                         case VertexRuntimeTypes.VertexPositionColor:
                             meshDefinitionPC[j] = ByteMarshal.ByteArrayToStructure<VertexPositionColor>(bytes);
                             break;
@@ -378,6 +393,27 @@ namespace Henzai.Core
                 var faceCount = aiMesh.FaceCount;
                 switch (henzaiVertexType)
                 {
+                    case VertexRuntimeTypes.VertexPosition:
+                        materialsP[meshIndiciesP_Counter] = material;
+                        meshIndiciesP[meshIndiciesP_Counter] = new ushort[3 * faceCount];
+
+                        for (int j = 0; j < faceCount; j++)
+                        {
+                            var face = aiMesh.Faces[j];
+
+                            if (face.IndexCount != 3)
+                            {
+                                Console.Error.WriteLine("Loading Assimp: Face index count != 3!");
+                                continue;
+                            }
+
+                            meshIndiciesP[meshIndiciesP_Counter][3 * j + 0] = face.Indices[0].ToUnsignedShort();
+                            meshIndiciesP[meshIndiciesP_Counter][3 * j + 1] = face.Indices[1].ToUnsignedShort();
+                            meshIndiciesP[meshIndiciesP_Counter][3 * j + 2] = face.Indices[2].ToUnsignedShort();
+                        }
+                        meshesP[meshIndiciesP_Counter] = new Mesh<VertexPosition>(meshDefinitionP, meshIndiciesP[meshIndiciesP_Counter]);
+                        meshIndiciesP_Counter++;
+                        break;
                     case VertexRuntimeTypes.VertexPositionColor:
                         materialsPC[meshIndiciesPC_Counter] = material;
                         meshIndiciesPC[meshIndiciesPC_Counter] = new ushort[3 * faceCount];
@@ -489,8 +525,8 @@ namespace Henzai.Core
 
             }
 
-             //if(meshCountP > 0)
-                 //loadedModels.modelP = new Model<VertexPosition>(modelDir,meshesP,meshIndiciesP);
+            if(meshCountP > 0)
+                loadedModels.modelP = new Model<VertexPosition,RealtimeMaterial>(modelDir,meshesP, materialsP);
             if (meshCountPC > 0)
                 loadedModels.modelPC = new Model<VertexPositionColor, RealtimeMaterial>(modelDir, meshesPC, materialsPC);
             if (meshCountPN > 0)
