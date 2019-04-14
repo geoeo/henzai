@@ -29,10 +29,10 @@
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content> 
 
-      <!--<Content Include="../Assets/Models/sphere.obj">
+      <Content Include="../Assets/Models/sphere.obj">
         <Link>Models/sphere.obj</Link>
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>-->
+      </Content>
 
       <Content Include="../Assets/Models/Box.dae">
         <Link>Models/Box.dae</Link>

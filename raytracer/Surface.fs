@@ -16,7 +16,7 @@ type Surface(id: ID, geometry : RaytracingGeometry, material : RaytraceMaterial)
     //let mutable samplesArray  = Array.zeroCreate<Ray*Raytracer.Material.Color> this.SampleCount
 
     abstract member Scatter: Ray -> LineParameter -> int -> bool*Ray*Cosine
-    abstract member Emitted : Color 
+    abstract member Emitted : Ray -> LineParameter -> Color 
     abstract member SampleCount : int
     abstract member PDF : float32
     abstract member BRDF : Color
@@ -30,7 +30,7 @@ type Surface(id: ID, geometry : RaytracingGeometry, material : RaytraceMaterial)
     member this.SamplesArray  = Array.zeroCreate<Ray*Color> this.SampleCount 
 
     default this.Scatter _ _ _ = (true, Ray(Vector4.UnitX, Vector4.UnitX), 1.0f)
-    default this.Emitted = this.Material.Emittance
+    default this.Emitted _ _ = this.Material.Emittance
     default this.SampleCount = noSampleCount
     default this.PDF = 1.0f
     default this.BRDF = this.Material.Albedo
@@ -59,16 +59,6 @@ type NoSurface(id: ID, geometry : RaytracingGeometry, material : RaytraceMateria
 
     override this.GenerateSamples _ _ _ _ = (noSampleCount, this.SamplesArray)
 
-let findClosestIntersection (ray : Ray) (surfaces : Surface[]) =
-    let mutable (bMin,tMin, vMin : Surface) = (false, Single.MaxValue, upcast (NoSurface(0UL, NotHitable(), RaytraceMaterial(Vector4.Zero))))
-    for surface in surfaces do
-        let struct(b,t) = surface.Geometry.AsHitable.Intersect ray
-        if surface.Geometry.AsHitable.IntersectionAcceptable b t 1.0f (RaytraceGeometryUtils.PointForRay ray t) &&  t < tMin then
-            bMin <- b
-            tMin <- t
-            vMin <- surface
-
-    struct(bMin, tMin, vMin)
 
 type Lambertian(id: ID, geometry : RaytracingGeometry, material : RaytraceMaterial) =
     inherit Surface(id, geometry, material)
@@ -93,6 +83,16 @@ type Lambertian(id: ID, geometry : RaytracingGeometry, material : RaytraceMateri
         let outDir = Vector4.Normalize(normalSample)
         let outRay = Ray(positionOnSurface, outDir)
         (true, outRay, cosOfIncidence)
+
+type NormalVis(id: ID, geometry : RaytracingGeometry, material : RaytraceMaterial) =
+    inherit Surface(id, geometry, material)
+
+    override this.Emitted (incommingRay : Ray) (t : LineParameter) =
+        let positionOnSurface = incommingRay.Origin + t*incommingRay.Direction
+        this.Geometry.AsHitable.NormalForSurfacePoint positionOnSurface
+        
+    override this.GenerateSamples _ _ _ _ = (noSampleCount, this.SamplesArray)
+
 
 type Metal(id: ID, geometry : RaytracingGeometry, material : RaytraceMaterial, fuzz : float32) =
     inherit Surface(id, geometry, material)
@@ -192,7 +192,16 @@ type Dielectric(id: ID, geometry : RaytracingGeometry, material : RaytraceMateri
             (2, samplesArray)
 
 
-       
+let findClosestIntersection (ray : Ray) (surfaces : Surface[]) =
+    let mutable (bMin,tMin, vMin : Surface) = (false, Single.MaxValue, upcast (NoSurface(0UL, NotHitable(), RaytraceMaterial(Vector4.Zero))))
+    for surface in surfaces do
+        let struct(b,t) = surface.Geometry.AsHitable.Intersect ray
+        if surface.Geometry.AsHitable.IntersectionAcceptable b t 1.0f (RaytraceGeometryUtils.PointForRay ray t) &&  t < tMin then
+            bMin <- b
+            tMin <- t
+            vMin <- surface
+
+    struct(bMin, tMin, vMin)      
 
 //https://learnopengl.com/Lighting/Light-casters
 //TODO refactor constants

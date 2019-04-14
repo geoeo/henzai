@@ -97,6 +97,12 @@ let spheres_scene_3 : Surface list
          Lambertian(assignIDAndIncrement id,Sphere(Vector3(0.0f,-1.5f,-3.5f),2.5f), RaytraceMaterial(Rgba32.Red));
        ]
 
+let spheres_scene_4 : Surface list
+     = [
+         Lambertian(assignIDAndIncrement id,Sphere(Vector3(0.0f,-1.5f,-3.5f),2.5f), RaytraceMaterial(Rgba32.Red));
+         NormalVis(assignIDAndIncrement id,Sphere(Vector3(6.0f,-1.5f,-3.5f),2.5f), RaytraceMaterial(Rgba32.Red));
+       ]
+
 let spheres_glass : Surface list = [
         Dielectric(assignIDAndIncrement id,Sphere(Vector3(-5.1f,-2.0f,-11.0f),3.0f),RaytraceMaterial(Rgba32.White),1.5f);
 ]

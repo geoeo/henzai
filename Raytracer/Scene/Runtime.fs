@@ -78,15 +78,15 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
                 let surfaceGeometry = surface.Geometry
                 if surfaceGeometry.AsHitable.IntersectionAcceptable hasIntersection t 1.0f (RaytraceGeometryUtils.PointForRay ray t)
                 then
-                    let emittedRadiance = surface.Emitted
-                    let (validSamples,raySamples) = surface.GenerateSamples ray t ((int)currentTraceDepth) surface.SamplesArray
+                    let emittedRadiance = surface.Emitted ray t
+                    let (validSamples, raySamples) = surface.GenerateSamples ray t ((int)currentTraceDepth) surface.SamplesArray
                     if validSamples = 0 then
                         emittedRadiance
                     else 
                         let mutable totalReflectedLight = Vector4.Zero
                         for i in 0..validSamples-1 do
-                            let (ray,shading) = raySamples.[i]
-                            totalReflectedLight <- totalReflectedLight + shading*rayTrace currentTraceDepth ray batchID
+                            let (ray_new, shading) = raySamples.[i]
+                            totalReflectedLight <- totalReflectedLight + shading*rayTrace currentTraceDepth ray_new batchID
                         emittedRadiance + totalReflectedLight/(float32)validSamples              
                 else 
                     backgroundColor
@@ -119,15 +119,15 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
                 if batchID = 0 && iteration = 0 then writeToDepthBuffer t px py
 
                 let currentTraceDepth = 0us
-                let emittedRadiance = surface.Emitted
+                let emittedRadiance = surface.Emitted ray t
                 let (validSamples,raySamples) = surface.GenerateSamples ray t ((int)currentTraceDepth) surface.SamplesArray
                 if validSamples = 0 then
                     emittedRadiance
                 else 
                     let mutable totalReflectedLight = Vector4.Zero
                     for i in 0..validSamples-1 do
-                        let (ray,shading) = raySamples.[i]
-                        totalReflectedLight <- totalReflectedLight + shading*rayTrace currentTraceDepth ray batchID
+                        let (ray_new, shading) = raySamples.[i]
+                        totalReflectedLight <- totalReflectedLight + shading*rayTrace currentTraceDepth ray_new batchID
                     emittedRadiance + totalReflectedLight/(float32)validSamples   
             else
                 backgroundColor 

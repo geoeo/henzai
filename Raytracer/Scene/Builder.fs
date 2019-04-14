@@ -29,6 +29,7 @@ let convertModelToSurfaceList (model: Model<'T, RaytraceMaterial>, vertexTypeTra
 
         let indicesCount = mesh.IndicesCount
         let indices = mesh.MeshIndices
+        //let vertices : 'T[] = Array.map vertexTypeTransform mesh.Vertices
         let vertices : 'T[] = Array.map vertexTypeTransform mesh.Vertices
         let mutable counter = 0
 
@@ -37,21 +38,34 @@ let convertModelToSurfaceList (model: Model<'T, RaytraceMaterial>, vertexTypeTra
         for j in 0..3..indicesCount-1 do
             let i1 = (int)indices.[j]
             let i2 = (int)indices.[j+1]
-            let i3 = (int)indices.[j+2]   
+            let i3 = (int)indices.[j+2]  
+
+            let v1 : VertexPositionNormal = vertices.[i1]
+            let v2 : VertexPositionNormal = vertices.[i2]
+            let v3 : VertexPositionNormal = vertices.[i3]
+
+            let n1 = v1.GetNormal()
+            let n2 = v2.GetNormal()
+            let n3 = v3.GetNormal()
+
+            let mutable n = (n1 + n2 + n3) /3.0f
+
 
             let triangle = new IndexedTriangle<'T>(i1, i2, i3, vertices)
-            let surface = Lambertian(assignIDAndIncrement id, triangle, material)
+            //let triangle = new IndexedTriangleNormal<'T>(i1, i2, i3, vertices, Vector4.Normalize(Vector4(n, 0.0f)))
+            //let surface = Lambertian(assignIDAndIncrement id, triangle, material)
+            let surface = NormalVis(assignIDAndIncrement id, triangle, material)
             surfaceList <- surface :> Surface :: surfaceList
 
             //TODO: normals seems to be inconsistent for all meshes except box.dae
-            // if counter%2 = 0 then
-            //     let triangle = new IndexedTriangle<'T>(i1, i2, i3, vertices)
-            //     let surface = Lambertian(assignIDAndIncrement id, triangle, material)
-            //     surfaceList <- surface :> Surface :: surfaceList
-            // else 
-            //     let triangle = new IndexedTriangle<'T>(i1, i3, i2, vertices)
-            //     let surface = Lambertian(assignIDAndIncrement id, triangle, material)
-            //     surfaceList <- surface :> Surface :: surfaceList
+            //if counter%2 = 0 then
+            // let triangle = new IndexedTriangle<'T>(i1, i2, i3, vertices)
+            // let surface = Lambertian(assignIDAndIncrement id, triangle, material)
+            // surfaceList <- surface :> Surface :: surfaceList
+            //else 
+             //let triangle = new IndexedTriangle<'T>(i1, i3, i2, vertices)
+             //let surface = Lambertian(assignIDAndIncrement id, triangle, material)
+             //surfaceList <- surface :> Surface :: surfaceList
             //let triangle = Triangle(vertices.[i1].GetPosition(), vertices.[i2].GetPosition(), vertices.[i3].GetPosition())
 
             counter <- counter + 1
@@ -64,19 +78,25 @@ let loadAssets =
     //let sceneList = List.concat [lightsAA;triangle_scene;spheres_scene_2;light_sphere;planes_scene_2_AA] # old scene 
     //let sceneNonBoundableArray : Surface[] = List.concat [plane_floor_Unbounded;lightsNonAA;plane_mirror_NonAA] |> Array.ofList # old scene
 
-    let rtModel = AssimpLoader.LoadFromFileWithRealtimeMaterial<VertexPositionNormal>(AppContext.BaseDirectory, "Models/Box.dae", VertexPositionNormal.HenzaiType, AssimpLoader.RaytracePostProcessSteps)
+    //let rtModel = AssimpLoader.LoadFromFileWithRealtimeMaterial<VertexPositionNormal>(AppContext.BaseDirectory, "Models/Box.dae", VertexPositionNormal.HenzaiType, AssimpLoader.RaytracePostProcessSteps)
     //let rtModel = AssimpLoader.LoadFromFileWithRealtimeMaterial<VertexPositionNormal>(AppContext.BaseDirectory, "Models/duck.dae", VertexPositionNormal.HenzaiType, AssimpLoader.RaytracePostProcessSteps)
     //let rtModel = AssimpLoader.LoadFromFileWithRealtimeMaterial<VertexPositionNormal>(AppContext.BaseDirectory, "Models/teapot.dae", VertexPositionNormal.HenzaiType, AssimpLoader.RaytracePostProcessSteps)
     //let rtModel = AssimpLoader.LoadFromFileWithRealtimeMaterial<VertexPositionNormal>(AppContext.BaseDirectory, "Models/chinesedragon.dae", VertexPositionNormal.HenzaiType, AssimpLoader.RaytracePostProcessSteps)
     //let rtModel = AssimpLoader.LoadFromFileWithRealtimeMaterial<VertexPositionNormal>(AppContext.BaseDirectory, "Models/sphere_centered.obj", VertexPositionNormal.HenzaiType, AssimpLoader.RaytracePostProcessSteps)
+    let rtModel = AssimpLoader.LoadFromFileWithRealtimeMaterial<VertexPositionNormal>(AppContext.BaseDirectory, "Models/sphere.obj", VertexPositionNormal.HenzaiType, AssimpLoader.RaytracePostProcessSteps)
     let raytracingModel = Model<VertexPositionNormal,RealtimeMaterial>.ConvertToRaytracingModel(rtModel, Rgba32.Red.ToVector4(), Vector4.Zero)
     //let transform = Matrix4x4.Identity
-    let mutable transform = Matrix4x4.CreateScale(1.0f)
-    transform.Translation <- Vector3(-5.0f, -5.0f, -3.0f)
+    //let mutable transformScale = Matrix4x4.CreateScale(0.01f)
+    let mutable transformScale = Matrix4x4.CreateScale(1.00f)
+    //let mutable transformRot = Matrix4x4.CreateFromYawPitchRoll(MathF.PI,0.0f,0.0f)
+    let mutable transformRot = Matrix4x4.CreateFromYawPitchRoll(0.0f,0.0f,0.0f)
+    let mutable transform = Matrix4x4.Multiply(transformRot, transformScale)
+    transform.Translation <- Vector3(-5.0f, -1.5f, -3.5f)
     let modelSurfaceList = convertModelToSurfaceList(raytracingModel, (vertexPositionNormalTransform transform))
     //let sceneNonBoundableArray : Surface[] = List.concat [modelSurfaceList] |> Array.ofList
     let sceneNonBoundableArray : Surface[] = List.concat [plane_floor_Unbounded;lightsNonAA] |> Array.ofList
-    let sceneList  = List.concat[triangle_scene;spheres_scene_3;light_sphere;lightsAA; modelSurfaceList ]
+    //let sceneList  = List.concat[triangle_scene;spheres_scene_4;light_sphere;lightsAA; modelSurfaceList ]
+    let sceneList  = List.concat[spheres_scene_4;light_sphere;modelSurfaceList ]
 
     let sceneArray : Surface[] = sceneList|> Array.ofList
     //let sceneArray : Surface[] = sceneList |> Array.ofList
