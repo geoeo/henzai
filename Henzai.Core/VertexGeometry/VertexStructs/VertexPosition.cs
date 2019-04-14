@@ -7,6 +7,7 @@ namespace Henzai.Core.VertexGeometry
     {
         //TODO: Investigate better aligment of bytes for all Vertex structs
         public const byte SizeInBytes = 12;
+        public const byte PositionOffset = 0;
         public const byte ElementCount = 1;
         public const VertexRuntimeTypes HenzaiType = VertexRuntimeTypes.VertexPosition;
 

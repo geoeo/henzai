@@ -1,7 +1,9 @@
 namespace HenzaiFunc.Core
 
 open System.Numerics
+open HenzaiFunc.Core.RaytraceGeometry
 open Henzai.Core.VertexGeometry
+open Henzai.Core.Numerics
 
 
 
@@ -38,3 +40,5 @@ module VertexGeometry =
     let vertexPositionTextureTransform(transform : Matrix4x4) (v : VertexPositionTexture) = 
         let transformedVector4 = Vector4.Transform(v.GetPosition(), transform)
         VertexPositionTexture(transformedVector4, v)
+
+    

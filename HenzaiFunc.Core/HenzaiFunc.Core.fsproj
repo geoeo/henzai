@@ -11,7 +11,6 @@
     <Compile Include="Extensions/Array.fs" />
     <Compile Include="Utils.fs" />
     <Compile Include="Types.fs" />
-    <Compile Include="VertexGeometry.fs"/>
     <Compile Include="RaytraceGeometry/Ray.fs" />
     <Compile Include="RaytraceGeometry/Hitable.fs" />
     <Compile Include="RaytraceGeometry/RaytraceGeometryUtils.fs" />
@@ -31,6 +30,7 @@
     <Compile Include="Acceleration/Culler.fs" />
     <Compile Include="Acceleration/BVHTreeBuilder.fs" />
     <Compile Include="Acceleration/BVHRuntime.fs" />
+    <Compile Include="VertexGeometry.fs"/>
     <ProjectReference Include="../Henzai.Core/Henzai.Core.csproj" />
   </ItemGroup>
 </Project>
