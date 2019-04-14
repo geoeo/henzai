@@ -172,6 +172,15 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
                 //Gamma correct TODO: refactor
                 frameBuffer.[px,py] <- Vector4.SquareRoot(avgColor)
 
+    member self.RenderSceneSync() =
+        for px in 0..width-1 do
+            for py in 0..height-1 do
+                let mutable avgColor = Vector4(0.0f, 0.0f, 0.0f, 1.0f)
+                for it in 0..samplesPerPixel-1 do
+                    avgColor <- avgColor + renderPass px py it
+                //Gamma correct TODO: refactor
+                frameBuffer.[px,py] <- Vector4.SquareRoot(avgColor/(float32)samplesPerPixel)
+
     member self.RenderSceneParallel() =
         let renderSquareSize = renderSquareSide*renderSquareSide
         //Don't have to clear pixels because image size will always be a multiple of renderSquareSide  

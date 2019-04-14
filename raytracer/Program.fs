@@ -32,6 +32,7 @@ let main argv =
     let mainScene = RuntimeScene (orderedSurfaceArray, sceneNonBoundableArray, bvhRuntime, bvhRuntimeArray)
     //mainScene.RenderScene()
     mainScene.RenderSceneParallel()
+    //mainScene.RenderSceneSync()
     printfn "Finished Rendering. Time taken: %f ms" stopWatch.Elapsed.TotalMilliseconds
     mainScene.SaveFrameBuffer()
     mainScene.SaveDepthBuffer()

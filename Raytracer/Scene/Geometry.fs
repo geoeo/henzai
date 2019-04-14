@@ -12,6 +12,11 @@ let lightsNonAA : Surface list
      NoSurface(assignIDAndIncrement id, Plane(new System.Numerics.Plane((Henzai.Core.Numerics.Vector.CreateUnitVector3(-1.0f, -1.0f, 1.0f)),20.0f),((Henzai.Core.Numerics.Vector.CreateUnitVector3(20.0f, 20.0f, -20.0f))),20.0f,13.0f), RaytraceMaterial(Rgba32.White, 0.0f, Rgba32.White, 1.0f));
     ]
 
+let lightsNonAA_2 : Surface list 
+    =  [
+     NoSurface(assignIDAndIncrement id, Plane(new System.Numerics.Plane((Henzai.Core.Numerics.Vector.CreateUnitVector3(0.0f, -1.0f, -1.0f)),20.0f),((Henzai.Core.Numerics.Vector.CreateUnitVector3(0.0f, 20.0f, -20.0f))), 30.0f, 20.0f), RaytraceMaterial(Rgba32.White, 0.0f, Rgba32.White, 1.0f));
+    ]
+
 
 let lightsAA : Surface list 
     =  [
@@ -32,7 +37,7 @@ let lights_simple : Surface list
 
 let light_sphere : Surface list = [
         //NoSurface(assignIDAndIncrement id, Sphere(Vector3(-13.0f,-6.0f,10.0f),3.0f), RaytraceMaterial(Rgba32.White,0.0f, Rgba32.White,1.0f));  
-        NoSurface(assignIDAndIncrement id, Sphere(Vector3(-4.0f,10.0f,-1.0f),3.0f), RaytraceMaterial(Rgba32.White,0.0f, Rgba32.White,1.0f));  
+        NoSurface(assignIDAndIncrement id, Sphere(Vector3(0.0f,12.0f,20.0f),5.0f), RaytraceMaterial(Rgba32.White,0.0f, Rgba32.White,1.0f));  
 ]
 
 let spheres : Surface list
@@ -101,6 +106,12 @@ let spheres_scene_4 : Surface list
      = [
          Lambertian(assignIDAndIncrement id,Sphere(Vector3(-6.0f,-1.5f,-3.5f),2.5f), RaytraceMaterial(Rgba32.Red));
          NormalVis(assignIDAndIncrement id,Sphere(Vector3(6.0f,-1.5f,-3.5f),2.5f), RaytraceMaterial(Rgba32.Red));
+       ]
+
+let lights_spheres_scene_4 : Surface list
+     = [
+         NoSurface(assignIDAndIncrement id,Sphere(Vector3(-6.0f,0.5f,-3.5f),2.5f), RaytraceMaterial(Rgba32.White,0.0f, Rgba32.White,1.0f));
+         NoSurface(assignIDAndIncrement id,Sphere(Vector3(6.0f,0.5f,-3.5f),2.5f), RaytraceMaterial(Rgba32.White,0.0f, Rgba32.White,1.0f));
        ]
 
 let spheres_glass : Surface list = [

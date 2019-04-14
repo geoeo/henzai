@@ -65,7 +65,8 @@ type IndexedTriangleNormal<'T when 'T : struct and 'T :> VertexLocateable>(v0 : 
                 let u = area1/fullArea
                 let v = area2/fullArea
                 let w = 1.0f - u - v
-                u*normal0 + v*normal1 + w*normal2
+                Vector4.Normalize(u*normal0 + v*normal1 + w*normal2)
+                //Vector4.Normalize((normal0 + normal1 + normal2)/3.0f)
 
 
             override this.IntersectionAcceptable hasIntersection t _ _ =

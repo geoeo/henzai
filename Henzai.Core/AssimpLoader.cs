@@ -121,10 +121,10 @@ namespace Henzai.Core
             | PostProcessSteps.CalculateTangentSpace | PostProcessSteps.GenerateSmoothNormals | PostProcessSteps.JoinIdenticalVertices | PostProcessSteps.FixInFacingNormals;
 
         public const PostProcessSteps RaytracePostProcessSteps
-            = PostProcessSteps.JoinIdenticalVertices | PostProcessSteps.FixInFacingNormals;
+            = PostProcessSteps.JoinIdenticalVertices | PostProcessSteps.GenerateSmoothNormals | PostProcessSteps.FindInvalidData;
 
         public const PostProcessSteps RaytracePostProcessStepsCW
-            = PostProcessSteps.FlipWindingOrder | PostProcessSteps.JoinIdenticalVertices | PostProcessSteps.FixInFacingNormals;
+            = PostProcessSteps.FlipWindingOrder | PostProcessSteps.JoinIdenticalVertices | PostProcessSteps.FixInFacingNormals |  PostProcessSteps.FindInvalidData;
 
         //private const PostProcessSteps DefaultPostProcessSteps
         //    = PostProcessSteps.None;
