@@ -44,17 +44,17 @@ let convertModelToSurfaceList (model: Model<'T, RaytraceMaterial>, vertexTypeTra
             let v2 : VertexPositionNormal = vertices.[i2]
             let v3 : VertexPositionNormal = vertices.[i3]
 
-            let n1 = v1.GetNormal()
-            let n2 = v2.GetNormal()
-            let n3 = v3.GetNormal()
+            let n1 = Vector4(v1.GetNormal(), 0.0f)
+            let n2 = Vector4(v2.GetNormal(), 0.0f)
+            let n3 = Vector4(v3.GetNormal(), 0.0f)
 
             let mutable n = (n1 + n2 + n3) /3.0f
 
 
-            let triangle = new IndexedTriangle<'T>(i1, i2, i3, vertices)
-            //let triangle = new IndexedTriangleNormal<'T>(i1, i2, i3, vertices, Vector4.Normalize(Vector4(n, 0.0f)))
-            //let surface = Lambertian(assignIDAndIncrement id, triangle, material)
-            let surface = NormalVis(assignIDAndIncrement id, triangle, material)
+            //let triangle = new IndexedTriangle<'T>(i1, i2, i3, vertices)
+            let triangle = new IndexedTriangleNormal<'T>(i1, i2, i3, vertices, n1,n2,n3)
+            let surface = Lambertian(assignIDAndIncrement id, triangle, material)
+            //let surface = NormalVis(assignIDAndIncrement id, triangle, material)
             surfaceList <- surface :> Surface :: surfaceList
 
             //TODO: normals seems to be inconsistent for all meshes except box.dae
@@ -82,21 +82,21 @@ let loadAssets =
     //let rtModel = AssimpLoader.LoadFromFileWithRealtimeMaterial<VertexPositionNormal>(AppContext.BaseDirectory, "Models/duck.dae", VertexPositionNormal.HenzaiType, AssimpLoader.RaytracePostProcessSteps)
     //let rtModel = AssimpLoader.LoadFromFileWithRealtimeMaterial<VertexPositionNormal>(AppContext.BaseDirectory, "Models/teapot.dae", VertexPositionNormal.HenzaiType, AssimpLoader.RaytracePostProcessSteps)
     //let rtModel = AssimpLoader.LoadFromFileWithRealtimeMaterial<VertexPositionNormal>(AppContext.BaseDirectory, "Models/chinesedragon.dae", VertexPositionNormal.HenzaiType, AssimpLoader.RaytracePostProcessSteps)
-    //let rtModel = AssimpLoader.LoadFromFileWithRealtimeMaterial<VertexPositionNormal>(AppContext.BaseDirectory, "Models/sphere_centered.obj", VertexPositionNormal.HenzaiType, AssimpLoader.RaytracePostProcessSteps)
-    let rtModel = AssimpLoader.LoadFromFileWithRealtimeMaterial<VertexPositionNormal>(AppContext.BaseDirectory, "Models/sphere.obj", VertexPositionNormal.HenzaiType, AssimpLoader.RaytracePostProcessSteps)
+    let rtModel = AssimpLoader.LoadFromFileWithRealtimeMaterial<VertexPositionNormal>(AppContext.BaseDirectory, "Models/sphere_centered.obj", VertexPositionNormal.HenzaiType, AssimpLoader.RaytracePostProcessSteps)
+    //let rtModel = AssimpLoader.LoadFromFileWithRealtimeMaterial<VertexPositionNormal>(AppContext.BaseDirectory, "Models/sphere.obj", VertexPositionNormal.HenzaiType, AssimpLoader.RaytracePostProcessSteps)
     let raytracingModel = Model<VertexPositionNormal,RealtimeMaterial>.ConvertToRaytracingModel(rtModel, Rgba32.Red.ToVector4(), Vector4.Zero)
     //let transform = Matrix4x4.Identity
     //let mutable transformScale = Matrix4x4.CreateScale(0.01f)
-    let mutable transformScale = Matrix4x4.CreateScale(1.00f)
+    let mutable transformScale = Matrix4x4.CreateScale(1.0f)
     //let mutable transformRot = Matrix4x4.CreateFromYawPitchRoll(MathF.PI,0.0f,0.0f)
     let mutable transformRot = Matrix4x4.CreateFromYawPitchRoll(0.0f,0.0f,0.0f)
     let mutable transform = Matrix4x4.Multiply(transformRot, transformScale)
-    transform.Translation <- Vector3(-5.0f, -1.5f, -3.5f)
+    transform.Translation <- Vector3(0.0f, -1.5f, -3.5f)
     let modelSurfaceList = convertModelToSurfaceList(raytracingModel, (vertexPositionNormalTransform transform))
     //let sceneNonBoundableArray : Surface[] = List.concat [modelSurfaceList] |> Array.ofList
     let sceneNonBoundableArray : Surface[] = List.concat [plane_floor_Unbounded;lightsNonAA] |> Array.ofList
     //let sceneList  = List.concat[triangle_scene;spheres_scene_4;light_sphere;lightsAA; modelSurfaceList ]
-    let sceneList  = List.concat[spheres_scene_4;light_sphere;modelSurfaceList ]
+    let sceneList  = List.concat[light_sphere;modelSurfaceList ]
 
     let sceneArray : Surface[] = sceneList|> Array.ofList
     //let sceneArray : Surface[] = sceneList |> Array.ofList

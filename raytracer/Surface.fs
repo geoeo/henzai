@@ -90,6 +90,15 @@ type NormalVis(id: ID, geometry : RaytracingGeometry, material : RaytraceMateria
     override this.Emitted (incommingRay : Ray) (t : LineParameter) =
         let positionOnSurface = incommingRay.Origin + t*incommingRay.Direction
         this.Geometry.AsHitable.NormalForSurfacePoint positionOnSurface
+
+    override this.GenerateSamples _ _ _ _ = (noSampleCount, this.SamplesArray)
+
+type IntersectVis(id: ID, geometry : RaytracingGeometry, material : RaytraceMaterial) =
+    inherit Surface(id, geometry, material)
+
+    override this.Emitted (incommingRay : Ray) (t : LineParameter) =
+        let positionOnSurface = incommingRay.Origin + t*incommingRay.Direction
+        this.Geometry.AsHitable.NormalForSurfacePoint positionOnSurface
         
     override this.GenerateSamples _ _ _ _ = (noSampleCount, this.SamplesArray)
 

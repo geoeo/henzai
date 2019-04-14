@@ -99,7 +99,7 @@ let spheres_scene_3 : Surface list
 
 let spheres_scene_4 : Surface list
      = [
-         Lambertian(assignIDAndIncrement id,Sphere(Vector3(0.0f,-1.5f,-3.5f),2.5f), RaytraceMaterial(Rgba32.Red));
+         Lambertian(assignIDAndIncrement id,Sphere(Vector3(-6.0f,-1.5f,-3.5f),2.5f), RaytraceMaterial(Rgba32.Red));
          NormalVis(assignIDAndIncrement id,Sphere(Vector3(6.0f,-1.5f,-3.5f),2.5f), RaytraceMaterial(Rgba32.Red));
        ]
 
