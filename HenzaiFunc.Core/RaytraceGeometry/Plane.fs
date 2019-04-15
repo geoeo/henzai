@@ -12,7 +12,6 @@ type Plane(plane : System.Numerics.Plane, center : Point option, width : float32
         new(plane : System.Numerics.Plane, center : Vector3, width : float32, height : float32) =
             Plane(plane, Some (Vector.ToHomogeneous(ref center, 1.0f)), Some width, Some height)
             
-
         let plane = plane
 
         let normal = Vector4.Normalize(Vector4(plane.Normal, 0.0f))

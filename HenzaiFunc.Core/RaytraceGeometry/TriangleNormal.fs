@@ -8,7 +8,7 @@ open Henzai.Core.Numerics
 open Henzai.Core.VertexGeometry
 
 // Baldwin-Weber ray-triangle intersection algorithm: http://jcgt.org/published/0005/03/03/
-type IndexedTriangleNormal<'T when 'T : struct and 'T :> VertexLocateable>(v0 : Vector3, v1: Vector3, v2 : Vector3, normal0 : Vector4, normal1 : Vector4, normal2 : Vector4) =
+type TriangleNormal<'T when 'T : struct and 'T :> VertexLocateable>(v0 : Vector3, v1: Vector3, v2 : Vector3, normal0 : Vector4, normal1 : Vector4, normal2 : Vector4) =
     inherit RaytracingGeometry() with
 
         //TODO: move this somewhere else
@@ -55,7 +55,6 @@ type IndexedTriangleNormal<'T when 'T : struct and 'T :> VertexLocateable>(v0 : 
 
 
         interface Hitable with
-            override this.TMin = 0.000001f
 
             override this.NormalForSurfacePoint p = 
                 let p3 = Vector.ToVec3(ref p)
@@ -69,8 +68,10 @@ type IndexedTriangleNormal<'T when 'T : struct and 'T :> VertexLocateable>(v0 : 
                 //Vector4.Normalize((normal0 + normal1 + normal2)/3.0f)
 
 
-            override this.IntersectionAcceptable hasIntersection t _ _ =
-                hasIntersection && t > this.AsHitable.TMin
+            override this.IntersectionAcceptable hasIntersection t _ point =
+                let tMinPassed = t > this.AsHitable.TMin
+                // if not tMinPassed then printfn "IndexedTriangleNormal tMin failed at (%f,%f,%f)!" point.X point.Y point.Z
+                hasIntersection && tMinPassed
 
             override this.HasIntersection (ray:Ray) = 
                 let struct(hasIntersection,_) = this.AsHitable.Intersect ray 
@@ -102,8 +103,8 @@ type IndexedTriangleNormal<'T when 'T : struct and 'T :> VertexLocateable>(v0 : 
 
             override this.IsBoundable = true
             
-        static member CreateTriangleFromVertexStructs<'T when 'T : struct and 'T :> VertexLocateable>(a : 'T, b : 'T, c : 'T)
-           = Triangle(a.GetPosition(), b.GetPosition(), c.GetPosition())
+        // static member CreateTriangleFromVertexStructs<'T when 'T : struct and 'T :> VertexLocateable>(a : 'T, b : 'T, c : 'T)
+        //    = Triangle(a.GetPosition(), b.GetPosition(), c.GetPosition())
              
 
 

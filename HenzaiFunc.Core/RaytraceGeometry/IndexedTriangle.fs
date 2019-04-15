@@ -51,7 +51,6 @@ type IndexedTriangle<'T when 'T : struct and 'T :> VertexLocateable>(i0 : int, i
                            crossV2V0.Z/normal.Z, -crossV1V0.Z/normal.Z, -nDotV0/normal.Z, 1.0f)
 
         interface Hitable with
-            override this.TMin = 0.000001f
 
             override this.NormalForSurfacePoint _ = unitNormal
 

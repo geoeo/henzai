@@ -49,7 +49,7 @@ let convertModelWithNormalToSurfaceList (model: Model<'T, RaytraceMaterial> when
             let n2 = Vector4(v2.GetNormal(), 0.0f)
             let n3 = Vector4(v3.GetNormal(), 0.0f)
 
-            let triangle = new IndexedTriangleNormal<'T>(Vector.ToVec3(v1.GetPosition()), Vector.ToVec3(v2.GetPosition()), Vector.ToVec3(v3.GetPosition()), n1, n2, n3)
+            let triangle = new TriangleNormal<'T>(Vector.ToVec3(v1.GetPosition()), Vector.ToVec3(v2.GetPosition()), Vector.ToVec3(v3.GetPosition()), n1, n2, n3)
             let surface = Lambertian(assignIDAndIncrement id, triangle, material)
             //let surface = Metal(assignIDAndIncrement id, triangle, material, 0.0f)
             //let surface = NormalVis(assignIDAndIncrement id, triangle, material)
@@ -89,8 +89,9 @@ let convertModelToSurfaceList (model: Model<'T, RaytraceMaterial>, vertexTypeTra
 
 //TODO: profile larger models
 let loadAssets = 
-    //let sceneList = List.concat [lightsAA;triangle_scene;spheres_scene_2;light_sphere;planes_scene_2_AA] # old scene 
-    //let sceneNonBoundableArray : Surface[] = List.concat [plane_floor_Unbounded;lightsNonAA;plane_mirror_NonAA] |> Array.ofList # old scene
+    //let sceneArray = List.concat [lightsAA;triangle_scene;spheres_scene_2;light_sphere;planes_scene_2_AA;plane_mirror_NonAA;lightsNonAA] |> Array.ofList //# old scene 
+    //let sceneArray = List.concat [light_sphere;triangle_scene] |> Array.ofList //# old scene 
+    //let sceneNonBoundableArray : Surface[] = List.concat [plane_floor_Unbounded] |> Array.ofList //# old scene
 
     //let rtModel = AssimpLoader.LoadFromFileWithRealtimeMaterial<VertexPositionNormal>(AppContext.BaseDirectory, "Models/Box.dae", VertexPositionNormal.HenzaiType, AssimpLoader.RaytracePostProcessSteps)
     let rtModel = AssimpLoader.LoadFromFileWithRealtimeMaterial<VertexPositionNormal>(AppContext.BaseDirectory, "Models/duck.dae", VertexPositionNormal.HenzaiType, AssimpLoader.RaytracePostProcessSteps)
@@ -101,7 +102,9 @@ let loadAssets =
 
     let raytracingModel = Model<VertexPositionNormal,RealtimeMaterial>.ConvertToRaytracingModel(rtModel, Rgba32.Red.ToVector4(), Vector4.Zero)
     //let transform = Matrix4x4.Identity
+    //let transformScale = Matrix4x4.Identity
     let mutable transformScale = Matrix4x4.CreateScale(0.02f) // duck
+    //let mutable transformScale = Matrix4x4.CreateScale(0.1f) // sphere
     //let mutable transformScale = Matrix4x4.CreateScale(0.9f)
     //let mutable transformScale = Matrix4x4.CreateScale(2.0f)
     //let mutable transformRot = Matrix4x4.CreateFromYawPitchRoll(0.0f,-MathF.PI/2.0f,0.0f)
@@ -110,15 +113,14 @@ let loadAssets =
     transform.Translation <- Vector3(0.0f, -1.5f, -3.5f)
     let modelSurfaceList = convertModelWithNormalToSurfaceList(raytracingModel, (vertexPositionNormalTransform transform))
     //let sceneNonBoundableArray : Surface[] = List.concat [modelSurfaceList] |> Array.ofList
-    let sceneNonBoundableArray : Surface[] = List.concat [plane_floor_Unbounded;lightsNonAA;lightsNonAA_2] |> Array.ofList
+    //let sceneNonBoundableArray : Surface[] = List.concat [plane_floor_Unbounded;lightsNonAA;lightsNonAA_2] |> Array.ofList
+    //let sceneNonBoundableArray : Surface[] = List.concat [light_box] |> Array.ofList
     //let sceneList  = List.concat[triangle_scene;spheres_scene_4;light_sphere;lightsAA; modelSurfaceList ]
-    let sceneList  = List.concat[modelSurfaceList;lights_spheres_scene_4 ]
+    let sceneList  = List.concat[modelSurfaceList;light_box]
 
     let sceneArray : Surface[] = sceneList|> Array.ofList
-    //let sceneArray : Surface[] = sceneList |> Array.ofList
     //(sceneArray, sceneNonBoundableArray)
-    //(sceneArray, emptySurfaceArray)
-    (sceneArray, sceneNonBoundableArray)
+    (sceneArray, emptySurfaceArray)
 
 let constructBVHTree surfaceArray splitMethod = 
     let bvhTreeBuilder = BVHTreeBuilder<Surface>()

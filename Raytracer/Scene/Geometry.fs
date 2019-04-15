@@ -36,8 +36,8 @@ let lights_simple : Surface list
     ]
 
 let light_sphere : Surface list = [
-        //NoSurface(assignIDAndIncrement id, Sphere(Vector3(-13.0f,-6.0f,10.0f),3.0f), RaytraceMaterial(Rgba32.White,0.0f, Rgba32.White,1.0f));  
-        NoSurface(assignIDAndIncrement id, Sphere(Vector3(0.0f,12.0f,20.0f),5.0f), RaytraceMaterial(Rgba32.White,0.0f, Rgba32.White,1.0f));  
+        NoSurface(assignIDAndIncrement id, Sphere(Vector3(-15.0f,-6.0f,-4.0f),3.0f), RaytraceMaterial(Rgba32.White,0.0f, Rgba32.White,1.0f));  
+        //NoSurface(assignIDAndIncrement id, Sphere(Vector3(0.0f,12.0f,20.0f),5.0f), RaytraceMaterial(Rgba32.White,0.0f, Rgba32.White,1.0f));  
 ]
 
 let spheres : Surface list
@@ -114,15 +114,31 @@ let lights_spheres_scene_4 : Surface list
          NoSurface(assignIDAndIncrement id,Sphere(Vector3(6.0f,0.5f,-3.5f),2.5f), RaytraceMaterial(Rgba32.White,0.0f, Rgba32.White,1.0f));
        ]
 
+let light_box : Surface list
+     = [
+     NoSurface(assignIDAndIncrement id, Plane(System.Numerics.Plane((Henzai.Core.Numerics.Vector.CreateUnitVector3(-1.0f, 0.0f, 0.0f)),20.0f),((Henzai.Core.Numerics.Vector.CreateUnitVector3(20.0f, 0.0f, 0.0f))),40.0f,40.0f), RaytraceMaterial(Rgba32.White, 0.0f, Rgba32.White, 1.0f));
+     NoSurface(assignIDAndIncrement id, Plane(System.Numerics.Plane((Henzai.Core.Numerics.Vector.CreateUnitVector3(1.0f, 0.0f, 0.0f)),20.0f),((Henzai.Core.Numerics.Vector.CreateUnitVector3(-20.0f, 0.0f, 0.0f))),40.0f,40.0f), RaytraceMaterial(Rgba32.White, 0.0f, Rgba32.White, 1.0f));
+     NoSurface(assignIDAndIncrement id, Plane(System.Numerics.Plane((Henzai.Core.Numerics.Vector.CreateUnitVector3(0.0f, -1.0f, 0.0f)),20.0f),((Henzai.Core.Numerics.Vector.CreateUnitVector3(0.0f, 20.0f, 0.0f))),40.0f,40.0f), RaytraceMaterial(Rgba32.White, 0.0f, Rgba32.White, 1.0f));
+     NoSurface(assignIDAndIncrement id, Plane(System.Numerics.Plane((Henzai.Core.Numerics.Vector.CreateUnitVector3(0.0f, 1.0f, 0.0f)),20.0f),((Henzai.Core.Numerics.Vector.CreateUnitVector3(0.0f, -20.0f, 0.0f))),40.0f,40.0f), RaytraceMaterial(Rgba32.White, 0.0f, Rgba32.White, 1.0f));
+     NoSurface(assignIDAndIncrement id, Plane(System.Numerics.Plane((Henzai.Core.Numerics.Vector.CreateUnitVector3(0.0f, 0.0f, -1.0f)),20.0f),((Henzai.Core.Numerics.Vector.CreateUnitVector3(0.0f, 0.0f, 20.0f))),40.0f,40.0f), RaytraceMaterial(Rgba32.White, 0.0f, Rgba32.White, 1.0f));
+     NoSurface(assignIDAndIncrement id, Plane(System.Numerics.Plane((Henzai.Core.Numerics.Vector.CreateUnitVector3(0.0f, 0.0f, 1.0f)),20.0f),((Henzai.Core.Numerics.Vector.CreateUnitVector3(0.0f, 0.0f, -20.0f))),40.0f,40.0f), RaytraceMaterial(Rgba32.White, 0.0f, Rgba32.White, 1.0f));
+       ]
+
+let light_plane_z : Surface list 
+        = [
+        NoSurface(assignIDAndIncrement id, Plane(System.Numerics.Plane((Henzai.Core.Numerics.Vector.CreateUnitVector3(0.0f, 0.0f, -1.0f)),20.0f),((Henzai.Core.Numerics.Vector.CreateUnitVector3(0.0f, 0.0f, 20.0f))),40.0f,40.0f), RaytraceMaterial(Rgba32.White, 0.0f, Rgba32.White, 1.0f));
+        //not working//NoSurface(assignIDAndIncrement id, Plane(System.Numerics.Plane((Henzai.Core.Numerics.Vector.CreateUnitVector3(0.0f, 0.0f, -1.0f)),20.0f),((Henzai.Core.Numerics.Vector.CreateUnitVector3(-100.0f, 0.0f, 20.0f))),20.0f,20.0f), RaytraceMaterial(Rgba32.White, 0.0f, Rgba32.White, 1.0f));
+        ]
+
 let spheres_glass : Surface list = [
         Dielectric(assignIDAndIncrement id,Sphere(Vector3(-5.1f,-2.0f,-11.0f),3.0f),RaytraceMaterial(Rgba32.White),1.5f);
 ]
 
 let planes : Surface list = [
     Lambertian(assignIDAndIncrement id,Plane(System.Numerics.Plane.CreateFromVertices(Vector3(-1.0f,-6.0f,0.0f),Vector3(1.0f,-6.0f,0.0f),Vector3(0.0f,-6.0f,-1.0f)),None,None,None),RaytraceMaterial(Vector4(1.0f,1.0f,1.0f,1.0f)));
-    Lambertian(assignIDAndIncrement id,Plane(new System.Numerics.Plane((Henzai.Core.Numerics.Vector.CreateUnitVector3(0.0f, 0.0f, -1.0f)),17.0f),((Vector3(0.0f,0.0f,17.0f))), 30.0f, 10.0f), RaytraceMaterial(Rgba32.White));
-    Lambertian(assignIDAndIncrement id,Plane(new System.Numerics.Plane((Henzai.Core.Numerics.Vector.CreateUnitVector3(0.0f, 0.0f, 1.0f)),30.0f),((Vector3(-5.0f,10.0f,-30.0f))), 25.0f, 20.0f), RaytraceMaterial(Rgba32.IndianRed));
-    Metal(assignIDAndIncrement id, Plane(new System.Numerics.Plane((Henzai.Core.Numerics.Vector.CreateUnitVector3(-1.0f, 0.0f, 1.0f)),15.0f),((Vector3(15.0f,3.0f,-15.0f))), 10.0f, 6.0f), RaytraceMaterial(Rgba32.AntiqueWhite),0.01f)
+    Lambertian(assignIDAndIncrement id,Plane(System.Numerics.Plane((Henzai.Core.Numerics.Vector.CreateUnitVector3(0.0f, 0.0f, -1.0f)),17.0f),((Vector3(0.0f,0.0f,17.0f))), 30.0f, 10.0f), RaytraceMaterial(Rgba32.White));
+    Lambertian(assignIDAndIncrement id,Plane(System.Numerics.Plane((Henzai.Core.Numerics.Vector.CreateUnitVector3(0.0f, 0.0f, 1.0f)),30.0f),((Vector3(-5.0f,10.0f,-30.0f))), 25.0f, 20.0f), RaytraceMaterial(Rgba32.IndianRed));
+    Metal(assignIDAndIncrement id, Plane(System.Numerics.Plane((Henzai.Core.Numerics.Vector.CreateUnitVector3(-1.0f, 0.0f, 1.0f)),15.0f),((Vector3(15.0f,3.0f,-15.0f))), 10.0f, 6.0f), RaytraceMaterial(Rgba32.AntiqueWhite),0.01f)
     ]
 
 let planes_submission : Surface list = [
@@ -157,6 +173,7 @@ let plane_floor_bounded : Surface list = [
 let triangle_scene : Surface list = [
             //Lambertian(assignIDAndIncrement id,Triangle(Vector3(-13.0f,-6.0f,-16.0f),Vector3(-17.0f,-6.0f,-16.0f),Vector3(-15.0f,-3.0f,-16.0f)),RaytraceMaterial(Rgba32.White));
             Dielectric(assignIDAndIncrement id,Triangle(Vector3(-13.0f,-6.0f,-16.0f),Vector3(-11.0f,-6.0f,-16.0f),Vector3(-12.0f,-3.0f,-16.0f)),RaytraceMaterial(Rgba32.IndianRed), 1.5f);
+            //Lambertian(assignIDAndIncrement id,Triangle(Vector3(-13.0f,-6.0f,-16.0f),Vector3(-11.0f,-6.0f,-16.0f),Vector3(-12.0f,-3.0f,-16.0f)),RaytraceMaterial(Rgba32.IndianRed));
             Lambertian(assignIDAndIncrement id,Triangle(Vector3(-14.0f,-6.0f,-18.0f),Vector3(-10.0f,-6.0f,-18.0f),Vector3(-12.0f,0.0f,-18.0f)),RaytraceMaterial(Rgba32.RoyalBlue));
 ]
 
