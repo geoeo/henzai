@@ -87,7 +87,7 @@ type BVHRuntime<'T when 'T :> Hitable>() =
                         let geometry = orderedPrimitives.[primitiveOffset + i]
                         let struct(leafHasIntersection, leafHit) = geometry.Intersect ray 
                         let point = ray.Origin + leafHit*ray.Direction
-                        let intersectionAcceptable = geometry.IntersectionAcceptable leafHasIntersection leafHit 0.0f point
+                        let intersectionAcceptable = geometry.IntersectionAcceptable leafHasIntersection leafHit 1.0f point
                         if intersectionAcceptable && leafHit < tHit then
                             hasIntersection <- leafHasIntersection
                             tHit <- leafHit

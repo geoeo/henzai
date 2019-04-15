@@ -76,20 +76,20 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
             if hasIntersection then
                 let surface = surfaceOption.Value
                 let surfaceGeometry = surface.Geometry
-                if surfaceGeometry.AsHitable.IntersectionAcceptable hasIntersection t 1.0f (RaytraceGeometryUtils.PointForRay ray t)
-                then
-                    let emittedRadiance = surface.Emitted ray t
-                    let (validSamples, raySamples) = surface.GenerateSamples ray t ((int)currentTraceDepth) surface.SamplesArray
-                    if validSamples = 0 then
-                        emittedRadiance
-                    else 
-                        let mutable totalReflectedLight = Vector4.Zero
-                        for i in 0..validSamples-1 do
-                            let (ray_new, shading) = raySamples.[i]
-                            totalReflectedLight <- totalReflectedLight + shading*rayTrace currentTraceDepth ray_new batchID
-                        emittedRadiance + totalReflectedLight/(float32)validSamples              
+                //if surfaceGeometry.AsHitable.IntersectionAcceptable hasIntersection t 1.0f (RaytraceGeometryUtils.PointForRay ray t)
+                //then
+                let emittedRadiance = surface.Emitted ray t
+                let (validSamples, raySamples) = surface.GenerateSamples ray t ((int)currentTraceDepth) surface.SamplesArray
+                if validSamples = 0 then
+                    emittedRadiance
                 else 
-                    backgroundColor
+                    let mutable totalReflectedLight = Vector4.Zero
+                    for i in 0..validSamples-1 do
+                        let (ray_new, shading) = raySamples.[i]
+                        totalReflectedLight <- totalReflectedLight + shading*rayTrace currentTraceDepth ray_new batchID
+                    emittedRadiance + totalReflectedLight/(float32)validSamples              
+                // else 
+                //     backgroundColor
              else
                  backgroundColor
 
@@ -107,7 +107,7 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
             
         // Some geometry is not present in the BVH i.e. infinite planes
         let struct(b_linear, t_linear, s_linear) = findClosestIntersection ray nonBoundableSurfaces
-        if (not hasIntersection || t_linear < t ) && s_linear.Geometry.AsHitable.IntersectionAcceptable b_linear t_linear 1.0f (RaytraceGeometryUtils.PointForRay ray t_linear) then
+        if (not hasIntersection || t_linear < t ) && s_linear.Geometry.AsHitable.IntersectionAcceptable b_linear t_linear dotLookAtAndTracingRay (RaytraceGeometryUtils.PointForRay ray t_linear) then
             hasIntersection <- b_linear
             t <- t_linear
             surfaceOption <- Some s_linear
@@ -115,22 +115,22 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
         if hasIntersection then
             let surface = surfaceOption.Value
             let surfaceGeometry = surface.Geometry
-            if surfaceGeometry.AsHitable.IntersectionAcceptable hasIntersection t dotLookAtAndTracingRay (RaytraceGeometryUtils.PointForRay ray t) then
-                if batchID = 0 && iteration = 0 then writeToDepthBuffer t px py
+            //if surfaceGeometry.AsHitable.IntersectionAcceptable hasIntersection t dotLookAtAndTracingRay (RaytraceGeometryUtils.PointForRay ray t) then
+            if batchID = 0 && iteration = 0 then writeToDepthBuffer t px py
 
-                let currentTraceDepth = 0us
-                let emittedRadiance = surface.Emitted ray t
-                let (validSamples,raySamples) = surface.GenerateSamples ray t ((int)currentTraceDepth) surface.SamplesArray
-                if validSamples = 0 then
-                    emittedRadiance
-                else 
-                    let mutable totalReflectedLight = Vector4.Zero
-                    for i in 0..validSamples-1 do
-                        let (ray_new, shading) = raySamples.[i]
-                        totalReflectedLight <- totalReflectedLight + shading*rayTrace currentTraceDepth ray_new batchID
-                    emittedRadiance + totalReflectedLight/(float32)validSamples   
-            else
-                backgroundColor 
+            let currentTraceDepth = 0us
+            let emittedRadiance = surface.Emitted ray t
+            let (validSamples,raySamples) = surface.GenerateSamples ray t ((int)currentTraceDepth) surface.SamplesArray
+            if validSamples = 0 then
+                emittedRadiance
+            else 
+                let mutable totalReflectedLight = Vector4.Zero
+                for i in 0..validSamples-1 do
+                    let (ray_new, shading) = raySamples.[i]
+                    totalReflectedLight <- totalReflectedLight + shading*rayTrace currentTraceDepth ray_new batchID
+                emittedRadiance + totalReflectedLight/(float32)validSamples   
+            // else
+            //     backgroundColor 
          else
              backgroundColor
 
