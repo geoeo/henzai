@@ -177,8 +177,11 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
                 frameBuffer.[px,py] <- Vector4.SquareRoot(avgColor/(float32)samplesPerPixel)
 
     member self.RenderSceneParallel() =
-        for i in 1..renderSquareSize-1 do
-            randomStateForThread.[i]<-Random()
+        let stopWatch = System.Diagnostics.Stopwatch.StartNew()
+        for i in 0..renderSquareSize-1 do
+            let seed = stopWatch.Elapsed.TotalMilliseconds*100000.0
+            randomStateForThread.[i]<-Random((int)seed)
+        stopWatch.Stop()
         //Don't have to clear pixels because image size will always be a multiple of renderSquareSide  
         let pixelsToRenderWithIndex = Array.zeroCreate<int*int*int> renderSquareSize
         let renderSquareStartIndexes = Array.zeroCreate<int*int> (width/renderSquareSide * height/renderSquareSide)

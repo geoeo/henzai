@@ -56,6 +56,8 @@ type TriangleNormal<'T when 'T : struct and 'T :> VertexLocateable>(v0 : Vector3
 
         interface Hitable with
 
+            override this.TMin = 0.001f
+
             override this.NormalForSurfacePoint p = 
                 let p3 = Vector.ToVec3(ref p)
                 let area1 = triangleArea v1 v2 p3

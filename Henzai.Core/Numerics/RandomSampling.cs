@@ -42,7 +42,7 @@ namespace Henzai.Core.Numerics
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float RandomFloat(Random randState)
         {        
-            return (float)randState.NextDouble();;
+            return (float)randState.NextDouble();
         }
 
         public static Vector3 RandomInUnitDisk(ref uint state)

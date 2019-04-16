@@ -71,6 +71,7 @@ type Lambertian(id: ID, geometry : RaytracingGeometry, material : RaytraceMateri
 
         //sampling hemisphere
         let rand_norm = RandomSampling.RandomInUnitHemisphere(randomGen)
+        //let rand_norm = RandomSampling.RandomInUnitHemisphere_Sync()
         let cosOfIncidence = rand_norm.Y
         let mutable nb = Vector4.Zero
         let mutable nt = Vector4.Zero
