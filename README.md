@@ -6,6 +6,7 @@ Henzai (遍在) meaning ubiquitous, is a cross platform 3D rendering engine usin
 ![Henzai Opengl](/docs/Pictures/sponza_opengl.png)
 ![Raytracer](/docs/Pictures/display.jpg)
 ![RaytracerMesh](/docs/Pictures/display_mesh.jpg)
+![RaytracerMesh_2](/docs/Pictures/display_mesh_2.jpg)
 ## Resources
 
 ### Graphics
