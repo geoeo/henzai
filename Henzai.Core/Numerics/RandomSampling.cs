@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 
 // Implementation from https://github.com/mellinoe/veldrid-raytracer/blob/master/src/raytracer/RandUtil.cs
 // Theory from Raytracing in a Weekend
@@ -38,7 +39,11 @@ namespace Henzai.Core.Numerics
             return ret;
         }
 
-        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float RandomFloat(Random randState)
+        {        
+            return (float)randState.NextDouble();;
+        }
 
         public static Vector3 RandomInUnitDisk(ref uint state)
         {
@@ -88,6 +93,19 @@ namespace Henzai.Core.Numerics
                 rand2 = randState.NextDouble(); // phi
             }
 
+            
+            float cosTheta = 1.0f -(float)rand1;
+            float sinTheta = MathF.Sqrt(1.0f - cosTheta*cosTheta);
+            float phi = 2.0f * MathF.PI * (float)rand2;
+            float x = sinTheta * MathF.Cos(phi);
+            float z = sinTheta * MathF.Sin(phi);
+            return new Vector3(x, cosTheta, z);
+        }
+
+        public static Vector3 RandomInUnitHemisphere(Random random)
+        {
+            double rand1 = random.NextDouble(); // theta
+            double rand2 = random.NextDouble(); // phi
             
             float cosTheta = 1.0f -(float)rand1;
             float sinTheta = MathF.Sqrt(1.0f - cosTheta*cosTheta);

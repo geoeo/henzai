@@ -16,7 +16,10 @@ open BenchmarkDotNet.Attributes
 
 type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvhRuntime : BVHRuntime<Surface>, bvhRuntimeArray : BVHRuntimeNode []) =
 
-    let bvhTraversalStack2D = Array2D.zeroCreate batchSize bvhRuntimeArray.Length
+    //TODO decide on a async implementation
+    // let bvhTraversalStack2D = Array2D.zeroCreate batchSize bvhRuntimeArray.Length
+    let bvhTraversalStack2D = Array2D.zeroCreate renderSquareSize bvhRuntimeArray.Length
+    let randomStateForThread = Array.create renderSquareSize (Random())
 
     let batches = samplesPerPixel / batchSize
     let batchIndices = [|1..batchSize|] 
@@ -52,6 +55,7 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
 
     let rec rayTrace previousTraceDepth (ray : Ray) batchID =
         let bvhTraversalStack = bvhTraversalStack2D.[batchID, *]
+        let random = randomStateForThread.[batchID]
 
         if previousTraceDepth >= maxTraceDepth 
         then  
@@ -75,7 +79,7 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
             if hasIntersection then
                 let surface = surfaceOption.Value
                 let emittedRadiance = surface.Emitted ray t
-                let (validSamples, raySamples) = surface.GenerateSamples ray t ((int)currentTraceDepth) surface.SamplesArray
+                let (validSamples, raySamples) = surface.GenerateSamples ray t surface.SamplesArray random
                 if validSamples = 0 then
                     emittedRadiance
                 else 
@@ -91,6 +95,7 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
     let rayTraceBase (ray : Ray) px py batchID iteration = 
         let dotLookAtAndTracingRay = Vector3.Dot(Vector3.Normalize(lookAt), Vector.ToVec3(ray.Direction))
         let bvhTraversalStack = bvhTraversalStack2D.[batchID, *]
+        let random = randomStateForThread.[batchID]
 
         let mutable struct(hasIntersection, t, surfaceOption) = struct(false, 0.0f, None)
         if bvhRuntimeArray.Length > 0 then
@@ -112,7 +117,7 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
 
             let currentTraceDepth = 0us
             let emittedRadiance = surface.Emitted ray t
-            let (validSamples,raySamples) = surface.GenerateSamples ray t ((int)currentTraceDepth) surface.SamplesArray
+            let (validSamples,raySamples) = surface.GenerateSamples ray t surface.SamplesArray random
             if validSamples = 0 then
                 emittedRadiance
             else 
@@ -142,14 +147,14 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
             Array.blit colorsBatch 0 colorSamples (batchIndex*batchSize) batchSize 
         if Array.isEmpty colorSamples then Vector4.Zero else (Array.reduce (+) colorSamples)/(float32)samplesPerPixel
 
-    let renderPass px py it= 
+    let renderPass px py threadId it = 
         let dirCS = 
             RayDirection (PixelToCamera (float32 px) (float32 py) (float32 width) (float32 height) fov)
         let rot : Matrix4x4 = Henzai.Core.Numerics.Geometry.Rotation(ref cameraWS)
         let dirWS = Vector4.Normalize(Vector4.Transform(dirCS, rot))
         let ray = Ray(Vector4(cameraWS.Translation, 1.0f), dirWS)
         
-        rayTraceBase ray px py 0 it
+        rayTraceBase ray px py threadId it
 
 
     //TODO: Merge RenderSceneParallel and renderPassParallel.
@@ -167,14 +172,15 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
             for py in 0..height-1 do
                 let mutable avgColor = Vector4(0.0f, 0.0f, 0.0f, 1.0f)
                 for it in 0..samplesPerPixel-1 do
-                    avgColor <- avgColor + renderPass px py it
+                    avgColor <- avgColor + renderPass px py 0 it
                 //Gamma correct TODO: refactor
                 frameBuffer.[px,py] <- Vector4.SquareRoot(avgColor/(float32)samplesPerPixel)
 
     member self.RenderSceneParallel() =
-        let renderSquareSize = renderSquareSide*renderSquareSide
+        for i in 1..renderSquareSize-1 do
+            randomStateForThread.[i]<-Random()
         //Don't have to clear pixels because image size will always be a multiple of renderSquareSide  
-        let pixelsToRender = Array.zeroCreate<int*int> renderSquareSize
+        let pixelsToRenderWithIndex = Array.zeroCreate<int*int*int> renderSquareSize
         let renderSquareStartIndexes = Array.zeroCreate<int*int> (width/renderSquareSide * height/renderSquareSide)
         let flatIndexTo2D i = i/renderSquareSide, i%renderSquareSide
         let flatIndexes = [|0..renderSquareSize-1|]
@@ -187,11 +193,11 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
                 renderSquareStartIndexes.[idx] <- (px, py)
 
         for (px, py) in renderSquareStartIndexes do
-            let generatePixelCalls = Array.map(fun (i, (xOff, yOff)) -> async {return pixelsToRender.[i] <- px+xOff, py+yOff}) allIndexes
+            let generatePixelCalls = Array.map(fun (i, (xOff, yOff)) -> async {return pixelsToRenderWithIndex.[i] <- i, px+xOff, py+yOff}) allIndexes
             generatePixelCalls |> Async.Parallel |> Async.RunSynchronously |> ignore
 
             for it in 0..samplesPerPixel-1 do
-                let pixelRenderCalls = Array.map(fun (x, y) -> async {return renderPass x y it}) pixelsToRender
+                let pixelRenderCalls = Array.map(fun (i, x, y) -> async {return renderPass x y i it}) pixelsToRenderWithIndex
                 let colors = pixelRenderCalls |> Async.Parallel |> Async.RunSynchronously
 
                 let addColorCalls = Array.map(fun (i, (xOff, yOff)) -> async {return frameBuffer.[px+xOff,py+yOff] <- frameBuffer.[px+xOff,py+yOff] + colors.[i]}) allIndexes

@@ -7,20 +7,18 @@ open HenzaiFunc.Core.Types
 open HenzaiFunc.Core.RaytraceGeometry
 open Henzai.Core.Materials;
 open Henzai.Core.Numerics
-
-let randomState = Random()
    
 //TODO: Refactor namespace + Split this up    
 [<AbstractClass>]
 type Surface(id: ID, geometry : RaytracingGeometry, material : RaytraceMaterial) =
     //let mutable samplesArray  = Array.zeroCreate<Ray*Raytracer.Material.Color> this.SampleCount
 
-    abstract member Scatter: Ray -> LineParameter -> int -> (bool*Ray*Cosine)
+    abstract member Scatter: Ray -> LineParameter -> Random -> (bool*Ray*Cosine)
     abstract member Emitted : Ray -> LineParameter -> Color 
     abstract member SampleCount : int
     abstract member PDF : float32
     abstract member BRDF : Color
-    abstract member GenerateSamples : Ray -> LineParameter -> int -> struct(Ray* Color)[]->(int*struct(Ray* Color)[])
+    abstract member GenerateSamples : Ray -> LineParameter -> struct(Ray* Color)[] -> Random ->(int*struct(Ray* Color)[])
 
     member this.ID = id
     member this.Geometry = geometry
@@ -34,9 +32,9 @@ type Surface(id: ID, geometry : RaytracingGeometry, material : RaytraceMaterial)
     default this.SampleCount = noSampleCount
     default this.PDF = 1.0f
     default this.BRDF = this.Material.Albedo
-    default this.GenerateSamples (incommingRay : Ray) (t : LineParameter) (depthLevel : int) samplesArray  = 
+    default this.GenerateSamples (incommingRay : Ray) (t : LineParameter) samplesArray randomGen = 
         for i in 0..this.SampleCount-1 do
-            let shading = this.ComputeSample (this.Scatter incommingRay t depthLevel)
+            let shading = this.ComputeSample (this.Scatter incommingRay t randomGen)
             samplesArray.SetValue(shading, i)
         (this.SampleCount, samplesArray)
 
@@ -66,13 +64,13 @@ type Lambertian(id: ID, geometry : RaytracingGeometry, material : RaytraceMateri
     override this.SampleCount = lambertianSampleCount
     override this.PDF = 1.0f / (2.0f * MathF.PI)
     override this.BRDF = this.Material.Albedo / MathF.PI
-    override this.Scatter (incommingRay : Ray) (t : LineParameter) (depthLevel : int) =
-
+    override this.Scatter (incommingRay : Ray) (t : LineParameter) (randomGen : Random) =
+        //TODO: external dependecies seem to slow down this section
         let positionOnSurface = incommingRay.Origin + t*incommingRay.Direction
         let mutable normal = this.Geometry.AsHitable.NormalForSurfacePoint positionOnSurface
 
         //sampling hemisphere
-        let rand_norm = RandomSampling.RandomInUnitHemisphere_Sync()
+        let rand_norm = RandomSampling.RandomInUnitHemisphere(randomGen)
         let cosOfIncidence = rand_norm.Y
         let mutable nb = Vector4.Zero
         let mutable nt = Vector4.Zero
@@ -111,13 +109,13 @@ type Metal(id: ID, geometry : RaytracingGeometry, material : RaytraceMaterial, f
         = incommingRay.Direction - 2.0f*Vector4.Dot(incommingRay.Direction, normalToSurface)*normalToSurface 
 
     override this.SampleCount = metalSampleCount
-    override this.Scatter (incommingRay : Ray) (t : LineParameter) (depthLevel : int) =
+    override this.Scatter (incommingRay : Ray) (t : LineParameter) (randomGen : Random) =
 
         let positionOnSurface = incommingRay.Origin + t*incommingRay.Direction
         let mutable normal = Vector4.Normalize(this.Geometry.AsHitable.NormalForSurfacePoint positionOnSurface)
 
         //sampling hemisphere
-        let rand_norm = RandomSampling.RandomInUnitHemisphere_Sync()
+        let rand_norm = RandomSampling.RandomInUnitHemisphere(randomGen)
         let mutable nb = Vector4.Zero
         let mutable nt = Vector4.Zero
         Henzai.Core.Numerics.Geometry.CreateCoordinateSystemAroundNormal(&normal, &nt, &nb)
@@ -153,7 +151,7 @@ type Dielectric(id: ID, geometry : RaytracingGeometry, material : RaytraceMateri
     ///<summary>
     /// Returns: (Reflect Probability,intersection Position,Reflection Dir, Refraction Dir)
     /// </summary>
-    member this.CalcFresnel (incommingRay : Ray) (t : LineParameter) (depthLevel : int) = 
+    member this.CalcFresnel (incommingRay : Ray) (t : LineParameter) = 
         let positionOnSurface = incommingRay.Origin + t*incommingRay.Direction
         let normal = Vector4.Normalize(this.Geometry.AsHitable.NormalForSurfacePoint positionOnSurface)
         let reflectDir = Vector4.Normalize(this.Reflect incommingRay normal)
@@ -174,9 +172,9 @@ type Dielectric(id: ID, geometry : RaytracingGeometry, material : RaytraceMateri
         let reflectProb = if refracted then this.SchlickApprx cos_incidence incidenceIndex transmissionIndex  else 1.0f
         (reflectProb , positionOnSurface, reflectDir, refrationDir)
 
-    override this.Scatter (incommingRay : Ray) (t : LineParameter) (depthLevel : int) =
-        let (reflectProb, positionOnSurface, reflectDir, refractionDir) = this.CalcFresnel incommingRay t depthLevel
-        let randomFloat = RandomSampling.RandomFloat_Sync()
+    override this.Scatter (incommingRay : Ray) (t : LineParameter) (randomGen : Random) =
+        let (reflectProb, positionOnSurface, reflectDir, refractionDir) = this.CalcFresnel incommingRay t
+        let randomFloat = RandomSampling.RandomFloat(randomGen)
         if randomFloat <= reflectProb 
         then 
             let reflectRay = Ray(positionOnSurface, reflectDir)
@@ -185,8 +183,8 @@ type Dielectric(id: ID, geometry : RaytracingGeometry, material : RaytraceMateri
             let refractRay = Ray(positionOnSurface, refractionDir)
             (true, refractRay, 1.0f)
 
-    override this.GenerateSamples (incommingRay : Ray) (t : LineParameter) (depthLevel : int) samplesArray =
-        let (reflectProb, positionOnSurface, reflectDir, refractionDir) = this.CalcFresnel incommingRay t depthLevel
+    override this.GenerateSamples (incommingRay : Ray) (t : LineParameter) samplesArray _ =
+        let (reflectProb, positionOnSurface, reflectDir, refractionDir) = this.CalcFresnel incommingRay t
         let reflectRay = Ray(positionOnSurface, reflectDir)
         let reflectShading : Color = this.BRDF*reflectProb
         if MathF.Round(reflectProb, 3) = 1.0f then 

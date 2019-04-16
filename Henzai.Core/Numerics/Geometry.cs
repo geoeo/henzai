@@ -1,6 +1,7 @@
 using System;
 using System.Numerics;
 using System.Diagnostics;
+using System.Runtime.CompilerServices; 
 
 namespace Henzai.Core.Numerics
 {
@@ -27,6 +28,7 @@ namespace Henzai.Core.Numerics
         }
 
         //TODO use correct keywords
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CreateCoordinateSystemAroundNormal(ref Vector4 nInOut, ref Vector4 ntInOut, ref Vector4 nbInOut)
         {
             var n = Vector.ToVec3(nInOut);
@@ -76,6 +78,7 @@ namespace Henzai.Core.Numerics
             );
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Matrix4x4 ChangeOfBase(ref Vector4 nt, ref Vector4 n, ref Vector4 nb)
         {
             return new Matrix4x4
