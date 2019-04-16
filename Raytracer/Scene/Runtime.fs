@@ -75,7 +75,7 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
             if hasIntersection then
                 let surface = surfaceOption.Value
                 let emittedRadiance = surface.Emitted ray t
-                let struct(validSamples, raySamples) = surface.GenerateSamples ray t ((int)currentTraceDepth) surface.SamplesArray
+                let (validSamples, raySamples) = surface.GenerateSamples ray t ((int)currentTraceDepth) surface.SamplesArray
                 if validSamples = 0 then
                     emittedRadiance
                 else 
@@ -112,7 +112,7 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
 
             let currentTraceDepth = 0us
             let emittedRadiance = surface.Emitted ray t
-            let struct(validSamples,raySamples) = surface.GenerateSamples ray t ((int)currentTraceDepth) surface.SamplesArray
+            let (validSamples,raySamples) = surface.GenerateSamples ray t ((int)currentTraceDepth) surface.SamplesArray
             if validSamples = 0 then
                 emittedRadiance
             else 
