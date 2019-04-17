@@ -196,9 +196,10 @@ type Dielectric(id: ID, geometry : RaytracingGeometry, material : RaytraceMateri
             samplesArray.SetValue(struct(refractRay, 2.0f*refractShading), 1)
             (2, samplesArray)
 
+let noSurface : Surface = upcast (NoSurface(0UL, NotHitable(), RaytraceMaterial(Vector4.Zero)))
 
 let findClosestIntersection (ray : Ray) (surfaces : Surface[]) =
-    let mutable (bMin,tMin, vMin : Surface) = (false, Single.MaxValue, upcast (NoSurface(0UL, NotHitable(), RaytraceMaterial(Vector4.Zero))))
+    let mutable (bMin,tMin, vMin) = (false, Single.MaxValue, noSurface)
     for surface in surfaces do
         let struct(b,t) = surface.Geometry.AsHitable.Intersect ray
         if surface.Geometry.AsHitable.IntersectionAcceptable b t 1.0f (RaytraceGeometryUtils.PointForRay ray t) &&  t < tMin then
