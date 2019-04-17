@@ -19,7 +19,7 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
     //TODO decide on a async implementation
     // let bvhTraversalStack2D = Array2D.zeroCreate batchSize bvhRuntimeArray.Length
     let bvhTraversalStack2D = Array2D.zeroCreate renderSquareSize bvhRuntimeArray.Length
-    let randomStateForThread = Array.create renderSquareSize (Random())
+    let randomStateForThread = Array.zeroCreate<Random> renderSquareSize
 
     let batches = samplesPerPixel / batchSize
     let batchIndices = [|1..batchSize|] 
@@ -70,7 +70,7 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
                 surfaceOption <- s_bvh
                 
             // Some geometry is not present in the BVH i.e. infinite planes
-            let struct(b_linear, t_linear, s_linear) = findClosestIntersection ray nonBoundableSurfaces
+            let (b_linear, t_linear, s_linear) = findClosestIntersection ray nonBoundableSurfaces
             if (not hasIntersection || t_linear < t ) && s_linear.Geometry.AsHitable.IntersectionAcceptable b_linear t_linear 1.0f (RaytraceGeometryUtils.PointForRay ray t_linear) then
                 hasIntersection <- b_linear
                 t <- t_linear
@@ -105,7 +105,7 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
             surfaceOption <- s_bvh
             
         // Some geometry is not present in the BVH i.e. infinite planes
-        let struct(b_linear, t_linear, s_linear) = findClosestIntersection ray nonBoundableSurfaces
+        let (b_linear, t_linear, s_linear) = findClosestIntersection ray nonBoundableSurfaces
         if (not hasIntersection || t_linear < t ) && s_linear.Geometry.AsHitable.IntersectionAcceptable b_linear t_linear dotLookAtAndTracingRay (RaytraceGeometryUtils.PointForRay ray t_linear) then
             hasIntersection <- b_linear
             t <- t_linear

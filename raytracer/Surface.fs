@@ -11,9 +11,7 @@ open Henzai.Core.Numerics
 //TODO: Refactor namespace + Split this up    
 [<AbstractClass>]
 type Surface(id: ID, geometry : RaytracingGeometry, material : RaytraceMaterial) =
-    //let mutable samplesArray  = Array.zeroCreate<Ray*Raytracer.Material.Color> this.SampleCount
-
-    abstract member Scatter: Ray -> LineParameter -> Random -> (bool*Ray*Cosine)
+    abstract member Scatter: Ray -> LineParameter -> Random -> (Ray*Cosine)
     abstract member Emitted : Ray -> LineParameter -> Color 
     abstract member SampleCount : int
     abstract member PDF : float32
@@ -24,10 +22,10 @@ type Surface(id: ID, geometry : RaytracingGeometry, material : RaytraceMaterial)
     member this.Geometry = geometry
     member this.Material = material
     member this.MCComputeBRDF cosOfIncidence = this.BRDF*(cosOfIncidence/this.PDF)
-    member this.ComputeSample (b : bool , ray : Ray , cosOfIncidience : Cosine) = struct(ray, this.MCComputeBRDF cosOfIncidience)
+    member this.ComputeSample (ray : Ray , cosOfIncidience : Cosine) = struct(ray, this.MCComputeBRDF cosOfIncidience)
     member this.SamplesArray  = Array.zeroCreate<struct(Ray*Color)> this.SampleCount 
 
-    default this.Scatter _ _ _ = (true, Ray(Vector4.UnitX, Vector4.UnitX), 1.0f)
+    default this.Scatter _ _ _ = (Ray(Vector4.UnitX, Vector4.UnitX), 1.0f)
     default this.Emitted _ _ = this.Material.Emittance
     default this.SampleCount = noSampleCount
     default this.PDF = 1.0f
@@ -71,7 +69,6 @@ type Lambertian(id: ID, geometry : RaytracingGeometry, material : RaytraceMateri
 
         //sampling hemisphere
         let rand_norm = RandomSampling.RandomInUnitHemisphere(randomGen)
-        //let rand_norm = RandomSampling.RandomInUnitHemisphere_Sync()
         let cosOfIncidence = rand_norm.Y
         let mutable nb = Vector4.Zero
         let mutable nt = Vector4.Zero
@@ -81,7 +78,7 @@ type Lambertian(id: ID, geometry : RaytracingGeometry, material : RaytraceMateri
 
         let outDir = Vector4.Normalize(normalSample)
         let outRay = Ray(positionOnSurface, outDir)
-        (true, outRay, cosOfIncidence)
+        (outRay, cosOfIncidence)
 
 type NormalVis(id: ID, geometry : RaytracingGeometry, material : RaytraceMaterial) =
     inherit Surface(id, geometry, material)
@@ -127,7 +124,7 @@ type Metal(id: ID, geometry : RaytracingGeometry, material : RaytraceMaterial, f
 
         let outDir = Vector4.Normalize(this.Reflect incommingRay modifiedNormal)
         let outRay =  Ray(positionOnSurface, outDir)    
-        (true,outRay,1.0f)
+        (outRay,1.0f)
 
 // https://www.scratchapixel.com/lessons/3d-basic-rendering/introduction-to-shading/reflection-refraction-fresnel
 type Dielectric(id: ID, geometry : RaytracingGeometry, material : RaytraceMaterial, refractiveIndex : float32) =
@@ -179,10 +176,10 @@ type Dielectric(id: ID, geometry : RaytracingGeometry, material : RaytraceMateri
         if randomFloat <= reflectProb 
         then 
             let reflectRay = Ray(positionOnSurface, reflectDir)
-            (true, reflectRay, 1.0f)
+            (reflectRay, 1.0f)
         else // refraction has to have been successful
             let refractRay = Ray(positionOnSurface, refractionDir)
-            (true, refractRay, 1.0f)
+            (refractRay, 1.0f)
 
     override this.GenerateSamples (incommingRay : Ray) (t : LineParameter) samplesArray _ =
         let (reflectProb, positionOnSurface, reflectDir, refractionDir) = this.CalcFresnel incommingRay t
@@ -209,7 +206,7 @@ let findClosestIntersection (ray : Ray) (surfaces : Surface[]) =
             tMin <- t
             vMin <- surface
 
-    struct(bMin, tMin, vMin)      
+    (bMin, tMin, vMin)      
 
 //https://learnopengl.com/Lighting/Light-casters
 //TODO refactor constants
