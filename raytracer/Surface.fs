@@ -16,7 +16,7 @@ type Surface(id: ID, geometry : RaytracingGeometry, material : RaytraceMaterial)
     abstract member SampleCount : int
     abstract member PDF : float32
     abstract member BRDF : Color
-    abstract member GenerateSamples : Ray -> LineParameter -> struct(Ray* Color)[] -> Random ->(int*struct(Ray* Color)[])
+    abstract member GenerateSamples : Ray -> LineParameter -> struct(Ray* Color)[] ->Random ->(int*struct(Ray* Color)[])
 
     member this.ID = id
     member this.Geometry = geometry
@@ -34,6 +34,7 @@ type Surface(id: ID, geometry : RaytracingGeometry, material : RaytraceMaterial)
         for i in 0..this.SampleCount-1 do
             let shading = this.ComputeSample (this.Scatter incommingRay t randomGen)
             samplesArray.SetValue(shading, i)
+            
         (this.SampleCount, samplesArray)
 
     interface Hitable with
@@ -196,10 +197,10 @@ type Dielectric(id: ID, geometry : RaytracingGeometry, material : RaytraceMateri
             samplesArray.SetValue(struct(refractRay, 2.0f*refractShading), 1)
             (2, samplesArray)
 
-let noSurface : Surface = upcast (NoSurface(0UL, NotHitable(), RaytraceMaterial(Vector4.Zero)))
+// let noSurface : Surface = upcast (NoSurface(0UL, NotHitable(), RaytraceMaterial(Vector4.Zero)))
 
 let findClosestIntersection (ray : Ray) (surfaces : Surface[]) =
-    let mutable (bMin,tMin, vMin) = (false, Single.MaxValue, noSurface)
+    let mutable (bMin,tMin, vMin : Surface) = (false, Single.MaxValue,  upcast (NoSurface(0UL, NotHitable(), RaytraceMaterial(Vector4.Zero))))
     for surface in surfaces do
         let struct(b,t) = surface.Geometry.AsHitable.Intersect ray
         if surface.Geometry.AsHitable.IntersectionAcceptable b t 1.0f (RaytraceGeometryUtils.PointForRay ray t) &&  t < tMin then

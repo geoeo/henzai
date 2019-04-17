@@ -182,13 +182,14 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
             let seed = stopWatch.Elapsed.TotalMilliseconds*100000.0
             randomStateForThread.[i]<-Random((int)seed)
         stopWatch.Stop()
-        //Don't have to clear pixels because image size will always be a multiple of renderSquareSide  
-        let pixelsToRenderWithIndex = Array.zeroCreate<int*int*int> renderSquareSize
         let renderSquareStartIndexes = Array.zeroCreate<int*int> (width/renderSquareSide * height/renderSquareSide)
         let flatIndexTo2D i = i/renderSquareSide, i%renderSquareSide
         let flatIndexes = [|0..renderSquareSize-1|]
         let twoDIndexes = Array.map flatIndexTo2D flatIndexes
-        let allIndexes = Array.zip flatIndexes twoDIndexes
+
+        let pixelRenderCalls = Array.zeroCreate<Async<Color>> renderSquareSize
+        let addColorCalls = Array.zeroCreate<Async<unit>> renderSquareSize
+        let toneMapCalls = Array.zeroCreate<Async<unit>> renderSquareSize
 
         for px in 0..renderSquareSide..width-renderSquareSide do
             for py in 0..renderSquareSide..height-renderSquareSide do
@@ -196,17 +197,24 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
                 renderSquareStartIndexes.[idx] <- (px, py)
 
         for (px, py) in renderSquareStartIndexes do
-            let generatePixelCalls = Array.map(fun (i, (xOff, yOff)) -> async {return pixelsToRenderWithIndex.[i] <- i, px+xOff, py+yOff}) allIndexes
-            generatePixelCalls |> Async.Parallel |> Async.RunSynchronously |> ignore
 
             for it in 0..samplesPerPixel-1 do
-                let pixelRenderCalls = Array.map(fun (i, x, y) -> async {return renderPass x y i it}) pixelsToRenderWithIndex
+                for i in 0..renderSquareSize-1 do
+                    let xOff, yOff = twoDIndexes.[i]
+                    let x, y = px+xOff, py+yOff
+                    pixelRenderCalls.[i]<-async {return renderPass x y i it}
                 let colors = pixelRenderCalls |> Async.Parallel |> Async.RunSynchronously
-
-                let addColorCalls = Array.map(fun (i, (xOff, yOff)) -> async {return frameBuffer.[px+xOff,py+yOff] <- frameBuffer.[px+xOff,py+yOff] + colors.[i]}) allIndexes
+   
+                for i in 0..renderSquareSize-1 do
+                    let xOff, yOff = twoDIndexes.[i]
+                    addColorCalls.[i]<-
+                        async {return frameBuffer.[px+xOff,py+yOff] <- frameBuffer.[px+xOff,py+yOff] + colors.[i]}
                 addColorCalls |> Async.Parallel |> Async.RunSynchronously |> ignore
 
-            let toneMapCalls = Array.map(fun (xOff, yOff) -> async {return frameBuffer.[px+xOff,py+yOff] <- Vector4.SquareRoot(frameBuffer.[px+xOff,py+yOff]/(float32)samplesPerPixel)}) twoDIndexes
+            for i in 0..renderSquareSize-1 do
+                let xOff, yOff = twoDIndexes.[i]
+                toneMapCalls.[i] <-
+                    async{return frameBuffer.[px+xOff,py+yOff] <- Vector4.SquareRoot(frameBuffer.[px+xOff,py+yOff]/(float32)samplesPerPixel)}
             toneMapCalls |> Async.Parallel |> Async.RunSynchronously |> ignore
 
     member self.SaveFrameBuffer() =
