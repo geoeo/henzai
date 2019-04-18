@@ -56,10 +56,10 @@ module Culler =
         (modelViewProjectionMatrix : byref<Matrix4x4>, 
          frustumRowVector : byref<Vector4>,
          vertexHomogeneous : byref<Vector4>) =
-        frustumRowVector.X <- modelViewProjectionMatrix.M31
-        frustumRowVector.Y <- modelViewProjectionMatrix.M32
+        frustumRowVector.X <- modelViewProjectionMatrix.M13
+        frustumRowVector.Y <- modelViewProjectionMatrix.M23
         frustumRowVector.Z <- modelViewProjectionMatrix.M33
-        frustumRowVector.W <- modelViewProjectionMatrix.M34
+        frustumRowVector.W <- modelViewProjectionMatrix.M43
 
         0.0f < Henzai.Core.Numerics.Vector.InMemoryDotProduct(&frustumRowVector, &vertexHomogeneous)
 
