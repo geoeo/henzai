@@ -94,8 +94,8 @@ module AABB =
         let e = h.X*planeNormalAbs.X + h.Y*planeNormalAbs.Y + h.Z*planeNormalAbs.Z
         let s = Vector.InMemoryDotProduct(&c, &planeNormal) + d
 
-        if s - e < 0 then IntersectionResult.OUTSIDE
-        elif s + e > 0 then IntersectionResult.INSIDE
+        if s - e < 0.0f then IntersectionResult.OUTSIDE
+        elif s + e > 0.0f then IntersectionResult.INSIDE
         else IntersectionResult.INTERSECTING
 
 
