@@ -64,7 +64,7 @@ type Lambertian(id: ID, geometry : RaytracingGeometry, material : RaytraceMateri
     override this.PDF = 1.0f / (2.0f * MathF.PI)
     override this.BRDF = this.Material.Albedo / MathF.PI
     override this.Scatter (incommingRay : Ray) (t : LineParameter) (randomGen : Random) =
-        //TODO: external dependecies seem to slow down this section
+        //TODO:@Perf external dependecies seem to slow down this section
         let positionOnSurface = incommingRay.Origin + t*incommingRay.Direction
         let mutable normal = this.Geometry.AsHitable.NormalForSurfacePoint positionOnSurface
 
