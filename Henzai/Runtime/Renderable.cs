@@ -316,6 +316,14 @@ namespace Henzai.Runtime
                 Thread.Sleep(msDiffRounded);
         }
 
+        /// <summary>
+        /// Sets delegates for runtime command generation.
+        /// Also updates index and vertex buffers, sets pipeline
+        /// </summary>
+        /// <param name="modelDescriptor">Model descriptor.</param>
+        /// <param name="sceneRuntimeDescriptor">Scene runtime descriptor.</param>
+        /// <param name="instancingData">Instancing data.</param>
+        /// <typeparam name="T">The type of Vertex sent to the GPU</typeparam>
         protected void FillRuntimeDescriptor<T>(ModelRuntimeDescriptor<T> modelDescriptor, SceneRuntimeDescriptor sceneRuntimeDescriptor, InstancingData instancingData) where T : struct, VertexRuntime, VertexLocateable
         {
             var model = modelDescriptor.Model;
