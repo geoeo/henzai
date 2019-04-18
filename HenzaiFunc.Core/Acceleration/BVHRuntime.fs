@@ -74,8 +74,7 @@ type BVHRuntime<'T when 'T :> Hitable>() =
         let mutable hasIntersection = false
         let mutable tHit = System.Single.MaxValue
         let mutable intersectedGeometry : ('T option) = None
-        
-
+       
         while toVisitOffset >= 0 do
             let node = bvhArray.[currentNodeIndex]
             let primitiveOffset = node.leafNode.primitivesOffset
