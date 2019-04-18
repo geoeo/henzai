@@ -90,9 +90,9 @@ let convertModelToSurfaceList (model: Model<'T, RaytraceMaterial>, vertexTypeTra
 
 //TODO: profile larger models
 let loadAssets = 
-    //let sceneArray = List.concat [lightsAA;triangle_scene;spheres_scene_2;light_sphere;planes_scene_2_AA;plane_mirror_NonAA;lightsNonAA] |> Array.ofList //# old scene 
+    let sceneArray = List.concat [lightsAA;triangle_scene;spheres_scene_2;light_sphere;planes_scene_2_AA;plane_mirror_NonAA;lightsNonAA] |> Array.ofList //# old scene 
     //let sceneArray = List.concat [light_sphere;triangle_scene] |> Array.ofList //# old scene 
-    //let sceneNonBoundableArray : Surface[] = List.concat [plane_floor_Unbounded] |> Array.ofList //# old scene
+    let sceneNonBoundableArray : Surface[] = List.concat [plane_floor_Unbounded] |> Array.ofList //# old scene
 
     //let rtModel = AssimpLoader.LoadFromFileWithRealtimeMaterial<VertexPositionNormal>(AppContext.BaseDirectory, "Models/Box.dae", VertexPositionNormal.HenzaiType, AssimpLoader.RaytracePostProcessSteps)
     //let rtModel = AssimpLoader.LoadFromFileWithRealtimeMaterial<VertexPositionNormal>(AppContext.BaseDirectory, "Models/duck.dae", VertexPositionNormal.HenzaiType, AssimpLoader.RaytracePostProcessSteps)
@@ -114,13 +114,14 @@ let loadAssets =
     let mutable transform = Matrix4x4.Multiply(transformRot, transformScale)
     transform.Translation <- Vector3(0.0f, -1.5f, -3.5f)
     let modelSurfaceList = convertModelWithNormalToSurfaceList(raytracingModel, (vertexPositionNormalTransform transform))
-    //let sceneNonBoundableArray : Surface[] = List.concat [modelSurfaceList] |> Array.ofList
-    let sceneNonBoundableArray : Surface[] = List.concat [plane_floor_Unbounded;lightsNonAA] |> Array.ofList
-    //let sceneNonBoundableArray : Surface[] = List.concat [light_box] |> Array.ofList
+
     //let sceneList  = List.concat[triangle_scene;spheres_scene_4;light_sphere;lightsAA; modelSurfaceList ]
     let sceneList  = List.concat[lightsAA;planes_scene_2_AA;spheres_scene_3;modelSurfaceList]
 
-    let sceneArray : Surface[] = sceneList|> Array.ofList
+    //let sceneNonBoundableArray : Surface[] = List.concat [modelSurfaceList] |> Array.ofList
+    // let sceneNonBoundableArray : Surface[] = List.concat [plane_floor_Unbounded;lightsNonAA] |> Array.ofList
+    //let sceneNonBoundableArray : Surface[] = List.concat [light_box] |> Array.ofList
+    // let sceneArray : Surface[] = sceneList|> Array.ofList
     (sceneArray, sceneNonBoundableArray)
 
 let constructBVHTree surfaceArray splitMethod = 
