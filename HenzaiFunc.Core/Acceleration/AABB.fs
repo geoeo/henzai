@@ -87,6 +87,7 @@ module AABB =
     /// d is from the equation of a plane 0 = xa + yb + zc + d
     /// Assuming positive halfspace is "inside" of the plane i.e. normal pointing inwards
     /// Realtime Rendering Third Editin p. 756
+    //TODO: Investigate error bound for intersection
     let PlaneIntersection (aabb: AABB) (planeNormal : byref<Vector4>) (d : float32) =
         let mutable c = center aabb
         let h = (diagonal aabb) / 2.0f

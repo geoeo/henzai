@@ -7,82 +7,99 @@ open Henzai.Core.VertexGeometry
 module Culler =
 
     // https://www.gamedevs.org/uploads/fast-extraction-viewing-frustum-planes-from-world-view-projection-matrix.pdf
+    let extractLeftPlane (modelViewProjectionMatrix : byref<Matrix4x4>) (planeTarget : byref<Vector4>) =
+        planeTarget.X <- modelViewProjectionMatrix.M14 + modelViewProjectionMatrix.M11
+        planeTarget.Y <- modelViewProjectionMatrix.M24 + modelViewProjectionMatrix.M21
+        planeTarget.Z <- modelViewProjectionMatrix.M34 + modelViewProjectionMatrix.M31
+        planeTarget.W <- modelViewProjectionMatrix.M44 + modelViewProjectionMatrix.M41
+
+    let extractRightPlane (modelViewProjectionMatrix : byref<Matrix4x4>) (planeTarget : byref<Vector4>) =
+        planeTarget.X <- modelViewProjectionMatrix.M14 - modelViewProjectionMatrix.M11
+        planeTarget.Y <- modelViewProjectionMatrix.M24 - modelViewProjectionMatrix.M21
+        planeTarget.Z <- modelViewProjectionMatrix.M34 - modelViewProjectionMatrix.M31
+        planeTarget.W <- modelViewProjectionMatrix.M44 - modelViewProjectionMatrix.M41
+
+    let extractTopPlane (modelViewProjectionMatrix : byref<Matrix4x4>) (planeTarget : byref<Vector4>) =
+        planeTarget.X <- modelViewProjectionMatrix.M14 - modelViewProjectionMatrix.M12
+        planeTarget.Y <- modelViewProjectionMatrix.M24 - modelViewProjectionMatrix.M22
+        planeTarget.Z <- modelViewProjectionMatrix.M34 - modelViewProjectionMatrix.M32
+        planeTarget.W <- modelViewProjectionMatrix.M44 - modelViewProjectionMatrix.M42
+
+    let extractBottomPlane (modelViewProjectionMatrix : byref<Matrix4x4>) (planeTarget : byref<Vector4>) =
+        planeTarget.X <- modelViewProjectionMatrix.M14 + modelViewProjectionMatrix.M12
+        planeTarget.Y <- modelViewProjectionMatrix.M24 + modelViewProjectionMatrix.M22
+        planeTarget.Z <- modelViewProjectionMatrix.M34 + modelViewProjectionMatrix.M32
+        planeTarget.W <- modelViewProjectionMatrix.M44 + modelViewProjectionMatrix.M42
+
+    let extractNearPlane (modelViewProjectionMatrix : byref<Matrix4x4>) (planeTarget : byref<Vector4>)=
+        planeTarget.X <- modelViewProjectionMatrix.M13
+        planeTarget.Y <- modelViewProjectionMatrix.M23
+        planeTarget.Z <- modelViewProjectionMatrix.M33
+        planeTarget.W <- modelViewProjectionMatrix.M43
+
+    let extractFarPlane (modelViewProjectionMatrix : byref<Matrix4x4>) (planeTarget : byref<Vector4>) =
+        planeTarget.X <- modelViewProjectionMatrix.M14 - modelViewProjectionMatrix.M13
+        planeTarget.Y <- modelViewProjectionMatrix.M24 - modelViewProjectionMatrix.M23
+        planeTarget.Z <- modelViewProjectionMatrix.M34 - modelViewProjectionMatrix.M33
+        planeTarget.W <- modelViewProjectionMatrix.M44 - modelViewProjectionMatrix.M43
 
     let leftHalfSpaceCheck
-        (modelViewProjectionMatrix : byref<Matrix4x4>, 
-         frustumRowVector : byref<Vector4>, 
-         vertexHomogeneous : byref<Vector4>) =
-        frustumRowVector.X <- modelViewProjectionMatrix.M14 + modelViewProjectionMatrix.M11
-        frustumRowVector.Y <- modelViewProjectionMatrix.M24 + modelViewProjectionMatrix.M21
-        frustumRowVector.Z <- modelViewProjectionMatrix.M34 + modelViewProjectionMatrix.M31
-        frustumRowVector.W <- modelViewProjectionMatrix.M44 + modelViewProjectionMatrix.M41
+        (modelViewProjectionMatrix : byref<Matrix4x4>) 
+        (plane : byref<Vector4>)
+        (vertexHomogeneous : byref<Vector4>) =
+        extractLeftPlane &modelViewProjectionMatrix &plane |> ignore
 
-        0.0f < Henzai.Core.Numerics.Vector.InMemoryDotProduct(&frustumRowVector, &vertexHomogeneous)
+        0.0f < Henzai.Core.Numerics.Vector.InMemoryDotProduct(&plane, &vertexHomogeneous)
 
     let rightHalfSpaceCheck
-        (modelViewProjectionMatrix : byref<Matrix4x4>, 
-         frustumRowVector : byref<Vector4>,
-         vertexHomogeneous : byref<Vector4>) =
-        frustumRowVector.X <- modelViewProjectionMatrix.M14 - modelViewProjectionMatrix.M11
-        frustumRowVector.Z <- modelViewProjectionMatrix.M34 - modelViewProjectionMatrix.M31
-        frustumRowVector.Y <- modelViewProjectionMatrix.M24 - modelViewProjectionMatrix.M21
-        frustumRowVector.W <- modelViewProjectionMatrix.M44 - modelViewProjectionMatrix.M41
+        (modelViewProjectionMatrix : byref<Matrix4x4>)
+        (plane : byref<Vector4>)
+        (vertexHomogeneous : byref<Vector4>) =
+        extractRightPlane &modelViewProjectionMatrix &plane |> ignore
 
-        0.0f < Henzai.Core.Numerics.Vector.InMemoryDotProduct(&frustumRowVector, &vertexHomogeneous)
+        0.0f < Henzai.Core.Numerics.Vector.InMemoryDotProduct(&plane, &vertexHomogeneous)
 
     let topHalfSpaceCheck
-        (modelViewProjectionMatrix : byref<Matrix4x4>, 
-         frustumRowVector : byref<Vector4>,
-         vertexHomogeneous : byref<Vector4>) =
-        frustumRowVector.X <- modelViewProjectionMatrix.M14 - modelViewProjectionMatrix.M12
-        frustumRowVector.Y <- modelViewProjectionMatrix.M24 - modelViewProjectionMatrix.M22
-        frustumRowVector.Z <- modelViewProjectionMatrix.M34 - modelViewProjectionMatrix.M32
-        frustumRowVector.W <- modelViewProjectionMatrix.M44 - modelViewProjectionMatrix.M42
+        (modelViewProjectionMatrix : byref<Matrix4x4>) 
+        (plane : byref<Vector4>)
+        (vertexHomogeneous : byref<Vector4>) =
+        extractTopPlane &modelViewProjectionMatrix &plane |> ignore
 
-        0.0f < Henzai.Core.Numerics.Vector.InMemoryDotProduct(&frustumRowVector, &vertexHomogeneous)
+        0.0f < Henzai.Core.Numerics.Vector.InMemoryDotProduct(&plane, &vertexHomogeneous)
 
     let bottomHalfSpaceCheck
-        (modelViewProjectionMatrix : byref<Matrix4x4>, 
-         frustumRowVector : byref<Vector4>,
-         vertexHomogeneous : byref<Vector4>) =
-        frustumRowVector.X <- modelViewProjectionMatrix.M14 + modelViewProjectionMatrix.M12
-        frustumRowVector.Y <- modelViewProjectionMatrix.M24 + modelViewProjectionMatrix.M22
-        frustumRowVector.Z <- modelViewProjectionMatrix.M34 + modelViewProjectionMatrix.M32
-        frustumRowVector.W <- modelViewProjectionMatrix.M44 + modelViewProjectionMatrix.M42
-
-        0.0f < Henzai.Core.Numerics.Vector.InMemoryDotProduct(&frustumRowVector, &vertexHomogeneous)
+        (modelViewProjectionMatrix : byref<Matrix4x4>)
+        (plane : byref<Vector4>)
+        (vertexHomogeneous : byref<Vector4>) =
+        extractBottomPlane &modelViewProjectionMatrix &plane |> ignore
+        0.0f < Henzai.Core.Numerics.Vector.InMemoryDotProduct(&plane, &vertexHomogeneous)
 
     let nearHalfSpaceCheck
-        (modelViewProjectionMatrix : byref<Matrix4x4>, 
-         frustumRowVector : byref<Vector4>,
-         vertexHomogeneous : byref<Vector4>) =
-        frustumRowVector.X <- modelViewProjectionMatrix.M13
-        frustumRowVector.Y <- modelViewProjectionMatrix.M23
-        frustumRowVector.Z <- modelViewProjectionMatrix.M33
-        frustumRowVector.W <- modelViewProjectionMatrix.M43
+        (modelViewProjectionMatrix : byref<Matrix4x4>)
+        (plane : byref<Vector4>)
+        (vertexHomogeneous : byref<Vector4>) =
+        extractNearPlane &modelViewProjectionMatrix &plane |> ignore
 
-        0.0f < Henzai.Core.Numerics.Vector.InMemoryDotProduct(&frustumRowVector, &vertexHomogeneous)
+        0.0f < Henzai.Core.Numerics.Vector.InMemoryDotProduct(&plane, &vertexHomogeneous)
 
     let farHalfSpaceCheck
-        (modelViewProjectionMatrix : byref<Matrix4x4>, 
-         frustumRowVector : byref<Vector4>,
-         vertexHomogeneous : byref<Vector4>) =
-        frustumRowVector.X <- modelViewProjectionMatrix.M14 - modelViewProjectionMatrix.M13;
-        frustumRowVector.Y <- modelViewProjectionMatrix.M24 - modelViewProjectionMatrix.M23;
-        frustumRowVector.Z <- modelViewProjectionMatrix.M34 - modelViewProjectionMatrix.M33;
-        frustumRowVector.W <- modelViewProjectionMatrix.M44 - modelViewProjectionMatrix.M43;
+        (modelViewProjectionMatrix : byref<Matrix4x4>)
+        (plane : byref<Vector4>) 
+        (vertexHomogeneous : byref<Vector4>) =
+        extractFarPlane &modelViewProjectionMatrix &plane |> ignore
 
-        0.0f < Henzai.Core.Numerics.Vector.InMemoryDotProduct(&frustumRowVector, &vertexHomogeneous)
+        0.0f < Henzai.Core.Numerics.Vector.InMemoryDotProduct(&plane, &vertexHomogeneous)
 
     let IsVertexWithinFrustum(modelViewProjectionMatrix : byref<Matrix4x4>, vertex : byref<Vector4>) =
-        let mutable frustumRowVector = Vector4.Zero
+        // This vector will be filled for each check. This is not parallizable!
+        let mutable plane = Vector4.Zero
 
-        leftHalfSpaceCheck(&modelViewProjectionMatrix, &frustumRowVector, &vertex) &&
-        rightHalfSpaceCheck(&modelViewProjectionMatrix, &frustumRowVector, &vertex) &&
-        topHalfSpaceCheck(&modelViewProjectionMatrix, &frustumRowVector, &vertex) &&
-        bottomHalfSpaceCheck(&modelViewProjectionMatrix, &frustumRowVector, &vertex) &&
-        nearHalfSpaceCheck(&modelViewProjectionMatrix, &frustumRowVector, &vertex) &&
-        farHalfSpaceCheck(&modelViewProjectionMatrix, &frustumRowVector, &vertex)
+        leftHalfSpaceCheck &modelViewProjectionMatrix &plane &vertex &&
+        rightHalfSpaceCheck &modelViewProjectionMatrix &plane &vertex &&
+        topHalfSpaceCheck &modelViewProjectionMatrix &plane &vertex &&
+        bottomHalfSpaceCheck &modelViewProjectionMatrix &plane &vertex &&
+        nearHalfSpaceCheck &modelViewProjectionMatrix &plane &vertex &&
+        farHalfSpaceCheck &modelViewProjectionMatrix &plane &vertex
 
     /// <summary>
     /// Culls a <see cref="Henzai.Core.VertexGeometry.GeometryDefinition"/> by testing every triangle of the mesh
