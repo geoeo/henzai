@@ -6,91 +6,50 @@ open Henzai.Core.VertexGeometry
 
 module Culler =
 
-    // https://www.gamedevs.org/uploads/fast-extraction-viewing-frustum-planes-from-world-view-projection-matrix.pdf
-    let extractLeftPlane (modelViewProjectionMatrix : byref<Matrix4x4>) (planeTarget : byref<Vector4>) =
-        planeTarget.X <- modelViewProjectionMatrix.M14 + modelViewProjectionMatrix.M11
-        planeTarget.Y <- modelViewProjectionMatrix.M24 + modelViewProjectionMatrix.M21
-        planeTarget.Z <- modelViewProjectionMatrix.M34 + modelViewProjectionMatrix.M31
-        planeTarget.W <- modelViewProjectionMatrix.M44 + modelViewProjectionMatrix.M41
-
-    let extractRightPlane (modelViewProjectionMatrix : byref<Matrix4x4>) (planeTarget : byref<Vector4>) =
-        planeTarget.X <- modelViewProjectionMatrix.M14 - modelViewProjectionMatrix.M11
-        planeTarget.Y <- modelViewProjectionMatrix.M24 - modelViewProjectionMatrix.M21
-        planeTarget.Z <- modelViewProjectionMatrix.M34 - modelViewProjectionMatrix.M31
-        planeTarget.W <- modelViewProjectionMatrix.M44 - modelViewProjectionMatrix.M41
-
-    let extractTopPlane (modelViewProjectionMatrix : byref<Matrix4x4>) (planeTarget : byref<Vector4>) =
-        planeTarget.X <- modelViewProjectionMatrix.M14 - modelViewProjectionMatrix.M12
-        planeTarget.Y <- modelViewProjectionMatrix.M24 - modelViewProjectionMatrix.M22
-        planeTarget.Z <- modelViewProjectionMatrix.M34 - modelViewProjectionMatrix.M32
-        planeTarget.W <- modelViewProjectionMatrix.M44 - modelViewProjectionMatrix.M42
-
-    let extractBottomPlane (modelViewProjectionMatrix : byref<Matrix4x4>) (planeTarget : byref<Vector4>) =
-        planeTarget.X <- modelViewProjectionMatrix.M14 + modelViewProjectionMatrix.M12
-        planeTarget.Y <- modelViewProjectionMatrix.M24 + modelViewProjectionMatrix.M22
-        planeTarget.Z <- modelViewProjectionMatrix.M34 + modelViewProjectionMatrix.M32
-        planeTarget.W <- modelViewProjectionMatrix.M44 + modelViewProjectionMatrix.M42
-
-    let extractNearPlane (modelViewProjectionMatrix : byref<Matrix4x4>) (planeTarget : byref<Vector4>)=
-        planeTarget.X <- modelViewProjectionMatrix.M13
-        planeTarget.Y <- modelViewProjectionMatrix.M23
-        planeTarget.Z <- modelViewProjectionMatrix.M33
-        planeTarget.W <- modelViewProjectionMatrix.M43
-
-    let extractFarPlane (modelViewProjectionMatrix : byref<Matrix4x4>) (planeTarget : byref<Vector4>) =
-        planeTarget.X <- modelViewProjectionMatrix.M14 - modelViewProjectionMatrix.M13
-        planeTarget.Y <- modelViewProjectionMatrix.M24 - modelViewProjectionMatrix.M23
-        planeTarget.Z <- modelViewProjectionMatrix.M34 - modelViewProjectionMatrix.M33
-        planeTarget.W <- modelViewProjectionMatrix.M44 - modelViewProjectionMatrix.M43
-
+   
     let leftHalfSpaceCheck
         (modelViewProjectionMatrix : byref<Matrix4x4>) 
         (plane : byref<Vector4>)
         (vertexHomogeneous : byref<Vector4>) =
-        extractLeftPlane &modelViewProjectionMatrix &plane |> ignore
-
+        Geometry.ExtractLeftPlane(&modelViewProjectionMatrix, &plane)
         0.0f < Henzai.Core.Numerics.Vector.InMemoryDotProduct(&plane, &vertexHomogeneous)
 
     let rightHalfSpaceCheck
         (modelViewProjectionMatrix : byref<Matrix4x4>)
         (plane : byref<Vector4>)
         (vertexHomogeneous : byref<Vector4>) =
-        extractRightPlane &modelViewProjectionMatrix &plane |> ignore
-
+        Geometry.ExtractRightPlane(&modelViewProjectionMatrix, &plane)
         0.0f < Henzai.Core.Numerics.Vector.InMemoryDotProduct(&plane, &vertexHomogeneous)
 
     let topHalfSpaceCheck
         (modelViewProjectionMatrix : byref<Matrix4x4>) 
         (plane : byref<Vector4>)
         (vertexHomogeneous : byref<Vector4>) =
-        extractTopPlane &modelViewProjectionMatrix &plane |> ignore
-
+        Geometry.ExtractTopPlane(&modelViewProjectionMatrix, &plane)
         0.0f < Henzai.Core.Numerics.Vector.InMemoryDotProduct(&plane, &vertexHomogeneous)
 
     let bottomHalfSpaceCheck
         (modelViewProjectionMatrix : byref<Matrix4x4>)
         (plane : byref<Vector4>)
         (vertexHomogeneous : byref<Vector4>) =
-        extractBottomPlane &modelViewProjectionMatrix &plane |> ignore
+        Geometry.ExtractBottomPlane(&modelViewProjectionMatrix, &plane)
         0.0f < Henzai.Core.Numerics.Vector.InMemoryDotProduct(&plane, &vertexHomogeneous)
 
     let nearHalfSpaceCheck
         (modelViewProjectionMatrix : byref<Matrix4x4>)
         (plane : byref<Vector4>)
         (vertexHomogeneous : byref<Vector4>) =
-        extractNearPlane &modelViewProjectionMatrix &plane |> ignore
-
+        Geometry.ExtractNearPlane(&modelViewProjectionMatrix, &plane)
         0.0f < Henzai.Core.Numerics.Vector.InMemoryDotProduct(&plane, &vertexHomogeneous)
 
     let farHalfSpaceCheck
         (modelViewProjectionMatrix : byref<Matrix4x4>)
         (plane : byref<Vector4>) 
         (vertexHomogeneous : byref<Vector4>) =
-        extractFarPlane &modelViewProjectionMatrix &plane |> ignore
-
+        Geometry.ExtractFarPlane(&modelViewProjectionMatrix, &plane)
         0.0f < Henzai.Core.Numerics.Vector.InMemoryDotProduct(&plane, &vertexHomogeneous)
 
-    let IsVertexWithinFrustum(modelViewProjectionMatrix : byref<Matrix4x4>, vertex : byref<Vector4>) =
+    let IsVertexWithinFrustum(modelViewProjectionMatrix : byref<Matrix4x4>) (vertex : byref<Vector4>) =
         // This vector will be filled for each check. This is not parallizable!
         let mutable plane = Vector4.Zero
 
@@ -104,7 +63,7 @@ module Culler =
     /// <summary>
     /// Culls a <see cref="Henzai.Core.VertexGeometry.GeometryDefinition"/> by testing every triangle of the mesh
     /// </summary>
-    let FrustumCullGeometryDefinition(modelViewProjectionMatrix : byref<Matrix4x4>, geometryDefinition : Henzai.Core.VertexGeometry.GeometryDefinition<'T>) =
+    let FrustumCullGeometryDefinition (modelViewProjectionMatrix : byref<Matrix4x4>) (geometryDefinition : Henzai.Core.VertexGeometry.GeometryDefinition<'T>) =
         let processedIndicesMap = geometryDefinition.ProcessedIndicesMap
         processedIndicesMap.Clear()
 
@@ -126,9 +85,9 @@ module Culler =
             let mutable v3 = vertices.[int i3].GetPosition()
 
             // If at least one vertex is within the frustum, the triangle is not culled.
-            if(IsVertexWithinFrustum(&modelViewProjectionMatrix, &v1) ||
-               IsVertexWithinFrustum(&modelViewProjectionMatrix, &v2) ||
-               IsVertexWithinFrustum(&modelViewProjectionMatrix, &v3)) then
+            if(IsVertexWithinFrustum &modelViewProjectionMatrix &v1 ||
+               IsVertexWithinFrustum &modelViewProjectionMatrix &v2 ||
+               IsVertexWithinFrustum &modelViewProjectionMatrix &v3) then
 
                if(not(processedIndicesMap.ContainsKey(i1))) then
                 validVertices.[validVertexCounter] <- vertices.[int i1]
@@ -153,5 +112,4 @@ module Culler =
 
         geometryDefinition.NumberOfValidIndicies <- validIndicesCounter
         geometryDefinition.NumberOfValidVertices <- validVertexCounter
-
         ()

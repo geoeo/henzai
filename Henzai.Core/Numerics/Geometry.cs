@@ -148,6 +148,49 @@ namespace Henzai.Core.Numerics
             return Matrix4x4.Identity + omega_x + Matrix4x4.Multiply(omega_x_squared, (float)factor);
         }
 
+        // https://www.gamedevs.org/uploads/fast-extraction-viewing-frustum-planes-from-world-view-projection-matrix.pdf
+        public static void ExtractLeftPlane(ref Matrix4x4 modelViewProjectionMatrix, ref Vector4 planeTarget){
+            planeTarget.X = modelViewProjectionMatrix.M14 + modelViewProjectionMatrix.M11;
+            planeTarget.Y = modelViewProjectionMatrix.M24 + modelViewProjectionMatrix.M21;
+            planeTarget.Z = modelViewProjectionMatrix.M34 + modelViewProjectionMatrix.M31;
+            planeTarget.W = modelViewProjectionMatrix.M44 + modelViewProjectionMatrix.M41;
+        }
+
+        public static void ExtractRightPlane(ref Matrix4x4 modelViewProjectionMatrix, ref Vector4 planeTarget){
+            planeTarget.X = modelViewProjectionMatrix.M14 - modelViewProjectionMatrix.M11;
+            planeTarget.Y = modelViewProjectionMatrix.M24 - modelViewProjectionMatrix.M21;
+            planeTarget.Z = modelViewProjectionMatrix.M34 - modelViewProjectionMatrix.M31;
+            planeTarget.W = modelViewProjectionMatrix.M44 - modelViewProjectionMatrix.M41;
+        }
+
+        public static void ExtractTopPlane (ref Matrix4x4 modelViewProjectionMatrix, ref Vector4 planeTarget){
+            planeTarget.X = modelViewProjectionMatrix.M14 - modelViewProjectionMatrix.M12;
+            planeTarget.Y = modelViewProjectionMatrix.M24 - modelViewProjectionMatrix.M22;
+            planeTarget.Z = modelViewProjectionMatrix.M34 - modelViewProjectionMatrix.M32;
+            planeTarget.W = modelViewProjectionMatrix.M44 - modelViewProjectionMatrix.M42;
+        }
+
+        public static void ExtractBottomPlane (ref Matrix4x4 modelViewProjectionMatrix, ref Vector4 planeTarget){
+            planeTarget.X = modelViewProjectionMatrix.M14 + modelViewProjectionMatrix.M12;
+            planeTarget.Y = modelViewProjectionMatrix.M24 + modelViewProjectionMatrix.M22;
+            planeTarget.Z = modelViewProjectionMatrix.M34 + modelViewProjectionMatrix.M32;
+            planeTarget.W = modelViewProjectionMatrix.M44 + modelViewProjectionMatrix.M42;
+        }
+
+        public static void ExtractNearPlane (ref Matrix4x4 modelViewProjectionMatrix, ref Vector4 planeTarget){
+            planeTarget.X = modelViewProjectionMatrix.M13;
+            planeTarget.Y = modelViewProjectionMatrix.M23;
+            planeTarget.Z = modelViewProjectionMatrix.M33;
+            planeTarget.W = modelViewProjectionMatrix.M43;
+        }
+
+        public static void ExtractFarPlane (ref Matrix4x4 modelViewProjectionMatrix, ref Vector4 planeTarget){
+            planeTarget.X = modelViewProjectionMatrix.M14 - modelViewProjectionMatrix.M13;
+            planeTarget.Y = modelViewProjectionMatrix.M24 - modelViewProjectionMatrix.M23;
+            planeTarget.Z = modelViewProjectionMatrix.M34 - modelViewProjectionMatrix.M33;
+            planeTarget.W = modelViewProjectionMatrix.M44 - modelViewProjectionMatrix.M43;
+        }
+
 
 
 
