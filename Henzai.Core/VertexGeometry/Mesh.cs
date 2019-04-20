@@ -56,7 +56,7 @@ namespace Henzai.Core.VertexGeometry
 
             _vertices = vertices;
             _validVertices = new T[vertices.Length];
-            CopyArrayOfStructs(_vertices, _validVertices);
+            Array.Copy(_vertices, _validVertices, _vertices.Length);
             NumberOfValidVertices = vertices.Length;
 
             _meshIndices = null;
@@ -71,7 +71,7 @@ namespace Henzai.Core.VertexGeometry
 
             _vertices = vertices;
             _validVertices = new T[vertices.Length];
-            CopyArrayOfStructs(_vertices, _validVertices);
+            Array.Copy(_vertices, _validVertices, _vertices.Length);
             NumberOfValidVertices = vertices.Length;
 
             _meshIndices = indices;
@@ -99,15 +99,6 @@ namespace Henzai.Core.VertexGeometry
             foreach (ushort index in _meshIndices)
                 Console.WriteLine($"{index}");
         }
-
-
-        //TODO: Look into optimizing this
-        private void CopyArrayOfStructs(T[] source, T[] target) {
-            Debug.Assert(source.Length == target.Length);
-            
-            for(int i = 0; i < source.Length; i++)
-                target[i] = source[i];        
-        } 
 
     }
 
