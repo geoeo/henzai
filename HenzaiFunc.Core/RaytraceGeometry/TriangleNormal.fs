@@ -18,18 +18,23 @@ type TriangleNormal<'T when 'T : struct and 'T :> VertexLocateable>(v0 : Vector3
 
             Vector3.Cross(AB, AC).Length()/2.0f
 
-        let e1 = v1 - v0
-        let e2 = v2 - v0
         let fullArea = triangleArea v0 v1 v2
-        let normal = Vector3.Cross(e1, e2)
+        let normal = 
+            let e1 = v1 - v0
+            let e2 = v2 - v0
+            Vector3.Cross(e1, e2)
 
         let localToWorld =
+            let e1 = v1 - v0
+            let e2 = v2 - v0
             Matrix4x4(e1.X, e1.Y, e1.Z, 0.0f,
                         e2.X, e2.Y, e2.Z, 0.0f,
                         1.0f, 0.0f, 0.0f, 0.0f,
                         v0.X, v0.Y, v0.Z, 1.0f)
 
-        let worldToLocal = 
+        let worldToLocal =
+            let e1 = v1 - v0
+            let e2 = v2 - v0 
             let crossV2V0 = Vector3.Cross(v2, v0)
             let crossV1V0 = Vector3.Cross(v1, v0)
             let normalXAbs = MathF.Abs(normal.X)
@@ -51,9 +56,6 @@ type TriangleNormal<'T when 'T : struct and 'T :> VertexLocateable>(v0 : Vector3
                            0.0f, 0.0f, 1.0f, 0.0f,
                            crossV2V0.Z/normal.Z, -crossV1V0.Z/normal.Z, -nDotV0/normal.Z, 1.0f)
                            
-          
-
-
         interface Hitable with
 
             override this.TMin = 0.001f

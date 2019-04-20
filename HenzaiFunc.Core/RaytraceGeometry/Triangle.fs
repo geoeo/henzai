@@ -13,21 +13,25 @@ type Triangle(v0 : Vector3, v1 : Vector3, v2 : Vector3) =
 
         new(v0 : Point, v1: Point, v2 : Point) =
             Triangle(Vector.ToVec3(v0), Vector.ToVec3(v1), Vector.ToVec3(v2))
+            
 
-        let e1 = v1 - v0
-
-        let e2 = v2 - v0
-
-        let normal = Vector4(Vector3.Cross(e1, e2), 0.0f)
+        let normal = 
+            let e1 = v1 - v0
+            let e2 = v2 - v0
+            Vector4(Vector3.Cross(e1, e2), 0.0f)
         let unitNormal = Vector4.Normalize(normal)
 
         let localToWorld =
+            let e1 = v1 - v0
+            let e2 = v2 - v0
             Matrix4x4(e1.X, e1.Y, e1.Z, 0.0f,
                     e2.X, e2.Y, e2.Z, 0.0f,
                     1.0f, 0.0f, 0.0f, 0.0f,
                     v0.X, v0.Y, v0.Z, 1.0f)
-                    
+
         let worldToLocal = 
+            let e1 = v1 - v0
+            let e2 = v2 - v0
             let crossV2V0 = Vector3.Cross(v2, v0)
             let crossV1V0 = Vector3.Cross(v1, v0)
             let normalXAbs = MathF.Abs(normal.X)
