@@ -1,8 +1,10 @@
 namespace HenzaiFunc.Core.Acceleration
 
 open System.Numerics
+open System.Collections.Generic;
 open Henzai.Core.Numerics
 open Henzai.Core.VertexGeometry
+open System.Collections.Generic
 
 module Culler =
     
@@ -63,8 +65,7 @@ module Culler =
     /// Culls a <see cref="Henzai.Core.VertexGeometry.Mesh"/> by testing every triangle of the mesh
     /// </summary>
     let FrustumCullMesh (modelViewProjectionMatrix : byref<Matrix4x4>) (mesh : Henzai.Core.VertexGeometry.Mesh<'T>) =
-        let processedIndicesMap = mesh.ProcessedIndicesMap
-        processedIndicesMap.Clear()
+        let processedIndicesMap = new Dictionary<uint16,bool>()
 
         let vertices = mesh.Vertices
         let indices = mesh.Indices

@@ -43,12 +43,6 @@ namespace Henzai.Core.VertexGeometry
         public int ValidVertexCount => NumberOfValidVertices;
         public int ValidIndicesCount => NumberOfValidIndicies;
         public bool IsCulled => NumberOfValidIndicies == 0;
-        /// <summary>
-        /// A datastrcture used for geometry pre/post processing
-        /// Used for culling operations
-        /// TODO: remove this
-        /// </summary>
-        public Dictionary<ushort, bool> ProcessedIndicesMap { get; }
 
         public int FaceCount => _vertices.Length / 3;
         public int ValidFaceCount => NumberOfValidVertices / 3;
@@ -68,8 +62,6 @@ namespace Henzai.Core.VertexGeometry
             _meshIndices = null;
             NumberOfValidIndicies = 0;
             _validMeshIndices = null;
-
-            ProcessedIndicesMap = new Dictionary<ushort, bool>();
         }
 
         public Mesh(T[] vertices, ushort[] indices)
@@ -86,8 +78,6 @@ namespace Henzai.Core.VertexGeometry
             _validMeshIndices = new ushort[indices.Length];
             Buffer.BlockCopy(indices,0,_validMeshIndices,0, indices.Length * sizeof(ushort));
             NumberOfValidIndicies = indices.Length;
-
-            ProcessedIndicesMap = new Dictionary<ushort, bool>();
         }
 
         public void SetNewWorldTransformation(ref Matrix4x4 world){
