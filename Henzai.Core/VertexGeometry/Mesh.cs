@@ -1,5 +1,7 @@
 using System;
 using System.Numerics;
+using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace Henzai.Core.VertexGeometry
 {
@@ -9,29 +11,83 @@ namespace Henzai.Core.VertexGeometry
     /// </summary>
     public sealed class Mesh<T> where T : struct, VertexLocateable
     {
-        private readonly GeometryDefinition<T> _geometryDefinition;
-        public GeometryDefinition<T> GeometryDefinition => _geometryDefinition;
-        public T[] Vertices => _geometryDefinition.GetValidVertices;
-        public ushort[] MeshIndices => _geometryDefinition.GetValidIndices;
+        private readonly T[] _vertices;
+        /// <summary>
+        /// Holds a continuous list of verticies which pass the frustum test.
+        /// The array may be larger than actual vertex count.
+        /// </summary>
+        private readonly T[] _validVertices;
+        private readonly ushort[] _meshIndices;
+        /// <summary>
+        /// Holds a continuous list of indices which pass the frustum test.
+        /// The array may be larger than actual index count.
+        /// </summary>
+        private readonly ushort[] _validMeshIndices;
 
-        public int VertexCount => _geometryDefinition.VertexCount;
-        public int IndicesCount => _geometryDefinition.IndicesCount;
-        public int FaceCount => _geometryDefinition.VertexCount / 3;
-        public int ValidVertexCount => _geometryDefinition.ValidVertexCount;
-        public int ValidIndicesCount => _geometryDefinition.ValidIndicesCount;
-        public int ValidFaceCount => _geometryDefinition.ValidVertexCount / 3;
+        /// <summary>
+        /// The number of indices that passed the frustum test.
+        /// Gives the blit range of <see cref="culledMeshIndices"/>
+        /// </summary>
+        public int NumberOfValidIndicies {get; set;}
+        /// <summary>
+        /// The number of verticies that passed the frustum test.
+        /// Gives the blit range of <see cref="culledVerticies"/>
+        /// </summary>
+        public int NumberOfValidVertices {get; set;}
+        public T[] Vertices => _vertices;
+        public ushort[] Indices => _meshIndices;
+        public T[] ValidVertices => _validVertices;
+        public ushort[] ValidIndices => _validMeshIndices;
+        public int VertexCount => _vertices.Length;
+        public int IndicesCount => _meshIndices.Length;
+        public int ValidVertexCount => NumberOfValidVertices;
+        public int ValidIndicesCount => NumberOfValidIndicies;
+        public bool IsCulled => NumberOfValidIndicies == 0;
+        /// <summary>
+        /// A datastrcture used for geometry pre/post processing
+        /// Used for culling operations
+        /// TODO: remove this
+        /// </summary>
+        public Dictionary<ushort, bool> ProcessedIndicesMap { get; }
+
+        public int FaceCount => _vertices.Length / 3;
+        public int ValidFaceCount => NumberOfValidVertices / 3;
+
         private Matrix4x4 _world = Matrix4x4.Identity;
         public ref Matrix4x4 World => ref _world;
-        public bool IsCulled => _geometryDefinition.IsCulled;
 
-        public Mesh(T[] meshDefinition)
+        public Mesh(T[] vertices)
         {
-            _geometryDefinition = new GeometryDefinition<T>(meshDefinition);
+            Debug.Assert(vertices != null);
+
+            _vertices = vertices;
+            _validVertices = new T[vertices.Length];
+            CopyArrayOfStructs(_vertices, _validVertices);
+            NumberOfValidVertices = vertices.Length;
+
+            _meshIndices = null;
+            NumberOfValidIndicies = 0;
+            _validMeshIndices = null;
+
+            ProcessedIndicesMap = new Dictionary<ushort, bool>();
         }
 
-        public Mesh(T[] meshDefinition, ushort[] indices)
+        public Mesh(T[] vertices, ushort[] indices)
         {
-            _geometryDefinition = new GeometryDefinition<T>(meshDefinition, indices);
+            Debug.Assert(vertices != null);
+            Debug.Assert(indices != null);
+
+            _vertices = vertices;
+            _validVertices = new T[vertices.Length];
+            CopyArrayOfStructs(_vertices, _validVertices);
+            NumberOfValidVertices = vertices.Length;
+
+            _meshIndices = indices;
+            _validMeshIndices = new ushort[indices.Length];
+            Buffer.BlockCopy(indices,0,_validMeshIndices,0, indices.Length * sizeof(ushort));
+            NumberOfValidIndicies = indices.Length;
+
+            ProcessedIndicesMap = new Dictionary<ushort, bool>();
         }
 
         public void SetNewWorldTransformation(ref Matrix4x4 world){
@@ -47,13 +103,21 @@ namespace Henzai.Core.VertexGeometry
                 var pos = vertex.GetPosition();
                 Console.WriteLine($"X:{pos.X} Y:{pos.Y} Z:{pos.Z}");
             }
-
         }
 
         public void PrintAllVertexIndices(){
-            foreach (ushort index in MeshIndices)
+            foreach (ushort index in _meshIndices)
                 Console.WriteLine($"{index}");
         }
+
+
+        //TODO: Look into optimizing this
+        private void CopyArrayOfStructs(T[] source, T[] target) {
+            Debug.Assert(source.Length == target.Length);
+            
+            for(int i = 0; i < source.Length; i++)
+                target[i] = source[i];        
+        } 
 
     }
 

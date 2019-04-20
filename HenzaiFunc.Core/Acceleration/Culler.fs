@@ -5,8 +5,7 @@ open Henzai.Core.Numerics
 open Henzai.Core.VertexGeometry
 
 module Culler =
-
-   
+    
     let leftHalfSpaceCheck
         (modelViewProjectionMatrix : byref<Matrix4x4>) 
         (plane : byref<Vector4>)
@@ -61,16 +60,16 @@ module Culler =
         farHalfSpaceCheck &modelViewProjectionMatrix &plane &vertex
 
     /// <summary>
-    /// Culls a <see cref="Henzai.Core.VertexGeometry.GeometryDefinition"/> by testing every triangle of the mesh
+    /// Culls a <see cref="Henzai.Core.VertexGeometry.Mesh"/> by testing every triangle of the mesh
     /// </summary>
-    let FrustumCullGeometryDefinition (modelViewProjectionMatrix : byref<Matrix4x4>) (geometryDefinition : Henzai.Core.VertexGeometry.GeometryDefinition<'T>) =
-        let processedIndicesMap = geometryDefinition.ProcessedIndicesMap
+    let FrustumCullMesh (modelViewProjectionMatrix : byref<Matrix4x4>) (mesh : Henzai.Core.VertexGeometry.Mesh<'T>) =
+        let processedIndicesMap = mesh.ProcessedIndicesMap
         processedIndicesMap.Clear()
 
-        let vertices = geometryDefinition.GetVertices
-        let indices = geometryDefinition.GetIndices
-        let validVertices = geometryDefinition.GetValidVertices
-        let validIndices = geometryDefinition.GetValidIndices
+        let vertices = mesh.Vertices
+        let indices = mesh.Indices
+        let validVertices = mesh.ValidVertices
+        let validIndices = mesh.ValidIndices
 
         let mutable validIndicesCounter = 0
         let mutable validVertexCounter = 0
@@ -110,6 +109,6 @@ module Culler =
                validIndices.[validIndicesCounter] <- i3
                validIndicesCounter <- validIndicesCounter+1
 
-        geometryDefinition.NumberOfValidIndicies <- validIndicesCounter
-        geometryDefinition.NumberOfValidVertices <- validVertexCounter
+        mesh.NumberOfValidIndicies <- validIndicesCounter
+        mesh.NumberOfValidVertices <- validVertexCounter
         ()

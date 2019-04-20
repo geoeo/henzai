@@ -9,11 +9,11 @@ let metalSampleCount = 1
 
 let width = 800
 let height = 640
-let samplesPerPixel = 32
+let samplesPerPixel = 8
 let batchSize = 1
 let renderSquareSide = 2
 let renderSquareSize = renderSquareSide*renderSquareSide
-let maxTraceDepth = 5us
+let maxTraceDepth = 4us
 
 assert (width%renderSquareSide = 0)
 assert (height%renderSquareSide = 0)

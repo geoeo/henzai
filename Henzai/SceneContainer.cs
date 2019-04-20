@@ -38,12 +38,12 @@ namespace Henzai
                     var mesh = model.GetMesh(i);
                     var worldMatrix = mesh.World;
                     var MVP = worldMatrix*camera.ViewProjectionMatirx;
-                    Culler.FrustumCullGeometryDefinition(ref MVP, mesh.GeometryDefinition);
+                    Culler.FrustumCullMesh(ref MVP, mesh);
                     uint vertexBytesToCopy = (vertexSizeInBytes* mesh.ValidVertexCount).ToUnsigned();
                     uint indexBytesToCopy = (sizeof(ushort)*mesh.ValidIndicesCount).ToUnsigned();
 
                     commandList.UpdateBuffer<VertexPositionNormalTextureTangentBitangent>(vertexBuffer,0,ref mesh.Vertices[0], vertexBytesToCopy);     
-                    commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.MeshIndices[0], indexBytesToCopy);
+                    commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.Indices[0], indexBytesToCopy);
                 }
             }
 
@@ -59,12 +59,12 @@ namespace Henzai
                     var mesh = model.GetMesh(i);
                     var worldMatrix = mesh.World;
                     var MVP = worldMatrix*camera.ViewProjectionMatirx;
-                    Culler.FrustumCullGeometryDefinition(ref MVP, mesh.GeometryDefinition); 
+                    Culler.FrustumCullMesh(ref MVP, mesh); 
                     uint vertexBytesToCopy = (vertexSizeInBytes* mesh.ValidVertexCount).ToUnsigned();
                     uint indexBytesToCopy = (sizeof(ushort)*mesh.ValidIndicesCount).ToUnsigned();
 
                     commandList.UpdateBuffer<VertexPositionNormal>(vertexBuffer,0,ref mesh.Vertices[0], vertexBytesToCopy);     
-                    commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.MeshIndices[0], indexBytesToCopy);
+                    commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.Indices[0], indexBytesToCopy);
                 }             
             }
 
@@ -80,12 +80,12 @@ namespace Henzai
                     var mesh = model.GetMesh(i);
                     var worldMatrix = mesh.World;
                     var MVP = worldMatrix*camera.ViewProjectionMatirx;               
-                    Culler.FrustumCullGeometryDefinition(ref MVP, mesh.GeometryDefinition); 
+                    Culler.FrustumCullMesh(ref MVP, mesh); 
                     uint vertexBytesToCopy = (vertexSizeInBytes* mesh.ValidVertexCount).ToUnsigned();
                     uint indexBytesToCopy = (sizeof(ushort)*mesh.ValidIndicesCount).ToUnsigned();
 
                     commandList.UpdateBuffer<VertexPositionTexture>(vertexBuffer,0,ref mesh.Vertices[0], vertexBytesToCopy);     
-                    commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.MeshIndices[0], indexBytesToCopy);
+                    commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.Indices[0], indexBytesToCopy);
                 }               
             }
 
@@ -101,12 +101,12 @@ namespace Henzai
                     var mesh = model.GetMesh(i);
                     var worldMatrix = mesh.World;
                     var MVP = worldMatrix*camera.ViewProjectionMatirx;
-                    Culler.FrustumCullGeometryDefinition(ref MVP, mesh.GeometryDefinition); 
+                    Culler.FrustumCullMesh(ref MVP, mesh); 
                     uint vertexBytesToCopy = (vertexSizeInBytes* mesh.ValidVertexCount).ToUnsigned();
                     uint indexBytesToCopy = (sizeof(ushort)*mesh.ValidIndicesCount).ToUnsigned();
 
                     commandList.UpdateBuffer<VertexPositionColor>(vertexBuffer,0,ref mesh.Vertices[0], vertexBytesToCopy);     
-                    commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.MeshIndices[0], indexBytesToCopy);
+                    commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.Indices[0], indexBytesToCopy);
                 }              
             }
 
@@ -122,12 +122,12 @@ namespace Henzai
                     var mesh = model.GetMesh(i);
                     var worldMatrix = mesh.World;
                     var MVP = worldMatrix*camera.ViewProjectionMatirx;
-                    Culler.FrustumCullGeometryDefinition(ref MVP, mesh.GeometryDefinition); 
+                    Culler.FrustumCullMesh(ref MVP, mesh); 
                     uint vertexBytesToCopy = (vertexSizeInBytes* mesh.ValidVertexCount).ToUnsigned();
                     uint indexBytesToCopy = (sizeof(ushort)*mesh.ValidIndicesCount).ToUnsigned();
 
                     commandList.UpdateBuffer<VertexPosition>(vertexBuffer,0,ref mesh.Vertices[0], vertexBytesToCopy);     
-                    commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.MeshIndices[0], indexBytesToCopy);
+                    commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.Indices[0], indexBytesToCopy);
                 }               
             }
 

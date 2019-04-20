@@ -79,7 +79,7 @@ namespace Henzai.Geometry
             for(int j = 0; j < numberOfMeshes; j++){
                 var mesh = model.GetMesh(j);
                 var vertices = mesh.Vertices;
-                var indicies = mesh.MeshIndices;
+                var indicies = mesh.Indices;
                 var numberOfIndicies = indicies.Length;
                 var numberOfVertices = vertices.Length;
                 var tangentCountPerVertex = new uint[numberOfVertices];
@@ -154,7 +154,7 @@ namespace Henzai.Geometry
             for(int j = 0; j < numberOfMeshes; j++){
                 var mesh = model.GetMesh(j);
                 var vertices = mesh.Vertices;
-                var indicies = mesh.MeshIndices;
+                var indicies = mesh.Indices;
                 var numberOfIndicies = indicies.Length;
                 var numberOfVerticies = vertices.Length;
                 var tangentCountPerVertex = new uint[numberOfVerticies];
