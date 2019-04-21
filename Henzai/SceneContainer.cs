@@ -40,7 +40,7 @@ namespace Henzai
                     var MVP = worldMatrix*camera.ViewProjectionMatirx;
                     Culler.FrustumCullMesh(ref MVP, mesh);
                     uint vertexBytesToCopy = (vertexSizeInBytes* mesh.ValidVertexCount).ToUnsigned();
-                    uint indexBytesToCopy = (sizeof(ushort)*mesh.ValidIndicesCount).ToUnsigned();
+                    uint indexBytesToCopy = (sizeof(ushort)*mesh.ValidIndexCount).ToUnsigned();
 
                     commandList.UpdateBuffer<VertexPositionNormalTextureTangentBitangent>(vertexBuffer,0,ref mesh.Vertices[0], vertexBytesToCopy);     
                     commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.Indices[0], indexBytesToCopy);
@@ -61,7 +61,7 @@ namespace Henzai
                     var MVP = worldMatrix*camera.ViewProjectionMatirx;
                     Culler.FrustumCullMesh(ref MVP, mesh); 
                     uint vertexBytesToCopy = (vertexSizeInBytes* mesh.ValidVertexCount).ToUnsigned();
-                    uint indexBytesToCopy = (sizeof(ushort)*mesh.ValidIndicesCount).ToUnsigned();
+                    uint indexBytesToCopy = (sizeof(ushort)*mesh.ValidIndexCount).ToUnsigned();
 
                     commandList.UpdateBuffer<VertexPositionNormal>(vertexBuffer,0,ref mesh.Vertices[0], vertexBytesToCopy);     
                     commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.Indices[0], indexBytesToCopy);
@@ -82,7 +82,7 @@ namespace Henzai
                     var MVP = worldMatrix*camera.ViewProjectionMatirx;               
                     Culler.FrustumCullMesh(ref MVP, mesh); 
                     uint vertexBytesToCopy = (vertexSizeInBytes* mesh.ValidVertexCount).ToUnsigned();
-                    uint indexBytesToCopy = (sizeof(ushort)*mesh.ValidIndicesCount).ToUnsigned();
+                    uint indexBytesToCopy = (sizeof(ushort)*mesh.ValidIndexCount).ToUnsigned();
 
                     commandList.UpdateBuffer<VertexPositionTexture>(vertexBuffer,0,ref mesh.Vertices[0], vertexBytesToCopy);     
                     commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.Indices[0], indexBytesToCopy);
@@ -103,7 +103,7 @@ namespace Henzai
                     var MVP = worldMatrix*camera.ViewProjectionMatirx;
                     Culler.FrustumCullMesh(ref MVP, mesh); 
                     uint vertexBytesToCopy = (vertexSizeInBytes* mesh.ValidVertexCount).ToUnsigned();
-                    uint indexBytesToCopy = (sizeof(ushort)*mesh.ValidIndicesCount).ToUnsigned();
+                    uint indexBytesToCopy = (sizeof(ushort)*mesh.ValidIndexCount).ToUnsigned();
 
                     commandList.UpdateBuffer<VertexPositionColor>(vertexBuffer,0,ref mesh.Vertices[0], vertexBytesToCopy);     
                     commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.Indices[0], indexBytesToCopy);
@@ -124,7 +124,7 @@ namespace Henzai
                     var MVP = worldMatrix*camera.ViewProjectionMatirx;
                     Culler.FrustumCullMesh(ref MVP, mesh); 
                     uint vertexBytesToCopy = (vertexSizeInBytes* mesh.ValidVertexCount).ToUnsigned();
-                    uint indexBytesToCopy = (sizeof(ushort)*mesh.ValidIndicesCount).ToUnsigned();
+                    uint indexBytesToCopy = (sizeof(ushort)*mesh.ValidIndexCount).ToUnsigned();
 
                     commandList.UpdateBuffer<VertexPosition>(vertexBuffer,0,ref mesh.Vertices[0], vertexBytesToCopy);     
                     commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.Indices[0], indexBytesToCopy);

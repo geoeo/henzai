@@ -2,6 +2,7 @@ using System;
 using System.Numerics;
 using System.Diagnostics;
 using System.Collections.Generic;
+using Henzai.Core.Acceleration;
 
 namespace Henzai.Core.VertexGeometry
 {
@@ -17,35 +18,33 @@ namespace Henzai.Core.VertexGeometry
         /// The array may be larger than actual vertex count.
         /// </summary>
         private readonly T[] _validVertices;
-        private readonly ushort[] _meshIndices;
+        private readonly ushort[] _indices;
         /// <summary>
         /// Holds a continuous list of indices which pass the frustum test.
         /// The array may be larger than actual index count.
         /// </summary>
-        private readonly ushort[] _validMeshIndices;
-        // private readonly AxisAlingedBoundable[] _triangles;
+        private readonly ushort[] _validIndices;
+        private readonly IndexedTriangleEngine<T>[] _validTriangles;
 
         /// <summary>
         /// The number of indices that passed the frustum test.
         /// Gives the blit range of <see cref="culledMeshIndices"/>
         /// </summary>
-        public int NumberOfValidIndicies {get; set;}
+        public int ValidIndexCount {get; set;}
         /// <summary>
         /// The number of verticies that passed the frustum test.
         /// Gives the blit range of <see cref="culledVerticies"/>
         /// </summary>
-        public int NumberOfValidVertices {get; set;}
+        public int ValidVertexCount {get; set;}
+        public int ValidTriangleCount {get; set;}
         public T[] Vertices => _vertices;
-        public ushort[] Indices => _meshIndices;
+        public ushort[] Indices => _indices;
         public T[] ValidVertices => _validVertices;
-        public ushort[] ValidIndices => _validMeshIndices;
+        public ushort[] ValidIndices => _validIndices;
+        public IndexedTriangleEngine<T>[] ValidTriangles => _validTriangles;
         public int VertexCount => _vertices.Length;
-        public int IndicesCount => _meshIndices.Length;
-        public int ValidVertexCount => NumberOfValidVertices;
-        public int ValidIndicesCount => NumberOfValidIndicies;
-        public bool IsCulled => NumberOfValidIndicies == 0;
-        public int FaceCount => _vertices.Length / 3;
-        public int ValidFaceCount => NumberOfValidVertices / 3;
+        public int IndexCount => _indices.Length;
+        public bool IsCulled => ValidIndexCount == 0;
 
         private Matrix4x4 _world = Matrix4x4.Identity;
         public ref Matrix4x4 World => ref _world;
@@ -57,11 +56,19 @@ namespace Henzai.Core.VertexGeometry
             _vertices = vertices;
             _validVertices = new T[vertices.Length];
             Array.Copy(_vertices, _validVertices, _vertices.Length);
-            NumberOfValidVertices = vertices.Length;
+            ValidIndexCount = vertices.Length;
 
-            _meshIndices = null;
-            NumberOfValidIndicies = 0;
-            _validMeshIndices = null;
+            _indices = null;
+            ValidVertexCount = VertexCount;
+            ValidIndexCount = 0;
+            _validIndices = null;
+
+            _validTriangles = new IndexedTriangleEngine<T>[IndexCount/3];
+            for(int i = 0; i < VertexCount; i=i+3)
+                _validTriangles[i/3] = new IndexedTriangleEngine<T>(i, i+1, i+2, _vertices);
+            ValidTriangleCount = _validTriangles.Length;
+            
+
         }
 
         public Mesh(T[] vertices, ushort[] indices)
@@ -72,12 +79,21 @@ namespace Henzai.Core.VertexGeometry
             _vertices = vertices;
             _validVertices = new T[vertices.Length];
             Array.Copy(_vertices, _validVertices, _vertices.Length);
-            NumberOfValidVertices = vertices.Length;
+            ValidVertexCount = vertices.Length;
 
-            _meshIndices = indices;
-            _validMeshIndices = new ushort[indices.Length];
-            Buffer.BlockCopy(indices,0,_validMeshIndices,0, indices.Length * sizeof(ushort));
-            NumberOfValidIndicies = indices.Length;
+            _indices = indices;
+            _validIndices = new ushort[indices.Length];
+            Buffer.BlockCopy(indices, 0, _validIndices, 0, indices.Length * sizeof(ushort));
+            ValidIndexCount = indices.Length;
+
+            _validTriangles = new IndexedTriangleEngine<T>[IndexCount/3];
+            for(int i = 0; i < IndexCount; i+=3){
+                var i0 = _indices[i];
+                var i1 = _indices[i+1];
+                var i2 = _indices[i+2];  
+                _validTriangles[i0/3] = new IndexedTriangleEngine<T>(i0, i1, i2, _vertices);
+            }
+            ValidTriangleCount = _validTriangles.Length;
         }
 
         public void SetNewWorldTransformation(ref Matrix4x4 world){
@@ -96,7 +112,7 @@ namespace Henzai.Core.VertexGeometry
         }
 
         public void PrintAllVertexIndices(){
-            foreach (ushort index in _meshIndices)
+            foreach (ushort index in _indices)
                 Console.WriteLine($"{index}");
         }
 

@@ -28,13 +28,13 @@ let convertModelToSurfaceList (model: Model<'T, RaytraceMaterial> when 'T :> Ver
         let mesh = model.GetMesh(i)
         let material = model.GetMaterial(i)
 
-        let indicesCount = mesh.IndicesCount
+        let indexCount = mesh.IndexCount
         let indices = mesh.Indices
         let vertices : 'T[] = Array.map vertexTypeTransform mesh.Vertices
 
         totalVertexCount <- totalVertexCount + mesh.VertexCount
         
-        for j in 0..3..indicesCount-1 do
+        for j in 0..3..indexCount-1 do
             let i1 = (int)indices.[j]
             let i2 = (int)indices.[j+1]
             let i3 = (int)indices.[j+2]  

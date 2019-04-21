@@ -110,6 +110,6 @@ module Culler =
                validIndices.[validIndicesCounter] <- i3
                validIndicesCounter <- validIndicesCounter+1
 
-        mesh.NumberOfValidIndicies <- validIndicesCounter
-        mesh.NumberOfValidVertices <- validVertexCounter
+        mesh.ValidIndexCount <- validIndicesCounter
+        mesh.ValidVertexCount <- validVertexCounter
         ()
