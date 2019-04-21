@@ -11,8 +11,6 @@
     <Compile Include="Extensions/Array.fs" />
     <Compile Include="Utils.fs" />
     <Compile Include="Types.fs" />
-    <Compile Include="RaytraceGeometry/Ray.fs" />
-    <Compile Include="RaytraceGeometry/Hitable.fs" />
     <Compile Include="RaytraceGeometry/RaytraceGeometryUtils.fs" />
     <Compile Include="RaytraceGeometry/AxisAlignedBoundingBox.fs" />
     <Compile Include="BVHTypes.fs" />

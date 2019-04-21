@@ -3,17 +3,18 @@ namespace HenzaiFunc.Core.RaytraceGeometry
 open HenzaiFunc.Core.Types
 open System.Numerics
 open HenzaiFunc.Core
+open Henzai.Core.Raytracing
 
 [<AbstractClass>]
 type RaytracingGeometry ()  =
     interface Hitable with
     
         // effects shadow acne
-        member this.TMin = 0.001f
-        member this.TMax = 500.0f
+        member this.TMin() = 0.001f
+        member this.TMax() = 500.0f
         member this.HasIntersection _ = false
         member this.Intersect _ = struct(false, 0.0f)
-        member this.IntersectionAcceptable _ _ _ _ = false
+        member this.IntersectionAcceptable(_, _, _, _) = false
         member this.NormalForSurfacePoint _ = Vector4.Zero
         member this.IsObstructedBySelf _ = false
 

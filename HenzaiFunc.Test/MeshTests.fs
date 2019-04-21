@@ -3,6 +3,7 @@
 open System
 open System.Numerics
 open Xunit
+open Henzai.Core.Raytracing
 open HenzaiFunc.Core.RaytraceGeometry
 open HenzaiFunc.Core.Acceleration
 open HenzaiFunc.Core.Types

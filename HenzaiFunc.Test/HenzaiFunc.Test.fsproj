@@ -14,6 +14,7 @@
     <Compile Include="PlaneTests.fs" />
     <Compile Include="MeshTests.fs" />
     <Compile Include="Program.fs" />
+    <ProjectReference Include="../Henzai.Core/Henzai.Core.csproj" />
     <ProjectReference Include="../HenzaiFunc.Core/HenzaiFunc.Core.fsproj" />
     <ProjectReference Include="../Raytracer/raytracer.fsproj" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />

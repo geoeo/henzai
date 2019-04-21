@@ -4,6 +4,7 @@ open System
 open System.Numerics
 open HenzaiFunc.Core.Types
 open Henzai.Core.Numerics
+open Henzai.Core.Raytracing
 
 type Plane(plane : System.Numerics.Plane, center : Point option, width : float32 option, height : float32 option) = 
     inherit RaytracingGeometry () with
@@ -116,7 +117,7 @@ type Plane(plane : System.Numerics.Plane, center : Point option, width : float32
                 // plane store the distance from the plane to the origin i.e. we have to invert
                 let numerator = Plane.DotNormal(plane,  Henzai.Core.Numerics.Vector.ToVec3(-kern - ray.Origin))
                 let denominator = Plane.DotNormal(plane, Henzai.Core.Numerics.Vector.ToVec3(ray.Direction))
-                if Math.Abs(denominator) < this.AsHitable.TMin || Math.Abs(numerator) < this.AsHitable.TMin  then struct(false, 0.0f)
+                if Math.Abs(denominator) < this.AsHitable.TMin() || Math.Abs(numerator) < this.AsHitable.TMin()  then struct(false, 0.0f)
                 else 
                     let t = numerator / denominator
                     if t < 0.0f then struct(false, 0.0f)
@@ -125,11 +126,11 @@ type Plane(plane : System.Numerics.Plane, center : Point option, width : float32
                         struct(pointLiesInRectangle pointOnSurface, t)
 
             override this.HasIntersection (ray:Ray) = 
-                let struct(hasIntersection, _) = this.AsHitable.Intersect ray 
+                let struct(hasIntersection, _) = this.AsHitable.Intersect(ray) 
                 hasIntersection
             // dotView factor ensures sampling "straight" at very large distances due to fov
-            override this.IntersectionAcceptable hasIntersection t dotViewTrace pointOnSurface =
-                let generalIntersection = hasIntersection && t > this.AsHitable.TMin && t <= (this.AsHitable.TMax/dotViewTrace)
+            override this.IntersectionAcceptable(hasIntersection, t, dotViewTrace, pointOnSurface) =
+                let generalIntersection = hasIntersection && t > this.AsHitable.TMin() && t <= (this.AsHitable.TMax()/dotViewTrace)
                 match center with
                     | Some _ -> generalIntersection && pointLiesInRectangle pointOnSurface
                     | None -> generalIntersection

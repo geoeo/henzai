@@ -5,6 +5,7 @@ open System.Numerics
 open HenzaiFunc.Core.Types
 open HenzaiFunc.Core.Acceleration
 open Henzai.Core.Numerics
+open Henzai.Core.Raytracing
    
 
 type Sphere(center : Point, radius : Radius) =
@@ -49,7 +50,7 @@ type Sphere(center : Point, radius : Radius) =
 
             override this.Intersect (ray : Ray) = 
                 let (hasIntersection,i1,i2) = this.Intersections (ray : Ray)
-                if i1 >= this.AsHitable.TMin && i2 >= this.AsHitable.TMin then
+                if i1 >= this.AsHitable.TMin() && i2 >= this.AsHitable.TMin() then
                     struct(hasIntersection, MathF.Min(i1, i2))
                 else if i1 < 0.0f then
                     struct(hasIntersection, i2)
@@ -63,12 +64,12 @@ type Sphere(center : Point, radius : Radius) =
                 let (hasIntersection,_,_) = this.Intersections ray 
                 hasIntersection
 
-            override this.IntersectionAcceptable hasIntersection t _ _ =
-                hasIntersection && t > this.AsHitable.TMin
+            override this.IntersectionAcceptable(hasIntersection, t, _, _) =
+                hasIntersection && t > this.AsHitable.TMin()
 
             override this.IsObstructedBySelf ray =
                 let (b,i1,i2) = this.Intersections ray
-                this.AsHitable.IntersectionAcceptable b (MathF.Max(i1, i2)) 1.0f Vector4.Zero
+                this.AsHitable.IntersectionAcceptable(b, (MathF.Max(i1, i2)), 1.0f, Vector4.Zero)
 
         interface AxisAlignedBoundable with
             override this.GetBounds =

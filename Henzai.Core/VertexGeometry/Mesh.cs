@@ -23,6 +23,7 @@ namespace Henzai.Core.VertexGeometry
         /// The array may be larger than actual index count.
         /// </summary>
         private readonly ushort[] _validMeshIndices;
+        // private readonly AxisAlingedBoundable[] _triangles;
 
         /// <summary>
         /// The number of indices that passed the frustum test.
@@ -43,7 +44,6 @@ namespace Henzai.Core.VertexGeometry
         public int ValidVertexCount => NumberOfValidVertices;
         public int ValidIndicesCount => NumberOfValidIndicies;
         public bool IsCulled => NumberOfValidIndicies == 0;
-
         public int FaceCount => _vertices.Length / 3;
         public int ValidFaceCount => NumberOfValidVertices / 3;
 

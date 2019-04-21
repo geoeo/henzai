@@ -2,7 +2,9 @@
 
 open System.Numerics
 open Xunit
+open Henzai.Core.Raytracing
 open HenzaiFunc.Core.RaytraceGeometry
+
 
 [<Fact>]
 let SimpleAABBRayIntersectionTestZFront() = 

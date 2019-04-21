@@ -3,6 +3,7 @@
 open System.Numerics
 open HenzaiFunc.Core.Types
 open HenzaiFunc.Core.RaytraceGeometry
+open Henzai.Core.Raytracing
 
 // Phyisically Based Rendering Third Edition p. 280
 /// Implements methods to optimize a BVH BST into a runtime representation
@@ -79,14 +80,14 @@ type BVHRuntime<'T when 'T :> Hitable>() =
             let node = bvhArray.[currentNodeIndex]
             let primitiveOffset = node.leafNode.primitivesOffset
             let nPrimitives = node.nPrimitives
-            if node.aabb.AsHitable.HasIntersection ray then 
+            if node.aabb.AsHitable.HasIntersection(ray) then 
                 // leaf
                 if nPrimitives > 0 then
                     for i in 0..nPrimitives-1 do
                         let geometry = orderedPrimitives.[primitiveOffset + i]
-                        let struct(leafHasIntersection, leafHit) = geometry.Intersect ray 
+                        let struct(leafHasIntersection, leafHit) = geometry.Intersect(ray) 
                         let point = ray.Origin + leafHit*ray.Direction
-                        let intersectionAcceptable = geometry.IntersectionAcceptable leafHasIntersection leafHit 1.0f point
+                        let intersectionAcceptable = geometry.IntersectionAcceptable(leafHasIntersection, leafHit, 1.0f, point)
                         if intersectionAcceptable && leafHit < tHit then
                             hasIntersection <- leafHasIntersection
                             tHit <- leafHit

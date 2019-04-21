@@ -3,6 +3,7 @@
 open System.Numerics
 open HenzaiFunc.Core
 open HenzaiFunc.Core.Types
+open Henzai.Core.Raytracing
 
 
 type AABB(pMin : MinPoint, pMax : MaxPoint) = 
@@ -28,11 +29,11 @@ type AABB(pMin : MinPoint, pMax : MaxPoint) =
     interface Hitable with
 
         // effects shadow acne
-        member this.TMin = 0.001f
-        member this.TMax = 500.0f
+        member this.TMin() = 0.001f
+        member this.TMax() = 500.0f
         // Optimized Ray Box Intersection Phyisically Based Rendering Third Edition p. 129
         // TODO: investigate performance improvement when passing in invDir
-        member this.Intersect ray = 
+        member this.Intersect(ray) = 
             let invDir = Vector4(1.0f / ray.Direction.X, 1.0f/ ray.Direction.Y, 1.0f / ray.Direction.Z, 0.0f)
             let (isXDirNeg, isYDirNeg, isZDirNeg) = (invDir.X < 0.0f, invDir.Y < 0.0f, invDir.Z < 0.0f)
             let gamma3 = (RaytraceGeometryUtils.gamma 3)
@@ -53,13 +54,13 @@ type AABB(pMin : MinPoint, pMax : MaxPoint) =
             if tzMin > tMin then tMin <- tzMin else ()
             if tzMax < tMax then tMax <- tzMax else ()
 
-            struct(tMin < this.AsHitable.TMax && tMax > 0.0f && passed , tMin)
+            struct(tMin < this.AsHitable.TMax() && tMax > 0.0f && passed , tMin)
 
-        member this.HasIntersection ray =
+        member this.HasIntersection(ray) =
             let struct(hasIntersection, t) = this.AsHitable.Intersect ray 
             let p = ray.Origin + t*ray.Direction
-            this.AsHitable.IntersectionAcceptable hasIntersection t 0.0f p
-        member this.IntersectionAcceptable hasIntersection t _ _ = hasIntersection
+            this.AsHitable.IntersectionAcceptable(hasIntersection, t, 0.0f, p)
+        member this.IntersectionAcceptable(hasIntersection, _, _, _) = hasIntersection
         member this.NormalForSurfacePoint _ = Vector4.Zero
         member this.IsObstructedBySelf _ = false
 

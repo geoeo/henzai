@@ -5,6 +5,7 @@ open System.Numerics
 open HenzaiFunc.Core.Types
 open Henzai.Core.Numerics
 open Henzai.Core.VertexGeometry
+open Henzai.Core.Raytracing
 
 // Baldwin-Weber ray-triangle intersection algorithm: http://jcgt.org/published/0005/03/03/
 type IndexedTriangle<'T when 'T : struct and 'T :> VertexLocateable>(i0 : int, i1 : int, i2 : int, vertices : 'T[]) =
@@ -64,11 +65,11 @@ type IndexedTriangle<'T when 'T : struct and 'T :> VertexLocateable>(i0 : int, i
 
             override this.NormalForSurfacePoint _ = unitNormal
 
-            override this.IntersectionAcceptable hasIntersection t _ _ =
-                hasIntersection && t > this.AsHitable.TMin
+            override this.IntersectionAcceptable(hasIntersection, t, _, _) =
+                hasIntersection && t > this.AsHitable.TMin()
 
             override this.HasIntersection (ray:Ray) = 
-                let struct(hasIntersection,_) = this.AsHitable.Intersect ray 
+                let struct(hasIntersection,_) = this.AsHitable.Intersect(ray) 
                 hasIntersection
 
             override this.Intersect (ray:Ray) =

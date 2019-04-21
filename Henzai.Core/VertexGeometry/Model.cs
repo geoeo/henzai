@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 using Henzai.Core.VertexGeometry;
 using Henzai.Core.Materials;
 
@@ -70,8 +71,7 @@ namespace Henzai.Core
         public void SetNewWorldTranslation(ref Vector3 translation, bool applyToAllMeshes)
         {
             _world.Translation = translation;
-            if (applyToAllMeshes)
-            {
+            if (applyToAllMeshes){
                 foreach (var mesh in _meshes)
                     mesh.SetNewWorldTranslation(ref translation);
             }
@@ -80,15 +80,14 @@ namespace Henzai.Core
         //TODO: Retrieve a subset of the meshes encapsulated by this model class
         public Model<T, U> SplitByString(string id)
         {
-            return null;
+            throw new NotImplementedException();
         }
 
         public static Model<T, RaytraceMaterial> ConvertToRaytracingModel(Model<T, RealtimeMaterial> rtModel)
         {
             var materialCount = rtModel.MaterialCount;
             var raytraceMaterials = new RaytraceMaterial[materialCount];
-            for(int i = 0; i < rtModel.MaterialCount; i++)
-            {
+            for(int i = 0; i < rtModel.MaterialCount; i++){
                 var rtMat = rtModel.GetMaterial(i);
                 raytraceMaterials[i] = new RaytraceMaterial(rtMat.diffuse, rtMat.emissive);
             }
@@ -99,8 +98,7 @@ namespace Henzai.Core
         {
             var materialCount = rtModel.MaterialCount;
             var raytraceMaterials = new RaytraceMaterial[materialCount];
-            for (int i = 0; i < rtModel.MaterialCount; i++)
-            {
+            for (int i = 0; i < rtModel.MaterialCount; i++){
                 raytraceMaterials[i] = new RaytraceMaterial(diffuse, emissive);
             }
             return new Model<T, RaytraceMaterial>(rtModel._meshes, raytraceMaterials);

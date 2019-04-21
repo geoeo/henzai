@@ -8,6 +8,7 @@ open System.Numerics
 open Raytracer.Camera
 open HenzaiFunc.Core.RaytraceGeometry
 open Henzai.Core.Numerics
+open Henzai.Core.Raytracing
 open HenzaiFunc.Core.Types
 open HenzaiFunc.Core.Acceleration
 open Raytracer.Surface
@@ -71,7 +72,7 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
                 
             // Some geometry is not present in the BVH i.e. infinite planes
             let (b_linear, t_linear, s_linear) = findClosestIntersection ray nonBoundableSurfaces
-            if (not hasIntersection || t_linear < t ) && s_linear.Geometry.AsHitable.IntersectionAcceptable b_linear t_linear 1.0f (RaytraceGeometryUtils.PointForRay ray t_linear) then
+            if (not hasIntersection || t_linear < t ) && s_linear.Geometry.AsHitable.IntersectionAcceptable(b_linear, t_linear, 1.0f, (RaytraceGeometryUtils.PointForRay ray t_linear)) then
                 hasIntersection <- b_linear
                 t <- t_linear
                 surfaceOption <- Some s_linear
@@ -106,7 +107,7 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
             
         // Some geometry is not present in the BVH i.e. infinite planes
         let (b_linear, t_linear, s_linear) = findClosestIntersection ray nonBoundableSurfaces
-        if (not hasIntersection || t_linear < t ) && s_linear.Geometry.AsHitable.IntersectionAcceptable b_linear t_linear dotLookAtAndTracingRay (RaytraceGeometryUtils.PointForRay ray t_linear) then
+        if (not hasIntersection || t_linear < t ) && s_linear.Geometry.AsHitable.IntersectionAcceptable(b_linear, t_linear, dotLookAtAndTracingRay, (RaytraceGeometryUtils.PointForRay ray t_linear)) then
             hasIntersection <- b_linear
             t <- t_linear
             surfaceOption <- Some s_linear
