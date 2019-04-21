@@ -114,8 +114,3 @@ type IndexedTriangle<'T when 'T : struct and 'T :> VertexLocateable>(i0 : int, i
                 AABB(pMin, pMax)
 
             override this.IsBoundable() = true
-
-        static member CreateTriangleFromVertexStructs<'T when 'T : struct and 'T :> VertexLocateable>(a : 'T,
-                                                                                                      b : 'T,
-                                                                                                      c : 'T) =
-            Triangle(a.GetPosition(), b.GetPosition(), c.GetPosition())

@@ -5,14 +5,14 @@ using Henzai.Core.VertexGeometry;
 namespace Henzai.Core.Acceleration
 {
     /// This struct serves as a BVH primitive
-    public struct IndexedTriangle<T> : AxisAlignedBoundable where T : struct, VertexLocateable
+    public struct IndexedTriangleEngine<T> : AxisAlignedBoundable where T : struct, VertexLocateable
     {
         private readonly int _i0;
         private readonly int _i1;
         private readonly int _i2;
         private readonly T[] _vertices;
 
-        public IndexedTriangle(int i0, int i1, int i2, T[] vertices){
+        public IndexedTriangleEngine(int i0, int i1, int i2, T[] vertices){
             _i0 = i0;
             _i1 = i1;
             _i2 = i2;

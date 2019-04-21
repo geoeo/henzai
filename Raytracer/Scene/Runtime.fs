@@ -11,7 +11,7 @@ open Henzai.Core.Numerics
 open Henzai.Core.Raytracing
 open HenzaiFunc.Core.Types
 open HenzaiFunc.Core.Acceleration
-open Raytracer.Surface
+open Raytracer.Surface.Surface
 open Raytracer.RuntimeParameters
 open BenchmarkDotNet.Attributes
 

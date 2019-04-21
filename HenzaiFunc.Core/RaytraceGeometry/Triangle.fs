@@ -96,9 +96,7 @@ type Triangle(v0 : Vector3, v1 : Vector3, v2 : Vector3) =
             override this.IsBoundable() = true
 
         member this.GetVertices = [v0;v1;v2]
-            
-        static member CreateTriangleFromVertexStructs<'T when 'T : struct and 'T :> VertexLocateable>(a : 'T, b : 'T, c : 'T)
-           = Triangle(a.GetPosition(), b.GetPosition(), c.GetPosition())
+           
              
 
 

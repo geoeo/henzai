@@ -7,7 +7,13 @@
   <ItemGroup>
     <Compile Include="RuntimeParameters.fs" />
     <Compile Include="Camera.fs" />
-    <Compile Include="Surface.fs" />
+    <Compile Include="Surface/SurfaceTypes.fs" />
+    <Compile Include="Surface/Surface.fs" />
+    <Compile Include="Surface/Lambertian.fs" />
+    <Compile Include="Surface/Metal.fs" />
+    <Compile Include="Surface/Dielectric.fs" />
+    <Compile Include="Surface/DebugSurfaces.fs" />
+    <Compile Include="Surface/SurfaceFactory.fs" />
     <Compile Include="Scene/Geometry.fs" />
     <Compile Include="Scene/Builder.fs" />
     <Compile Include="Scene/Runtime.fs" />

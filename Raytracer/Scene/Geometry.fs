@@ -2,7 +2,11 @@ module Raytracer.Scene.Geometry
 
 open System.Numerics
 open SixLabors.ImageSharp.PixelFormats
-open Raytracer.Surface
+open Raytracer.Surface.Surface
+open Raytracer.Surface.Lambertian
+open Raytracer.Surface.Metal
+open Raytracer.Surface.Dielectric
+open Raytracer.Surface.DebugSurfaces
 open Henzai.Core.Materials
 open HenzaiFunc.Core.RaytraceGeometry
 open Raytracer.RuntimeParameters

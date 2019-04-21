@@ -1,7 +1,7 @@
 ﻿open Raytracer.Scene.Builder
 open Raytracer.Scene.Runtime
 open BenchmarkDotNet.Running
-open Raytracer.Surface
+open Raytracer.Surface.Surface
 open HenzaiFunc.Core.Acceleration
 open HenzaiFunc.Core.Types
 
