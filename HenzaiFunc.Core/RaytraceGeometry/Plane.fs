@@ -13,15 +13,12 @@ type Plane(plane : System.Numerics.Plane, center : Point option, width : float32
         //TODO: Make center Vector4 aswell?
         new(plane : System.Numerics.Plane, center : Vector3, width : float32, height : float32) =
             Plane(plane, Some (Vector.ToHomogeneous(ref center, 1.0f)), Some width, Some height)
-            
-        let plane = plane
-
+           
         let normal = Vector4.Normalize(Vector4(plane.Normal, 0.0f))
 
         let widthOff = if width.IsNone then 0.0f else width.Value / 2.0f
 
         let heightOff = if height.IsNone then 0.0f else height.Value / 2.0f
-
 
         /// Elements of the transformed Vector should always be rounded
         let R_orientation_canoical = Geometry.RotationBetweenUnitVectors(ref normal, ref RaytraceGeometryUtils.CanonicalPlaneSpace)
@@ -38,8 +35,8 @@ type Plane(plane : System.Numerics.Plane, center : Point option, width : float32
 
         // Profile this
         // does not wor with nonAA planes( probably due to precision in R_orientation_canoical)
-        let(pMin, pMax) =
-            if center.IsNone then (Vector4.Zero, Vector4.Zero)
+        let aabb =
+            if center.IsNone then AABB()
             else
                 //let withVal = width.Value
                 //let heightVal = height.Value
@@ -84,10 +81,9 @@ type Plane(plane : System.Numerics.Plane, center : Point option, width : float32
 
                 let pMin = Vector4(MathF.Round(xMin), MathF.Round(yMin), MathF.Round(zMin), 1.0f)
                 let pMax = Vector4(MathF.Round(xMax), MathF.Round(yMax), MathF.Round(zMax), 1.0f)
+               
+                AABB(pMin, pMax)
 
-
-                                 
-                (pMin, pMax)
             
 
         let pointLiesInRectangle (point : Point) =
@@ -140,6 +136,6 @@ type Plane(plane : System.Numerics.Plane, center : Point option, width : float32
                 normal
 
         interface AxisAlignedBoundable with
-            override this.GetBounds() = AABB(pMin, pMax)
+            override this.GetBounds() = aabb
 
             override this.IsBoundable() = center.IsSome

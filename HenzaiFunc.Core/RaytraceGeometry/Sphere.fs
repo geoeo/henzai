@@ -14,18 +14,24 @@ type Sphere(center : Point, radius : Radius) =
         new(sphereCenter : Vector3, radius : Radius) = 
             Sphere(Vector.ToHomogeneous(ref sphereCenter, 1.0f), radius)
 
-        // override this.TMin = 0.000001f// 0.0001// 0.000001f
-
+        //TODO: refactor candidate
         // http://mathworld.wolfram.com/Sphere.html
         static member ParametricEquationOfASpehre (r : Radius) (phi : Radians) (theta : Radians) = 
             assert (phi >= 0.0f && phi <= MathF.PI)
 
             r*Vector3(MathF.Sin(phi)*MathF.Cos(theta), MathF.Sin(phi)*MathF.Sin(theta), MathF.Cos(phi))
 
+        //TODO: refactor candidate
         static member BoundingSphere (aabb : AABB) =
             let center = AABBProc.Center(aabb)
             let radius = if AABBProc.Inside(aabb, center) then Vector.Distance(ref center, ref aabb.PMax) else 0.0f    
             Sphere(center, radius)
+
+        let aabb = 
+            let pMin = center + Vector4(-radius, -radius, -radius, 0.0f)
+            let pMax = center + Vector4(radius, radius, radius, 0.0f)
+
+            AABB(pMin, pMax)
 
         member this.Radius = radius
 
@@ -72,12 +78,7 @@ type Sphere(center : Point, radius : Radius) =
                 this.AsHitable.IntersectionAcceptable(b, (MathF.Max(i1, i2)), 1.0f, Vector4.Zero)
 
         interface AxisAlignedBoundable with
-            override this.GetBounds() =
-
-                let pMin = center + Vector4(-radius, -radius, -radius, 0.0f)
-                let pMax = center + Vector4(radius, radius, radius, 0.0f)
-
-                AABB(pMin, pMax)
+            override this.GetBounds() = aabb
 
             override this.IsBoundable() = true
 

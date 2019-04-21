@@ -68,6 +68,22 @@ type IndexedTriangle<'T when 'T : struct and 'T :> VertexLocateable>(i0 : int, i
                      crossV2V0.Z / normal.Z, -crossV1V0.Z / normal.Z,
                      -nDotV0 / normal.Z, 1.0f)
 
+        let aabb =
+            let v0 = vertices.[i0].GetPosition()
+            let v1 = vertices.[i1].GetPosition()
+            let v2 = vertices.[i2].GetPosition()
+            let pMin =
+                Vector4
+                    (MathF.Min(v0.X, MathF.Min(v1.X, v2.X)),
+                     MathF.Min(v0.Y, MathF.Min(v1.Y, v2.Y)),
+                     MathF.Min(v0.Z, MathF.Min(v1.Z, v2.Z)), 1.0f)
+            let pMax =
+                Vector4
+                    (MathF.Max(v0.X, MathF.Max(v1.X, v2.X)),
+                     MathF.Max(v0.Y, MathF.Max(v1.Y, v2.Y)),
+                     MathF.Max(v0.Z, MathF.Max(v1.Z, v2.Z)), 1.0f)
+            AABB(pMin, pMax)
+
         interface Hitable with
             override this.NormalForSurfacePoint _ = unitNormal
             override this.IntersectionAcceptable(hasIntersection, t, _, _) =
@@ -97,20 +113,6 @@ type IndexedTriangle<'T when 'T : struct and 'T :> VertexLocateable>(i0 : int, i
 
         interface AxisAlignedBoundable with
 
-            override this.GetBounds() =
-                let v0 = vertices.[i0].GetPosition()
-                let v1 = vertices.[i1].GetPosition()
-                let v2 = vertices.[i2].GetPosition()
-                let pMin =
-                    Vector4
-                        (MathF.Min(v0.X, MathF.Min(v1.X, v2.X)),
-                         MathF.Min(v0.Y, MathF.Min(v1.Y, v2.Y)),
-                         MathF.Min(v0.Z, MathF.Min(v1.Z, v2.Z)), 1.0f)
-                let pMax =
-                    Vector4
-                        (MathF.Max(v0.X, MathF.Max(v1.X, v2.X)),
-                         MathF.Max(v0.Y, MathF.Max(v1.Y, v2.Y)),
-                         MathF.Max(v0.Z, MathF.Max(v1.Z, v2.Z)), 1.0f)
-                AABB(pMin, pMax)
+            override this.GetBounds() = aabb
 
             override this.IsBoundable() = true
