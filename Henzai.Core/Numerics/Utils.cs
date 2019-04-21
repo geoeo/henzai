@@ -22,5 +22,11 @@ namespace Henzai.Core.Numerics{
             return (1.0f - t) * a + t*b;
         }
 
+        public static float RobustRayBounds(float value, float gamma) => value * (1.0f + 2.0f*gamma);
+
+        public static float Gamma (int n) => ((float)n*System.Single.Epsilon)/(1.0f - (float)n*System.Single.Epsilon);
+
+        public static int BoolToInt(bool b) => b ? 1 : 0;
+
     }
 }

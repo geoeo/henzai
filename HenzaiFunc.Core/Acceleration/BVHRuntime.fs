@@ -2,7 +2,7 @@
 
 open System.Numerics
 open HenzaiFunc.Core.Types
-open HenzaiFunc.Core.RaytraceGeometry
+open Henzai.Core.Acceleration
 open Henzai.Core.Raytracing
 
 // Phyisically Based Rendering Third Edition p. 280
@@ -80,7 +80,7 @@ type BVHRuntime<'T when 'T :> Hitable>() =
             let node = bvhArray.[currentNodeIndex]
             let primitiveOffset = node.leafNode.primitivesOffset
             let nPrimitives = node.nPrimitives
-            if node.aabb.AsHitable.HasIntersection(ray) then 
+            if node.aabb.HasIntersection(ray) then 
                 // leaf
                 if nPrimitives > 0 then
                     for i in 0..nPrimitives-1 do

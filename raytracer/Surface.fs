@@ -8,6 +8,7 @@ open HenzaiFunc.Core.RaytraceGeometry
 open Henzai.Core.Materials
 open Henzai.Core.Numerics
 open Henzai.Core.Raytracing
+open Henzai.Core.Acceleration
    
 //TODO: Refactor namespace + Split this up    
 [<AbstractClass>]
@@ -48,8 +49,8 @@ type Surface(id: ID, geometry : RaytracingGeometry, material : RaytraceMaterial)
         member this.IsObstructedBySelf ray = this.Geometry.AsHitable.IsObstructedBySelf ray
 
     interface AxisAlignedBoundable with
-        member this.GetBounds = this.Geometry.AsBoundable.GetBounds
-        member this.IsBoundable = this.Geometry.AsBoundable.IsBoundable
+        member this.GetBounds() = this.Geometry.AsBoundable.GetBounds()
+        member this.IsBoundable() = this.Geometry.AsBoundable.IsBoundable()
 
 
 type NoSurface(id: ID, geometry : RaytracingGeometry, material : RaytraceMaterial) =

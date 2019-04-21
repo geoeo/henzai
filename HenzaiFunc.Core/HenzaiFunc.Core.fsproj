@@ -12,12 +12,11 @@
     <Compile Include="Utils.fs" />
     <Compile Include="Types.fs" />
     <Compile Include="RaytraceGeometry/RaytraceGeometryUtils.fs" />
-    <Compile Include="RaytraceGeometry/AxisAlignedBoundingBox.fs" />
+    <!-- <Compile Include="RaytraceGeometry/AxisAlignedBoundingBox.fs" /> -->
     <Compile Include="BVHTypes.fs" />
     <Compile Include="Acceleration/AABB.fs" />
     <!--<Compile Include="BVHTypes.fs" /> -->
     <!--<Compile Include="Acceleration/AABB.fs" /> -->
-    <Compile Include="RaytraceGeometry/Boundables.fs" />
     <Compile Include="RaytraceGeometry/RaytracingGeometry.fs" />
     <Compile Include="RaytraceGeometry/NotHitable.fs" />
     <Compile Include="RaytraceGeometry/Sphere.fs" />

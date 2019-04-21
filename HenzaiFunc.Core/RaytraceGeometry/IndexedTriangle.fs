@@ -6,6 +6,7 @@ open HenzaiFunc.Core.Types
 open Henzai.Core.Numerics
 open Henzai.Core.VertexGeometry
 open Henzai.Core.Raytracing
+open Henzai.Core.Acceleration
 
 // Baldwin-Weber ray-triangle intersection algorithm: http://jcgt.org/published/0005/03/03/
 type IndexedTriangle<'T when 'T : struct and 'T :> VertexLocateable>(i0 : int, i1 : int, i2 : int, vertices : 'T[]) =
@@ -88,7 +89,7 @@ type IndexedTriangle<'T when 'T : struct and 'T :> VertexLocateable>(i0 : int, i
                  barycentric.X+barycentric.Y <= 1.0f, tWorld)
 
         interface AxisAlignedBoundable with
-            override this.GetBounds =
+            override this.GetBounds() =
 
                 let v0 = vertices.[i0].GetPosition()
                 let v1 = vertices.[i1].GetPosition()
@@ -100,7 +101,7 @@ type IndexedTriangle<'T when 'T : struct and 'T :> VertexLocateable>(i0 : int, i
 
                 AABB(pMin, pMax)
 
-            override this.IsBoundable = true
+            override this.IsBoundable() = true
             
         static member CreateTriangleFromVertexStructs<'T when 'T : struct and 'T :> VertexLocateable>(a : 'T, b : 'T, c : 'T)
            = Triangle(a.GetPosition(), b.GetPosition(), c.GetPosition())

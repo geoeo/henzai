@@ -2,7 +2,7 @@
 
 open HenzaiFunc.Core.Types
 open HenzaiFunc.Core.Extensions.Array
-open HenzaiFunc.Core.RaytraceGeometry
+open Henzai.Core.Acceleration
 
 // Phyisically Based Rendering Third Edition p. 257
 /// Implements methods to generate a BVH BST
@@ -13,7 +13,7 @@ type BVHTreeBuilder<'T when 'T :> AxisAlignedBoundable>() =
     let leafCostForSplit nPrimitives = float32 nPrimitives
 
     let buildBVHInfoArray ( geometryArray : 'T [] ) =
-        Array.mapi (fun i (elem : 'T) -> BVHPrimitive(i, elem.GetBounds)) geometryArray
+        Array.mapi (fun i (elem : 'T) -> BVHPrimitive(i, elem.GetBounds())) geometryArray
 
     let accessPointBySplitAxis (p : Point) axis = 
         match axis with

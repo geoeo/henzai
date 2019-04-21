@@ -1,7 +1,7 @@
-﻿namespace HenzaiFunc.Core.Types
+﻿// namespace HenzaiFunc.Core.Types
 
-open HenzaiFunc.Core.RaytraceGeometry
+// open Henzai.Core.Acceleration
 
-type AxisAlignedBoundable =
-    abstract member GetBounds: AABB
-    abstract member IsBoundable: bool
+// type AxisAlignedBoundable =
+//     abstract member GetBounds: AABB
+//     abstract member IsBoundable: bool

@@ -1,8 +1,7 @@
 namespace HenzaiFunc.Core.RaytraceGeometry
 
-open HenzaiFunc.Core.Types
 open System.Numerics
-open HenzaiFunc.Core
+open Henzai.Core.Acceleration
 open Henzai.Core.Raytracing
 
 [<AbstractClass>]
@@ -19,8 +18,8 @@ type RaytracingGeometry ()  =
         member this.IsObstructedBySelf _ = false
 
     interface AxisAlignedBoundable with
-        member this.GetBounds = AABB(Vector4.Zero, Vector4.Zero)
-        member this.IsBoundable = false
+        member this.GetBounds() = AABB(Vector4.Zero, Vector4.Zero)
+        member this.IsBoundable() = false
    
     member this.AsBoundable = this :> AxisAlignedBoundable
     member this.AsHitable = this :> Hitable

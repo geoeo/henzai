@@ -6,6 +6,7 @@ open HenzaiFunc.Core.Types
 open Henzai.Core.Numerics
 open Henzai.Core.VertexGeometry
 open Henzai.Core.Raytracing
+open Henzai.Core.Acceleration
 
 //TODO investigate reducing memory footprint my storing less variables i.e. e1, e2, normal
 // Baldwin-Weber ray-triangle intersection algorithm: http://jcgt.org/published/0005/03/03/
@@ -84,7 +85,7 @@ type Triangle(v0 : Vector3, v1 : Vector3, v2 : Vector3) =
                  barycentric.X+barycentric.Y <= 1.0f, tWorld)
 
         interface AxisAlignedBoundable with
-            override this.GetBounds =
+            override this.GetBounds() =
 
                 let pMin = Vector4(MathF.Min(v0.X, MathF.Min(v1.X, v2.X)), MathF.Min(v0.Y, MathF.Min(v1.Y, v2.Y)), MathF.Min(v0.Z, MathF.Min(v1.Z, v2.Z)), 1.0f)
 
@@ -92,7 +93,7 @@ type Triangle(v0 : Vector3, v1 : Vector3, v2 : Vector3) =
 
                 AABB(pMin, pMax)
 
-            override this.IsBoundable = true
+            override this.IsBoundable() = true
 
         member this.GetVertices = [v0;v1;v2]
             

@@ -7,6 +7,7 @@ open HenzaiFunc.Core.Types
 open Henzai.Core.Numerics
 open Henzai.Core.VertexGeometry
 open Henzai.Core.Raytracing
+open Henzai.Core.Acceleration
 
 // Baldwin-Weber ray-triangle intersection algorithm: http://jcgt.org/published/0005/03/03/
 type TriangleNormal<'T when 'T : struct and 'T :> VertexLocateable>(v0 : Vector3, v1: Vector3, v2 : Vector3, normal0 : Vector4, normal1 : Vector4, normal2 : Vector4) =
@@ -98,7 +99,7 @@ type TriangleNormal<'T when 'T : struct and 'T :> VertexLocateable>(v0 : Vector3
                  barycentric.X+barycentric.Y <= 1.0f, tWorld)
 
         interface AxisAlignedBoundable with
-            override this.GetBounds =
+            override this.GetBounds() =
 
                 let pMin = Vector4(MathF.Min(v0.X, MathF.Min(v1.X, v2.X)), MathF.Min(v0.Y, MathF.Min(v1.Y, v2.Y)), MathF.Min(v0.Z, MathF.Min(v1.Z, v2.Z)), 1.0f)
 
@@ -106,7 +107,7 @@ type TriangleNormal<'T when 'T : struct and 'T :> VertexLocateable>(v0 : Vector3
 
                 AABB(pMin, pMax)
 
-            override this.IsBoundable = true
+            override this.IsBoundable() = true
             
         // static member CreateTriangleFromVertexStructs<'T when 'T : struct and 'T :> VertexLocateable>(a : 'T, b : 'T, c : 'T)
         //    = Triangle(a.GetPosition(), b.GetPosition(), c.GetPosition())

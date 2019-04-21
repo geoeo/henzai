@@ -6,6 +6,7 @@ open HenzaiFunc.Core.Types
 open HenzaiFunc.Core.Acceleration
 open Henzai.Core.Numerics
 open Henzai.Core.Raytracing
+open Henzai.Core.Acceleration
    
 
 type Sphere(center : Point, radius : Radius) =
@@ -72,14 +73,14 @@ type Sphere(center : Point, radius : Radius) =
                 this.AsHitable.IntersectionAcceptable(b, (MathF.Max(i1, i2)), 1.0f, Vector4.Zero)
 
         interface AxisAlignedBoundable with
-            override this.GetBounds =
+            override this.GetBounds() =
 
                 let pMin = center + Vector4(-radius, -radius, -radius, 1.0f)
                 let pMax = center + Vector4(radius, radius, radius, 1.0f)
 
                 AABB(pMin, pMax)
 
-            override this.IsBoundable = true
+            override this.IsBoundable() = true
 
         
 

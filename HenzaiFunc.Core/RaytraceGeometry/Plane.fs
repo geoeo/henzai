@@ -5,6 +5,7 @@ open System.Numerics
 open HenzaiFunc.Core.Types
 open Henzai.Core.Numerics
 open Henzai.Core.Raytracing
+open Henzai.Core.Acceleration
 
 type Plane(plane : System.Numerics.Plane, center : Point option, width : float32 option, height : float32 option) = 
     inherit RaytracingGeometry () with
@@ -139,6 +140,6 @@ type Plane(plane : System.Numerics.Plane, center : Point option, width : float32
                 normal
 
         interface AxisAlignedBoundable with
-            override this.GetBounds = AABB(pMin, pMax)
+            override this.GetBounds() = AABB(pMin, pMax)
 
-            override this.IsBoundable = center.IsSome
+            override this.IsBoundable() = center.IsSome

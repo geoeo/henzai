@@ -3,7 +3,7 @@
 open System.Numerics
 open Xunit
 open HenzaiFunc.Core.RaytraceGeometry
-open HenzaiFunc.Core.Acceleration
+open Henzai.Core.Acceleration
 open HenzaiFunc.Core.Types
 
 
@@ -12,7 +12,7 @@ let PlaneZAABBTest() =
     let p 
         = Plane(new System.Numerics.Plane((Henzai.Core.Numerics.Vector.CreateUnitVector3(0.0f, 0.0f, 1.0f)),30.0f), Vector3(10.0f,10.0f,-30.0f), 20.0f, 20.0f)
 
-    let aabb = (p :> AxisAlignedBoundable).GetBounds
+    let aabb = (p :> AxisAlignedBoundable).GetBounds()
 
     Assert.Equal(0.0f, aabb.PMin.X)
     Assert.Equal(0.0f, aabb.PMin.Y)
@@ -28,7 +28,7 @@ let PlaneYAABBTest() =
     let p 
         = Plane(new System.Numerics.Plane((Henzai.Core.Numerics.Vector.CreateUnitVector3(0.0f, 1.0f, 0.0f)),30.0f), Vector3(10.0f,10.0f,-30.0f), 20.0f, 20.0f)
 
-    let aabb = (p :> AxisAlignedBoundable).GetBounds
+    let aabb = (p :> AxisAlignedBoundable).GetBounds()
 
 
     Assert.Equal(0.0f, aabb.PMin.X)
@@ -46,7 +46,7 @@ let PlaneXAABBTest() =
     let p 
         = Plane(new System.Numerics.Plane((Henzai.Core.Numerics.Vector.CreateUnitVector3(1.0f, 0.0f, 0.0f)),30.0f), Vector3(30.0f,10.0f,-30.0f), 20.0f, 20.0f)
 
-    let aabb = (p :> AxisAlignedBoundable).GetBounds
+    let aabb = (p :> AxisAlignedBoundable).GetBounds()
 
     Assert.Equal(-40.0f, aabb.PMin.Z)
     Assert.Equal(0.0f, aabb.PMin.Y)

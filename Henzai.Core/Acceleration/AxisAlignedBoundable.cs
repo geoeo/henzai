@@ -2,9 +2,10 @@
 
 namespace Henzai.Core.Acceleration
 {
-    // public interface AxisAlignedBoundable
-    // {
-    //     //TODO
-    // }
+    public interface AxisAlignedBoundable
+    {
+        AABB GetBounds();
+        bool IsBoundable();
+    }
 
 }

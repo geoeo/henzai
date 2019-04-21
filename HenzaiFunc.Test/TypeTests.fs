@@ -2,7 +2,8 @@
 
 open Xunit
 open HenzaiFunc.Core.Types
-open HenzaiFunc.Core.RaytraceGeometry
+open Henzai.Core.Acceleration
+open Henzai.Core.Raytracing
 open System.Runtime.InteropServices
 
 
@@ -36,6 +37,6 @@ let BVHLinearNodeInfoSizeTest () =
 [<Fact>]
 let BVHLinearNodeInfoAssignTest () =
     let i = InteriorRuntimeNode(2, SplitAxis.Y)
-    let t = BVHRuntimeNode(AABB(), i, 0)
+    let t = BVHRuntimeNode(new AABB(), i, 0)
     Assert.Equal(32, sizeof<BVHRuntimeNode>)
     Assert.Equal(SplitAxis.Y, t.interiorNode.splitAxis)
