@@ -9,7 +9,7 @@ let metalSampleCount = 1
 
 let width = 800
 let height = 640
-let samplesPerPixel = 2
+let samplesPerPixel = 8
 let batchSize = 1
 let renderSquareSide = 2
 let renderSquareSize = renderSquareSide*renderSquareSide

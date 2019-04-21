@@ -12,7 +12,6 @@
     <Compile Include="Utils.fs" />
     <Compile Include="Types.fs" />
     <Compile Include="RaytraceGeometry/RaytraceGeometryUtils.fs" />
-    <!-- <Compile Include="RaytraceGeometry/AxisAlignedBoundingBox.fs" /> -->
     <Compile Include="BVHTypes.fs" />
     <Compile Include="Acceleration/AABB.fs" />
     <!--<Compile Include="BVHTypes.fs" /> -->
