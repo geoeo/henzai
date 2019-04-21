@@ -4,14 +4,15 @@ open System
 open System.Numerics
 open Xunit
 open Henzai.Core.Raytracing
-open HenzaiFunc.Core.RaytraceGeometry
 open HenzaiFunc.Core.Acceleration
 open HenzaiFunc.Core.Types
 open Henzai.Core
 open Henzai.Core.VertexGeometry
 open Henzai.Core.Materials
-open HenzaiFunc.Core.RaytraceGeometry
-open Raytracer.Scene.Builder
+open HenzaiFunc.Core.VertexGeometry
+open Raytracer.Surface.Surface
+open Raytracer.Surface.SurfaceFactory
+open Raytracer.Surface.SurfaceTypes
 open Raytracer.Surface
 
 let rayZNeg = Ray(Vector3(0.0f, 0.0f, 1.0f), Vector3(0.0f, 0.0f, -1.0f))
@@ -50,17 +51,19 @@ let indexArray =
 
 let identityTransform = Matrix4x4.Identity
 
-let vertexPositionNormalTransform(transform : Matrix4x4) (v : VertexPositionNormal) = 
-    let transformedVector4 = Vector4.Transform(v.GetPosition(), transform)
-    VertexPositionNormal(transformedVector4, v)
+// let vertexPositionNormalTransform(transform : Matrix4x4) (v : VertexPositionNormal) = 
+//     let transformedVector4 = Vector4.Transform(v.GetPosition(), transform)
+//     VertexPositionNormal(transformedVector4, v)
 
 let transformFunc = vertexPositionNormalTransform identityTransform
+
+//TODO Assigne Id in RuntimeParametrs makes thread problems. Have to run in Debug mode
 
 [<Fact>]
 let loadMeshTest () =
     let rtModel = AssimpLoader.LoadFromFileWithRealtimeMaterial<VertexPositionNormal>(AppContext.BaseDirectory, "Models/Box.dae", VertexPositionNormal.HenzaiType)
     let raytracingModel = Model<VertexPositionNormal,RealtimeMaterial>.ConvertToRaytracingModel(rtModel);
-    let modelSurfaceList = convertModelToSurfaceList(raytracingModel, transformFunc)
+    let modelSurfaceList = convertModelToSurfaceList(raytracingModel, transformFunc, VertexRuntimeTypes.VertexPositionNormal, SurfaceTypes.NoSurface)
     Assert.Equal(12, modelSurfaceList.Length)
 
 [<Fact>]
@@ -70,7 +73,7 @@ let buildBVHBoxTest () =
     let bvhRuntime = BVHRuntime<Surface>()
     let rtModel = AssimpLoader.LoadFromFileWithRealtimeMaterial<VertexPositionNormal>(AppContext.BaseDirectory, "Models/Box.dae", VertexPositionNormal.HenzaiType)
     let raytracingModel = Model<VertexPositionNormal,RealtimeMaterial>.ConvertToRaytracingModel(rtModel);
-    let modelSurfaceList = convertModelToSurfaceList(raytracingModel, transformFunc)
+    let modelSurfaceList = convertModelToSurfaceList(raytracingModel, transformFunc, VertexRuntimeTypes.VertexPositionNormal, SurfaceTypes.NoSurface)
     let surfaceArray : Surface[] = modelSurfaceList |> Array.ofList
     let (bvhTree, orderedSurfaceArray, totalNodeCount) = bvhTreeBuilder.build surfaceArray SplitMethods.Middle
     let bvhRuntimeArray = bvhRuntime.constructBVHRuntime bvhTree totalNodeCount
@@ -89,7 +92,7 @@ let intersectBVHBoxZTest () =
     let bvhRuntime = BVHRuntime<Surface>()
     let rtModel = AssimpLoader.LoadFromFileWithRealtimeMaterial<VertexPositionNormal>(AppContext.BaseDirectory, "Models/Box.dae", VertexPositionNormal.HenzaiType)
     let raytracingModel = Model<VertexPositionNormal,RealtimeMaterial>.ConvertToRaytracingModel(rtModel);
-    let modelSurfaceList = convertModelToSurfaceList(raytracingModel, transformFunc)
+    let modelSurfaceList = convertModelToSurfaceList(raytracingModel, transformFunc, VertexRuntimeTypes.VertexPositionNormal, SurfaceTypes.NoSurface)
     let surfaceArray : Surface[] = modelSurfaceList |> Array.ofList
 
     let (bvhTree, orderedSurfaceArray, totalNodeCount) = bvhTreeBuilder.build surfaceArray SplitMethods.Middle
@@ -108,7 +111,7 @@ let intersectBVHBoxXTest () =
     let bvhRuntime = BVHRuntime<Surface>()
     let rtModel = AssimpLoader.LoadFromFileWithRealtimeMaterial<VertexPositionNormal>(AppContext.BaseDirectory, "Models/Box.dae", VertexPositionNormal.HenzaiType)
     let raytracingModel = Model<VertexPositionNormal,RealtimeMaterial>.ConvertToRaytracingModel(rtModel);
-    let modelSurfaceList = convertModelToSurfaceList(raytracingModel, transformFunc)
+    let modelSurfaceList = convertModelToSurfaceList(raytracingModel, transformFunc, VertexRuntimeTypes.VertexPositionNormal, SurfaceTypes.NoSurface)
     let surfaceArray : Surface[] = modelSurfaceList |> Array.ofList
     let (bvhTree, orderedSurfaceArray, totalNodeCount) = bvhTreeBuilder.build surfaceArray SplitMethods.Middle
     let bvhRuntimeArray = bvhRuntime.constructBVHRuntime bvhTree totalNodeCount
@@ -126,7 +129,7 @@ let intersectBVHBoxYTest () =
     let bvhRuntime = BVHRuntime<Surface>()
     let rtModel = AssimpLoader.LoadFromFileWithRealtimeMaterial<VertexPositionNormal>(AppContext.BaseDirectory, "Models/Box.dae", VertexPositionNormal.HenzaiType)
     let raytracingModel = Model<VertexPositionNormal,RealtimeMaterial>.ConvertToRaytracingModel(rtModel);
-    let modelSurfaceList = convertModelToSurfaceList(raytracingModel, transformFunc)
+    let modelSurfaceList = convertModelToSurfaceList(raytracingModel, transformFunc, VertexRuntimeTypes.VertexPositionNormal, SurfaceTypes.NoSurface)
     let surfaceArray : Surface[] = modelSurfaceList |> Array.ofList
     let (bvhTree, orderedSurfaceArray, totalNodeCount) = bvhTreeBuilder.build surfaceArray SplitMethods.Middle
     let bvhRuntimeArray = bvhRuntime.constructBVHRuntime bvhTree totalNodeCount

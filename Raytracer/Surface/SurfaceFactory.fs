@@ -13,9 +13,14 @@ open HenzaiFunc.Core.RaytraceGeometry
 open Henzai.Core.VertexGeometry
 open Henzai.Core.Materials
 open Henzai.Core.Numerics
+open Henzai.Core.Reflection
 open Henzai.Core
 
 let convertModelToSurfaceList (model: Model<'T, RaytraceMaterial> when 'T :> VertexTangentspace, vertexTypeTransform : 'T -> 'T, vertexRuntimeType : VertexRuntimeTypes, surfaceType : SurfaceTypes) =
+    
+    if not(Verifier.VerifyVertexStruct<'T>(vertexRuntimeType))
+        then failwithf "Verifier Failed on vertexRuntimeType"
+    
     let meshCount = model.MeshCount
     let mutable surfaceList: Surface list = []
     let mutable totalVertexCount = 0
@@ -51,6 +56,7 @@ let convertModelToSurfaceList (model: Model<'T, RaytraceMaterial> when 'T :> Ver
             //TODO: allow to pass surface parameters
             let surface = 
                 match surfaceType with
+                | SurfaceTypes.NoSurface -> NoSurface(assignIDAndIncrement id, triangle, material)  :> Surface
                 | SurfaceTypes.Lambertian -> Lambertian(assignIDAndIncrement id, triangle, material)  :> Surface
                 | SurfaceTypes.Metal -> Metal(assignIDAndIncrement id, triangle, material, 0.3f) :> Surface
                 | SurfaceTypes.Dielectric -> Dielectric(assignIDAndIncrement id, triangle, material, 1.5f)  :> Surface
