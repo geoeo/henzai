@@ -1,10 +1,8 @@
 namespace HenzaiFunc.Core
 
 open System.Numerics
-open HenzaiFunc.Core.RaytraceGeometry
 open Henzai.Core.VertexGeometry
 open Henzai.Core.Numerics
-
 
 
 module VertexGeometry = 

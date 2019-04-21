@@ -12,29 +12,30 @@ namespace Henzai.Core.Acceleration
 
         public AABB()
         {
-            _boundingCorners = new Vector4[] {new Vector4(System.Single.MaxValue), new Vector4(System.Single.MinValue)};
+            _boundingCorners = new Vector4[] { new Vector4(System.Single.MaxValue), new Vector4(System.Single.MinValue) };
         }
 
         public AABB(Vector4 pMin, Vector4 pMax)
         {
-            _boundingCorners = new Vector4[] {pMin, pMax};
+            _boundingCorners = new Vector4[] { pMin, pMax };
         }
 
         public AABB(Vector3 pMin, Vector3 pMax)
         {
-            _boundingCorners = new Vector4[] {new Vector4(pMin, 1.0f), new Vector4(pMax, 1.0f)};
+            _boundingCorners = new Vector4[] { new Vector4(pMin, 1.0f), new Vector4(pMax, 1.0f) };
         }
 
         public Vector4 PMin => _boundingCorners[0];
         public Vector4 PMax => _boundingCorners[1];
         public float TMin() => 0.001f;
         public float TMax() => 500.0f;
-        public bool IntersectionAcceptable(bool hasIntersection, float t, float dotView,  Vector4 point) => hasIntersection;
+        public bool IntersectionAcceptable(bool hasIntersection, float t, float dotView, Vector4 point) => hasIntersection;
         public Vector4 NormalForSurfacePoint(Vector4 point) => Vector4.Zero;
         public bool IsObstructedBySelf(Ray ray) => false;
-        public bool HasIntersection(Ray ray){
-            var (hasIntersection, t) = Intersect(ray); 
-            var p = ray.Origin + t*ray.Direction;
+        public bool HasIntersection(Ray ray)
+        {
+            var (hasIntersection, t) = Intersect(ray);
+            var p = ray.Origin + t * ray.Direction;
             return IntersectionAcceptable(hasIntersection, t, 0.0f, p);
         }
 
@@ -54,8 +55,8 @@ namespace Henzai.Core.Acceleration
         // Optimized Ray Box Intersection Phyisically Based Rendering Third Edition p. 129
         public (bool, float) Intersect(Ray ray)
         {
-            var invDir = new Vector4(1.0f / ray.Direction.X, 1.0f/ ray.Direction.Y, 1.0f / ray.Direction.Z, 0.0f);
-            
+            var invDir = new Vector4(1.0f / ray.Direction.X, 1.0f / ray.Direction.Y, 1.0f / ray.Direction.Z, 0.0f);
+
             var isXDirNeg = invDir.X < 0.0f;
             var isYDirNeg = invDir.Y < 0.0f;
             var isZDirNeg = invDir.Z < 0.0f;
@@ -73,16 +74,16 @@ namespace Henzai.Core.Acceleration
             tzMax = Utils.RobustRayBounds(tzMax, gamma3);
             var passed = !(tMin > tyMax || tyMin > tMax || tMin > tzMax || tzMin > tMax);
 
-            if(tyMin > tMin)
+            if (tyMin > tMin)
                 tMin = tyMin;
-            if(tyMax < tMax)
+            if (tyMax < tMax)
                 tMax = tyMax;
-            if(tzMin > tMin)
+            if (tzMin > tMin)
                 tMin = tzMin;
-            if(tzMax < tMax) 
+            if (tzMax < tMax)
                 tMax = tzMax;
 
-            return (tMin < TMax() && tMax > 0.0f && passed , tMin);
+            return (tMin < TMax() && tMax > 0.0f && passed, tMin);
         }
 
     }
