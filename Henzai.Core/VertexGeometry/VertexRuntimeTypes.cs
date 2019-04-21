@@ -1,6 +1,6 @@
 ﻿namespace Henzai.Core.VertexGeometry
 {
-    public enum VertexRuntimeTypes
+    public enum VertexRuntimeTypes : ushort
     {
         VertexPosition,
         VertexPositionNDCColor,

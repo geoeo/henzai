@@ -3,10 +3,9 @@ namespace HenzaiFunc.Core.RaytraceGeometry
 open System
 open System.Numerics
 open HenzaiFunc.Core.Types
-open HenzaiFunc.Core.Acceleration
+open Henzai.Core.Acceleration
 open Henzai.Core.Numerics
 open Henzai.Core.Raytracing
-open Henzai.Core.Acceleration
    
 
 type Sphere(center : Point, radius : Radius) =
@@ -24,8 +23,8 @@ type Sphere(center : Point, radius : Radius) =
             r*Vector3(MathF.Sin(phi)*MathF.Cos(theta), MathF.Sin(phi)*MathF.Sin(theta), MathF.Cos(phi))
 
         static member BoundingSphere (aabb : AABB) =
-            let center = AABB.center aabb
-            let radius = if AABB.inside aabb center then Vector.Distance(ref center, ref aabb.PMax) else 0.0f    
+            let center = AABBProc.Center(aabb)
+            let radius = if AABBProc.Inside(aabb, center) then Vector.Distance(ref center, ref aabb.PMax) else 0.0f    
             Sphere(center, radius)
 
         member this.Radius = radius

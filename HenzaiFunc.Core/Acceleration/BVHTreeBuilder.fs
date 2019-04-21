@@ -28,12 +28,12 @@ type BVHTreeBuilder<'T when 'T :> AxisAlignedBoundable>() =
         | SplitMethods.Middle ->
             let midFloat = (accessPointBySplitAxis centroidBounds.PMin dim + accessPointBySplitAxis centroidBounds.PMax dim) / 2.0f
             //TODO: investigate in place solution without allocating
-            let smaller, largerOrEqual = Array.partition (fun (elem : BVHPrimitive) -> accessPointBySplitAxis (AABB.center elem.aabb) dim < midFloat) bvhInfoSubArray
+            let smaller, largerOrEqual = Array.partition (fun (elem : BVHPrimitive) -> accessPointBySplitAxis (AABBProc.Center(elem.aabb)) dim < midFloat) bvhInfoSubArray
             let mid = start + smaller.Length
             struct(mid , smaller, largerOrEqual)
         | SplitMethods.EqualCounts ->
             let mid = bvhInfoSubArray.Length / 2
-            let map (e : BVHPrimitive) = accessPointBySplitAxis (AABB.center e.aabb) dim
+            let map (e : BVHPrimitive) = accessPointBySplitAxis (AABBProc.Center(e.aabb)) dim
             bvhInfoSubArray.nthElement(map, mid)
             let smaller = bvhInfoSubArray.[..(mid-1)]
             let largerOrEqual = bvhInfoSubArray.[mid..]
@@ -50,18 +50,18 @@ type BVHTreeBuilder<'T when 'T :> AxisAlignedBoundable>() =
                 let bucketCounts : int [] = Array.zeroCreate nBuckets
                 let bucketBounds : AABB [] = Array.init nBuckets (fun i -> AABB())
                 let bucketCosts : float32 [] = Array.zeroCreate (nBuckets-1)
-                let offsetFromIndex aabb = accessPointBySplitAxis (AABB.offset centroidBounds (AABB.center aabb)) dim
+                let offsetFromIndex aabb = accessPointBySplitAxis (AABBProc.Offset(centroidBounds, AABBProc.Center(aabb))) dim
                 // Init
                 for i in 0..nPrimitives-1 do
                     let aabbOfIndex = bvhInfoSubArray.[i].aabb
                     let offset = offsetFromIndex aabbOfIndex
                     let b = if offset = 1.0f then nBuckets - 1 else nBuckets*(int offset)
                     bucketCounts.[b] <- bucketCounts.[b] + 1
-                    bucketBounds.[b] <- AABB.unionWithAABB bucketBounds.[b] aabbOfIndex
+                    bucketBounds.[b] <- AABBProc.UnionWithAABB(bucketBounds.[b], aabbOfIndex)
 
                 // Using scans O(N)
                 let foldCount countAcc count = count + countAcc
-                let foldBounds boundsAcc bounds = AABB.unionWithAABB boundsAcc bounds
+                let foldBounds boundsAcc bounds = AABBProc.UnionWithAABB(boundsAcc, bounds)
 
                 let countScanFwd = Array.scan foldCount 0 bucketCounts
                 let countScanBck = Array.scanBack foldCount bucketCounts 0
@@ -75,7 +75,7 @@ type BVHTreeBuilder<'T when 'T :> AxisAlignedBoundable>() =
                     let b1 = boundsScanBck.[i]
                     bucketCosts.[i] <- 
                         traversalCost +
-                        ((float32 count0)*AABB.surfaceArea b0 + (float32 count1)*AABB.surfaceArea b1) / (AABB.surfaceArea centroidBounds)
+                        ((float32 count0)*AABBProc.SurfaceArea(b0) + (float32 count1)*AABBProc.SurfaceArea(b1)) / (AABBProc.SurfaceArea(centroidBounds))
                 
 
                 // Select the bucket with minimal cost
@@ -86,7 +86,7 @@ type BVHTreeBuilder<'T when 'T :> AxisAlignedBoundable>() =
                     struct(start, bvhInfoSubArray, [||])
                 else
                     let partitionFunc (elem : BVHPrimitive) =
-                        let  b = nBuckets_f32 * accessPointBySplitAxis (AABB.offset centroidBounds (AABB.center elem.aabb)) dim
+                        let  b = nBuckets_f32 * accessPointBySplitAxis (AABBProc.Offset(centroidBounds, AABBProc.Center(elem.aabb))) dim
                         if b = nBuckets_f32 
                             then nBuckets - 1 <= minCostIndex
                         else 
@@ -97,7 +97,7 @@ type BVHTreeBuilder<'T when 'T :> AxisAlignedBoundable>() =
         | x -> failwithf "Recursive splitmethod %u not yet implemented" (LanguagePrimitives.EnumToValue x)
 
     let buildLeafFromMultiplePrimitives bvhInfoArray (geometryArray: 'T []) subArray orderedGeometryList centroidBounds nPrimitives axis =
-        let bounds = Array.fold (fun acc (elem : BVHPrimitive) -> AABB.unionWithAABB acc elem.aabb) (AABB()) subArray
+        let bounds = Array.fold (fun acc (elem : BVHPrimitive) -> AABBProc.UnionWithAABB(acc, elem.aabb)) (AABB()) subArray
         let newOrderedList = Array.fold (fun acc (elem : BVHPrimitive) -> (geometryArray.[elem.indexOfBoundable] :: acc)) orderedGeometryList subArray
         let leaf = Node (BVHBuildNode(SplitAxis.None, orderedGeometryList.Length, nPrimitives, bounds), Empty, Empty)
         (leaf, newOrderedList, 1)
@@ -115,8 +115,8 @@ type BVHTreeBuilder<'T when 'T :> AxisAlignedBoundable>() =
             // TODO: investigate Span type for this when upgrading to >= F#4.5
             // TODO: profile this
             let subArray = if nPrimitives = bvhInfoArray.Length then bvhInfoArray else bvhInfoArray.[start..finish-1]
-            let centroidBounds = Array.fold (fun acc (elem : BVHPrimitive) -> AABB.unionWithPoint acc (AABB.center elem.aabb)) (AABB()) subArray
-            let axis = AABB.maximumExtent centroidBounds
+            let centroidBounds = Array.fold (fun acc (elem : BVHPrimitive) -> AABBProc.UnionWithPoint(acc, AABBProc.Center(elem.aabb))) (AABB()) subArray
+            let axis = AABBProc.MaximumExtent(centroidBounds)
             // Unusual case e.g. multiple instances of the same geometry
             if accessPointBySplitAxis centroidBounds.PMin axis = accessPointBySplitAxis centroidBounds.PMax axis then
                 buildLeafFromMultiplePrimitives bvhInfoArray geometryArray subArray orderedGeometryList centroidBounds nPrimitives axis
@@ -132,7 +132,7 @@ type BVHTreeBuilder<'T when 'T :> AxisAlignedBoundable>() =
                     let (rightSubTree, rightOrderedSubList, rightTotalNodes) = recursiveBuild geometryArray bvhInfoArray splitPoint finish leftOrderedSubList splitMethod
                     let (leftNode, ll, lr)  =  BVHTree.decompose leftSubTree
                     let (rightNode, rl, rr) =  BVHTree.decompose rightSubTree
-                    let bvhNode = BVHBuildNode(axis, start, 0, AABB.unionWithAABB leftNode.aabb rightNode.aabb)
+                    let bvhNode = BVHBuildNode(axis, start, 0, AABBProc.UnionWithAABB(leftNode.aabb, rightNode.aabb))
                     let newTotalNodes = leftTotalNodes + rightTotalNodes + 1
                     (Node (bvhNode, Node (leftNode , ll, lr), Node (rightNode , rl, rr)), rightOrderedSubList, newTotalNodes)
 

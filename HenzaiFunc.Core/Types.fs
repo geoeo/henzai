@@ -21,10 +21,6 @@ type CoordinateSystem =
     | XYNegZ = 0uy //RHS
     | XYZ = 1uy //LHS
 
-type IntersectionResult = 
-    | OUTSIDE = 0uy
-    | INSIDE = 1uy
-    | INTERSECTING = 2uy
 
 
 

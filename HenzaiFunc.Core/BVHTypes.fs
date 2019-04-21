@@ -12,12 +12,6 @@ type SplitMethods =
     | Middle = 2uy
     | EqualCounts = 3uy
 
-type SplitAxis = 
-    | X = 0uy
-    | Y = 1uy
-    | Z = 2uy
-    | None = 4uy
-
 /// A layer of abstraction to index a geometry in the main array/storage
 [<IsReadOnly;Struct>]
 type BVHPrimitive = 
