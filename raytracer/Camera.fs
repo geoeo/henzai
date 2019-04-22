@@ -39,7 +39,7 @@ let PixelToCamera x y width height fov =
 let RayDirection (cameraPixel_x, cameraPixel_y) =
     Vector4.Normalize(Vector4(cameraPixel_x, cameraPixel_y, -1.0f, 0.0f))
 
-let WorldToCamera  position target up = Matrix4x4.CreateLookAt(position, target,up);
+let WorldToCamera  position target up = Matrix4x4.CreateLookAt(position, target, up);
 
 let CameraToWorld worldToCamera = 
     let success , cameraToWorld = Matrix4x4.Invert(worldToCamera)

@@ -46,6 +46,8 @@ let convertModelToSurfaceList (model: Model<'T, RaytraceMaterial> when 'T :> Ver
             let n1 = Vector4(v1.GetNormal(), 0.0f)
             let n2 = Vector4(v2.GetNormal(), 0.0f)
             let n3 = Vector4(v3.GetNormal(), 0.0f)
+            
+            let id = assignIDAndIncrement id
 
             let triangle = 
                 match vertexRuntimeType with
@@ -56,11 +58,11 @@ let convertModelToSurfaceList (model: Model<'T, RaytraceMaterial> when 'T :> Ver
             //TODO: allow to pass surface parameters
             let surface = 
                 match surfaceType with
-                | SurfaceTypes.NoSurface -> NoSurface(assignIDAndIncrement id, triangle, material)  :> Surface
-                | SurfaceTypes.Lambertian -> Lambertian(assignIDAndIncrement id, triangle, material)  :> Surface
-                | SurfaceTypes.Metal -> Metal(assignIDAndIncrement id, triangle, material, 0.3f) :> Surface
-                | SurfaceTypes.Dielectric -> Dielectric(assignIDAndIncrement id, triangle, material, 1.5f)  :> Surface
-                | SurfaceTypes.NormalVis -> NormalVis(assignIDAndIncrement id, triangle, material) :> Surface
+                | SurfaceTypes.NoSurface -> NoSurface(id, triangle, material)  :> Surface
+                | SurfaceTypes.Lambertian -> Lambertian(id, triangle, material)  :> Surface
+                | SurfaceTypes.Metal -> Metal(id, triangle, material, 0.3f) :> Surface
+                | SurfaceTypes.Dielectric -> Dielectric(id, triangle, material, 1.5f)  :> Surface
+                | SurfaceTypes.NormalVis -> NormalVis(id, triangle, material) :> Surface
                 | x -> failwithf "surfaceType %u not implemented yet" (LanguagePrimitives.EnumToValue x)
 
             surfaceList <- surface :: surfaceList
