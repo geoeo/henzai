@@ -149,46 +149,76 @@ namespace Henzai.Core.Numerics
         }
 
         // https://www.gamedevs.org/uploads/fast-extraction-viewing-frustum-planes-from-world-view-projection-matrix.pdf
-        public static void ExtractLeftPlane(ref Matrix4x4 modelViewProjectionMatrix, ref Vector4 planeTarget){
-            planeTarget.X = modelViewProjectionMatrix.M14 + modelViewProjectionMatrix.M11;
-            planeTarget.Y = modelViewProjectionMatrix.M24 + modelViewProjectionMatrix.M21;
-            planeTarget.Z = modelViewProjectionMatrix.M34 + modelViewProjectionMatrix.M31;
-            planeTarget.W = modelViewProjectionMatrix.M44 + modelViewProjectionMatrix.M41;
+        public static Vector4 ExtractLeftPlane(ref Matrix4x4 modelViewProjectionMatrix){
+            var a = modelViewProjectionMatrix.M14 + modelViewProjectionMatrix.M11;
+            var b = modelViewProjectionMatrix.M24 + modelViewProjectionMatrix.M21;
+            var c = modelViewProjectionMatrix.M34 + modelViewProjectionMatrix.M31;
+            var mag = MathF.Sqrt(a * a + b * b + c * c);
+            a /= mag;
+            b /= mag;
+            c /= mag;
+            var d = (modelViewProjectionMatrix.M44 + modelViewProjectionMatrix.M41)/mag;
+            return new Vector4(a, b, c, d);
         }
 
-        public static void ExtractRightPlane(ref Matrix4x4 modelViewProjectionMatrix, ref Vector4 planeTarget){
-            planeTarget.X = modelViewProjectionMatrix.M14 - modelViewProjectionMatrix.M11;
-            planeTarget.Y = modelViewProjectionMatrix.M24 - modelViewProjectionMatrix.M21;
-            planeTarget.Z = modelViewProjectionMatrix.M34 - modelViewProjectionMatrix.M31;
-            planeTarget.W = modelViewProjectionMatrix.M44 - modelViewProjectionMatrix.M41;
+        public static Vector4 ExtractRightPlane(ref Matrix4x4 modelViewProjectionMatrix){
+            var a = modelViewProjectionMatrix.M14 - modelViewProjectionMatrix.M11;
+            var b = modelViewProjectionMatrix.M24 - modelViewProjectionMatrix.M21;
+            var c = modelViewProjectionMatrix.M34 - modelViewProjectionMatrix.M31;
+            var mag = MathF.Sqrt(a * a + b * b + c * c);
+            a /= mag;
+            b /= mag;
+            c /= mag;
+            var d = (modelViewProjectionMatrix.M44 - modelViewProjectionMatrix.M41)/mag;
+            return new Vector4(a, b, c, d);
         }
 
-        public static void ExtractTopPlane (ref Matrix4x4 modelViewProjectionMatrix, ref Vector4 planeTarget){
-            planeTarget.X = modelViewProjectionMatrix.M14 - modelViewProjectionMatrix.M12;
-            planeTarget.Y = modelViewProjectionMatrix.M24 - modelViewProjectionMatrix.M22;
-            planeTarget.Z = modelViewProjectionMatrix.M34 - modelViewProjectionMatrix.M32;
-            planeTarget.W = modelViewProjectionMatrix.M44 - modelViewProjectionMatrix.M42;
+        public static Vector4 ExtractTopPlane (ref Matrix4x4 modelViewProjectionMatrix){
+            var a = modelViewProjectionMatrix.M14 - modelViewProjectionMatrix.M12;
+            var b = modelViewProjectionMatrix.M24 - modelViewProjectionMatrix.M22;
+            var c = modelViewProjectionMatrix.M34 - modelViewProjectionMatrix.M32;
+            var mag = MathF.Sqrt(a * a + b * b + c * c);
+            a /= mag;
+            b /= mag;
+            c /= mag;
+            var d = (modelViewProjectionMatrix.M44 - modelViewProjectionMatrix.M42)/mag;
+            return new Vector4(a, b, c, d);
         }
 
-        public static void ExtractBottomPlane (ref Matrix4x4 modelViewProjectionMatrix, ref Vector4 planeTarget){
-            planeTarget.X = modelViewProjectionMatrix.M14 + modelViewProjectionMatrix.M12;
-            planeTarget.Y = modelViewProjectionMatrix.M24 + modelViewProjectionMatrix.M22;
-            planeTarget.Z = modelViewProjectionMatrix.M34 + modelViewProjectionMatrix.M32;
-            planeTarget.W = modelViewProjectionMatrix.M44 + modelViewProjectionMatrix.M42;
+        public static Vector4 ExtractBottomPlane (ref Matrix4x4 modelViewProjectionMatrix){
+            var a = modelViewProjectionMatrix.M14 + modelViewProjectionMatrix.M12;
+            var b = modelViewProjectionMatrix.M24 + modelViewProjectionMatrix.M22;
+            var c = modelViewProjectionMatrix.M34 + modelViewProjectionMatrix.M32;
+            var mag = MathF.Sqrt(a * a + b * b + c * c);
+            a /= mag;
+            b /= mag;
+            c /= mag;
+            var d = (modelViewProjectionMatrix.M44 + modelViewProjectionMatrix.M42)/mag;
+            return new Vector4(a, b, c, d);
         }
 
-        public static void ExtractNearPlane (ref Matrix4x4 modelViewProjectionMatrix, ref Vector4 planeTarget){
-            planeTarget.X = modelViewProjectionMatrix.M13;
-            planeTarget.Y = modelViewProjectionMatrix.M23;
-            planeTarget.Z = modelViewProjectionMatrix.M33;
-            planeTarget.W = modelViewProjectionMatrix.M43;
+        public static Vector4 ExtractNearPlane (ref Matrix4x4 modelViewProjectionMatrix){
+            var a = modelViewProjectionMatrix.M13;
+            var b = modelViewProjectionMatrix.M23;
+            var c = modelViewProjectionMatrix.M33;
+            var mag = MathF.Sqrt(a * a + b * b + c * c);
+            a /= mag;
+            b /= mag;
+            c /= mag;
+            var d = modelViewProjectionMatrix.M43/mag;
+            return new Vector4(a, b, c, d);
         }
 
-        public static void ExtractFarPlane (ref Matrix4x4 modelViewProjectionMatrix, ref Vector4 planeTarget){
-            planeTarget.X = modelViewProjectionMatrix.M14 - modelViewProjectionMatrix.M13;
-            planeTarget.Y = modelViewProjectionMatrix.M24 - modelViewProjectionMatrix.M23;
-            planeTarget.Z = modelViewProjectionMatrix.M34 - modelViewProjectionMatrix.M33;
-            planeTarget.W = modelViewProjectionMatrix.M44 - modelViewProjectionMatrix.M43;
+        public static Vector4 ExtractFarPlane (ref Matrix4x4 modelViewProjectionMatrix){
+            var a = modelViewProjectionMatrix.M14 - modelViewProjectionMatrix.M13;
+            var b = modelViewProjectionMatrix.M24 - modelViewProjectionMatrix.M23;
+            var c = modelViewProjectionMatrix.M34 - modelViewProjectionMatrix.M33;
+            var mag = MathF.Sqrt(a * a + b * b + c * c);
+            a /= mag;
+            b /= mag;
+            c /= mag;
+            var d = (modelViewProjectionMatrix.M44 - modelViewProjectionMatrix.M43)/mag;
+            return new Vector4(a, b, c, d);
         }
 
 

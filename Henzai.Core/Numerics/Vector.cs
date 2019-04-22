@@ -70,6 +70,12 @@ namespace Henzai.Core.Numerics {
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float InMemoryDotProduct3(ref Vector4 a, ref Vector4 b)
+        {
+            return a.X * b.X + a.Y * b.Y + a.Z * b.Z;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float InMemoryDotProduct(ref Vector3 a, ref Vector3 b){
             return a.X*b.X+a.Y*b.Y+a.Z*b.Z;
         }
