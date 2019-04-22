@@ -65,10 +65,9 @@ namespace Henzai.Core.VertexGeometry
 
             _validTriangles = new IndexedTriangleEngine<T>[IndexCount/3];
             for(int i = 0; i < VertexCount; i=i+3)
-                _validTriangles[i/3] = new IndexedTriangleEngine<T>(i, i+1, i+2, _vertices);
+                _validTriangles[i/3] = new IndexedTriangleEngine<T>(i, i+1, i+2, this);
             ValidTriangleCount = _validTriangles.Length;
-            
-
+        
         }
 
         public Mesh(T[] vertices, ushort[] indices)
@@ -91,7 +90,7 @@ namespace Henzai.Core.VertexGeometry
                 var i0 = _indices[i];
                 var i1 = _indices[i+1];
                 var i2 = _indices[i+2];  
-                _validTriangles[i0/3] = new IndexedTriangleEngine<T>(i0, i1, i2, _vertices);
+                _validTriangles[i0/3] = new IndexedTriangleEngine<T>(i0, i1, i2, this);
             }
             ValidTriangleCount = _validTriangles.Length;
         }

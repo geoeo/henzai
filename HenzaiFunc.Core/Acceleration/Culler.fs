@@ -3,6 +3,7 @@ namespace HenzaiFunc.Core.Acceleration
 open System.Numerics
 open System.Collections.Generic
 open Henzai.Core.Numerics
+open HenzaiFunc.Core.Types
 
 module Culler =
     let leftHalfSpaceCheck (plane : byref<Vector4>)
@@ -99,3 +100,11 @@ module Culler =
         mesh.ValidIndexCount <- validIndicesCounter
         mesh.ValidVertexCount <- validVertexCounter
         ()
+
+    //TODO 
+    let FrustumCullBVH (bvhArray : BVHRuntimeNode[], orderedPrimitives : 'T [], nodesToVisit : int[], viewProjectionMatrix : byref<Matrix4x4>) =
+        // let validNodeStack = Traverse bvhArray
+        // Visit all leaves (l) of the validNodeStack
+            // Add the primitives of l to its corresponding mesh's valid data structures
+        ()
+

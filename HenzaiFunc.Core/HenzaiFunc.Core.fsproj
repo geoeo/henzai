@@ -20,9 +20,9 @@
     <Compile Include="RaytraceGeometry/Triangle.fs" />
     <Compile Include="RaytraceGeometry/IndexedTriangle.fs" />
     <Compile Include="RaytraceGeometry/TriangleNormal.fs" />
-    <Compile Include="Acceleration/Culler.fs" />
     <Compile Include="Acceleration/BVHTreeBuilder.fs" />
     <Compile Include="Acceleration/BVHRuntime.fs" />
+    <Compile Include="Acceleration/Culler.fs" />
     <Compile Include="VertexGeometry.fs"/>
     <ProjectReference Include="../Henzai.Core/Henzai.Core.csproj" />
   </ItemGroup>

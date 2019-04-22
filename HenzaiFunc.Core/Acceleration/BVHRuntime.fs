@@ -112,7 +112,7 @@ type BVHRuntime<'T when 'T :> Hitable>() =
         struct(hasIntersection, tHit, intersectedGeometry)
 
     member this.TraverseWithFrustum (bvhArray : BVHRuntimeNode[], nodesToVisit : int[], viewProjectionMatrix : byref<Matrix4x4>) =
-        let mutable validNodeStack : BVHRuntimeNode[] = Array.zeroCreate<BVHRuntimeNode> 2
+        let mutable validNodeStack : struct(BVHRuntimeNode*int)[] = Array.zeroCreate<struct(BVHRuntimeNode*int)> 2
         let mutable validNodeStackOffset = -1
         let mutable toVisitOffset = 0
         let mutable currentNodeIndex = 0
@@ -157,7 +157,7 @@ type BVHRuntime<'T when 'T :> Hitable>() =
 
             if ((inside || intersecting) && nPrimitives > 0) || (inside && nPrimitives = 0)  then 
                 validNodeStackOffset <- validNodeStackOffset + 1
-                validNodeStack.[validNodeStackOffset] <- node
+                validNodeStack.[validNodeStackOffset] <- struct(node,currentNodeIndex)
                 toVisitOffset <- toVisitOffset - 1
                 if toVisitOffset >= 0 then 
                     currentNodeIndex <- nodesToVisit.[toVisitOffset]
