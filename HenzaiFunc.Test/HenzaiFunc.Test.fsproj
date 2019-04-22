@@ -9,7 +9,8 @@
     <Compile Include="ArrayTests.fs" />
     <Compile Include="SphereTests.fs" />
     <Compile Include="TypeTests.fs" />
-    <Compile Include="AABBTests.fs" />
+    <Compile Include="AABBRayTests.fs" />
+    <Compile Include="AABBPlaneTests.fs" />
     <Compile Include="BVHPlaneTests.fs" />
     <Compile Include="PlaneTests.fs" />
     <Compile Include="MeshTests.fs" />

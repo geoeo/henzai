@@ -1,9 +1,10 @@
-﻿module AABBTests
+﻿module AABBRayTests
 
+open System
 open System.Numerics
 open Xunit
 open Henzai.Core.Acceleration
-//open HenzaiFunc.Core.RaytraceGeometry
+open Henzai.Core.Numerics
 open Henzai.Core.Raytracing
 
 
@@ -187,9 +188,6 @@ let NoAABBRayIntersectionTestY() =
     //let struct(hasIntersection, tHit) = aabb.AsHitable.Intersect(ray)
     Assert.False(hasIntersection)
 
-
-//////
-
 [<Fact>]
 let AABBRayIntersectionTestXYZ() = 
     let aabb = new AABB(Vector3(0.0f, 0.0f, -1.0f), Vector3(1.0f, 1.0f, 0.0f))
@@ -197,5 +195,6 @@ let AABBRayIntersectionTestXYZ() =
     let struct(hasIntersection, tHit) = aabb.Intersect(ray)
     //let struct(hasIntersection, tHit) = aabb.AsHitable.Intersect(ray)
     Assert.True(hasIntersection)
+
 
 
