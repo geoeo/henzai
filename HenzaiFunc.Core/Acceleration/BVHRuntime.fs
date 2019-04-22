@@ -54,20 +54,20 @@ type BVHRuntime<'T when 'T :> Hitable>() =
                 //TODO: this is buggy
                 (currentOffset, count + count2 + 1)
 
-    member this.allocateMemoryForBVHRuntime nodeCount = 
+    member this.AllocateMemoryForBVHRuntime nodeCount = 
         Array.zeroCreate<BVHRuntimeNode> nodeCount
 
     /// Allocates memory and flattens the array
-    member this.constructBVHRuntime bvhTree nodeCount =
-        let bvhArray = this.allocateMemoryForBVHRuntime nodeCount
+    member this.ConstructBVHRuntime bvhTree nodeCount =
+        let bvhArray = this.AllocateMemoryForBVHRuntime nodeCount
         flattenBVHTreeRec bvhTree bvhArray 0 CoordinateSystem.XYNegZ |> ignore
         bvhArray
 
-    member this.flattenBVHTree (bvhTree : BVHTree) (bvhRuntimeArray : BVHRuntimeNode []) (currentOffset : int) (coordinateSystem : CoordinateSystem) = 
+    member this.FlattenBVHTree (bvhTree : BVHTree) (bvhRuntimeArray : BVHRuntimeNode []) (currentOffset : int) (coordinateSystem : CoordinateSystem) = 
         flattenBVHTreeRec bvhTree bvhRuntimeArray currentOffset coordinateSystem
 
     /// Finds the closest intersection for the given ray
-    member this.traverse (bvhArray : BVHRuntimeNode []) (orderedPrimitives : 'T []) (nodesToVisit : int[]) (ray : Ray) = 
+    member this.Traverse (bvhArray : BVHRuntimeNode []) (orderedPrimitives : 'T []) (nodesToVisit : int[]) (ray : Ray) = 
         let invDir = Vector4(1.0f / ray.Direction.X, 1.0f/ ray.Direction.Y, 1.0f / ray.Direction.Z, 0.0f)
         let (isXDirNeg, isYDirNeg, isZDirNeg) = (invDir.X < 0.0f, invDir.Y < 0.0f, invDir.Z < 0.0f)
         let mutable toVisitOffset = 0

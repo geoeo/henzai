@@ -17,7 +17,7 @@ let planeGeomertryArray : RaytracingGeometry []  =
 [<Fact>]
 let buildBVHPlaneTest () =
     let bvhTreeBuilder = BVHTreeBuilder<RaytracingGeometry>() 
-    let (bvhTree, orderedPrimitiveList, nodeCount) = bvhTreeBuilder.build planeGeomertryArray SplitMethods.Middle
+    let (bvhTree, orderedPrimitiveList, nodeCount) = bvhTreeBuilder.Build planeGeomertryArray SplitMethods.Middle
     let (value, left, right) = BVHTree.decompose bvhTree
     Assert.Equal(3, nodeCount)
     Assert.Equal(2, orderedPrimitiveList.Length)

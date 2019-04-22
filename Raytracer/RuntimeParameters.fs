@@ -10,15 +10,14 @@ let metalSampleCount = 1
 
 let width = 800
 let height = 640
-let samplesPerPixel = 8
-let batchSize = 1
-let renderSquareSide = 2
-let renderSquareSize = renderSquareSide*renderSquareSide
+let samplesPerPixel = 16
+let batchSize = 4
 let maxTraceDepth = 4us
 
-assert (width%renderSquareSide = 0)
-assert (height%renderSquareSide = 0)
-assert (renderSquareSide%4 = 0)
+if batchSize > 1 then
+    assert (batchSize%2 = 0)
+    assert (width%batchSize = 0)
+    assert (height%batchSize = 0)
 
 let outputDir = "Output/"
 let sceneImageName = "scene.jpg"

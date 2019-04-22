@@ -45,7 +45,6 @@ type BVHTreeBuilder<'T when 'T :> AxisAlignedBoundable>() =
             else
                 let nBuckets = 12
                 let nBuckets_f32 = float32 nBuckets
-                let intersectionCost = 1.0f
                 let traversalCost = 0.125f
                 let bucketCounts : int [] = Array.zeroCreate nBuckets
                 let bucketBounds : AABB [] = Array.init nBuckets (fun i -> AABB())
@@ -136,7 +135,7 @@ type BVHTreeBuilder<'T when 'T :> AxisAlignedBoundable>() =
                     let newTotalNodes = leftTotalNodes + rightTotalNodes + 1
                     (Node (bvhNode, Node (leftNode , ll, lr), Node (rightNode , rl, rr)), rightOrderedSubList, newTotalNodes)
 
-    member this.build ( geometryArray : 'T []) (splitMethod : SplitMethods) =
+    member this.Build ( geometryArray : 'T []) (splitMethod : SplitMethods) =
         if Array.isEmpty geometryArray then
             (Empty, [||], 0)
         else

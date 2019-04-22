@@ -75,8 +75,8 @@ let buildBVHBoxTest () =
     let raytracingModel = Model<VertexPositionNormal,RealtimeMaterial>.ConvertToRaytracingModel(rtModel);
     let modelSurfaceList = convertModelToSurfaceList(raytracingModel, transformFunc, VertexRuntimeTypes.VertexPositionNormal, SurfaceTypes.NoSurface)
     let surfaceArray : Surface[] = modelSurfaceList |> Array.ofList
-    let (bvhTree, orderedSurfaceArray, totalNodeCount) = bvhTreeBuilder.build surfaceArray SplitMethods.Middle
-    let bvhRuntimeArray = bvhRuntime.constructBVHRuntime bvhTree totalNodeCount
+    let (bvhTree, orderedSurfaceArray, totalNodeCount) = bvhTreeBuilder.Build surfaceArray SplitMethods.Middle
+    let bvhRuntimeArray = bvhRuntime.ConstructBVHRuntime bvhTree totalNodeCount
     let mutable nPrimitives = 0
     for node in bvhRuntimeArray do
         let nodePrimitives = node.nPrimitives
@@ -95,12 +95,12 @@ let intersectBVHBoxZTest () =
     let modelSurfaceList = convertModelToSurfaceList(raytracingModel, transformFunc, VertexRuntimeTypes.VertexPositionNormal, SurfaceTypes.NoSurface)
     let surfaceArray : Surface[] = modelSurfaceList |> Array.ofList
 
-    let (bvhTree, orderedSurfaceArray, totalNodeCount) = bvhTreeBuilder.build surfaceArray SplitMethods.Middle
-    let bvhRuntimeArray = bvhRuntime.constructBVHRuntime bvhTree totalNodeCount
+    let (bvhTree, orderedSurfaceArray, totalNodeCount) = bvhTreeBuilder.Build surfaceArray SplitMethods.Middle
+    let bvhRuntimeArray = bvhRuntime.ConstructBVHRuntime bvhTree totalNodeCount
     let bvhTraversalStack = Array.zeroCreate bvhRuntimeArray.Length
 
-    let struct(isHit_ZNeg, tHit_ZNeg, surfaceOption_ZNeg) = bvhRuntime.traverse bvhRuntimeArray orderedSurfaceArray bvhTraversalStack rayZNeg
-    let struct(isHit_ZPos, tHit_ZPos, surfaceOption_ZPos) = bvhRuntime.traverse bvhRuntimeArray orderedSurfaceArray bvhTraversalStack rayZPos
+    let struct(isHit_ZNeg, tHit_ZNeg, surfaceOption_ZNeg) = bvhRuntime.Traverse bvhRuntimeArray orderedSurfaceArray bvhTraversalStack rayZNeg
+    let struct(isHit_ZPos, tHit_ZPos, surfaceOption_ZPos) = bvhRuntime.Traverse bvhRuntimeArray orderedSurfaceArray bvhTraversalStack rayZPos
 
     Assert.Equal(true, isHit_ZNeg)
     Assert.Equal(true, isHit_ZPos)
@@ -113,12 +113,12 @@ let intersectBVHBoxXTest () =
     let raytracingModel = Model<VertexPositionNormal,RealtimeMaterial>.ConvertToRaytracingModel(rtModel);
     let modelSurfaceList = convertModelToSurfaceList(raytracingModel, transformFunc, VertexRuntimeTypes.VertexPositionNormal, SurfaceTypes.NoSurface)
     let surfaceArray : Surface[] = modelSurfaceList |> Array.ofList
-    let (bvhTree, orderedSurfaceArray, totalNodeCount) = bvhTreeBuilder.build surfaceArray SplitMethods.Middle
-    let bvhRuntimeArray = bvhRuntime.constructBVHRuntime bvhTree totalNodeCount
+    let (bvhTree, orderedSurfaceArray, totalNodeCount) = bvhTreeBuilder.Build surfaceArray SplitMethods.Middle
+    let bvhRuntimeArray = bvhRuntime.ConstructBVHRuntime bvhTree totalNodeCount
     let bvhTraversalStack = Array.zeroCreate bvhRuntimeArray.Length
 
-    let struct(isHit_XNeg, tHit_XNeg, surfaceOption_XNeg) = bvhRuntime.traverse bvhRuntimeArray orderedSurfaceArray bvhTraversalStack rayXNeg
-    let struct(isHit_XPos, tHit_XPos, surfaceOption_XPos) = bvhRuntime.traverse bvhRuntimeArray orderedSurfaceArray bvhTraversalStack rayXPos
+    let struct(isHit_XNeg, tHit_XNeg, surfaceOption_XNeg) = bvhRuntime.Traverse bvhRuntimeArray orderedSurfaceArray bvhTraversalStack rayXNeg
+    let struct(isHit_XPos, tHit_XPos, surfaceOption_XPos) = bvhRuntime.Traverse bvhRuntimeArray orderedSurfaceArray bvhTraversalStack rayXPos
 
     Assert.Equal(true, isHit_XNeg)
     Assert.Equal(true, isHit_XPos)
@@ -131,12 +131,12 @@ let intersectBVHBoxYTest () =
     let raytracingModel = Model<VertexPositionNormal,RealtimeMaterial>.ConvertToRaytracingModel(rtModel);
     let modelSurfaceList = convertModelToSurfaceList(raytracingModel, transformFunc, VertexRuntimeTypes.VertexPositionNormal, SurfaceTypes.NoSurface)
     let surfaceArray : Surface[] = modelSurfaceList |> Array.ofList
-    let (bvhTree, orderedSurfaceArray, totalNodeCount) = bvhTreeBuilder.build surfaceArray SplitMethods.Middle
-    let bvhRuntimeArray = bvhRuntime.constructBVHRuntime bvhTree totalNodeCount
+    let (bvhTree, orderedSurfaceArray, totalNodeCount) = bvhTreeBuilder.Build surfaceArray SplitMethods.Middle
+    let bvhRuntimeArray = bvhRuntime.ConstructBVHRuntime bvhTree totalNodeCount
     let bvhTraversalStack = Array.zeroCreate bvhRuntimeArray.Length
 
-    let struct(isHit_YNeg, tHit_YNeg, surfaceOption_YNeg) = bvhRuntime.traverse bvhRuntimeArray orderedSurfaceArray bvhTraversalStack rayXNeg
-    let struct(isHit_YPos, tHit_YPos, surfaceOption_YPos) = bvhRuntime.traverse bvhRuntimeArray orderedSurfaceArray bvhTraversalStack rayXPos 
+    let struct(isHit_YNeg, tHit_YNeg, surfaceOption_YNeg) = bvhRuntime.Traverse bvhRuntimeArray orderedSurfaceArray bvhTraversalStack rayXNeg
+    let struct(isHit_YPos, tHit_YPos, surfaceOption_YPos) = bvhRuntime.Traverse bvhRuntimeArray orderedSurfaceArray bvhTraversalStack rayXPos 
 
     Assert.Equal(true, isHit_YNeg)
     Assert.Equal(true, isHit_YPos)

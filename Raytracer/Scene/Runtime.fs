@@ -64,7 +64,7 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
             let currentTraceDepth = previousTraceDepth + 1us
             let mutable struct(hasIntersection, t, surfaceOption) = struct(false, 0.0f, None)
             if bvhRuntimeArray.Length > 0 then
-                let struct(b_bvh, t_bvh, s_bvh) = bvhRuntime.traverse bvhRuntimeArray surfaces bvhTraversalStack ray
+                let struct(b_bvh, t_bvh, s_bvh) = bvhRuntime.Traverse bvhRuntimeArray surfaces bvhTraversalStack ray
                 hasIntersection <- b_bvh
                 t <- t_bvh
                 surfaceOption <- s_bvh
@@ -99,7 +99,7 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
 
         let mutable struct(hasIntersection, t, surfaceOption) = struct(false, 0.0f, None)
         if bvhRuntimeArray.Length > 0 then
-            let struct(b_bvh, t_bvh, s_bvh) = bvhRuntime.traverse bvhRuntimeArray surfaces bvhTraversalStack ray
+            let struct(b_bvh, t_bvh, s_bvh) = bvhRuntime.Traverse bvhRuntimeArray surfaces bvhTraversalStack ray
             hasIntersection <- b_bvh
             t <- t_bvh
             surfaceOption <- s_bvh

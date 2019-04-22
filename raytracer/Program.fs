@@ -23,7 +23,7 @@ let main argv =
     stopWatch.Restart()
     let (bvhTree, orderedSurfaceArray, totalNodeCount) = constructBVHTree sceneArray SplitMethods.SAH
     let bvhRuntime = BVHRuntime<Surface>()
-    let bvhRuntimeArray = bvhRuntime.constructBVHRuntime bvhTree totalNodeCount
+    let bvhRuntimeArray = bvhRuntime.ConstructBVHRuntime bvhTree totalNodeCount
     stopWatch.Stop()
     printfn "Constructed BVH Tree in %f ms" stopWatch.Elapsed.TotalMilliseconds
 
