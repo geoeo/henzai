@@ -122,13 +122,12 @@ namespace Henzai.Core.Acceleration
         public static IntersectionResult PlaneIntersection(AABB aabb, ref Vector4 plane)
         {
             var intersection = IntersectionResult.Intersecting;
-            var pNorm = Vector4.Normalize(plane);
             var c = Center(aabb);
-            var d = pNorm.W;
+            var d = plane.W;
             var h = (Diagonal(aabb)) / 2.0f;
-            var planeNormalAbs = Vector4.Abs(pNorm);
+            var planeNormalAbs = Vector4.Abs(plane);
             var e = h.X * planeNormalAbs.X + h.Y * planeNormalAbs.Y + h.Z * planeNormalAbs.Z;
-            var s = Numerics.Vector.InMemoryDotProduct(ref c, ref pNorm) + d;
+            var s = Numerics.Vector.InMemoryDotProduct3(ref c, ref plane) + d;
 
             var isOutside = s - e < 0.0f;
             var isInside = s + e > 0.0f;
