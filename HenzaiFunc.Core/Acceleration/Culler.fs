@@ -3,8 +3,6 @@ namespace HenzaiFunc.Core.Acceleration
 open System.Numerics
 open System.Collections.Generic
 open Henzai.Core.Numerics
-open Henzai.Core.VertexGeometry
-open System.Collections.Generic
 
 module Culler =
     let leftHalfSpaceCheck (plane : byref<Vector4>)
@@ -45,7 +43,7 @@ module Culler =
     /// <summary>
     /// Culls a <see cref="Henzai.Core.VertexGeometry.Mesh"/> by testing every triangle of the mesh
     /// </summary>
-    let FrustumCullMesh (modelViewProjectionMatrix : byref<Matrix4x4>)
+    let FrustumCullMesh (viewProjectionMatrix : byref<Matrix4x4>)
         (mesh : Henzai.Core.VertexGeometry.Mesh<'T>) =
         let processedIndicesMap = new Dictionary<uint16, bool>()
         let vertices = mesh.Vertices
@@ -55,17 +53,17 @@ module Culler =
         let mutable validIndicesCounter = 0
         let mutable validVertexCounter = 0
         let mutable planeLeft =
-            Geometry.ExtractLeftPlane(&modelViewProjectionMatrix)
+            Geometry.ExtractLeftPlane(&viewProjectionMatrix)
         let mutable planeRight =
-            Geometry.ExtractRightPlane(&modelViewProjectionMatrix)
+            Geometry.ExtractRightPlane(&viewProjectionMatrix)
         let mutable planeTop =
-            Geometry.ExtractTopPlane(&modelViewProjectionMatrix)
+            Geometry.ExtractTopPlane(&viewProjectionMatrix)
         let mutable planeBottom =
-            Geometry.ExtractBottomPlane(&modelViewProjectionMatrix)
+            Geometry.ExtractBottomPlane(&viewProjectionMatrix)
         let mutable planeNear =
-            Geometry.ExtractNearPlane(&modelViewProjectionMatrix)
+            Geometry.ExtractNearPlane(&viewProjectionMatrix)
         let mutable planeFar =
-            Geometry.ExtractFarPlane(&modelViewProjectionMatrix)
+            Geometry.ExtractFarPlane(&viewProjectionMatrix)
         for i in // If at least one vertex is within the frustum, the triangle is not culled.
                  0..3..indices.Length - 1 do
             let i1 = indices.[i]

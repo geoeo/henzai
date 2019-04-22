@@ -4,6 +4,8 @@ open System.Numerics
 open HenzaiFunc.Core.Types
 open Henzai.Core.Acceleration
 open Henzai.Core.Raytracing
+open Henzai.Core.Numerics
+open Henzai.Core.Acceleration
 
 // Phyisically Based Rendering Third Edition p. 280
 /// Implements methods to optimize a BVH BST into a runtime representation
@@ -27,8 +29,6 @@ type BVHRuntime<'T when 'T :> Hitable>() =
         | x -> failwithf "Accessed point by %u. Should not happen!" (LanguagePrimitives.EnumToValue x)
 
     /// Flattens the BVHTree into the supplied bvhRuntimeArray.
-    /// Returns 1. This is an artefact of the C++ implementation it is based on.
-    //TODO: Refactor to make more functional
     let rec flattenBVHTreeRec (bvhTree : BVHTree) (bvhRuntimeArray : BVHRuntimeNode []) (currentOffset : int) (coordinateSystem : CoordinateSystem) =
         if bvhRuntimeArray.Length = 0 then
             (0,0)
@@ -51,7 +51,6 @@ type BVHRuntime<'T when 'T :> Hitable>() =
 
                 let interiorRuntimeNode = InteriorRuntimeNode(secondChildOffset, splitAxis)
                 bvhRuntimeArray.[currentOffset] <- BVHRuntimeNode(currentBounds, interiorRuntimeNode, 0)
-                //TODO: this is buggy
                 (currentOffset, count + count2 + 1)
 
     member this.AllocateMemoryForBVHRuntime nodeCount = 
@@ -106,11 +105,69 @@ type BVHRuntime<'T when 'T :> Hitable>() =
                         nodesToVisit.[toVisitOffset] <- interiorNode.secondChildOffset
                         toVisitOffset <- toVisitOffset + 1 
                         currentNodeIndex <- currentNodeIndex + 1
-             else
-                 toVisitOffset <- toVisitOffset - 1
-                 if toVisitOffset >= 0 then 
-                     currentNodeIndex <- nodesToVisit.[toVisitOffset]
+            else
+                toVisitOffset <- toVisitOffset - 1
+                if toVisitOffset >= 0 then 
+                    currentNodeIndex <- nodesToVisit.[toVisitOffset]
         struct(hasIntersection, tHit, intersectedGeometry)
+
+    member this.TraverseWithFrustum (bvhArray : BVHRuntimeNode[], nodesToVisit : int[], viewProjectionMatrix : byref<Matrix4x4>) =
+        let mutable validNodeStack : BVHRuntimeNode[] = Array.zeroCreate<BVHRuntimeNode> 2
+        let mutable validNodeStackOffset = -1
+        let mutable toVisitOffset = 0
+        let mutable currentNodeIndex = 0
+
+        let mutable planeLeft =
+            Geometry.ExtractLeftPlane(&viewProjectionMatrix)
+        let mutable planeRight =
+            Geometry.ExtractRightPlane(&viewProjectionMatrix)
+        let mutable planeTop =
+            Geometry.ExtractTopPlane(&viewProjectionMatrix)
+        let mutable planeBottom =
+            Geometry.ExtractBottomPlane(&viewProjectionMatrix)
+        let mutable planeNear =
+            Geometry.ExtractNearPlane(&viewProjectionMatrix)
+        let mutable planeFar =
+            Geometry.ExtractFarPlane(&viewProjectionMatrix)
+           
+        while toVisitOffset >= 0 do
+            let node = bvhArray.[currentNodeIndex]
+            let nPrimitives = node.nPrimitives
+            let currentAABB = node.aabb
+            let currentIntersectionLeft = AABBProc.PlaneIntersection(currentAABB,&planeLeft)
+            let currentIntersectionRight = AABBProc.PlaneIntersection(currentAABB,&planeRight)
+            let currentIntersectionTop = AABBProc.PlaneIntersection(currentAABB,&planeTop)
+            let currentIntersectionBottom = AABBProc.PlaneIntersection(currentAABB,&planeBottom)
+            let currentIntersectionNear = AABBProc.PlaneIntersection(currentAABB,&planeNear)
+            let currentIntersectionFar = AABBProc.PlaneIntersection(currentAABB,&planeFar)
+            let inside = 
+                currentIntersectionLeft = IntersectionResult.Inside &&
+                currentIntersectionRight = IntersectionResult.Inside &&
+                currentIntersectionTop = IntersectionResult.Inside &&
+                currentIntersectionBottom = IntersectionResult.Inside &&
+                currentIntersectionNear = IntersectionResult.Inside &&
+                currentIntersectionFar = IntersectionResult.Inside
+            let intersecting = 
+                currentIntersectionLeft = IntersectionResult.Intersecting &&
+                currentIntersectionRight = IntersectionResult.Intersecting &&
+                currentIntersectionTop = IntersectionResult.Intersecting &&
+                currentIntersectionBottom = IntersectionResult.Intersecting &&
+                currentIntersectionNear = IntersectionResult.Intersecting &&
+                currentIntersectionFar = IntersectionResult.Intersecting
+
+            if ((inside || intersecting) && nPrimitives > 0) || (inside && nPrimitives = 0)  then 
+                validNodeStackOffset <- validNodeStackOffset + 1
+                validNodeStack.[validNodeStackOffset] <- node
+                toVisitOffset <- toVisitOffset - 1
+                if toVisitOffset >= 0 then 
+                    currentNodeIndex <- nodesToVisit.[toVisitOffset]
+            else
+                let interiorNode = node.interiorNode
+                nodesToVisit.[toVisitOffset] <- currentNodeIndex + 1
+                toVisitOffset <- toVisitOffset + 1 
+                currentNodeIndex <- interiorNode.secondChildOffset
+
+        struct(validNodeStack, validNodeStackOffset)
 
 
         
