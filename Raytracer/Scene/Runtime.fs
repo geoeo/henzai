@@ -19,8 +19,8 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
 
     //TODO decide on a async implementation
     // let bvhTraversalStack2D = Array2D.zeroCreate batchSize bvhRuntimeArray.Length
-    let bvhTraversalStack2D = Array2D.zeroCreate renderSquareSize bvhRuntimeArray.Length
-    let randomStateForThread = Array.zeroCreate<Random> renderSquareSize
+    let bvhTraversalStack2D = Array2D.zeroCreate batchSize bvhRuntimeArray.Length
+    let randomStateForThread = Array.zeroCreate<Random> batchSize
 
     let batches = samplesPerPixel / batchSize
     let batchIndices = [|1..batchSize|] 
@@ -52,7 +52,6 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
         depthBuffer.[px,py] <- t
         if t > maxFrameBufferDepth then 
             maxFrameBufferDepth <- t 
-
 
     let rec rayTrace previousTraceDepth (ray : Ray) batchID =
         let bvhTraversalStack = bvhTraversalStack2D.[batchID, *]
@@ -179,44 +178,32 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
 
     member self.RenderSceneParallel() =
         let stopWatch = System.Diagnostics.Stopwatch.StartNew()
-        for i in 0..renderSquareSize-1 do
+        for i in 0..batchSize-1 do
             let seed = stopWatch.Elapsed.TotalMilliseconds*100000.0
             randomStateForThread.[i]<-Random((int)seed)
         stopWatch.Stop()
-        let renderSquareStartIndexes = Array.zeroCreate<int*int> (width/renderSquareSide * height/renderSquareSide)
-        let flatIndexTo2D i = i/renderSquareSide, i%renderSquareSide
-        let flatIndexes = [|0..renderSquareSize-1|]
-        let twoDIndexes = Array.map flatIndexTo2D flatIndexes
 
-        let pixelRenderCalls = Array.zeroCreate<Async<Color>> renderSquareSize
-        let addColorCalls = Array.zeroCreate<Async<unit>> renderSquareSize
-        let toneMapCalls = Array.zeroCreate<Async<unit>> renderSquareSize
+        let pixelRenderCalls = Array.zeroCreate<Async<Color>> batchSize
+        let addColorCalls = Array.zeroCreate<Async<unit>> batchSize
+        let toneMapCalls = Array.zeroCreate<Async<unit>> batchSize
 
-        for px in 0..renderSquareSide..width-renderSquareSide do
-            for py in 0..renderSquareSide..height-renderSquareSide do
-                let idx = (height/renderSquareSide)*(px/renderSquareSide)+(py/renderSquareSide)
-                renderSquareStartIndexes.[idx] <- (px, py)
+        for px in 0..width-1 do
+            for py in 0..batchSize..height-batchSize do
+                for it in 0..samplesPerPixel-1 do
+                    for i in 0..batchSize-1 do
+                        let x, y = px, py+i
+                        pixelRenderCalls.[i]<-async {return renderPass x y i it}
+                    let colors = pixelRenderCalls |> Async.Parallel |> Async.RunSynchronously
+       
+                    for i in 0..batchSize-1 do
+                        addColorCalls.[i]<-
+                            async {return frameBuffer.[px,py+i] <- frameBuffer.[px,py+i] + colors.[i]}
+                    addColorCalls |> Async.Parallel |> Async.RunSynchronously |> ignore
 
-        for (px, py) in renderSquareStartIndexes do
-
-            for it in 0..samplesPerPixel-1 do
-                for i in 0..renderSquareSize-1 do
-                    let xOff, yOff = twoDIndexes.[i]
-                    let x, y = px+xOff, py+yOff
-                    pixelRenderCalls.[i]<-async {return renderPass x y i it}
-                let colors = pixelRenderCalls |> Async.Parallel |> Async.RunSynchronously
-   
-                for i in 0..renderSquareSize-1 do
-                    let xOff, yOff = twoDIndexes.[i]
-                    addColorCalls.[i]<-
-                        async {return frameBuffer.[px+xOff,py+yOff] <- frameBuffer.[px+xOff,py+yOff] + colors.[i]}
-                addColorCalls |> Async.Parallel |> Async.RunSynchronously |> ignore
-
-            for i in 0..renderSquareSize-1 do
-                let xOff, yOff = twoDIndexes.[i]
-                toneMapCalls.[i] <-
-                    async{return frameBuffer.[px+xOff,py+yOff] <- Vector4.SquareRoot(frameBuffer.[px+xOff,py+yOff]/(float32)samplesPerPixel)}
-            toneMapCalls |> Async.Parallel |> Async.RunSynchronously |> ignore
+                for i in 0..batchSize-1 do
+                    toneMapCalls.[i] <-
+                        async{return frameBuffer.[px,py+i] <- Vector4.SquareRoot(frameBuffer.[px,py+i]/(float32)samplesPerPixel)}
+                toneMapCalls |> Async.Parallel |> Async.RunSynchronously |> ignore
 
     member self.SaveFrameBuffer() =
         using (File.OpenWrite(sceneImagePath)) (fun output ->
