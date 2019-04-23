@@ -6,16 +6,17 @@ open Henzai.Core.Acceleration
 
 // Phyisically Based Rendering Third Edition p. 257
 /// Implements methods to generate a BVH BST
-type BVHTreeBuilder<'T when 'T :> AxisAlignedBoundable>() =
+[<AbstractClass; Sealed>]
+type BVHTreeBuilder<'T when 'T :> AxisAlignedBoundable> private() =
 
-    let minPrimitivesForSplit = 128
+    static let minPrimitivesForSplit = 128
 
-    let leafCostForSplit nPrimitives = float32 nPrimitives
+    static let leafCostForSplit nPrimitives = float32 nPrimitives
 
-    let buildBVHInfoArray ( geometryArray : 'T [] ) =
+    static let buildBVHInfoArray ( geometryArray : 'T [] ) =
         Array.mapi (fun i (elem : 'T) -> BVHPrimitive(i, elem.GetBounds())) geometryArray
 
-    let accessPointBySplitAxis (p : Point) axis = 
+    static let accessPointBySplitAxis (p : Point) axis = 
         match axis with
         | SplitAxis.X -> p.X
         | SplitAxis.Y -> p.Y
@@ -23,7 +24,7 @@ type BVHTreeBuilder<'T when 'T :> AxisAlignedBoundable>() =
         | x -> failwithf "Accessed point by %u. Should not happen!" (LanguagePrimitives.EnumToValue x)
 
     /// start and finish are offsets indexing the global bvhInfoArray. bvhInfoSubArray is just a slice of that array and not indexed by start and finish
-    let rec calculateSplitPoint (bvhInfoSubArray : BVHPrimitive []) (start : int) (finish : int) (centroidBounds : AABB) (dim : SplitAxis) (splitMethod : SplitMethods) =
+    static let rec calculateSplitPoint (bvhInfoSubArray : BVHPrimitive []) (start : int) (finish : int) (centroidBounds : AABB) (dim : SplitAxis) (splitMethod : SplitMethods) =
         match splitMethod with
         | SplitMethods.Middle ->
             let midFloat = (accessPointBySplitAxis centroidBounds.PMin dim + accessPointBySplitAxis centroidBounds.PMax dim) / 2.0f
@@ -95,14 +96,14 @@ type BVHTreeBuilder<'T when 'T :> AxisAlignedBoundable>() =
                     struct(mid, smaller, largerOrEqual)
         | x -> failwithf "Recursive splitmethod %u not yet implemented" (LanguagePrimitives.EnumToValue x)
 
-    let buildLeafFromMultiplePrimitives bvhInfoArray (geometryArray: 'T []) subArray orderedGeometryList centroidBounds nPrimitives axis =
+    static let buildLeafFromMultiplePrimitives bvhInfoArray (geometryArray: 'T []) subArray orderedGeometryList centroidBounds nPrimitives axis =
         let bounds = Array.fold (fun acc (elem : BVHPrimitive) -> AABBProc.UnionWithAABB(acc, elem.aabb)) (AABB()) subArray
         let newOrderedList = Array.fold (fun acc (elem : BVHPrimitive) -> (geometryArray.[elem.indexOfBoundable] :: acc)) orderedGeometryList subArray
         let leaf = Node (BVHBuildNode(SplitAxis.None, orderedGeometryList.Length, nPrimitives, bounds), Empty, Empty)
         (leaf, newOrderedList, 1)
 
     /// Builds a BST of bounding volumes. Primitives are ordered Smallest-To-Largest along the split axis
-    let rec recursiveBuild ( geometryArray : 'T []) (bvhInfoArray : BVHPrimitive []) (start : int) (finish : int) (orderedGeometryList : 'T  list) (splitMethod : SplitMethods) = 
+    static let rec recursiveBuild ( geometryArray : 'T []) (bvhInfoArray : BVHPrimitive []) (start : int) (finish : int) (orderedGeometryList : 'T  list) (splitMethod : SplitMethods) = 
         let nPrimitives = finish - start
         if nPrimitives = 1 then
             let bvhPrimitive = bvhInfoArray.[start]
@@ -135,7 +136,7 @@ type BVHTreeBuilder<'T when 'T :> AxisAlignedBoundable>() =
                     let newTotalNodes = leftTotalNodes + rightTotalNodes + 1
                     (Node (bvhNode, Node (leftNode , ll, lr), Node (rightNode , rl, rr)), rightOrderedSubList, newTotalNodes)
 
-    member this.Build ( geometryArray : 'T []) (splitMethod : SplitMethods) =
+    static member Build ( geometryArray : 'T []) (splitMethod : SplitMethods) =
         if Array.isEmpty geometryArray then
             (Empty, [||], 0)
         else

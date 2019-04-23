@@ -58,8 +58,7 @@ let loadAssets =
     (sceneArray, sceneNonBoundableArray)
 
 let constructBVHTree surfaceArray splitMethod = 
-    let bvhTreeBuilder = BVHTreeBuilder<Surface>()
-    bvhTreeBuilder.Build surfaceArray splitMethod
+    BVHTreeBuilder<Surface>.Build surfaceArray splitMethod
 
   
     

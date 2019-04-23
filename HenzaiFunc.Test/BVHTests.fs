@@ -85,8 +85,7 @@ let aLotOfSpheresGeometryArray : RaytracingGeometry [] =
 
 [<Fact>]
 let buildBVHSimpleSphereTest () =
-    let bvhTreeBuilder = BVHTreeBuilder<RaytracingGeometry>() 
-    let (bvhTree, orderedPrimitiveList, nodeCount) = bvhTreeBuilder.Build simpleSphereGeomertryArray SplitMethods.Middle
+    let (bvhTree, orderedPrimitiveList, nodeCount) = BVHTreeBuilder<RaytracingGeometry>.Build simpleSphereGeomertryArray SplitMethods.Middle
     let (value, left, right) = BVHTree.decompose bvhTree
     Assert.Equal(1, nodeCount)
     Assert.Equal(1, orderedPrimitiveList.Length)
@@ -96,36 +95,31 @@ let buildBVHSimpleSphereTest () =
 
 [<Fact>]
 let buildBVHStandardSphereTest () =
-    let bvhTreeBuilder = BVHTreeBuilder<RaytracingGeometry>() 
-    let (bvhTree, orderedPrimitiveList, nodeCount) = bvhTreeBuilder.Build standardSphereGeomertryArray SplitMethods.Middle
+    let (bvhTree, orderedPrimitiveList, nodeCount) = BVHTreeBuilder<RaytracingGeometry>.Build standardSphereGeomertryArray SplitMethods.Middle
     Assert.Equal(5, nodeCount)
     Assert.Equal(3, orderedPrimitiveList.Length)
 
 [<Fact>]
 let buildBVHOverlappingSphereTest () =
-    let bvhTreeBuilder = BVHTreeBuilder<RaytracingGeometry>() 
-    let (bvhTree, orderedPrimitiveList, nodeCount) = bvhTreeBuilder.Build overlappingSphereGeomertryArray SplitMethods.Middle
+    let (bvhTree, orderedPrimitiveList, nodeCount) = BVHTreeBuilder<RaytracingGeometry>.Build overlappingSphereGeomertryArray SplitMethods.Middle
     Assert.Equal(5, nodeCount)
     Assert.Equal(3, orderedPrimitiveList.Length)
 
 [<Fact>]
 let buildBVHIdenticalSphereTest () =
-    let bvhTreeBuilder = BVHTreeBuilder<RaytracingGeometry>() 
-    let (bvhTree, orderedPrimitiveList, nodeCount) = bvhTreeBuilder.Build identicalSphereGeomertryArray SplitMethods.Middle
+    let (bvhTree, orderedPrimitiveList, nodeCount) = BVHTreeBuilder<RaytracingGeometry>.Build identicalSphereGeomertryArray SplitMethods.Middle
     Assert.Equal(1, nodeCount)
     Assert.Equal(3, orderedPrimitiveList.Length)
 
 [<Fact>]
 let buildBVHLargeSphereTest () =
-    let bvhTreeBuilder = BVHTreeBuilder<RaytracingGeometry>() 
-    let (bvhTree, orderedPrimitiveList, nodeCount) = bvhTreeBuilder.Build largeSphereGeomertryArray SplitMethods.Middle
+    let (bvhTree, orderedPrimitiveList, nodeCount) = BVHTreeBuilder<RaytracingGeometry>.Build largeSphereGeomertryArray SplitMethods.Middle
     Assert.Equal(9, nodeCount)
     Assert.Equal(5, orderedPrimitiveList.Length)
 
 [<Fact>]
 let buildBVHSmallLargeSphereTest () =
-    let bvhTreeBuilder = BVHTreeBuilder<RaytracingGeometry>() 
-    let (bvhTree, orderedPrimitiveList, nodeCount) = bvhTreeBuilder.Build smallLargeSphereGeometryArrray SplitMethods.Middle
+    let (bvhTree, orderedPrimitiveList, nodeCount) = BVHTreeBuilder<RaytracingGeometry>.Build smallLargeSphereGeometryArrray SplitMethods.Middle
     let (v, l ,r) = BVHTree.decompose bvhTree
     Assert.Equal(3, nodeCount)
     Assert.Equal(2, orderedPrimitiveList.Length)
@@ -134,16 +128,14 @@ let buildBVHSmallLargeSphereTest () =
     
 [<Fact>]
 let buildBVHALotTest () =
-    let bvhTreeBuilder = BVHTreeBuilder<RaytracingGeometry>() 
-    let (bvhTree, orderedPrimitiveList, nodeCount) = bvhTreeBuilder.Build aLotOfSpheresGeometryArray SplitMethods.Middle
+    let (bvhTree, orderedPrimitiveList, nodeCount) = BVHTreeBuilder<RaytracingGeometry>.Build aLotOfSpheresGeometryArray SplitMethods.Middle
     let (v, l ,r) = BVHTree.decompose bvhTree
     Assert.True(true)
 
 
 [<Fact>]
 let flattenBVHSimpleSphereTest () =
-    let bvhTreeBuilder = BVHTreeBuilder<RaytracingGeometry>() 
-    let (bvhTree, orderedPrimitiveList, nodeCount) = bvhTreeBuilder.Build simpleSphereGeomertryArray SplitMethods.Middle
+    let (bvhTree, orderedPrimitiveList, nodeCount) = BVHTreeBuilder<RaytracingGeometry>.Build simpleSphereGeomertryArray SplitMethods.Middle
     let bvhArray = BVHRuntime.AllocateMemoryForBVHRuntime nodeCount
     let out = BVHRuntime.FlattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYZ
     let bvhRuntimeNode = bvhArray.[0]
@@ -157,9 +149,8 @@ let flattenBVHSimpleSphereTest () =
 
 
 [<Fact>]
-let flattenBVHIdenticalSphereTest () =
-    let bvhTreeBuilder = BVHTreeBuilder<RaytracingGeometry>() 
-    let (bvhTree, orderedPrimitiveArray, nodeCount) = bvhTreeBuilder.Build identicalSphereGeomertryArray SplitMethods.Middle
+let flattenBVHIdenticalSphereTest () = 
+    let (bvhTree, orderedPrimitiveArray, nodeCount) = BVHTreeBuilder<RaytracingGeometry>.Build identicalSphereGeomertryArray SplitMethods.Middle
     let bvhArray = BVHRuntime.AllocateMemoryForBVHRuntime nodeCount
     let out = BVHRuntime.FlattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYZ
     let bvhRuntimeNode_Zero = bvhArray.[0]
@@ -175,8 +166,7 @@ let flattenBVHIdenticalSphereTest () =
         
 [<Fact>]
 let flattenBVHOverlappingSphereTest () =
-    let bvhTreeBuilder = BVHTreeBuilder<RaytracingGeometry>() 
-    let (bvhTree, orderedPrimitiveArray, nodeCount) = bvhTreeBuilder.Build overlappingSphereGeomertryArray SplitMethods.Middle
+    let (bvhTree, orderedPrimitiveArray, nodeCount) = BVHTreeBuilder<RaytracingGeometry>.Build overlappingSphereGeomertryArray SplitMethods.Middle
     let bvhArray = BVHRuntime.AllocateMemoryForBVHRuntime nodeCount
     let out = BVHRuntime.FlattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYZ
     let bvhRuntimeNode_Zero = bvhArray.[0]
@@ -209,8 +199,7 @@ let flattenBVHOverlappingSphereTest () =
     
 [<Fact>]
 let flattenBVHSphereTest () =
-    let bvhTreeBuilder = BVHTreeBuilder<RaytracingGeometry>() 
-    let (bvhTree, orderedPrimitiveArray, nodeCount) = bvhTreeBuilder.Build standardSphereGeomertryArray SplitMethods.Middle
+    let (bvhTree, orderedPrimitiveArray, nodeCount) = BVHTreeBuilder<RaytracingGeometry>.Build standardSphereGeomertryArray SplitMethods.Middle
     let bvhArray = BVHRuntime.AllocateMemoryForBVHRuntime nodeCount
     let out = BVHRuntime.FlattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYZ
     let bvhRuntimeNode_Zero = bvhArray.[0]
@@ -244,8 +233,7 @@ let flattenBVHSphereTest () =
 
 [<Fact>]
 let flattenBVHLargeSphereTest () =
-    let bvhTreeBuilder = BVHTreeBuilder<RaytracingGeometry>() 
-    let (bvhTree, orderedPrimitiveArray, nodeCount) = bvhTreeBuilder.Build largeSphereGeomertryArray SplitMethods.Middle
+    let (bvhTree, orderedPrimitiveArray, nodeCount) = BVHTreeBuilder<RaytracingGeometry>.Build largeSphereGeomertryArray SplitMethods.Middle
     let bvhArray = BVHRuntime.AllocateMemoryForBVHRuntime nodeCount
     let out = BVHRuntime.FlattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYZ
 
@@ -298,8 +286,7 @@ let flattenBVHLargeSphereTest () =
 
 [<Fact>]
 let flattenBVHSmallLargeSphereTest () =
-    let bvhTreeBuilder = BVHTreeBuilder<RaytracingGeometry>() 
-    let (bvhTree, orderedPrimitiveList, nodeCount) = bvhTreeBuilder.Build smallLargeSphereGeometryArrray SplitMethods.Middle
+    let (bvhTree, orderedPrimitiveList, nodeCount) = BVHTreeBuilder<RaytracingGeometry>.Build smallLargeSphereGeometryArrray SplitMethods.Middle
     let bvhArray = BVHRuntime.AllocateMemoryForBVHRuntime nodeCount
     let out = BVHRuntime.FlattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYZ
     let bvhRuntimeNode = bvhArray.[0]
@@ -312,8 +299,7 @@ let flattenBVHSmallLargeSphereTest () =
 
 [<Fact>]
 let flattenBVHALotSphereTest () =
-    let bvhTreeBuilder = BVHTreeBuilder<RaytracingGeometry>() 
-    let (bvhTree, orderedPrimitiveList, nodeCount) = bvhTreeBuilder.Build aLotOfSpheresGeometryArray SplitMethods.Middle
+    let (bvhTree, orderedPrimitiveList, nodeCount) = BVHTreeBuilder<RaytracingGeometry>.Build aLotOfSpheresGeometryArray SplitMethods.Middle
     let bvhArray = BVHRuntime.AllocateMemoryForBVHRuntime nodeCount
     let out = BVHRuntime.FlattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYZ
     let bvhRuntimeNode = bvhArray.[0]
@@ -326,8 +312,7 @@ let flattenBVHALotSphereTest () =
 
 [<Fact>]
 let intersectBVHSimpleSphereTest () =
-    let bvhTreeBuilder = BVHTreeBuilder<RaytracingGeometry>()
-    let (bvhTree, orderedPrimitiveArray, nodeCount) = bvhTreeBuilder.Build simpleSphereGeomertryArray SplitMethods.Middle
+    let (bvhTree, orderedPrimitiveArray, nodeCount) = BVHTreeBuilder<RaytracingGeometry>.Build simpleSphereGeomertryArray SplitMethods.Middle
     let bvhArray = BVHRuntime.AllocateMemoryForBVHRuntime nodeCount
     let bvhRuntimeStack = Array.zeroCreate bvhArray.Length
     let out = BVHRuntime.FlattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYZ
@@ -346,8 +331,7 @@ let intersectBVHSimpleSphereTest () =
 
 [<Fact>]
 let intersectBVHStandardSphereTest () =
-    let bvhTreeBuilder = BVHTreeBuilder<RaytracingGeometry>() 
-    let (bvhTree, orderedPrimitiveArray, nodeCount) = bvhTreeBuilder.Build standardSphereGeomertryArray SplitMethods.Middle
+    let (bvhTree, orderedPrimitiveArray, nodeCount) = BVHTreeBuilder<RaytracingGeometry>.Build standardSphereGeomertryArray SplitMethods.Middle
     let bvhArray = BVHRuntime.AllocateMemoryForBVHRuntime nodeCount
     let bvhRuntimeStack = Array.zeroCreate bvhArray.Length
     let out = BVHRuntime.FlattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYZ
@@ -365,8 +349,7 @@ let intersectBVHStandardSphereTest () =
 
 [<Fact>]
 let intersectBVHIdenticalSphereTest () =
-    let bvhTreeBuilder = BVHTreeBuilder<RaytracingGeometry>() 
-    let (bvhTree, orderedPrimitiveArray, nodeCount) = bvhTreeBuilder.Build identicalSphereGeomertryArray SplitMethods.Middle
+    let (bvhTree, orderedPrimitiveArray, nodeCount) = BVHTreeBuilder<RaytracingGeometry>.Build identicalSphereGeomertryArray SplitMethods.Middle
     let bvhArray = BVHRuntime.AllocateMemoryForBVHRuntime nodeCount
     let bvhRuntimeStack = Array.zeroCreate bvhArray.Length
     let out = BVHRuntime.FlattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYZ
@@ -386,8 +369,7 @@ let intersectBVHIdenticalSphereTest () =
 
 [<Fact>]
 let intersectBVHLargeSphereTest () =
-    let bvhTreeBuilder = BVHTreeBuilder<RaytracingGeometry>() 
-    let (bvhTree, orderedPrimitiveArray, nodeCount) = bvhTreeBuilder.Build largeSphereGeomertryArray SplitMethods.Middle
+    let (bvhTree, orderedPrimitiveArray, nodeCount) = BVHTreeBuilder<RaytracingGeometry>.Build largeSphereGeomertryArray SplitMethods.Middle
     let bvhArray = BVHRuntime.AllocateMemoryForBVHRuntime nodeCount
     let bvhRuntimeStack = Array.zeroCreate bvhArray.Length
     let out = BVHRuntime.FlattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYZ
@@ -406,8 +388,7 @@ let intersectBVHLargeSphereTest () =
 
 [<Fact>]
 let intersectBVHSmallLargeSphereTest () =
-    let bvhTreeBuilder = BVHTreeBuilder<RaytracingGeometry>() 
-    let (bvhTree, orderedPrimitiveArray, nodeCount) = bvhTreeBuilder.Build smallLargeSphereGeometryArrray SplitMethods.Middle
+    let (bvhTree, orderedPrimitiveArray, nodeCount) = BVHTreeBuilder<RaytracingGeometry>.Build smallLargeSphereGeometryArrray SplitMethods.Middle
     let bvhArray = BVHRuntime.AllocateMemoryForBVHRuntime nodeCount
     let bvhRuntimeStack = Array.zeroCreate bvhArray.Length
     let out = BVHRuntime.FlattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYZ
@@ -424,8 +405,7 @@ let intersectBVHSmallLargeSphereTest () =
 
 [<Fact>]
 let intersectBVHSmallLargeSphereInfrontTest () =
-    let bvhTreeBuilder = BVHTreeBuilder<RaytracingGeometry>() 
-    let (bvhTree, orderedPrimitiveArray, nodeCount) = bvhTreeBuilder.Build smallLargeInFrontSphereGeometryArray SplitMethods.Middle
+    let (bvhTree, orderedPrimitiveArray, nodeCount) = BVHTreeBuilder<RaytracingGeometry>.Build smallLargeInFrontSphereGeometryArray SplitMethods.Middle
     let bvhArray = BVHRuntime.AllocateMemoryForBVHRuntime nodeCount
     let bvhRuntimeStack = Array.zeroCreate bvhArray.Length
     let out = BVHRuntime.FlattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYZ
@@ -447,8 +427,7 @@ let intersectBVHSmallLargeSphereInfrontTest () =
 
 [<Fact>]
 let intersectBVHALotLargeSphereInfrontTest () =
-    let bvhTreeBuilder = BVHTreeBuilder<RaytracingGeometry>() 
-    let (bvhTree, orderedPrimitiveArray, nodeCount) = bvhTreeBuilder.Build aLotOfSpheresGeometryArray SplitMethods.Middle
+    let (bvhTree, orderedPrimitiveArray, nodeCount) = BVHTreeBuilder<RaytracingGeometry>.Build aLotOfSpheresGeometryArray SplitMethods.Middle
     let bvhArray = BVHRuntime.AllocateMemoryForBVHRuntime nodeCount
     let bvhRuntimeStack = Array.zeroCreate bvhArray.Length
     let out = BVHRuntime.FlattenBVHTree bvhTree bvhArray 0 CoordinateSystem.XYZ
