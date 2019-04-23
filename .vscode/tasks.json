@@ -24,6 +24,16 @@
             "problemMatcher": "$msCompile"
         },
         {
+            "label": "build HenzaiFunc.Core",
+            "command": "dotnet build HenzaiFunc.Core/HenzaiFunc.Core.fsproj",
+            "type": "shell",
+            "group": "build",
+            "presentation": {
+                "reveal": "silent"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
             "label": "build getting started",
             "command": "dotnet build Projects/getting_started/getting_started.csproj",
             "type": "shell",
