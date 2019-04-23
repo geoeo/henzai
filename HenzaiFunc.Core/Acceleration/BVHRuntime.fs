@@ -5,13 +5,13 @@ open HenzaiFunc.Core.Types
 open Henzai.Core.Acceleration
 open Henzai.Core.Raytracing
 open Henzai.Core.Numerics
-open Henzai.Core.Acceleration
 
 // Phyisically Based Rendering Third Edition p. 280
 /// Implements methods to optimize a BVH BST into a runtime representation
-type BVHRuntime<'T when 'T :> Hitable>() = 
+[<AbstractClass; Sealed>]
+type BVHRuntime private() = 
    
-    let determineSubTreeOrder ((l, r) : (BVHTree * BVHTree)) (splitAxis : SplitAxis) (coordinateSystem : CoordinateSystem) =
+    static let determineSubTreeOrder ((l, r) : (BVHTree * BVHTree)) (splitAxis : SplitAxis) (coordinateSystem : CoordinateSystem) =
         match splitAxis, coordinateSystem with
         | SplitAxis.X, CoordinateSystem.XYNegZ -> (l, r)
         | SplitAxis.Y, CoordinateSystem.XYNegZ -> (l, r)
@@ -21,7 +21,7 @@ type BVHRuntime<'T when 'T :> Hitable>() =
         | SplitAxis.Z, CoordinateSystem.XYZ -> (l, r)
         | (_, x) -> failwithf "coordinate system %u for subtree not implemented!" (LanguagePrimitives.EnumToValue x)
 
-    let accessBySplitAxis (v1, v2, v3) axis = 
+    static let accessBySplitAxis (v1, v2, v3) axis = 
         match axis with
         | SplitAxis.X -> v1
         | SplitAxis.Y -> v2
@@ -29,7 +29,7 @@ type BVHRuntime<'T when 'T :> Hitable>() =
         | x -> failwithf "Accessed point by %u. Should not happen!" (LanguagePrimitives.EnumToValue x)
 
     /// Flattens the BVHTree into the supplied bvhRuntimeArray.
-    let rec flattenBVHTreeRec (bvhTree : BVHTree) (bvhRuntimeArray : BVHRuntimeNode []) (currentOffset : int) (coordinateSystem : CoordinateSystem) =
+    static let rec flattenBVHTreeRec (bvhTree : BVHTree) (bvhRuntimeArray : BVHRuntimeNode []) (currentOffset : int) (coordinateSystem : CoordinateSystem) =
         if bvhRuntimeArray.Length = 0 then
             (0,0)
         else
@@ -53,20 +53,20 @@ type BVHRuntime<'T when 'T :> Hitable>() =
                 bvhRuntimeArray.[currentOffset] <- BVHRuntimeNode(currentBounds, interiorRuntimeNode, 0)
                 (currentOffset, count + count2 + 1)
 
-    member this.AllocateMemoryForBVHRuntime nodeCount = 
+    static member AllocateMemoryForBVHRuntime nodeCount = 
         Array.zeroCreate<BVHRuntimeNode> nodeCount
 
     /// Allocates memory and flattens the array
-    member this.ConstructBVHRuntime bvhTree nodeCount =
-        let bvhArray = this.AllocateMemoryForBVHRuntime nodeCount
+    static member ConstructBVHRuntime bvhTree nodeCount =
+        let bvhArray = BVHRuntime.AllocateMemoryForBVHRuntime nodeCount
         flattenBVHTreeRec bvhTree bvhArray 0 CoordinateSystem.XYNegZ |> ignore
         bvhArray
 
-    member this.FlattenBVHTree (bvhTree : BVHTree) (bvhRuntimeArray : BVHRuntimeNode []) (currentOffset : int) (coordinateSystem : CoordinateSystem) = 
+    static member FlattenBVHTree (bvhTree : BVHTree) (bvhRuntimeArray : BVHRuntimeNode []) (currentOffset : int) (coordinateSystem : CoordinateSystem) = 
         flattenBVHTreeRec bvhTree bvhRuntimeArray currentOffset coordinateSystem
 
     /// Finds the closest intersection for the given ray
-    member this.Traverse (bvhArray : BVHRuntimeNode []) (orderedPrimitives : 'T []) (nodesToVisit : int[]) (ray : Ray) = 
+    static member Traverse<'T when 'T :> Hitable> (bvhArray : BVHRuntimeNode []) (orderedPrimitives : 'T []) (nodesToVisit : int[]) (ray : Ray) = 
         let invDir = Vector4(1.0f / ray.Direction.X, 1.0f/ ray.Direction.Y, 1.0f / ray.Direction.Z, 0.0f)
         let (isXDirNeg, isYDirNeg, isZDirNeg) = (invDir.X < 0.0f, invDir.Y < 0.0f, invDir.Z < 0.0f)
         let mutable toVisitOffset = 0
@@ -111,7 +111,7 @@ type BVHRuntime<'T when 'T :> Hitable>() =
                     currentNodeIndex <- nodesToVisit.[toVisitOffset]
         struct(hasIntersection, tHit, intersectedGeometry)
 
-    member this.TraverseWithFrustum (bvhArray : BVHRuntimeNode[], nodesToVisit : int[], viewProjectionMatrix : byref<Matrix4x4>) =
+    static member TraverseWithFrustum (bvhArray : BVHRuntimeNode[], nodesToVisit : int[], viewProjectionMatrix : byref<Matrix4x4>) =
         let mutable validNodeStack : struct(BVHRuntimeNode*int)[] = Array.zeroCreate<struct(BVHRuntimeNode*int)> 2
         let mutable validNodeStackOffset = -1
         let mutable toVisitOffset = 0

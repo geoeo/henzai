@@ -104,6 +104,7 @@ module Culler =
     //TODO 
     let FrustumCullBVH (bvhArray : BVHRuntimeNode[], orderedPrimitives : 'T [], nodesToVisit : int[], viewProjectionMatrix : byref<Matrix4x4>) =
         // let validNodeStack = Traverse bvhArray
+        // let struct(validNodeStack, validNodeStackOffset) = 
         // Visit all leaves (l) of the validNodeStack
             // Add the primitives of l to its corresponding mesh's valid data structures
         ()

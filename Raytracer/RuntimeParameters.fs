@@ -10,7 +10,7 @@ let metalSampleCount = 1
 
 let width = 800
 let height = 640
-let samplesPerPixel = 16
+let samplesPerPixel = 1
 let batchSize = 4
 let maxTraceDepth = 4us
 

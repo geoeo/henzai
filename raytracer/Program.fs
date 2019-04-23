@@ -22,14 +22,13 @@ let main argv =
     printfn "Constructing BVH Tree.."
     stopWatch.Restart()
     let (bvhTree, orderedSurfaceArray, totalNodeCount) = constructBVHTree sceneArray SplitMethods.SAH
-    let bvhRuntime = BVHRuntime<Surface>()
-    let bvhRuntimeArray = bvhRuntime.ConstructBVHRuntime bvhTree totalNodeCount
+    let bvhRuntimeArray = BVHRuntime.ConstructBVHRuntime bvhTree totalNodeCount
     stopWatch.Stop()
     printfn "Constructed BVH Tree in %f ms" stopWatch.Elapsed.TotalMilliseconds
 
     printfn "Rendering.."
     stopWatch.Restart()
-    let mainScene = RuntimeScene (orderedSurfaceArray, sceneNonBoundableArray, bvhRuntime, bvhRuntimeArray)
+    let mainScene = RuntimeScene (orderedSurfaceArray, sceneNonBoundableArray, bvhRuntimeArray)
     //mainScene.RenderScene()
     mainScene.RenderSceneParallel()
     //mainScene.RenderSceneSync()
