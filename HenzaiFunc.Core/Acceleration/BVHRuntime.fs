@@ -111,11 +111,12 @@ type BVHRuntime private() =
                     currentNodeIndex <- nodesToVisit.[toVisitOffset]
         struct(hasIntersection, tHit, intersectedGeometry)
 
-    static member TraverseWithFrustum (bvhArray : BVHRuntimeNode[], nodesToVisit : int[], viewProjectionMatrix : byref<Matrix4x4>) =
-        let mutable validNodeStack : struct(BVHRuntimeNode*int)[] = Array.zeroCreate<struct(BVHRuntimeNode*int)> 2
+    static member TraverseWithFrustum (bvhArray : BVHRuntimeNode[] , orderedPrimitives : IndexedTriangleEngine<'T>[], nodesToVisit : int[], viewProjectionMatrix : byref<Matrix4x4>) =
+        let mutable validNodeStack : struct(int*int) = struct(-1, -1)
         let mutable validNodeStackOffset = -1
         let mutable toVisitOffset = 0
         let mutable currentNodeIndex = 0
+        let mutable parentOfCurrentNodeIndex = -1
 
         let mutable planeLeft =
             Geometry.ExtractLeftPlane(&viewProjectionMatrix)
@@ -157,17 +158,40 @@ type BVHRuntime private() =
 
             if ((inside || intersecting) && nPrimitives > 0) || (inside && nPrimitives = 0)  then 
                 validNodeStackOffset <- validNodeStackOffset + 1
-                validNodeStack.[validNodeStackOffset] <- struct(node,currentNodeIndex)
+                validNodeStack <-
+                    match validNodeStack with
+                    | struct(-1, -1) -> struct(currentNodeIndex, -1)
+                    | struct(x, -1) -> struct(x, -1)
+                    | _ -> failwithf "TraverseWithFrustum: all node slots are taken"
                 toVisitOffset <- toVisitOffset - 1
                 if toVisitOffset >= 0 then 
                     currentNodeIndex <- nodesToVisit.[toVisitOffset]
             else
                 let interiorNode = node.interiorNode
-                nodesToVisit.[toVisitOffset] <- currentNodeIndex + 1
+                let leftChildIndex = currentNodeIndex + 1
+                let rightChildIndex = interiorNode.secondChildOffset
+                nodesToVisit.[toVisitOffset] <- leftChildIndex
                 toVisitOffset <- toVisitOffset + 1 
-                currentNodeIndex <- interiorNode.secondChildOffset
+                parentOfCurrentNodeIndex <- currentNodeIndex
+                currentNodeIndex <- rightChildIndex
 
-        struct(validNodeStack, validNodeStackOffset)
+                let endOfRightChild = 
+                    if parentOfCurrentNodeIndex = 0 then 
+                        bvhArray.Length 
+                    else 
+                        bvhArray.[parentOfCurrentNodeIndex].interiorNode.secondChildOffset
+
+                for i in 0.. endOfRightChild-1 do
+                    let n = bvhArray.[i]
+                    let offset = n.leafNode.primitivesOffset
+                    let nPrims = n.nPrimitives
+                    if nPrims > 0 then
+                        for j in 0..nPrims-1 do
+                            let mesh = orderedPrimitives.[offset+j].Mesh
+                            mesh.ValidIndexCount <- 0
+                            mesh.ValidVertexCount <- 0
+                            mesh.ValidTriangleCount <- 0           
+        validNodeStack
 
 
         

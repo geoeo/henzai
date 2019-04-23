@@ -11,8 +11,9 @@ namespace Henzai.Core.Acceleration
         private readonly int _i1;
         private readonly int _i2;
         private readonly Mesh<T> _mesh;
-
         private readonly AABB _aabb;
+
+        public Mesh<T> Mesh => _mesh;
 
         public IndexedTriangleEngine(int i0, int i1, int i2, Mesh<T> mesh){
             _i0 = i0;

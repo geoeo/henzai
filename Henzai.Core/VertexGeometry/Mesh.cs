@@ -25,6 +25,8 @@ namespace Henzai.Core.VertexGeometry
         /// </summary>
         private readonly ushort[] _validIndices;
         private readonly IndexedTriangleEngine<T>[] _validTriangles;
+        // private readonly Dictionary<ushort, bool> _processedIndicesMap;
+        private Matrix4x4 _world = Matrix4x4.Identity;
 
         /// <summary>
         /// The number of indices that passed the frustum test.
@@ -45,9 +47,8 @@ namespace Henzai.Core.VertexGeometry
         public int VertexCount => _vertices.Length;
         public int IndexCount => _indices.Length;
         public bool IsCulled => ValidIndexCount == 0;
-
-        private Matrix4x4 _world = Matrix4x4.Identity;
         public ref Matrix4x4 World => ref _world;
+        // public Dictionary<ushort, bool> ProcessedIndicesMap => _processedIndicesMap;
 
         public Mesh(T[] vertices)
         {
@@ -67,6 +68,8 @@ namespace Henzai.Core.VertexGeometry
             for(int i = 0; i < VertexCount; i=i+3)
                 _validTriangles[i/3] = new IndexedTriangleEngine<T>(i, i+1, i+2, this);
             ValidTriangleCount = _validTriangles.Length;
+
+            // _processedIndicesMap = new Dictionary<ushort, bool>();
         
         }
 
@@ -93,6 +96,8 @@ namespace Henzai.Core.VertexGeometry
                 _validTriangles[i0/3] = new IndexedTriangleEngine<T>(i0, i1, i2, this);
             }
             ValidTriangleCount = _validTriangles.Length;
+
+            //  _processedIndicesMap = new Dictionary<ushort, bool>();
         }
 
         public void SetNewWorldTransformation(ref Matrix4x4 world){
