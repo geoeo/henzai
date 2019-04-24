@@ -9,45 +9,25 @@ open Henzai.Core.Acceleration
 open System
 
 module Culler =
-    let leftHalfSpaceCheck (plane : byref<Vector4>)
+    let halfSpaceCheck (plane : byref<Vector4>)
         (vertexHomogeneous : byref<Vector4>) =
-        0.0f < Henzai.Core.Numerics.Vector.InMemoryDotProduct
-                   (&plane, &vertexHomogeneous)
-    let rightHalfSpaceCheck (plane : byref<Vector4>)
-        (vertexHomogeneous : byref<Vector4>) =
-        0.0f < Henzai.Core.Numerics.Vector.InMemoryDotProduct
-                   (&plane, &vertexHomogeneous)
-    let topHalfSpaceCheck (plane : byref<Vector4>)
-        (vertexHomogeneous : byref<Vector4>) =
-        0.0f < Henzai.Core.Numerics.Vector.InMemoryDotProduct
-                   (&plane, &vertexHomogeneous)
-    let bottomHalfSpaceCheck (plane : byref<Vector4>)
-        (vertexHomogeneous : byref<Vector4>) =
-        0.0f < Henzai.Core.Numerics.Vector.InMemoryDotProduct
-                   (&plane, &vertexHomogeneous)
-    let nearHalfSpaceCheck (plane : byref<Vector4>)
-        (vertexHomogeneous : byref<Vector4>) =
-        0.0f < Henzai.Core.Numerics.Vector.InMemoryDotProduct
-                   (&plane, &vertexHomogeneous)
-    let farHalfSpaceCheck (plane : byref<Vector4>)
-        (vertexHomogeneous : byref<Vector4>) =
-        0.0f < Henzai.Core.Numerics.Vector.InMemoryDotProduct
-                   (&plane, &vertexHomogeneous)
+        0.0f < Henzai.Core.Numerics.Vector.InMemoryDotProduct(&plane, &vertexHomogeneous)
+
     let IsVertexWithinFrustum (vertex : byref<Vector4>)
         (planeLeft : byref<Vector4>) (planeRight : byref<Vector4>)
         (planeTop : byref<Vector4>) (planeBottom : byref<Vector4>)
         (planeNear : byref<Vector4>) (planeFar : byref<Vector4>) =
-        leftHalfSpaceCheck &planeLeft &vertex
-        && rightHalfSpaceCheck &planeRight &vertex
-        && topHalfSpaceCheck &planeTop &vertex
-        && bottomHalfSpaceCheck &planeBottom &vertex
-        && nearHalfSpaceCheck &planeNear &vertex
-        && farHalfSpaceCheck &planeFar &vertex
+        halfSpaceCheck &planeLeft &vertex
+        && halfSpaceCheck &planeRight &vertex
+        && halfSpaceCheck &planeTop &vertex
+        && halfSpaceCheck &planeBottom &vertex
+        && halfSpaceCheck &planeNear &vertex
+        && halfSpaceCheck &planeFar &vertex
 
     /// <summary>
     /// Culls a <see cref="Henzai.Core.VertexGeometry.Mesh"/> by testing every triangle of the mesh
     /// </summary>
-    let FrustumCullMesh (viewProjectionMatrix : byref<Matrix4x4>)
+    let FrustumCullMesh (worldViewProjectionMatrix : byref<Matrix4x4>)
         (mesh : Henzai.Core.VertexGeometry.Mesh<'T>) =
         //TODO: Profile this thoroughly
         let processedIndicesMap = new Dictionary<uint16,uint16>()
@@ -58,17 +38,17 @@ module Culler =
         let mutable validIndicesCounter = 0us
         let mutable validVertexCounter = 0
         let mutable planeLeft =
-            Geometry.ExtractLeftPlane(&viewProjectionMatrix)
+            Geometry.ExtractLeftPlane(&worldViewProjectionMatrix)
         let mutable planeRight =
-            Geometry.ExtractRightPlane(&viewProjectionMatrix)
+            Geometry.ExtractRightPlane(&worldViewProjectionMatrix)
         let mutable planeTop =
-            Geometry.ExtractTopPlane(&viewProjectionMatrix)
+            Geometry.ExtractTopPlane(&worldViewProjectionMatrix)
         let mutable planeBottom =
-            Geometry.ExtractBottomPlane(&viewProjectionMatrix)
+            Geometry.ExtractBottomPlane(&worldViewProjectionMatrix)
         let mutable planeNear =
-            Geometry.ExtractNearPlane(&viewProjectionMatrix)
+            Geometry.ExtractNearPlane(&worldViewProjectionMatrix)
         let mutable planeFar =
-            Geometry.ExtractFarPlane(&viewProjectionMatrix)
+            Geometry.ExtractFarPlane(&worldViewProjectionMatrix)
         for i in 0..3..indices.Length - 1 do
             let i1 = indices.[i]
             let i2 = indices.[i + 1]
@@ -130,9 +110,6 @@ module Culler =
                 let i1 = indices.[i]
                 let i2 = indices.[i + 1]
                 let i3 = indices.[i + 2]
-                let mutable v1 = vertices.[int i1].GetPosition()
-                let mutable v2 = vertices.[int i2].GetPosition()
-                let mutable v3 = vertices.[int i3].GetPosition()
                 if (not (processedIndicesMap.ContainsKey(i1))) then
                     processedIndicesMap.Add(i1, (uint16)validVertexCounter)
                     validVertices.[validVertexCounter] <- vertices.[int i1]
