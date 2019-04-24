@@ -102,7 +102,6 @@ module Culler =
                 validIndicesCounter <- validIndicesCounter + 1
         mesh.ValidIndexCount <- validIndicesCounter
         mesh.ValidVertexCount <- validVertexCounter
-        mesh.ValidTriangleCount <- validIndicesCounter / 3
         ()
 
     let rec processInteriorNodeForCulling (runtimeNodeIndex : int) (bvhArray : BVHRuntimeNode[]) (orderedPrimitives : IndexedTriangleEngine<'T>[]) =
@@ -144,7 +143,6 @@ module Culler =
                 validIndicesCounter <- validIndicesCounter + 1
             mesh.ValidIndexCount <- validIndicesCounter
             mesh.ValidVertexCount <- validVertexCounter
-            mesh.ValidTriangleCount <- validIndicesCounter / 3
             ()
         else
             let leftChildIndex = runtimeNodeIndex+1
@@ -156,8 +154,8 @@ module Culler =
     /// <summary>
     /// Culls a list of <see cref="Henzai.Core.Acceleration.IndexedTriangleEngine"/> with the camera view frustum
     /// </summary>
-    let FrustumCullBVH (bvhArray : BVHRuntimeNode[], orderedPrimitives : IndexedTriangleEngine<'T>[],nodesToVisit : int[], viewProjectionMatrix : byref<Matrix4x4>) =
-        let indices = BVHRuntime.TraverseWithFrustum(bvhArray,orderedPrimitives,nodesToVisit, &viewProjectionMatrix)
+    let FrustumCullBVH (bvhArray : BVHRuntimeNode[], orderedPrimitives : IndexedTriangleEngine<'T>[],nodesToVisit : int[], worldViewProjectionMatrix : byref<Matrix4x4>) =
+        let indices = BVHRuntime.TraverseWithFrustum(bvhArray, orderedPrimitives,nodesToVisit, &worldViewProjectionMatrix)
         match indices with
         | struct(-1, -1) -> ()
         | struct(indexA, -1) -> processInteriorNodeForCulling indexA bvhArray orderedPrimitives

@@ -38,13 +38,19 @@ namespace Henzai.Core.VertexGeometry
         /// Gives the blit range of <see cref="culledVerticies"/>
         /// </summary>
         public int ValidVertexCount {get; set;}
-        public int ValidTriangleCount {get; set;}
+        public int TriangleCount => _triangles.Length;
         public T[] Vertices => _vertices;
         public ushort[] Indices => _indices;
         public T[] ValidVertices => _validVertices;
         public ushort[] ValidIndices => _validIndices;
         public IndexedTriangleEngine<T>[] Triangles => _triangles;
+        /// <summary>
+        /// Disclaimer: In general you want ValidVertexCount
+        /// </summary>
         public int VertexCount => _vertices.Length;
+        /// <summary>
+        /// Disclaimer: In general you want ValidIndexCount
+        /// </summary>
         public int IndexCount => _indices.Length;
         public bool IsCulled => ValidIndexCount == 0;
         public ref Matrix4x4 World => ref _world;
@@ -64,10 +70,9 @@ namespace Henzai.Core.VertexGeometry
             ValidIndexCount = 0;
             _validIndices = null;
 
-            _triangles = new IndexedTriangleEngine<T>[IndexCount/3];
+            _triangles = new IndexedTriangleEngine<T>[VertexCount/3];
             for(int i = 0; i < VertexCount; i+=3)
                 _triangles[i/3] = new IndexedTriangleEngine<T>(i, i+1, i+2, this);
-            ValidTriangleCount = _triangles.Length;
 
             // _processedIndicesMap = new Dictionary<ushort, bool>();
         
@@ -95,7 +100,6 @@ namespace Henzai.Core.VertexGeometry
                 var i2 = _indices[i+2];  
                 _triangles[i/3] = new IndexedTriangleEngine<T>(i0, i1, i2, this);
             }
-            ValidTriangleCount = _triangles.Length;
 
             //  _processedIndicesMap = new Dictionary<ushort, bool>();
         }

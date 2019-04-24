@@ -13,6 +13,7 @@ namespace Henzai.Core.Acceleration
         private readonly Mesh<T> _mesh;
         private readonly AABB _aabb;
 
+        //TODO: Once we start inserting/removing models at runtime this has to check for null
         public Mesh<T> Mesh => _mesh;
 
         public IndexedTriangleEngine(int i0, int i1, int i2, Mesh<T> mesh){
@@ -21,7 +22,6 @@ namespace Henzai.Core.Acceleration
             _i2 = i2;
             _mesh = mesh;
             
-            //TODO: Might have to apply the World transform aswell!!
             var vertices = mesh.Vertices;
             var v0 = vertices[_i0].GetPosition();
             var v1 = vertices[_i1].GetPosition();

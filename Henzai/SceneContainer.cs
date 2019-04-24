@@ -23,14 +23,32 @@ namespace Henzai
         public void ChangeBackend(GraphicsBackend graphicsBackend){
             Sdl2Window contextWindow = scene.ContextWindow;
             scene.Dispose();
-            createScene(graphicsBackend,contextWindow);
+            createScene(graphicsBackend, contextWindow);
         }
 
         protected void BuildBVH(ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] modelPNTTBDescriptorArray,ModelRuntimeDescriptor<VertexPositionNormal>[] modelPNDescriptorArray,ModelRuntimeDescriptor<VertexPositionTexture>[] modelPTDescriptorArray, ModelRuntimeDescriptor<VertexPositionColor>[] modelPCDescriptorArray, ModelRuntimeDescriptor<VertexPosition>[] modelPDescriptorArray){
+            var allTrianglesCount = 0;
+            foreach(var modelDescriptor in modelPNTTBDescriptorArray)
+                allTrianglesCount += modelDescriptor.Model.TotalTriangleCount;
+
+            var allBVHTriangles = new IndexedTriangleEngine<VertexPositionNormalTextureTangentBitangent>[allTrianglesCount];
+
+            var index = 0;
+            foreach(var modelDescriptor in modelPNTTBDescriptorArray){
+                var model = modelDescriptor.Model;
+                var meshCount = model.MeshCount;
+                for(int i = 0; i < meshCount; i++){
+                    
+                    var mesh = model.GetMesh(i);
+                    var triangles = mesh.Triangles;
+                    triangles.CopyTo(allBVHTriangles,index);
+                    index += mesh.TriangleCount;
+                }
+            }
+
             var bvhTriangles = modelPNTTBDescriptorArray[0].Model.GetMesh(0).Triangles;
             var t = BVHTreeBuilder<IndexedTriangleEngine<VertexPositionNormalTextureTangentBitangent>>.Build(bvhTriangles, SplitMethods.SAH);
         }
-
 
         protected void EnableCulling(float deltaTime, GraphicsDevice graphicsDevice, CommandList commandList, Camera camera, ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] modelPNTTBDescriptorArray,ModelRuntimeDescriptor<VertexPositionNormal>[] modelPNDescriptorArray,ModelRuntimeDescriptor<VertexPositionTexture>[] modelPTDescriptorArray, ModelRuntimeDescriptor<VertexPositionColor>[] modelPCDescriptorArray, ModelRuntimeDescriptor<VertexPosition>[] modelPDescriptorArray){
 

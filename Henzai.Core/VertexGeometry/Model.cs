@@ -17,6 +17,7 @@ namespace Henzai.Core
 
         public int MeshCount => _meshes.Length;
         public int MaterialCount => _materials.Length;
+        public int TotalTriangleCount {get; private set;}
         /// <summary>
         /// This returns the material associated with a mesh.
         /// It can be indexed via the mesh index
@@ -34,6 +35,8 @@ namespace Henzai.Core
             BaseDir = directory;
             _meshes = meshes;
             _materials = materials;
+
+            TotalTriangleCount = CalculateTotalValidTriangles(meshes);
         }
 
         public Model(Mesh<T>[] meshesIn, U[] materials)
@@ -41,6 +44,8 @@ namespace Henzai.Core
             BaseDir = string.Empty;
             _meshes = meshesIn;
             _materials = materials;
+
+            TotalTriangleCount = CalculateTotalValidTriangles(meshesIn);
         }
 
         public Model(string directoy, Mesh<T> meshIn, U material)
@@ -51,11 +56,23 @@ namespace Henzai.Core
 
             _materials = new U[1];
             _materials[0] = material;
+
+            TotalTriangleCount = meshIn.TriangleCount;
         }
 
         public Mesh<T> GetMesh(int index)
         {
             return _meshes[index];
+        }
+
+        public bool IsCulled(){
+            bool isCulled = true;
+            foreach(var mesh in _meshes)
+                if(!mesh.IsCulled){
+                    isCulled = false;
+                    break;
+                }
+            return isCulled;
         }
 
         public void SetNewWorldTransformation(ref Matrix4x4 world, bool applyToAllMeshes)
@@ -102,6 +119,13 @@ namespace Henzai.Core
                 raytraceMaterials[i] = new RaytraceMaterial(diffuse, emissive);
             }
             return new Model<T, RaytraceMaterial>(rtModel._meshes, raytraceMaterials);
+        }
+
+        private static int CalculateTotalValidTriangles(Mesh<T>[] meshes){
+            var total = 0;
+            foreach(var mesh in meshes)
+                total += mesh.TriangleCount;
+            return total;
         }
     }
 }

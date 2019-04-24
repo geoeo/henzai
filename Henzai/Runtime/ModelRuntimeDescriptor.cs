@@ -10,7 +10,6 @@ namespace Henzai.Runtime
 {
     public sealed class ModelRuntimeDescriptor<T> where T : struct, VertexLocateable
     {
-
         /// <summary>
         /// Used During Resource Creation
         /// </summary>
@@ -65,8 +64,8 @@ namespace Henzai.Runtime
         public VertexRuntimeTypes VertexRuntimeType {get; private set;}
         public PrimitiveTopology PrimitiveTopology {get; private set;}
         public uint TotalInstanceCount{get;set;}
-        public bool IsCulled {get; set;}
-
+        public int TotalMeshCount {get; private set;}
+        public bool IsCulled => Model.IsCulled();
         public event Func<VertexLayoutDescription> CallVertexLayoutGeneration;
         public event Func<VertexLayoutDescription> CallVertexInstanceLayoutGeneration;
         public event Func<DisposeCollectorResourceFactory,Sampler> CallSamplerGeneration;
@@ -88,8 +87,6 @@ namespace Henzai.Runtime
 
             VertexRuntimeType = vertexRuntimeType;
             PrimitiveTopology = primitiveTopology;
-
-            IsCulled = false;
 
             VertexBufferList = new List<DeviceBuffer>();
             IndexBufferList = new List<DeviceBuffer>();

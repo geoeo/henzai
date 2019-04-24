@@ -189,8 +189,7 @@ type BVHRuntime private() =
                         for j in 0..nPrims-1 do
                             let mesh = orderedPrimitives.[offset+j].Mesh
                             mesh.ValidIndexCount <- 0
-                            mesh.ValidVertexCount <- 0
-                            mesh.ValidTriangleCount <- 0           
+                            mesh.ValidVertexCount <- 0          
         validNodeStack
 
 
