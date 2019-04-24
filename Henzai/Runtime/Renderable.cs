@@ -257,6 +257,9 @@ namespace Henzai.Runtime
                         _modelPCDescriptorArray,
                         _modelPDescriptorArray);
 
+                    // blocking wait for delegates as they may submit to the command buffer
+                    _graphicsDevice.WaitForIdle();
+
                     buildCommandListTasks[0] = Task.Run(() => this.BuildCommandList());
                     for (int i = 0; i < _allChildren.Count; i++)
                     {
