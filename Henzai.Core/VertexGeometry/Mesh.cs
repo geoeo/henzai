@@ -65,7 +65,7 @@ namespace Henzai.Core.VertexGeometry
             _validIndices = null;
 
             _triangles = new IndexedTriangleEngine<T>[IndexCount/3];
-            for(int i = 0; i < VertexCount-1; i+=3)
+            for(int i = 0; i < VertexCount; i+=3)
                 _triangles[i/3] = new IndexedTriangleEngine<T>(i, i+1, i+2, this);
             ValidTriangleCount = _triangles.Length;
 
@@ -89,7 +89,7 @@ namespace Henzai.Core.VertexGeometry
             ValidIndexCount = indices.Length;
 
             _triangles = new IndexedTriangleEngine<T>[IndexCount/3];
-            for(int i = 0; i < IndexCount-1; i+=3){
+            for(int i = 0; i < IndexCount; i+=3){
                 var i0 = _indices[i];
                 var i1 = _indices[i+1];
                 var i2 = _indices[i+2];  
