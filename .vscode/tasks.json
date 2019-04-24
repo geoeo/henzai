@@ -217,10 +217,10 @@
             "problemMatcher":"$msCompile"
         },
         {
-            "label": "run raytracer",
+            "label": "run raytracer (Release)",
             "type": "shell",
             "group": "build",
-            "command": "dotnet run --project Raytracer/",
+            "command": "dotnet run --project Raytracer/ -c Release",
             "problemMatcher":"$msCompile"
         }
     ]
