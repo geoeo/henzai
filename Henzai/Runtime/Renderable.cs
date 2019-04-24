@@ -359,8 +359,9 @@ namespace Henzai.Runtime
                     _graphicsDevice.UpdateBuffer(instancingBuffer, 0, instancingData.Positions);
                 }
 
-                _graphicsDevice.UpdateBuffer<T>(vertexBuffer, 0, ref mesh.Vertices[0], (vertexSizeInBytes * mesh.ValidVertexCount).ToUnsigned());
-                _graphicsDevice.UpdateBuffer<ushort>(indexBuffer, 0, ref mesh.Indices[0], (sizeof(ushort) * mesh.ValidIndexCount).ToUnsigned());
+                //TODO: Maybe refactor this to support culling better
+                _graphicsDevice.UpdateBuffer<T>(vertexBuffer, 0, ref mesh.ValidVertices[0], (vertexSizeInBytes * mesh.ValidVertexCount).ToUnsigned());
+                _graphicsDevice.UpdateBuffer<ushort>(indexBuffer, 0, ref mesh.ValidIndices[0], (sizeof(ushort) * mesh.ValidIndexCount).ToUnsigned());
 
                 var resourceSet = modelDescriptor.InvokeTextureResourceSetGeneration(i, _factory, _graphicsDevice);
                 if (resourceSet != null)

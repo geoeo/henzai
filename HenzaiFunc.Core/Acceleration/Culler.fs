@@ -6,6 +6,7 @@ open Henzai.Core.Numerics
 open Henzai.Core.VertexGeometry
 open HenzaiFunc.Core.Types
 open Henzai.Core.Acceleration
+open System
 
 module Culler =
     let leftHalfSpaceCheck (plane : byref<Vector4>)
@@ -49,12 +50,12 @@ module Culler =
     let FrustumCullMesh (viewProjectionMatrix : byref<Matrix4x4>)
         (mesh : Henzai.Core.VertexGeometry.Mesh<'T>) =
         //TODO: Profile this thoroughly
-        let processedIndicesMap = new Dictionary<uint16,bool>()
+        let processedIndicesMap = new Dictionary<uint16,uint16>()
         let vertices = mesh.Vertices
         let indices = mesh.Indices
         let validVertices = mesh.ValidVertices
         let validIndices = mesh.ValidIndices
-        let mutable validIndicesCounter = 0
+        let mutable validIndicesCounter = 0us
         let mutable validVertexCounter = 0
         let mutable planeLeft =
             Geometry.ExtractLeftPlane(&viewProjectionMatrix)
@@ -83,24 +84,30 @@ module Culler =
                 || IsVertexWithinFrustum &v3 &planeLeft &planeRight &planeTop
                        &planeBottom &planeNear &planeFar) then
                 if (not (processedIndicesMap.ContainsKey(i1))) then
+                    processedIndicesMap.Add(i1, (uint16)validVertexCounter)
                     validVertices.[validVertexCounter] <- vertices.[int i1]
+                    validIndices.[(int)validIndicesCounter] <- (uint16)validVertexCounter
                     validVertexCounter <- validVertexCounter + 1
-                    processedIndicesMap.Add(i1, true)
-                validIndices.[validIndicesCounter] <- i1
-                validIndicesCounter <- validIndicesCounter + 1
+                else
+                    validIndices.[(int)validIndicesCounter] <- processedIndicesMap.Item(i1)
+                validIndicesCounter <- validIndicesCounter + 1us
                 if (not (processedIndicesMap.ContainsKey(i2))) then
+                    processedIndicesMap.Add(i2, (uint16)validVertexCounter)
                     validVertices.[validVertexCounter] <- vertices.[int i2]
+                    validIndices.[(int)validIndicesCounter] <- (uint16)validVertexCounter
                     validVertexCounter <- validVertexCounter + 1
-                    processedIndicesMap.Add(i2, true)
-                validIndices.[validIndicesCounter] <- i2
-                validIndicesCounter <- validIndicesCounter + 1
+                else
+                    validIndices.[(int)validIndicesCounter] <- processedIndicesMap.Item(i2)
+                validIndicesCounter <- validIndicesCounter + 1us
                 if (not (processedIndicesMap.ContainsKey(i3))) then
+                    processedIndicesMap.Add(i3, (uint16)validVertexCounter)
                     validVertices.[validVertexCounter] <- vertices.[int i3]
+                    validIndices.[(int)validIndicesCounter] <- (uint16)validVertexCounter
                     validVertexCounter <- validVertexCounter + 1
-                    processedIndicesMap.Add(i3, true)
-                validIndices.[validIndicesCounter] <- i3
-                validIndicesCounter <- validIndicesCounter + 1
-        mesh.ValidIndexCount <- validIndicesCounter
+                else
+                    validIndices.[(int)validIndicesCounter] <- processedIndicesMap.Item(i3)
+                validIndicesCounter <- validIndicesCounter + 1us
+        mesh.ValidIndexCount <- (int)validIndicesCounter
         mesh.ValidVertexCount <- validVertexCounter
         ()
 
@@ -111,37 +118,46 @@ module Culler =
             let primitiveOffset = runtimeNode.leafNode.primitivesOffset
             for j in 0..nPrimitives-1 do
             let mesh = orderedPrimitives.[primitiveOffset+j].Mesh
-            let processedIndicesMap = new Dictionary<uint16,bool>()
+            let processedIndicesMap = new Dictionary<uint16,uint16>()
             let vertices = mesh.Vertices
             let indices = mesh.Indices
             let validVertices = mesh.ValidVertices
             let validIndices = mesh.ValidIndices
-            let mutable validIndicesCounter = 0
+            let mutable validIndicesCounter = 0us
             let mutable validVertexCounter = 0
             // Every vertex in Intersecting or Inside
-            for i in 0..3..indices.Length - 1 do
+            for i in 0..3..indices.Length-1 do
                 let i1 = indices.[i]
                 let i2 = indices.[i + 1]
                 let i3 = indices.[i + 2]
+                let mutable v1 = vertices.[int i1].GetPosition()
+                let mutable v2 = vertices.[int i2].GetPosition()
+                let mutable v3 = vertices.[int i3].GetPosition()
                 if (not (processedIndicesMap.ContainsKey(i1))) then
+                    processedIndicesMap.Add(i1, (uint16)validVertexCounter)
                     validVertices.[validVertexCounter] <- vertices.[int i1]
+                    validIndices.[(int)validIndicesCounter] <- (uint16)validVertexCounter
                     validVertexCounter <- validVertexCounter + 1
-                    processedIndicesMap.Add(i1, true)
-                validIndices.[validIndicesCounter] <- i1
-                validIndicesCounter <- validIndicesCounter + 1
+                else
+                    validIndices.[(int)validIndicesCounter] <- processedIndicesMap.Item(i1)
+                validIndicesCounter <- validIndicesCounter + 1us
                 if (not (processedIndicesMap.ContainsKey(i2))) then
+                    processedIndicesMap.Add(i2, (uint16)validVertexCounter)
                     validVertices.[validVertexCounter] <- vertices.[int i2]
+                    validIndices.[(int)validIndicesCounter] <- (uint16)validVertexCounter
                     validVertexCounter <- validVertexCounter + 1
-                    processedIndicesMap.Add(i2, true)
-                validIndices.[validIndicesCounter] <- i2
-                validIndicesCounter <- validIndicesCounter + 1
+                else
+                    validIndices.[(int)validIndicesCounter] <- processedIndicesMap.Item(i2)
+                validIndicesCounter <- validIndicesCounter + 1us
                 if (not (processedIndicesMap.ContainsKey(i3))) then
+                    processedIndicesMap.Add(i3, (uint16)validVertexCounter)
                     validVertices.[validVertexCounter] <- vertices.[int i3]
+                    validIndices.[(int)validIndicesCounter] <- (uint16)validVertexCounter
                     validVertexCounter <- validVertexCounter + 1
-                    processedIndicesMap.Add(i3, true)
-                validIndices.[validIndicesCounter] <- i3
-                validIndicesCounter <- validIndicesCounter + 1
-            mesh.ValidIndexCount <- validIndicesCounter
+                else
+                    validIndices.[(int)validIndicesCounter] <- processedIndicesMap.Item(i3)
+                validIndicesCounter <- validIndicesCounter + 1us
+            mesh.ValidIndexCount <- (int)validIndicesCounter
             mesh.ValidVertexCount <- validVertexCounter
             ()
         else
