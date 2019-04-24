@@ -24,7 +24,7 @@ namespace Henzai.Core.VertexGeometry
         /// The array may be larger than actual index count.
         /// </summary>
         private readonly ushort[] _validIndices;
-        private readonly IndexedTriangleEngine<T>[] _validTriangles;
+        private readonly IndexedTriangleEngine<T>[] _triangles;
         // private readonly Dictionary<ushort, bool> _processedIndicesMap;
         private Matrix4x4 _world = Matrix4x4.Identity;
 
@@ -43,7 +43,7 @@ namespace Henzai.Core.VertexGeometry
         public ushort[] Indices => _indices;
         public T[] ValidVertices => _validVertices;
         public ushort[] ValidIndices => _validIndices;
-        public IndexedTriangleEngine<T>[] ValidTriangles => _validTriangles;
+        public IndexedTriangleEngine<T>[] Triangles => _triangles;
         public int VertexCount => _vertices.Length;
         public int IndexCount => _indices.Length;
         public bool IsCulled => ValidIndexCount == 0;
@@ -64,10 +64,10 @@ namespace Henzai.Core.VertexGeometry
             ValidIndexCount = 0;
             _validIndices = null;
 
-            _validTriangles = new IndexedTriangleEngine<T>[IndexCount/3];
-            for(int i = 0; i < VertexCount; i=i+3)
-                _validTriangles[i/3] = new IndexedTriangleEngine<T>(i, i+1, i+2, this);
-            ValidTriangleCount = _validTriangles.Length;
+            _triangles = new IndexedTriangleEngine<T>[IndexCount/3];
+            for(int i = 0; i < VertexCount-1; i+=3)
+                _triangles[i/3] = new IndexedTriangleEngine<T>(i, i+1, i+2, this);
+            ValidTriangleCount = _triangles.Length;
 
             // _processedIndicesMap = new Dictionary<ushort, bool>();
         
@@ -88,14 +88,14 @@ namespace Henzai.Core.VertexGeometry
             Buffer.BlockCopy(indices, 0, _validIndices, 0, indices.Length * sizeof(ushort));
             ValidIndexCount = indices.Length;
 
-            _validTriangles = new IndexedTriangleEngine<T>[IndexCount/3];
-            for(int i = 0; i < IndexCount; i+=3){
+            _triangles = new IndexedTriangleEngine<T>[IndexCount/3];
+            for(int i = 0; i < IndexCount-1; i+=3){
                 var i0 = _indices[i];
                 var i1 = _indices[i+1];
                 var i2 = _indices[i+2];  
-                _validTriangles[i0/3] = new IndexedTriangleEngine<T>(i0, i1, i2, this);
+                _triangles[i/3] = new IndexedTriangleEngine<T>(i0, i1, i2, this);
             }
-            ValidTriangleCount = _validTriangles.Length;
+            ValidTriangleCount = _triangles.Length;
 
             //  _processedIndicesMap = new Dictionary<ushort, bool>();
         }

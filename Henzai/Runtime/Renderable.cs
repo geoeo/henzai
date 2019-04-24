@@ -58,9 +58,11 @@ namespace Henzai.Runtime
         // /// Bind Actions that have to be executed prior to entering the render loop
         // /// </summary>
         public event Action PreRenderLoop;
+        public event Action<ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[], ModelRuntimeDescriptor<VertexPositionNormal>[], ModelRuntimeDescriptor<VertexPositionTexture>[], ModelRuntimeDescriptor<VertexPositionColor>[], ModelRuntimeDescriptor<VertexPosition>[]> PreRender_Models;
         /// <summary>
         /// Bind Actions that have to be executed prior to every draw call
         /// </summary>
+        //TODO: Maybe unify some
         public event Action<float> PreDraw;
         public event Action<float, InputSnapshot> PreDraw_Time_Input;
         public event Action<float, GraphicsDevice, CommandList, Camera, ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[], ModelRuntimeDescriptor<VertexPositionNormal>[], ModelRuntimeDescriptor<VertexPositionTexture>[], ModelRuntimeDescriptor<VertexPositionColor>[], ModelRuntimeDescriptor<VertexPosition>[]> PreDraw_Time_GraphicsDevice_CommandList_Camera_Models;
@@ -225,6 +227,7 @@ namespace Henzai.Runtime
             drawTasksPost = new Task[_childrenPost.Count];
 
             PreRenderLoop?.Invoke();
+            PreRender_Models?.Invoke(_modelPNTTBDescriptorArray,_modelPNDescriptorArray,_modelPTDescriptorArray,_modelPCDescriptorArray,_modelPDescriptorArray);
             while (_contextWindow.Exists)
             {
                 _frameTimer.Start();

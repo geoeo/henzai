@@ -21,6 +21,7 @@ namespace Henzai.Core.Acceleration
             _i2 = i2;
             _mesh = mesh;
             
+            //TODO: Might have to apply the World transform aswell!!
             var vertices = mesh.Vertices;
             var v0 = vertices[_i0].GetPosition();
             var v1 = vertices[_i1].GetPosition();

@@ -153,7 +153,9 @@ module Culler =
             processInteriorNodeForCulling rightChildIndex bvhArray orderedPrimitives
             ()
 
-
+    /// <summary>
+    /// Culls a list of <see cref="Henzai.Core.Acceleration.IndexedTriangleEngine"/> with the camera view frustum
+    /// </summary>
     let FrustumCullBVH (bvhArray : BVHRuntimeNode[], orderedPrimitives : IndexedTriangleEngine<'T>[],nodesToVisit : int[], viewProjectionMatrix : byref<Matrix4x4>) =
         let indices = BVHRuntime.TraverseWithFrustum(bvhArray,orderedPrimitives,nodesToVisit, &viewProjectionMatrix)
         match indices with

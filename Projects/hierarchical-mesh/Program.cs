@@ -1,14 +1,21 @@
 ﻿using System;
 using Henzai;
 using Veldrid;
+using Veldrid.Sdl2;
 using Henzai.UI;
 
 namespace Henzai.Examples
 {
-    internal class Program
+    internal class Program : SceneContainer
     {
         static void Main(string[] args)
         {
+            Program programm = new Program();
+            programm.createScene(GraphicsBackend.Metal);
+        }
+
+        public override void createScene(GraphicsBackend graphicsBackend, Sdl2Window contextWindow = null){
+            
             Resolution renderResolution = new Resolution(960,540);
             Resolution windowSize = new Resolution(960,540);
             GraphicsDeviceOptions gdOptions = new GraphicsDeviceOptions()
@@ -36,8 +43,11 @@ namespace Henzai.Examples
                 rdOptions
             );
 
+
             SimpleGUIOverlay gui = new SimpleGUIOverlay(scene.GraphicsDevice,scene.ContextWindow);
             gui.SetOverlayFor(scene);
+
+            scene.PreRender_Models += BuildBVH;
 
             scene.Run(renderResolution);
         }

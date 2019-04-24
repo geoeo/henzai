@@ -1,6 +1,8 @@
 using Veldrid;
 using Veldrid.Sdl2;
+using HenzaiFunc.Core.Types;
 using HenzaiFunc.Core.Acceleration;
+using Henzai.Core.Acceleration;
 using Henzai.Core.Extensions;
 using Henzai.UI;
 using Henzai.Runtime;
@@ -12,6 +14,9 @@ namespace Henzai
     {
         protected static Renderable scene;
         protected static UserInterface  gui;
+        private BVHTree _bvhTree;
+        private VertexPositionNormalTextureTangentBitangent[] _PNTTBOrdered;
+
 
         public abstract void createScene(GraphicsBackend graphicsBackend, Sdl2Window contextWindow = null);
 
@@ -21,8 +26,13 @@ namespace Henzai
             createScene(graphicsBackend,contextWindow);
         }
 
-        //TODO: Way too slow, needs bounding boxes
-            protected void EnableCulling(float deltaTime, GraphicsDevice graphicsDevice, CommandList commandList, Camera camera, ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] modelPNTTBDescriptorArray,ModelRuntimeDescriptor<VertexPositionNormal>[] modelPNDescriptorArray,ModelRuntimeDescriptor<VertexPositionTexture>[] modelPTDescriptorArray, ModelRuntimeDescriptor<VertexPositionColor>[] modelPCDescriptorArray, ModelRuntimeDescriptor<VertexPosition>[] modelPDescriptorArray){
+        protected void BuildBVH(ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] modelPNTTBDescriptorArray,ModelRuntimeDescriptor<VertexPositionNormal>[] modelPNDescriptorArray,ModelRuntimeDescriptor<VertexPositionTexture>[] modelPTDescriptorArray, ModelRuntimeDescriptor<VertexPositionColor>[] modelPCDescriptorArray, ModelRuntimeDescriptor<VertexPosition>[] modelPDescriptorArray){
+            var bvhTriangles = modelPNTTBDescriptorArray[0].Model.GetMesh(0).Triangles;
+            var t = BVHTreeBuilder<IndexedTriangleEngine<VertexPositionNormalTextureTangentBitangent>>.Build(bvhTriangles, SplitMethods.SAH);
+        }
+
+
+        protected void EnableCulling(float deltaTime, GraphicsDevice graphicsDevice, CommandList commandList, Camera camera, ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] modelPNTTBDescriptorArray,ModelRuntimeDescriptor<VertexPositionNormal>[] modelPNDescriptorArray,ModelRuntimeDescriptor<VertexPositionTexture>[] modelPTDescriptorArray, ModelRuntimeDescriptor<VertexPositionColor>[] modelPCDescriptorArray, ModelRuntimeDescriptor<VertexPosition>[] modelPDescriptorArray){
 
             foreach(var modelDescriptor in modelPNTTBDescriptorArray){
                 var model = modelDescriptor.Model;
@@ -132,7 +142,7 @@ namespace Henzai
             }
 
             commandList.End();
-        }
+    }
 
     }
 }
