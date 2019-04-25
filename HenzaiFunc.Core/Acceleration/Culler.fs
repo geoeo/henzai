@@ -12,6 +12,45 @@ module Culler =
         (vertexHomogeneous : byref<Vector4>) =
         0.0f < Henzai.Core.Numerics.Vector.InMemoryDotProduct(&plane, &vertexHomogeneous)
 
+    let isLineIntersectionPlane (v : byref<Vector4>) (d : byref<Vector4>) (plane : byref<Vector4>) =
+        let a = plane.X
+        let b = plane.Y
+        let c = plane.Z
+        let denom = a*d.X + b*d.Y + c*d.Z
+        let num = - (a*v.X + b*v.Y + c*v.Z + plane.W)
+        match (denom,num) with 
+        | (d,_) when d = 0.0f -> false
+        | (d,n) when n/d <= 0.0f -> true
+        | _ -> true
+
+    // Works but too expensive
+    let AreVerticesIntersectingFrustum (v1 : byref<Vector4>) (v2 : byref<Vector4>) (v3 : byref<Vector4>)
+        (planeLeft : byref<Vector4>) (planeRight : byref<Vector4>)
+        (planeTop : byref<Vector4>) (planeBottom : byref<Vector4>)
+        (planeNear : byref<Vector4>) (planeFar : byref<Vector4>) =
+        let mutable l1 = v2 - v1
+        let mutable l2 = v3 - v2
+        let mutable l3 = v1 - v3
+        isLineIntersectionPlane &v1 &l1 &planeLeft ||
+        isLineIntersectionPlane &v1 &l1 &planeRight ||
+        isLineIntersectionPlane &v1 &l1 &planeTop ||
+        isLineIntersectionPlane &v1 &l1 &planeBottom ||
+        isLineIntersectionPlane &v1 &l1 &planeNear ||
+        isLineIntersectionPlane &v1 &l1 &planeFar ||
+        isLineIntersectionPlane &v2 &l2 &planeLeft ||
+        isLineIntersectionPlane &v2 &l2 &planeRight ||
+        isLineIntersectionPlane &v2 &l2 &planeTop ||
+        isLineIntersectionPlane &v2 &l2 &planeBottom ||
+        isLineIntersectionPlane &v2 &l2 &planeNear ||
+        isLineIntersectionPlane &v2 &l2 &planeFar ||
+        isLineIntersectionPlane &v3 &l3 &planeLeft ||
+        isLineIntersectionPlane &v3 &l3 &planeRight ||
+        isLineIntersectionPlane &v3 &l3 &planeTop ||
+        isLineIntersectionPlane &v3 &l3 &planeBottom ||
+        isLineIntersectionPlane &v3 &l3 &planeNear ||
+        isLineIntersectionPlane &v3 &l3 &planeFar
+
+
     let IsVertexWithinFrustum (vertex : byref<Vector4>)
         (planeLeft : byref<Vector4>) (planeRight : byref<Vector4>)
         (planeTop : byref<Vector4>) (planeBottom : byref<Vector4>)
@@ -41,14 +80,14 @@ module Culler =
         let validIndices = mesh.ValidIndices
         let mutable validIndicesCounter = 0us
         let mutable validVertexCounter = 0
-        // let mutable planeLeft =
-        //     Geometry.ExtractLeftPlane(&worldViewProjectionMatrix)
-        // let mutable planeRight =
-        //     Geometry.ExtractRightPlane(&worldViewProjectionMatrix)
-        // let mutable planeTop =
-        //     Geometry.ExtractTopPlane(&worldViewProjectionMatrix)
-        // let mutable planeBottom =
-        //     Geometry.ExtractBottomPlane(&worldViewProjectionMatrix)
+        let mutable planeLeft =
+            Geometry.ExtractLeftPlane(&worldViewProjectionMatrix)
+        let mutable planeRight =
+            Geometry.ExtractRightPlane(&worldViewProjectionMatrix)
+        let mutable planeTop =
+            Geometry.ExtractTopPlane(&worldViewProjectionMatrix)
+        let mutable planeBottom =
+            Geometry.ExtractBottomPlane(&worldViewProjectionMatrix)
         let mutable planeNear =
             Geometry.ExtractNearPlane(&worldViewProjectionMatrix)
         let mutable planeFar =
@@ -65,8 +104,8 @@ module Culler =
             let mutable v3 = vertex3.GetPosition()
             // If at least one vertex is within the frustum, the triangle is not culled.
             if (IsVertexWithinNearFarFrustum &v1 &planeNear &planeFar
-                || IsVertexWithinNearFarFrustum &v2 &planeNear &planeFar
-                || IsVertexWithinNearFarFrustum &v3 &planeNear &planeFar) then
+                && IsVertexWithinNearFarFrustum &v2 &planeNear &planeFar
+                && IsVertexWithinNearFarFrustum &v3 &planeNear &planeFar) then
                 if (not (processedIndicesMap.ContainsKey(i1))) then
                     processedIndicesMap.Add(i1, (uint16)validVertexCounter)
                     validVertices.[validVertexCounter] <- vertex1
