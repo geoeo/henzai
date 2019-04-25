@@ -50,10 +50,10 @@ namespace Henzai
             var t = BVHTreeBuilder<IndexedTriangleEngine<VertexPositionNormalTextureTangentBitangent>>.Build(bvhTriangles, SplitMethods.SAH);
         }
 
-        // Very slow
         protected void EnableCulling(float deltaTime, GraphicsDevice graphicsDevice, CommandList commandList, Camera camera, ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] modelPNTTBDescriptorArray,ModelRuntimeDescriptor<VertexPositionNormal>[] modelPNDescriptorArray,ModelRuntimeDescriptor<VertexPositionTexture>[] modelPTDescriptorArray, ModelRuntimeDescriptor<VertexPositionColor>[] modelPCDescriptorArray, ModelRuntimeDescriptor<VertexPosition>[] modelPDescriptorArray){
-
-            commandList.Begin();
+            var updateBuffers = false;
+            if (updateBuffers)
+                commandList.Begin();
 
             foreach(var modelDescriptor in modelPNTTBDescriptorArray){
                 var model = modelDescriptor.Model;
@@ -66,22 +66,30 @@ namespace Henzai
                     var indexBuffer = modelDescriptor.IndexBuffers[i];
                     var mesh = model.GetMesh(i);
                     var worldMatrix = mesh.World;
-                    mesh.CleanIndices.CopyTo(mesh.ValidIndices,0);
-                    mesh.CleanVertices.CopyTo(mesh.ValidVertices,0);
 
                     var MVP = worldMatrix*camera.ViewProjectionMatirx;
+
+                    if(updateBuffers){
+                        mesh.CleanIndices.CopyTo(mesh.ValidIndices,0);
+                        mesh.CleanVertices.CopyTo(mesh.ValidVertices,0);
+                    }
+
                     Culler.FrustumCullMesh(ref MVP, mesh);
+
+                    if(updateBuffers){
                     
-                    uint vertexBytesToCopy = (vertexSizeInBytes* mesh.ValidVertexCount).ToUnsigned();
-                    uint indexBytesToCopy = (sizeof(ushort)*mesh.ValidIndexCount).ToUnsigned();
-                    uint allIndexBytesToCopy = (sizeof(ushort)*mesh.IndexCount).ToUnsigned();
-                    uint allVertexBytesToCopy = (vertexSizeInBytes*mesh.VertexCount).ToUnsigned();
+                        uint vertexBytesToCopy = (vertexSizeInBytes* mesh.ValidVertexCount).ToUnsigned();
+                        uint indexBytesToCopy = (sizeof(ushort)*mesh.ValidIndexCount).ToUnsigned();
+                        uint allIndexBytesToCopy = (sizeof(ushort)*mesh.IndexCount).ToUnsigned();
+                        uint allVertexBytesToCopy = (vertexSizeInBytes*mesh.VertexCount).ToUnsigned();
 
-                    commandList.UpdateBuffer<VertexPositionNormalTextureTangentBitangent>(vertexBuffer,0,ref mesh.CleanVertices[0], allVertexBytesToCopy);     
-                    commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.CleanIndices[0], allIndexBytesToCopy);
+                        commandList.UpdateBuffer<VertexPositionNormalTextureTangentBitangent>(vertexBuffer,0,ref mesh.CleanVertices[0], allVertexBytesToCopy);     
+                        commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.CleanIndices[0], allIndexBytesToCopy);
 
-                    commandList.UpdateBuffer<VertexPositionNormalTextureTangentBitangent>(vertexBuffer,0,ref mesh.ValidVertices[0], vertexBytesToCopy);     
-                    commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.ValidIndices[0], indexBytesToCopy);
+                        commandList.UpdateBuffer<VertexPositionNormalTextureTangentBitangent>(vertexBuffer,0,ref mesh.ValidVertices[0], vertexBytesToCopy);     
+                        commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.ValidIndices[0], indexBytesToCopy);
+                    }
+
                 }
             }
 
@@ -96,22 +104,30 @@ namespace Henzai
                     var indexBuffer = modelDescriptor.IndexBuffers[i];
                     var mesh = model.GetMesh(i);
                     var worldMatrix = mesh.World;
-                    mesh.CleanIndices.CopyTo(mesh.ValidIndices,0);
-                    mesh.CleanVertices.CopyTo(mesh.ValidVertices,0);
 
                     var MVP = worldMatrix*camera.ViewProjectionMatirx;
+
+                    if(updateBuffers){
+                        mesh.CleanIndices.CopyTo(mesh.ValidIndices,0);
+                        mesh.CleanVertices.CopyTo(mesh.ValidVertices,0);
+                    }
+
                     Culler.FrustumCullMesh(ref MVP, mesh); 
-                    
-                    uint vertexBytesToCopy = (vertexSizeInBytes* mesh.ValidVertexCount).ToUnsigned();
-                    uint indexBytesToCopy = (sizeof(ushort)*mesh.ValidIndexCount).ToUnsigned();
-                    uint allIndexBytesToCopy = (sizeof(ushort)*mesh.IndexCount).ToUnsigned();
-                    uint allVertexBytesToCopy = (vertexSizeInBytes*mesh.VertexCount).ToUnsigned();
 
-                    commandList.UpdateBuffer<VertexPositionNormal>(vertexBuffer,0,ref mesh.CleanVertices[0], allVertexBytesToCopy);     
-                    commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.CleanIndices[0], allIndexBytesToCopy);
+                    if(updateBuffers){
+                        
+                        uint vertexBytesToCopy = (vertexSizeInBytes* mesh.ValidVertexCount).ToUnsigned();
+                        uint indexBytesToCopy = (sizeof(ushort)*mesh.ValidIndexCount).ToUnsigned();
+                        uint allIndexBytesToCopy = (sizeof(ushort)*mesh.IndexCount).ToUnsigned();
+                        uint allVertexBytesToCopy = (vertexSizeInBytes*mesh.VertexCount).ToUnsigned();
 
-                    commandList.UpdateBuffer<VertexPositionNormal>(vertexBuffer,0,ref mesh.ValidVertices[0], vertexBytesToCopy);     
-                    commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.ValidIndices[0], indexBytesToCopy);
+                        commandList.UpdateBuffer<VertexPositionNormal>(vertexBuffer,0,ref mesh.CleanVertices[0], allVertexBytesToCopy);     
+                        commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.CleanIndices[0], allIndexBytesToCopy);
+
+                        commandList.UpdateBuffer<VertexPositionNormal>(vertexBuffer,0,ref mesh.ValidVertices[0], vertexBytesToCopy);     
+                        commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.ValidIndices[0], indexBytesToCopy);
+                    }
+
                 }             
             }
 
@@ -125,23 +141,31 @@ namespace Henzai
                     var vertexBuffer = modelDescriptor.VertexBuffers[i];
                     var indexBuffer = modelDescriptor.IndexBuffers[i];
                     var mesh = model.GetMesh(i);
-                    mesh.CleanIndices.CopyTo(mesh.ValidIndices,0);
-                    mesh.CleanVertices.CopyTo(mesh.ValidVertices,0);
 
                     var worldMatrix = mesh.World;
-                    var MVP = worldMatrix*camera.ViewProjectionMatirx;               
+                    var MVP = worldMatrix*camera.ViewProjectionMatirx; 
+
+                    if(updateBuffers){
+                        mesh.CleanIndices.CopyTo(mesh.ValidIndices,0);
+                        mesh.CleanVertices.CopyTo(mesh.ValidVertices,0);
+                    }
+
                     Culler.FrustumCullMesh(ref MVP, mesh); 
 
-                    uint vertexBytesToCopy = (vertexSizeInBytes* mesh.ValidVertexCount).ToUnsigned();
-                    uint indexBytesToCopy = (sizeof(ushort)*mesh.ValidIndexCount).ToUnsigned();
-                    uint allIndexBytesToCopy = (sizeof(ushort)*mesh.IndexCount).ToUnsigned();
-                    uint allVertexBytesToCopy = (vertexSizeInBytes*mesh.VertexCount).ToUnsigned();
+                    if(updateBuffers){
 
-                    commandList.UpdateBuffer<VertexPositionTexture>(vertexBuffer,0,ref mesh.CleanVertices[0], allVertexBytesToCopy);     
-                    commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.CleanIndices[0], allIndexBytesToCopy);
+                        uint vertexBytesToCopy = (vertexSizeInBytes* mesh.ValidVertexCount).ToUnsigned();
+                        uint indexBytesToCopy = (sizeof(ushort)*mesh.ValidIndexCount).ToUnsigned();
+                        uint allIndexBytesToCopy = (sizeof(ushort)*mesh.IndexCount).ToUnsigned();
+                        uint allVertexBytesToCopy = (vertexSizeInBytes*mesh.VertexCount).ToUnsigned();
 
-                    commandList.UpdateBuffer<VertexPositionTexture>(vertexBuffer,0,ref mesh.ValidVertices[0], vertexBytesToCopy);     
-                    commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.ValidIndices[0], indexBytesToCopy);
+                        commandList.UpdateBuffer<VertexPositionTexture>(vertexBuffer,0,ref mesh.CleanVertices[0], allVertexBytesToCopy);     
+                        commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.CleanIndices[0], allIndexBytesToCopy);
+
+                        commandList.UpdateBuffer<VertexPositionTexture>(vertexBuffer,0,ref mesh.ValidVertices[0], vertexBytesToCopy);     
+                        commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.ValidIndices[0], indexBytesToCopy);
+                    }
+
                 }               
             }
 
@@ -155,23 +179,30 @@ namespace Henzai
                     var vertexBuffer = modelDescriptor.VertexBuffers[i];
                     var indexBuffer = modelDescriptor.IndexBuffers[i];
                     var mesh = model.GetMesh(i);
-                    mesh.CleanIndices.CopyTo(mesh.ValidIndices,0);
-                    mesh.CleanVertices.CopyTo(mesh.ValidVertices,0);
 
                     var worldMatrix = mesh.World;
                     var MVP = worldMatrix*camera.ViewProjectionMatirx;
+
+                    if(updateBuffers){
+                        mesh.CleanIndices.CopyTo(mesh.ValidIndices,0);
+                        mesh.CleanVertices.CopyTo(mesh.ValidVertices,0);
+                    }
+
                     Culler.FrustumCullMesh(ref MVP, mesh); 
 
-                    uint vertexBytesToCopy = (vertexSizeInBytes* mesh.ValidVertexCount).ToUnsigned();
-                    uint indexBytesToCopy = (sizeof(ushort)*mesh.ValidIndexCount).ToUnsigned();
-                    uint allIndexBytesToCopy = (sizeof(ushort)*mesh.IndexCount).ToUnsigned();
-                    uint allVertexBytesToCopy = (vertexSizeInBytes*mesh.VertexCount).ToUnsigned();
+                    if(updateBuffers){
+                        uint vertexBytesToCopy = (vertexSizeInBytes* mesh.ValidVertexCount).ToUnsigned();
+                        uint indexBytesToCopy = (sizeof(ushort)*mesh.ValidIndexCount).ToUnsigned();
+                        uint allIndexBytesToCopy = (sizeof(ushort)*mesh.IndexCount).ToUnsigned();
+                        uint allVertexBytesToCopy = (vertexSizeInBytes*mesh.VertexCount).ToUnsigned();
 
-                    commandList.UpdateBuffer<VertexPositionColor>(vertexBuffer,0,ref mesh.CleanVertices[0], allVertexBytesToCopy);     
-                    commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.CleanIndices[0], allIndexBytesToCopy);
+                        commandList.UpdateBuffer<VertexPositionColor>(vertexBuffer,0,ref mesh.CleanVertices[0], allVertexBytesToCopy);     
+                        commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.CleanIndices[0], allIndexBytesToCopy);
 
-                    commandList.UpdateBuffer<VertexPositionColor>(vertexBuffer,0,ref mesh.ValidVertices[0], vertexBytesToCopy);     
-                    commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.ValidIndices[0], indexBytesToCopy);
+                        commandList.UpdateBuffer<VertexPositionColor>(vertexBuffer,0,ref mesh.ValidVertices[0], vertexBytesToCopy);     
+                        commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.ValidIndices[0], indexBytesToCopy);
+                    }
+
                 }              
             }
 
@@ -208,8 +239,10 @@ namespace Henzai
             //     }               
             // }
 
-            commandList.End();
-            graphicsDevice.SubmitCommands(commandList);
+            if(updateBuffers){
+                commandList.End();
+                graphicsDevice.SubmitCommands(commandList);
+            }
     }
 
     }

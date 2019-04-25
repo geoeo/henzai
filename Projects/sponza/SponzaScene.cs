@@ -34,11 +34,16 @@ namespace Henzai.Examples
 
             // string filePath = Path.Combine(AppContext.BaseDirectory, "armor/armor.dae"); 
             // string filePath = Path.Combine(AppContext.BaseDirectory, "nanosuit/nanosuit.obj"); 
+
+            var scale = Matrix4x4.CreateScale(0.05f,0.05f,0.05f);
             
             //TODO: Write method to remove ambient terms
             var sponzaModels = AssimpLoader.LoadRealtimeModelsFromFile(AppContext.BaseDirectory,"sponza/sponza.obj");
             var sponzaPNTTB = sponzaModels.modelPNTTB;
             var sponzaPC = sponzaModels.modelPC;
+
+            sponzaPNTTB.SetNewWorldTransformation(ref scale, true);
+            sponzaPC.SetNewWorldTransformation(ref scale, true);
 
             for (int i = 0; i < sponzaPNTTB.MaterialCount; i++)
                 sponzaPNTTB.GetMaterial(i).ambient = Vector4.Zero;

@@ -35,7 +35,7 @@ namespace Henzai.Examples
                 UsePreferredGraphicsBackend = true,
                 LimitFrames = true,
                 FPSTarget = 60.0,
-                FarPlane = 2000f
+                FarPlane = 500.0f
             };
 
             scene = contextWindow == null ? new SponzaScene(

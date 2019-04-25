@@ -6,7 +6,6 @@ open Henzai.Core.Numerics
 open Henzai.Core.VertexGeometry
 open HenzaiFunc.Core.Types
 open Henzai.Core.Acceleration
-open System
 
 module Culler =
     let halfSpaceCheck (plane : byref<Vector4>)
@@ -17,10 +16,10 @@ module Culler =
         (planeLeft : byref<Vector4>) (planeRight : byref<Vector4>)
         (planeTop : byref<Vector4>) (planeBottom : byref<Vector4>)
         (planeNear : byref<Vector4>) (planeFar : byref<Vector4>) =
-        halfSpaceCheck &planeLeft &vertex
-        && halfSpaceCheck &planeRight &vertex
-        && halfSpaceCheck &planeTop &vertex
-        && halfSpaceCheck &planeBottom &vertex
+        (halfSpaceCheck &planeLeft &vertex
+        && halfSpaceCheck &planeRight &vertex)
+        || (halfSpaceCheck &planeTop &vertex
+        && halfSpaceCheck &planeBottom &vertex)
         && halfSpaceCheck &planeNear &vertex
         && halfSpaceCheck &planeFar &vertex
 
@@ -37,6 +36,8 @@ module Culler =
         let validIndices = mesh.ValidIndices
         let mutable validIndicesCounter = 0us
         let mutable validVertexCounter = 0
+        let mutable decrementVertex = false
+        let mutable decrementIndex = false
         //TODO: Write tests for all these
         let mutable planeLeft =
             Geometry.ExtractLeftPlane(&worldViewProjectionMatrix)
@@ -54,9 +55,14 @@ module Culler =
             let i1 = indices.[i]
             let i2 = indices.[i + 1]
             let i3 = indices.[i + 2]
-            let mutable v1 = vertices.[int i1].GetPosition()
-            let mutable v2 = vertices.[int i2].GetPosition()
-            let mutable v3 = vertices.[int i3].GetPosition()
+            let vertex1 = vertices.[int i1]
+            let vertex2 = vertices.[int i2]
+            let vertex3 = vertices.[int i3]
+            let mutable v1 = vertex1.GetPosition()
+            let mutable v2 = vertex2.GetPosition()
+            let mutable v3 = vertex3.GetPosition()
+            decrementVertex <- false
+            decrementIndex <- false
             // If at least one vertex is within the frustum, the triangle is not culled.
             if (IsVertexWithinFrustum &v1 &planeLeft &planeRight &planeTop
                     &planeBottom &planeNear &planeFar
@@ -64,27 +70,31 @@ module Culler =
                        &planeBottom &planeNear &planeFar
                 || IsVertexWithinFrustum &v3 &planeLeft &planeRight &planeTop
                        &planeBottom &planeNear &planeFar) then
+                decrementIndex <- true
                 if (not (processedIndicesMap.ContainsKey(i1))) then
                     processedIndicesMap.Add(i1, (uint16)validVertexCounter)
-                    validVertices.[validVertexCounter] <- vertices.[int i1]
+                    validVertices.[validVertexCounter] <- vertex1
                     validIndices.[(int)validIndicesCounter] <- (uint16)validVertexCounter
                     validVertexCounter <- validVertexCounter + 1
+                    decrementVertex <- true
                 else
                     validIndices.[(int)validIndicesCounter] <- processedIndicesMap.Item(i1)
                 validIndicesCounter <- validIndicesCounter + 1us
                 if (not (processedIndicesMap.ContainsKey(i2))) then
                     processedIndicesMap.Add(i2, (uint16)validVertexCounter)
-                    validVertices.[validVertexCounter] <- vertices.[int i2]
+                    validVertices.[validVertexCounter] <- vertex2
                     validIndices.[(int)validIndicesCounter] <- (uint16)validVertexCounter
                     validVertexCounter <- validVertexCounter + 1
+                    decrementVertex <- true
                 else
                     validIndices.[(int)validIndicesCounter] <- processedIndicesMap.Item(i2)
                 validIndicesCounter <- validIndicesCounter + 1us
                 if (not (processedIndicesMap.ContainsKey(i3))) then
                     processedIndicesMap.Add(i3, (uint16)validVertexCounter)
-                    validVertices.[validVertexCounter] <- vertices.[int i3]
+                    validVertices.[validVertexCounter] <- vertex3
                     validIndices.[(int)validIndicesCounter] <- (uint16)validVertexCounter
                     validVertexCounter <- validVertexCounter + 1
+                    decrementVertex <- true
                 else
                     validIndices.[(int)validIndicesCounter] <- processedIndicesMap.Item(i3)
                 validIndicesCounter <- validIndicesCounter + 1us

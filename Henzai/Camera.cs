@@ -70,12 +70,11 @@ namespace Henzai
         private void UpdatePerspectiveMatrix(float width, float height)
         {
             _projectionMatrix = Matrix4x4.CreatePerspectiveFieldOfView(_fov, width / height, _near, _far);
-            //_viewProjectionMatrix = _viewMatrix*_projectionMatrix;
         }
 
         private void UpdateViewMatrix()
         {
-            Quaternion lookRotation = Quaternion.CreateFromYawPitchRoll(Yaw, Pitch, 0f);
+            Quaternion lookRotation = Quaternion.CreateFromYawPitchRoll(_yaw, _pitch, 0f);
             Vector3 lookDir = Vector3.Transform(DEFAULT_LOOK_DIRECTION, lookRotation);
             Vector3 up = Vector3.Transform(Vector3.UnitY, lookRotation);            
             _lookDirection = Vector3.Normalize(lookDir);
@@ -123,6 +122,16 @@ namespace Henzai
                 _lookDirection = DEFAULT_LOOK_DIRECTION;
                 _upDirection = Vector3.UnitY;
                 _yaw = 0; _pitch = 0;
+
+                UpdateViewMatrix();
+            }
+
+            if(InputTracker.GetKey(Key.J))
+            {
+                _position = DEFAULT_POSITION;
+                _lookDirection = Vector3.UnitY;
+                _upDirection = -Vector3.UnitZ;
+                _yaw = 0; _pitch = MathF.PI/2.0f;
 
                 UpdateViewMatrix();
             }
