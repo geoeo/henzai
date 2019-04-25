@@ -69,6 +69,7 @@ module Culler =
 
     /// <summary>
     /// Culls a <see cref="Henzai.Core.VertexGeometry.Mesh"/> by testing every triangle of the mesh
+    /// This sets internal flags in mesh.
     /// </summary>
     let FrustumCullMesh (worldViewProjectionMatrix : byref<Matrix4x4>)
         (mesh : Henzai.Core.VertexGeometry.Mesh<'T>) =
