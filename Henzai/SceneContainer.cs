@@ -51,7 +51,6 @@ namespace Henzai
         }
 
         // Very slow
-        // Still buggy
         protected void EnableCulling(float deltaTime, GraphicsDevice graphicsDevice, CommandList commandList, Camera camera, ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] modelPNTTBDescriptorArray,ModelRuntimeDescriptor<VertexPositionNormal>[] modelPNDescriptorArray,ModelRuntimeDescriptor<VertexPositionTexture>[] modelPTDescriptorArray, ModelRuntimeDescriptor<VertexPositionColor>[] modelPCDescriptorArray, ModelRuntimeDescriptor<VertexPosition>[] modelPDescriptorArray){
 
             commandList.Begin();
@@ -67,10 +66,8 @@ namespace Henzai
                     var indexBuffer = modelDescriptor.IndexBuffers[i];
                     var mesh = model.GetMesh(i);
                     var worldMatrix = mesh.World;
-                    var indexClean = new ushort[mesh.IndexCount];
-                    var vertexClean = new VertexPositionNormalTextureTangentBitangent[mesh.VertexCount];
-                    indexClean.CopyTo(mesh.ValidIndices,0);
-                    vertexClean.CopyTo(mesh.ValidVertices,0);
+                    mesh.CleanIndices.CopyTo(mesh.ValidIndices,0);
+                    mesh.CleanVertices.CopyTo(mesh.ValidVertices,0);
 
                     var MVP = worldMatrix*camera.ViewProjectionMatirx;
                     Culler.FrustumCullMesh(ref MVP, mesh);
@@ -80,8 +77,8 @@ namespace Henzai
                     uint allIndexBytesToCopy = (sizeof(ushort)*mesh.IndexCount).ToUnsigned();
                     uint allVertexBytesToCopy = (vertexSizeInBytes*mesh.VertexCount).ToUnsigned();
 
-                    commandList.UpdateBuffer<VertexPositionNormalTextureTangentBitangent>(vertexBuffer,0,ref vertexClean[0], allVertexBytesToCopy);     
-                    commandList.UpdateBuffer<ushort>(indexBuffer,0,ref indexClean[0], allIndexBytesToCopy);
+                    commandList.UpdateBuffer<VertexPositionNormalTextureTangentBitangent>(vertexBuffer,0,ref mesh.CleanVertices[0], allVertexBytesToCopy);     
+                    commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.CleanIndices[0], allIndexBytesToCopy);
 
                     commandList.UpdateBuffer<VertexPositionNormalTextureTangentBitangent>(vertexBuffer,0,ref mesh.ValidVertices[0], vertexBytesToCopy);     
                     commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.ValidIndices[0], indexBytesToCopy);
@@ -99,10 +96,8 @@ namespace Henzai
                     var indexBuffer = modelDescriptor.IndexBuffers[i];
                     var mesh = model.GetMesh(i);
                     var worldMatrix = mesh.World;
-                    var indexClean = new ushort[mesh.IndexCount];
-                    var vertexClean = new VertexPositionNormal[mesh.VertexCount];
-                    indexClean.CopyTo(mesh.ValidIndices,0);
-                    vertexClean.CopyTo(mesh.ValidVertices,0);
+                    mesh.CleanIndices.CopyTo(mesh.ValidIndices,0);
+                    mesh.CleanVertices.CopyTo(mesh.ValidVertices,0);
 
                     var MVP = worldMatrix*camera.ViewProjectionMatirx;
                     Culler.FrustumCullMesh(ref MVP, mesh); 
@@ -112,8 +107,8 @@ namespace Henzai
                     uint allIndexBytesToCopy = (sizeof(ushort)*mesh.IndexCount).ToUnsigned();
                     uint allVertexBytesToCopy = (vertexSizeInBytes*mesh.VertexCount).ToUnsigned();
 
-                    commandList.UpdateBuffer<VertexPositionNormal>(vertexBuffer,0,ref vertexClean[0], allVertexBytesToCopy);     
-                    commandList.UpdateBuffer<ushort>(indexBuffer,0,ref indexClean[0], allIndexBytesToCopy);
+                    commandList.UpdateBuffer<VertexPositionNormal>(vertexBuffer,0,ref mesh.CleanVertices[0], allVertexBytesToCopy);     
+                    commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.CleanIndices[0], allIndexBytesToCopy);
 
                     commandList.UpdateBuffer<VertexPositionNormal>(vertexBuffer,0,ref mesh.ValidVertices[0], vertexBytesToCopy);     
                     commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.ValidIndices[0], indexBytesToCopy);
@@ -130,10 +125,8 @@ namespace Henzai
                     var vertexBuffer = modelDescriptor.VertexBuffers[i];
                     var indexBuffer = modelDescriptor.IndexBuffers[i];
                     var mesh = model.GetMesh(i);
-                    var indexClean = new ushort[mesh.IndexCount];
-                    var vertexClean = new VertexPositionTexture[mesh.VertexCount];
-                    indexClean.CopyTo(mesh.ValidIndices,0);
-                    vertexClean.CopyTo(mesh.ValidVertices,0);
+                    mesh.CleanIndices.CopyTo(mesh.ValidIndices,0);
+                    mesh.CleanVertices.CopyTo(mesh.ValidVertices,0);
 
                     var worldMatrix = mesh.World;
                     var MVP = worldMatrix*camera.ViewProjectionMatirx;               
@@ -144,8 +137,8 @@ namespace Henzai
                     uint allIndexBytesToCopy = (sizeof(ushort)*mesh.IndexCount).ToUnsigned();
                     uint allVertexBytesToCopy = (vertexSizeInBytes*mesh.VertexCount).ToUnsigned();
 
-                    commandList.UpdateBuffer<VertexPositionTexture>(vertexBuffer,0,ref vertexClean[0], allVertexBytesToCopy);     
-                    commandList.UpdateBuffer<ushort>(indexBuffer,0,ref indexClean[0], allIndexBytesToCopy);
+                    commandList.UpdateBuffer<VertexPositionTexture>(vertexBuffer,0,ref mesh.CleanVertices[0], allVertexBytesToCopy);     
+                    commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.CleanIndices[0], allIndexBytesToCopy);
 
                     commandList.UpdateBuffer<VertexPositionTexture>(vertexBuffer,0,ref mesh.ValidVertices[0], vertexBytesToCopy);     
                     commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.ValidIndices[0], indexBytesToCopy);
@@ -162,10 +155,8 @@ namespace Henzai
                     var vertexBuffer = modelDescriptor.VertexBuffers[i];
                     var indexBuffer = modelDescriptor.IndexBuffers[i];
                     var mesh = model.GetMesh(i);
-                    var indexClean = new ushort[mesh.IndexCount];
-                    var vertexClean = new VertexPositionColor[mesh.VertexCount];
-                    indexClean.CopyTo(mesh.ValidIndices,0);
-                    vertexClean.CopyTo(mesh.ValidVertices,0);
+                    mesh.CleanIndices.CopyTo(mesh.ValidIndices,0);
+                    mesh.CleanVertices.CopyTo(mesh.ValidVertices,0);
 
                     var worldMatrix = mesh.World;
                     var MVP = worldMatrix*camera.ViewProjectionMatirx;
@@ -176,8 +167,8 @@ namespace Henzai
                     uint allIndexBytesToCopy = (sizeof(ushort)*mesh.IndexCount).ToUnsigned();
                     uint allVertexBytesToCopy = (vertexSizeInBytes*mesh.VertexCount).ToUnsigned();
 
-                    commandList.UpdateBuffer<VertexPositionColor>(vertexBuffer,0,ref vertexClean[0], allVertexBytesToCopy);     
-                    commandList.UpdateBuffer<ushort>(indexBuffer,0,ref indexClean[0], allIndexBytesToCopy);
+                    commandList.UpdateBuffer<VertexPositionColor>(vertexBuffer,0,ref mesh.CleanVertices[0], allVertexBytesToCopy);     
+                    commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.CleanIndices[0], allIndexBytesToCopy);
 
                     commandList.UpdateBuffer<VertexPositionColor>(vertexBuffer,0,ref mesh.ValidVertices[0], vertexBytesToCopy);     
                     commandList.UpdateBuffer<ushort>(indexBuffer,0,ref mesh.ValidIndices[0], indexBytesToCopy);
