@@ -23,6 +23,7 @@ namespace Henzai
 
         private Vector3 _position;
         private Vector3 _lookDirection;
+        private Vector3 _upDirection;
         private float _moveSpeed;
 
         private float _yaw;
@@ -41,6 +42,7 @@ namespace Henzai
         public ref Matrix4x4 ViewProjectionMatirx => ref _viewProjectionMatrix;
         public Vector3 Position { get => _position; set { _position = value; UpdateViewMatrix(); } }
         public Vector3 LookDirection { get => _lookDirection; set { _lookDirection = value; UpdateViewMatrix();} }
+        public Vector3 UpDirection { get => _upDirection; set { _upDirection = value; UpdateViewMatrix();} }
         public float FarDistance { get => _far; set { _far = value; UpdateViewMatrix();} }
         public float FieldOfView { get => _fov; set { _fov = value; UpdateViewMatrix();} }
         public float NearDistance { get => _near; set { _near = value; UpdateViewMatrix();} }
@@ -71,17 +73,14 @@ namespace Henzai
             //_viewProjectionMatrix = _viewMatrix*_projectionMatrix;
         }
 
-        private void UpdateViewMatrix(bool defaultLookDir = false)
+        private void UpdateViewMatrix()
         {
             Quaternion lookRotation = Quaternion.CreateFromYawPitchRoll(Yaw, Pitch, 0f);
-            Vector3 lookDir;
-            if(defaultLookDir)
-                lookDir = Vector3.Transform(DEFAULT_LOOK_DIRECTION, lookRotation);
-            else
-                lookDir = Vector3.Transform(Vector3.Normalize(_lookDirection), lookRotation);
-            
+            Vector3 lookDir = Vector3.Transform(DEFAULT_LOOK_DIRECTION, lookRotation);
+            Vector3 up = Vector3.Transform(Vector3.UnitY, lookRotation);            
             _lookDirection = Vector3.Normalize(lookDir);
-            _viewMatrix = Matrix4x4.CreateLookAt(_position, _position + _lookDirection, Vector3.UnitY);
+            _upDirection = Vector3.Normalize(up);
+            _viewMatrix = Matrix4x4.CreateLookAt(_position, _position + _lookDirection, _upDirection);
             _viewProjectionMatrix = _viewMatrix*_projectionMatrix;
         }
 
@@ -122,6 +121,7 @@ namespace Henzai
             {
                 _position = DEFAULT_POSITION;
                 _lookDirection = DEFAULT_LOOK_DIRECTION;
+                _upDirection = Vector3.UnitY;
                 _yaw = 0; _pitch = 0;
 
                 UpdateViewMatrix();
@@ -132,7 +132,7 @@ namespace Henzai
                 Quaternion lookRotation = Quaternion.CreateFromYawPitchRoll(_yaw, _pitch, 0f);
                 motionDir = Vector3.Transform(motionDir, lookRotation);
                 _position += motionDir * _moveSpeed * sprintFactor * deltaSeconds;
-                UpdateViewMatrix(true);
+                UpdateViewMatrix();
             }
 
             Vector2 mouseDelta = InputTracker.MousePosition - _previousMousePos;
@@ -144,7 +144,7 @@ namespace Henzai
                 _pitch += -mouseDelta.Y * 0.01f;
                 _pitch = Pitch.Clamp(-1.55f, 1.55f);
 
-                UpdateViewMatrix(true);
+                UpdateViewMatrix();
             }
         }
 
