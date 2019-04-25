@@ -37,6 +37,7 @@ module Culler =
         let validIndices = mesh.ValidIndices
         let mutable validIndicesCounter = 0us
         let mutable validVertexCounter = 0
+        //TODO: Write tests for all these
         let mutable planeLeft =
             Geometry.ExtractLeftPlane(&worldViewProjectionMatrix)
         let mutable planeRight =

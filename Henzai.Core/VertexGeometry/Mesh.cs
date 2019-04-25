@@ -26,6 +26,8 @@ namespace Henzai.Core.VertexGeometry
         private readonly ushort[] _validIndices;
         private readonly IndexedTriangleEngine<T>[] _triangles;
         // private readonly Dictionary<ushort, bool> _processedIndicesMap;
+        private ushort[] _indexClean; 
+        private T[] _vertexClean;
         private Matrix4x4 _world = Matrix4x4.Identity;
 
         /// <summary>
@@ -42,11 +44,13 @@ namespace Henzai.Core.VertexGeometry
         public T[] Vertices => _vertices;
         public ushort[] Indices => _indices;
         public T[] ValidVertices => _validVertices;
-        public ushort[] ValidIndices => _validIndices;
+        public T[] CleanVertices => _vertexClean;
         public IndexedTriangleEngine<T>[] Triangles => _triangles;
         /// <summary>
         /// Disclaimer: In general you want ValidVertexCount
         /// </summary>
+        public ushort[] ValidIndices => _validIndices;
+        public ushort[] CleanIndices => _indexClean;
         public int VertexCount => _vertices.Length;
         /// <summary>
         /// Disclaimer: In general you want ValidIndexCount
@@ -74,10 +78,15 @@ namespace Henzai.Core.VertexGeometry
             for(int i = 0; i < VertexCount; i+=3)
                 _triangles[i/3] = new IndexedTriangleEngine<T>(i, i+1, i+2, this);
 
+            _indexClean = new ushort[IndexCount];
+            _vertexClean = new T[VertexCount];
+
             // _processedIndicesMap = new Dictionary<ushort, bool>();
         
         }
 
+        //TODO: Support trianlge strips
+        //TODO: Support instancing
         public Mesh(T[] vertices, ushort[] indices)
         {
             Debug.Assert(vertices != null);
@@ -100,6 +109,9 @@ namespace Henzai.Core.VertexGeometry
                 var i2 = _indices[i+2];  
                 _triangles[i/3] = new IndexedTriangleEngine<T>(i0, i1, i2, this);
             }
+
+            _indexClean = new ushort[IndexCount];
+            _vertexClean = new T[VertexCount];
 
             //  _processedIndicesMap = new Dictionary<ushort, bool>();
         }
