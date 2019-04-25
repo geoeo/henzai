@@ -16,11 +16,16 @@ module Culler =
         (planeLeft : byref<Vector4>) (planeRight : byref<Vector4>)
         (planeTop : byref<Vector4>) (planeBottom : byref<Vector4>)
         (planeNear : byref<Vector4>) (planeFar : byref<Vector4>) =
-        (halfSpaceCheck &planeLeft &vertex
-        && halfSpaceCheck &planeRight &vertex)
-        || (halfSpaceCheck &planeTop &vertex
-        && halfSpaceCheck &planeBottom &vertex)
+        halfSpaceCheck &planeLeft &vertex
+        && halfSpaceCheck &planeRight &vertex
+        && halfSpaceCheck &planeTop &vertex
+        && halfSpaceCheck &planeBottom &vertex
         && halfSpaceCheck &planeNear &vertex
+        && halfSpaceCheck &planeFar &vertex
+
+    let IsVertexWithinNearFarFrustum (vertex : byref<Vector4>)
+        (planeNear : byref<Vector4>) (planeFar : byref<Vector4>) =
+        halfSpaceCheck &planeNear &vertex
         && halfSpaceCheck &planeFar &vertex
 
     /// <summary>
@@ -36,17 +41,14 @@ module Culler =
         let validIndices = mesh.ValidIndices
         let mutable validIndicesCounter = 0us
         let mutable validVertexCounter = 0
-        let mutable decrementVertex = false
-        let mutable decrementIndex = false
-        //TODO: Write tests for all these
-        let mutable planeLeft =
-            Geometry.ExtractLeftPlane(&worldViewProjectionMatrix)
-        let mutable planeRight =
-            Geometry.ExtractRightPlane(&worldViewProjectionMatrix)
-        let mutable planeTop =
-            Geometry.ExtractTopPlane(&worldViewProjectionMatrix)
-        let mutable planeBottom =
-            Geometry.ExtractBottomPlane(&worldViewProjectionMatrix)
+        // let mutable planeLeft =
+        //     Geometry.ExtractLeftPlane(&worldViewProjectionMatrix)
+        // let mutable planeRight =
+        //     Geometry.ExtractRightPlane(&worldViewProjectionMatrix)
+        // let mutable planeTop =
+        //     Geometry.ExtractTopPlane(&worldViewProjectionMatrix)
+        // let mutable planeBottom =
+        //     Geometry.ExtractBottomPlane(&worldViewProjectionMatrix)
         let mutable planeNear =
             Geometry.ExtractNearPlane(&worldViewProjectionMatrix)
         let mutable planeFar =
@@ -61,22 +63,15 @@ module Culler =
             let mutable v1 = vertex1.GetPosition()
             let mutable v2 = vertex2.GetPosition()
             let mutable v3 = vertex3.GetPosition()
-            decrementVertex <- false
-            decrementIndex <- false
             // If at least one vertex is within the frustum, the triangle is not culled.
-            if (IsVertexWithinFrustum &v1 &planeLeft &planeRight &planeTop
-                    &planeBottom &planeNear &planeFar
-                || IsVertexWithinFrustum &v2 &planeLeft &planeRight &planeTop
-                       &planeBottom &planeNear &planeFar
-                || IsVertexWithinFrustum &v3 &planeLeft &planeRight &planeTop
-                       &planeBottom &planeNear &planeFar) then
-                decrementIndex <- true
+            if (IsVertexWithinNearFarFrustum &v1 &planeNear &planeFar
+                || IsVertexWithinNearFarFrustum &v2 &planeNear &planeFar
+                || IsVertexWithinNearFarFrustum &v3 &planeNear &planeFar) then
                 if (not (processedIndicesMap.ContainsKey(i1))) then
                     processedIndicesMap.Add(i1, (uint16)validVertexCounter)
                     validVertices.[validVertexCounter] <- vertex1
                     validIndices.[(int)validIndicesCounter] <- (uint16)validVertexCounter
                     validVertexCounter <- validVertexCounter + 1
-                    decrementVertex <- true
                 else
                     validIndices.[(int)validIndicesCounter] <- processedIndicesMap.Item(i1)
                 validIndicesCounter <- validIndicesCounter + 1us
@@ -85,7 +80,6 @@ module Culler =
                     validVertices.[validVertexCounter] <- vertex2
                     validIndices.[(int)validIndicesCounter] <- (uint16)validVertexCounter
                     validVertexCounter <- validVertexCounter + 1
-                    decrementVertex <- true
                 else
                     validIndices.[(int)validIndicesCounter] <- processedIndicesMap.Item(i2)
                 validIndicesCounter <- validIndicesCounter + 1us
@@ -94,7 +88,6 @@ module Culler =
                     validVertices.[validVertexCounter] <- vertex3
                     validIndices.[(int)validIndicesCounter] <- (uint16)validVertexCounter
                     validVertexCounter <- validVertexCounter + 1
-                    decrementVertex <- true
                 else
                     validIndices.[(int)validIndicesCounter] <- processedIndicesMap.Item(i3)
                 validIndicesCounter <- validIndicesCounter + 1us
