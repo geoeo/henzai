@@ -47,7 +47,7 @@ namespace Henzai.Examples
             SimpleGUIOverlay gui = new SimpleGUIOverlay(scene.GraphicsDevice,scene.ContextWindow);
             gui.SetOverlayFor(scene);
 
-            // scene.PreRender_Models += BuildBVH;
+            scene.PreRender_Models += BuildBVH;
             scene.PreDraw_Time_GraphicsDevice_CommandList_Camera_Models += EnableCulling;
 
             scene.Run(renderResolution);
