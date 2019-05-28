@@ -14,8 +14,8 @@ namespace Henzai
     {
         protected static Renderable scene;
         protected static UserInterface gui;
-        //private BVHTree _bvhTree;
-        //private VertexPositionNormalTextureTangentBitangent[] _PNTTBOrdered;
+        private BVHRuntimeNode[] _bvhRuntimeNodesPNTTB;
+        private IndexedTriangleEngine<VertexPositionNormalTextureTangentBitangent>[] _orderedPNTTB;
 
 
         public abstract void createScene(GraphicsBackend graphicsBackend, Sdl2Window contextWindow = null);
@@ -116,7 +116,7 @@ namespace Henzai
 
             var tuplePNTTB  = BVHTreeBuilder<IndexedTriangleEngine<VertexPositionNormalTextureTangentBitangent>>.Build(allBVHTrianglesPNTTB, SplitMethods.SAH);
             BVHTree PNTTBTree = tuplePNTTB.Item1;
-            IndexedTriangleEngine<VertexPositionNormalTextureTangentBitangent>[] PNTTBOrdered = tuplePNTTB.Item2;
+            _orderedPNTTB = tuplePNTTB.Item2;
             int PNTTBTotalNodes = tuplePNTTB.Item3;
 
             var tuplePN  = BVHTreeBuilder<IndexedTriangleEngine<VertexPositionNormal>>.Build(allBVHTrianglesPN, SplitMethods.SAH);
@@ -133,12 +133,82 @@ namespace Henzai
             BVHTree PCTree= tuplePC.Item1;
             IndexedTriangleEngine<VertexPositionColor>[] PCOrdered = tuplePC.Item2;
             int PCTotalNodes = tuplePC.Item3;
-     
+
+            _bvhRuntimeNodesPNTTB = BVHRuntime.ConstructBVHRuntime(PNTTBTree, PNTTBTotalNodes);
+            var bvhRuntimePN = BVHRuntime.ConstructBVHRuntime(PNTree, PNTotalNodes);
+            var bvhRuntimePT = BVHRuntime.ConstructBVHRuntime(PTTree, PTTotalNodes);
+            var bvhRuntimePC = BVHRuntime.ConstructBVHRuntime(PCTree, PCTotalNodes);
+
+        
         }
+
+         protected void EnableBVHCulling(float deltaTime, GraphicsDevice graphicsDevice, CommandList commandList, Camera camera, ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] modelPNTTBDescriptorArray, ModelRuntimeDescriptor<VertexPositionNormal>[] modelPNDescriptorArray, ModelRuntimeDescriptor<VertexPositionTexture>[] modelPTDescriptorArray, ModelRuntimeDescriptor<VertexPositionColor>[] modelPCDescriptorArray, ModelRuntimeDescriptor<VertexPosition>[] modelPDescriptorArray){
+
+            var updateBuffers = true;
+            if (updateBuffers)
+                commandList.Begin();
+
+
+            foreach (var modelDescriptor in modelPNTTBDescriptorArray)
+            {
+                var model = modelDescriptor.Model;
+                byte vertexSizeInBytes = model.GetMesh(0).Vertices[0].GetSizeInBytes();
+
+                if (updateBuffers){
+                    var meshCount = model.MeshCount;
+                    for (int i = 0; i < meshCount; i++){
+                        var mesh = model.GetMesh(i);
+                        //mesh.ValidIndexCount = 0;
+                        //mesh.ValidVertexCount = 0;
+                    }
+                }
+
+            }
+
+            Culler.FrustumCullBVH(_bvhRuntimeNodesPNTTB, _orderedPNTTB, ref camera.ViewProjectionMatirx);
+
+            foreach (var modelDescriptor in modelPNTTBDescriptorArray)
+            {
+                var model = modelDescriptor.Model;
+                byte vertexSizeInBytes = model.GetMesh(0).Vertices[0].GetSizeInBytes();
+
+                var meshCount = model.MeshCount;
+                for (int i = 0; i < meshCount; i++){
+                    var vertexBuffer = modelDescriptor.VertexBuffers[i];
+                    var indexBuffer = modelDescriptor.IndexBuffers[i];
+                    var mesh = model.GetMesh(i);
+
+                    if (updateBuffers)
+                    {
+                        mesh.CleanIndices.CopyTo(mesh.ValidIndices, 0);
+                        mesh.CleanVertices.CopyTo(mesh.ValidVertices, 0);
+
+                        uint vertexBytesToCopy = (vertexSizeInBytes * mesh.ValidVertexCount).ToUnsigned();
+                        uint indexBytesToCopy = (sizeof(ushort) * mesh.ValidIndexCount).ToUnsigned();
+                        uint allIndexBytesToCopy = (sizeof(ushort) * mesh.IndexCount).ToUnsigned();
+                        uint allVertexBytesToCopy = (vertexSizeInBytes * mesh.VertexCount).ToUnsigned();
+
+                        commandList.UpdateBuffer<VertexPositionNormalTextureTangentBitangent>(vertexBuffer, 0, ref mesh.CleanVertices[0], allVertexBytesToCopy);
+                        commandList.UpdateBuffer<ushort>(indexBuffer, 0, ref mesh.CleanIndices[0], allIndexBytesToCopy);
+
+                        commandList.UpdateBuffer<VertexPositionNormalTextureTangentBitangent>(vertexBuffer, 0, ref mesh.ValidVertices[0], vertexBytesToCopy);
+                        commandList.UpdateBuffer<ushort>(indexBuffer, 0, ref mesh.ValidIndices[0], indexBytesToCopy);
+                    }
+
+                }
+                    
+            }
+
+            if (updateBuffers)
+            {
+                commandList.End();
+                graphicsDevice.SubmitCommands(commandList);
+            }
+         }
 
         protected void EnableCulling(float deltaTime, GraphicsDevice graphicsDevice, CommandList commandList, Camera camera, ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] modelPNTTBDescriptorArray, ModelRuntimeDescriptor<VertexPositionNormal>[] modelPNDescriptorArray, ModelRuntimeDescriptor<VertexPositionTexture>[] modelPTDescriptorArray, ModelRuntimeDescriptor<VertexPositionColor>[] modelPCDescriptorArray, ModelRuntimeDescriptor<VertexPosition>[] modelPDescriptorArray)
         {
-            var updateBuffers = false;
+            var updateBuffers = true;
             if (updateBuffers)
                 commandList.Begin();
 
@@ -151,6 +221,7 @@ namespace Henzai
                 for (int i = 0; i < meshCount; i++)
                     FrustumCullMesh<VertexPositionNormalTextureTangentBitangent>(commandList, camera, updateBuffers, modelDescriptor, model, vertexSizeInBytes, i);
             }
+
 
             foreach (var modelDescriptor in modelPNDescriptorArray)
             {
