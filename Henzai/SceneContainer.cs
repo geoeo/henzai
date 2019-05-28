@@ -14,8 +14,8 @@ namespace Henzai
     {
         protected static Renderable scene;
         protected static UserInterface gui;
-        private BVHTree _bvhTree;
-        private VertexPositionNormalTextureTangentBitangent[] _PNTTBOrdered;
+        //private BVHTree _bvhTree;
+        //private VertexPositionNormalTextureTangentBitangent[] _PNTTBOrdered;
 
 
         public abstract void createScene(GraphicsBackend graphicsBackend, Sdl2Window contextWindow = null);
@@ -29,13 +29,29 @@ namespace Henzai
 
         protected void BuildBVH(ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] modelPNTTBDescriptorArray, ModelRuntimeDescriptor<VertexPositionNormal>[] modelPNDescriptorArray, ModelRuntimeDescriptor<VertexPositionTexture>[] modelPTDescriptorArray, ModelRuntimeDescriptor<VertexPositionColor>[] modelPCDescriptorArray, ModelRuntimeDescriptor<VertexPosition>[] modelPDescriptorArray)
         {
-            var allTrianglesCount = 0;
+            var allTrianglesCountPNTTB = 0;
+            var allTrianglesCountPN = 0;
+            var allTrianglesCountPT = 0;
+            var allTrianglesCountPC = 0;
+
             foreach (var modelDescriptor in modelPNTTBDescriptorArray)
-                allTrianglesCount += modelDescriptor.Model.TotalTriangleCount;
+                allTrianglesCountPNTTB += modelDescriptor.Model.TotalTriangleCount;
 
-            var allBVHTriangles = new IndexedTriangleEngine<VertexPositionNormalTextureTangentBitangent>[allTrianglesCount];
+            foreach (var modelDescriptor in modelPNDescriptorArray)
+                allTrianglesCountPN += modelDescriptor.Model.TotalTriangleCount;
 
-            var index = 0;
+            foreach (var modelDescriptor in modelPTDescriptorArray)
+                allTrianglesCountPT += modelDescriptor.Model.TotalTriangleCount;
+
+            foreach (var modelDescriptor in modelPCDescriptorArray)
+                allTrianglesCountPC += modelDescriptor.Model.TotalTriangleCount;
+
+            var allBVHTrianglesPNTTB = new IndexedTriangleEngine<VertexPositionNormalTextureTangentBitangent>[allTrianglesCountPNTTB];
+            var allBVHTrianglesPN = new IndexedTriangleEngine<VertexPositionNormal>[allTrianglesCountPN];
+            var allBVHTrianglesPT = new IndexedTriangleEngine<VertexPositionTexture>[allTrianglesCountPT];
+            var allBVHTrianglesPC = new IndexedTriangleEngine<VertexPositionColor>[allTrianglesCountPC];
+
+            var indexPNTTB = 0;
             foreach (var modelDescriptor in modelPNTTBDescriptorArray)
             {
                 var model = modelDescriptor.Model;
@@ -45,13 +61,79 @@ namespace Henzai
 
                     var mesh = model.GetMesh(i);
                     var triangles = mesh.Triangles;
-                    triangles.CopyTo(allBVHTriangles, index);
-                    index += mesh.TriangleCount;
+                    triangles.CopyTo(allBVHTrianglesPNTTB, indexPNTTB);
+                    indexPNTTB += mesh.TriangleCount;
                 }
             }
 
-            var bvhTriangles = modelPNTTBDescriptorArray[0].Model.GetMesh(0).Triangles;
-            var t = BVHTreeBuilder<IndexedTriangleEngine<VertexPositionNormalTextureTangentBitangent>>.Build(bvhTriangles, SplitMethods.SAH);
+            // PN
+            var indexPN = 0;
+            foreach (var modelDescriptor in modelPNDescriptorArray)
+            {
+                var model = modelDescriptor.Model;
+                var meshCount = model.MeshCount;
+                for (int i = 0; i < meshCount; i++)
+                {
+
+                    var mesh = model.GetMesh(i);
+                    var triangles = mesh.Triangles;
+                    triangles.CopyTo(allBVHTrianglesPN, indexPN);
+                    indexPN += mesh.TriangleCount;
+                }
+            }
+
+            // PT
+            var indexPT = 0;
+            foreach (var modelDescriptor in modelPTDescriptorArray)
+            {
+                var model = modelDescriptor.Model;
+                var meshCount = model.MeshCount;
+                for (int i = 0; i < meshCount; i++)
+                {
+
+                    var mesh = model.GetMesh(i);
+                    var triangles = mesh.Triangles;
+                    triangles.CopyTo(allBVHTrianglesPT, indexPT);
+                    indexPT += mesh.TriangleCount;
+                }
+            }
+
+            // PC
+            var indexPC = 0;
+            foreach (var modelDescriptor in modelPCDescriptorArray)
+            {
+                var model = modelDescriptor.Model;
+                var meshCount = model.MeshCount;
+                for (int i = 0; i < meshCount; i++)
+                {
+
+                    var mesh = model.GetMesh(i);
+                    var triangles = mesh.Triangles;
+                    triangles.CopyTo(allBVHTrianglesPC, indexPC);
+                    indexPC += mesh.TriangleCount;
+                }
+            }
+
+            var tuplePNTTB  = BVHTreeBuilder<IndexedTriangleEngine<VertexPositionNormalTextureTangentBitangent>>.Build(allBVHTrianglesPNTTB, SplitMethods.SAH);
+            BVHTree PNTTBTree = tuplePNTTB.Item1;
+            IndexedTriangleEngine<VertexPositionNormalTextureTangentBitangent>[] PNTTBOrdered = tuplePNTTB.Item2;
+            int PNTTBTotalNodes = tuplePNTTB.Item3;
+
+            var tuplePN  = BVHTreeBuilder<IndexedTriangleEngine<VertexPositionNormal>>.Build(allBVHTrianglesPN, SplitMethods.SAH);
+            BVHTree PNTree= tuplePN.Item1;
+            IndexedTriangleEngine<VertexPositionNormal>[] PNOrdered = tuplePN.Item2;
+            int PNTotalNodes = tuplePN.Item3;
+
+            var tuplePT  = BVHTreeBuilder<IndexedTriangleEngine<VertexPositionTexture>>.Build(allBVHTrianglesPT, SplitMethods.SAH);
+            BVHTree PTTree= tuplePT.Item1;
+            IndexedTriangleEngine<VertexPositionTexture>[] PTOrdered = tuplePT.Item2;
+            int PTTotalNodes = tuplePT.Item3;
+
+            var tuplePC  = BVHTreeBuilder<IndexedTriangleEngine<VertexPositionColor>>.Build(allBVHTrianglesPC, SplitMethods.SAH);
+            BVHTree PCTree= tuplePC.Item1;
+            IndexedTriangleEngine<VertexPositionColor>[] PCOrdered = tuplePC.Item2;
+            int PCTotalNodes = tuplePC.Item3;
+     
         }
 
         protected void EnableCulling(float deltaTime, GraphicsDevice graphicsDevice, CommandList commandList, Camera camera, ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] modelPNTTBDescriptorArray, ModelRuntimeDescriptor<VertexPositionNormal>[] modelPNDescriptorArray, ModelRuntimeDescriptor<VertexPositionTexture>[] modelPTDescriptorArray, ModelRuntimeDescriptor<VertexPositionColor>[] modelPCDescriptorArray, ModelRuntimeDescriptor<VertexPosition>[] modelPDescriptorArray)
