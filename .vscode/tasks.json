@@ -217,6 +217,13 @@
             "problemMatcher":"$msCompile"
         },
         {
+            "label": "run sponza (Release)",
+            "type": "shell",
+            "group": "build",
+            "command": "dotnet run --project Projects/sponza/ -c Release",
+            "problemMatcher":"$msCompile"
+        },
+        {
             "label": "run raytracer (Release)",
             "type": "shell",
             "group": "build",
