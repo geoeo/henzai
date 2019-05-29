@@ -57,7 +57,7 @@ namespace Henzai.Core.VertexGeometry
         /// </summary>
         public int IndexCount => _indices.Length;
         public bool AABBIsValid {get; set;}
-        public bool IsCulled => ValidIndexCount == 0 && !AABBIsValid;
+        public bool IsCulled => ValidIndexCount == 0 || !AABBIsValid;
         public ref Matrix4x4 World => ref _world;
         // public Dictionary<ushort, bool> ProcessedIndicesMap => _processedIndicesMap;
 
