@@ -16,6 +16,12 @@ namespace Henzai
         protected static UserInterface gui;
         private BVHRuntimeNode[] _bvhRuntimeNodesPNTTB;
         private IndexedTriangleEngine<VertexPositionNormalTextureTangentBitangent>[] _orderedPNTTB;
+        private BVHRuntimeNode[] _bvhRuntimeNodesPN;
+        private IndexedTriangleEngine<VertexPositionNormal>[] _orderedPN;
+        private BVHRuntimeNode[] _bvhRuntimeNodesPT;
+        private IndexedTriangleEngine<VertexPositionTexture>[] _orderedPT;
+        private BVHRuntimeNode[] _bvhRuntimeNodesPC;
+        private IndexedTriangleEngine<VertexPositionColor>[] _orderedPC;
 
 
         public abstract void createScene(GraphicsBackend graphicsBackend, Sdl2Window contextWindow = null);
@@ -121,82 +127,40 @@ namespace Henzai
 
             var tuplePN  = BVHTreeBuilder<IndexedTriangleEngine<VertexPositionNormal>>.Build(allBVHTrianglesPN, SplitMethods.SAH);
             BVHTree PNTree= tuplePN.Item1;
-            IndexedTriangleEngine<VertexPositionNormal>[] PNOrdered = tuplePN.Item2;
+            _orderedPN= tuplePN.Item2;
             int PNTotalNodes = tuplePN.Item3;
 
             var tuplePT  = BVHTreeBuilder<IndexedTriangleEngine<VertexPositionTexture>>.Build(allBVHTrianglesPT, SplitMethods.SAH);
             BVHTree PTTree= tuplePT.Item1;
-            IndexedTriangleEngine<VertexPositionTexture>[] PTOrdered = tuplePT.Item2;
+            _orderedPT = tuplePT.Item2;
             int PTTotalNodes = tuplePT.Item3;
 
             var tuplePC  = BVHTreeBuilder<IndexedTriangleEngine<VertexPositionColor>>.Build(allBVHTrianglesPC, SplitMethods.SAH);
             BVHTree PCTree= tuplePC.Item1;
-            IndexedTriangleEngine<VertexPositionColor>[] PCOrdered = tuplePC.Item2;
+            _orderedPC = tuplePC.Item2;
             int PCTotalNodes = tuplePC.Item3;
 
             _bvhRuntimeNodesPNTTB = BVHRuntime.ConstructBVHRuntime(PNTTBTree, PNTTBTotalNodes);
-            var bvhRuntimePN = BVHRuntime.ConstructBVHRuntime(PNTree, PNTotalNodes);
-            var bvhRuntimePT = BVHRuntime.ConstructBVHRuntime(PTTree, PTTotalNodes);
-            var bvhRuntimePC = BVHRuntime.ConstructBVHRuntime(PCTree, PCTotalNodes);
-                                                                                                                                                              
-        
+            _bvhRuntimeNodesPN = BVHRuntime.ConstructBVHRuntime(PNTree, PNTotalNodes);
+            _bvhRuntimeNodesPT = BVHRuntime.ConstructBVHRuntime(PTTree, PTTotalNodes);
+            _bvhRuntimeNodesPC = BVHRuntime.ConstructBVHRuntime(PCTree, PCTotalNodes);                                                                                                                                                 
         }
-        
+
          protected void EnableBVHCulling(float deltaTime, GraphicsDevice graphicsDevice, CommandList commandList, Camera camera, ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] modelPNTTBDescriptorArray, ModelRuntimeDescriptor<VertexPositionNormal>[] modelPNDescriptorArray, ModelRuntimeDescriptor<VertexPositionTexture>[] modelPTDescriptorArray, ModelRuntimeDescriptor<VertexPositionColor>[] modelPCDescriptorArray, ModelRuntimeDescriptor<VertexPosition>[] modelPDescriptorArray){
 
-            var updateBuffers = false;
-            if (updateBuffers) {
-                commandList.Begin();
-
-                foreach (var modelDescriptor in modelPNTTBDescriptorArray)
-                {
-                    var model = modelDescriptor.Model;
-                    byte vertexSizeInBytes = model.GetMesh(0).Vertices[0].GetSizeInBytes();
-
-                    var meshCount = model.MeshCount;
-                    for (int i = 0; i < meshCount; i++){
-                        var mesh = model.GetMesh(i);
-                        mesh.ValidIndexCount = 0;
-                        mesh.ValidVertexCount = 0;
-                    }
-                }
-            }
-
-            Culler.FrustumCullBVH(_bvhRuntimeNodesPNTTB, _orderedPNTTB, ref camera.ViewProjectionMatirx);
-
-            if (updateBuffers) {
-
-                foreach (var modelDescriptor in modelPNTTBDescriptorArray)
-                {
-                    var model = modelDescriptor.Model;
-                    byte vertexSizeInBytes = model.GetMesh(0).Vertices[0].GetSizeInBytes();
-
-                    var meshCount = model.MeshCount;
-                    for (int i = 0; i < meshCount; i++){
-                        var vertexBuffer = modelDescriptor.VertexBuffers[i];
-                        var indexBuffer = modelDescriptor.IndexBuffers[i];
-                        var mesh = model.GetMesh(i);
-
-                            mesh.CleanIndices.CopyTo(mesh.ValidIndices, 0);
-                            mesh.CleanVertices.CopyTo(mesh.ValidVertices, 0);
-
-                            uint vertexBytesToCopy = (vertexSizeInBytes * mesh.ValidVertexCount).ToUnsigned();
-                            uint indexBytesToCopy = (sizeof(ushort) * mesh.ValidIndexCount).ToUnsigned();
-                            uint allIndexBytesToCopy = (sizeof(ushort) * mesh.IndexCount).ToUnsigned();
-                            uint allVertexBytesToCopy = (vertexSizeInBytes * mesh.VertexCount).ToUnsigned();
-
-                            commandList.UpdateBuffer<VertexPositionNormalTextureTangentBitangent>(vertexBuffer, 0, ref mesh.CleanVertices[0], allVertexBytesToCopy);
-                            commandList.UpdateBuffer<ushort>(indexBuffer, 0, ref mesh.CleanIndices[0], allIndexBytesToCopy);
-
-                            commandList.UpdateBuffer<VertexPositionNormalTextureTangentBitangent>(vertexBuffer, 0, ref mesh.ValidVertices[0], vertexBytesToCopy);
-                            commandList.UpdateBuffer<ushort>(indexBuffer, 0, ref mesh.ValidIndices[0], indexBytesToCopy);
+            invalidateAABB(modelPNTTBDescriptorArray);
+            invalidateAABB(modelPNDescriptorArray);
+            invalidateAABB(modelPTDescriptorArray);
+            invalidateAABB(modelPCDescriptorArray);
                         
-                    }      
-                }
-
-                commandList.End();
-                graphicsDevice.SubmitCommands(commandList);
-            }
+            if (_orderedPNTTB.Length > 0)
+                Culler.FrustumCullBVH(_bvhRuntimeNodesPNTTB, _orderedPNTTB, ref camera.ViewProjectionMatirx);
+            if (_orderedPN.Length > 0)
+                Culler.FrustumCullBVH(_bvhRuntimeNodesPN, _orderedPN, ref camera.ViewProjectionMatirx);
+            if (_orderedPT.Length > 0)
+                Culler.FrustumCullBVH(_bvhRuntimeNodesPT, _orderedPT, ref camera.ViewProjectionMatirx);
+            if (_orderedPC.Length > 0)
+                Culler.FrustumCullBVH(_bvhRuntimeNodesPC, _orderedPC, ref camera.ViewProjectionMatirx);
          }
 
         protected void EnableCulling(float deltaTime, GraphicsDevice graphicsDevice, CommandList commandList, Camera camera, ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] modelPNTTBDescriptorArray, ModelRuntimeDescriptor<VertexPositionNormal>[] modelPNDescriptorArray, ModelRuntimeDescriptor<VertexPositionTexture>[] modelPTDescriptorArray, ModelRuntimeDescriptor<VertexPositionColor>[] modelPCDescriptorArray, ModelRuntimeDescriptor<VertexPosition>[] modelPDescriptorArray)
@@ -214,7 +178,6 @@ namespace Henzai
                 for (int i = 0; i < meshCount; i++)
                     FrustumCullMesh<VertexPositionNormalTextureTangentBitangent>(commandList, camera, updateBuffers, modelDescriptor, model, vertexSizeInBytes, i);
             }
-
 
             foreach (var modelDescriptor in modelPNDescriptorArray)
             {
@@ -260,6 +223,18 @@ namespace Henzai
             {
                 commandList.End();
                 graphicsDevice.SubmitCommands(commandList);
+            }
+        }
+
+        private static void invalidateAABB<T>(ModelRuntimeDescriptor<T>[] modelDescriptorArray) where T : struct, VertexLocateable {
+            foreach (var modelDescriptor in modelDescriptorArray)
+            {
+                var model = modelDescriptor.Model;
+                var meshCount = model.MeshCount;
+                for (int i = 0; i < meshCount; i++){
+                    var mesh = model.GetMesh(i);
+                    mesh.AABBIsValid = false;
+                }
             }
         }
 

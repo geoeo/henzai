@@ -158,13 +158,13 @@ module Culler =
         let bvhTraversalStack = Array.zeroCreate orderedPrimitives.Length
 
         let stopWatch = System.Diagnostics.Stopwatch.StartNew()
-        let indices = BVHRuntime.TraverseWithFrustum(bvhArray, orderedPrimitives, bvhTraversalStack, &worldViewProjectionMatrix)
+        let indices = BVHRuntime.TraverseWithFrustum(bvhArray, bvhTraversalStack, &worldViewProjectionMatrix)
         stopWatch.Stop()
         let perfTimeBVHTraverse = stopWatch.Elapsed.TotalMilliseconds
 
         stopWatch.Restart();
         match indices with
-        | struct(-1, -1) -> failwithf "No FrustumCullBVH index!"
+        | struct(-1, -1) -> () // everything is culled
         | struct(indexA, -1) -> processInteriorNodeForCulling indexA bvhArray orderedPrimitives
         | struct(indexA, indexB) ->
             processInteriorNodeForCulling indexA bvhArray orderedPrimitives

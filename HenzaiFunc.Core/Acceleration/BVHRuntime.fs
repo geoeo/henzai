@@ -111,23 +111,21 @@ type BVHRuntime private() =
                     currentNodeIndex <- nodesToVisit.[toVisitOffset]
         struct(hasIntersection, tHit, intersectedGeometry)
 
-    static member TraverseWithFrustum (bvhArray : BVHRuntimeNode[] , orderedPrimitives : IndexedTriangleEngine<'T>[], nodesToVisit : int[], viewProjectionMatrix : byref<Matrix4x4>) =
+    static member TraverseWithFrustum (bvhArray : BVHRuntimeNode[], nodesToVisit : int[], viewProjectionMatrix : byref<Matrix4x4>) =
         let mutable validNodeStack : struct(int*int) = struct(-1, -1)
         let mutable validNodeStackOffset = -1
         let mutable toVisitOffset = 0
         let mutable currentNodeIndex = 0
         let mutable parentOfCurrentNodeIndex = -1
 
-        //TODO Compute world transformation form AABB
-
-        // let mutable planeLeft =
-        //     Geometry.ExtractLeftPlane(&viewProjectionMatrix)
-        // let mutable planeRight =
-        //     Geometry.ExtractRightPlane(&viewProjectionMatrix)
-        // let mutable planeTop =
-        //     Geometry.ExtractTopPlane(&viewProjectionMatrix)
-        // let mutable planeBottom =
-        //     Geometry.ExtractBottomPlane(&viewProjectionMatrix)
+        let mutable planeLeft =
+            Geometry.ExtractLeftPlane(&viewProjectionMatrix)
+        let mutable planeRight =
+            Geometry.ExtractRightPlane(&viewProjectionMatrix)
+        let mutable planeTop =
+            Geometry.ExtractTopPlane(&viewProjectionMatrix)
+        let mutable planeBottom =
+            Geometry.ExtractBottomPlane(&viewProjectionMatrix)
         let mutable planeNear =
             Geometry.ExtractNearPlane(&viewProjectionMatrix)
         let mutable planeFar =
@@ -136,26 +134,30 @@ type BVHRuntime private() =
         while toVisitOffset >= 0 do
             let node = bvhArray.[currentNodeIndex]
             let currentAABB = node.aabb
-            //let nPrimitives = node.nPrimitives
 
-            //let world = currentAABB.World();
-            //let mvp = world * viewProjectionMatrix;
-
-
-               
-
-            //let currentIntersectionLeft = AABBProc.PlaneIntersection(currentAABB,&planeLeft)
-            //let currentIntersectionRight = AABBProc.PlaneIntersection(currentAABB,&planeRight)
-            //let currentIntersectionTop = AABBProc.PlaneIntersection(currentAABB,&planeTop)
-            //let currentIntersectionBottom = AABBProc.PlaneIntersection(currentAABB,&planeBottom)
+            // These impact performance
+            let currentIntersectionLeft = AABBProc.PlaneIntersection(currentAABB,&planeLeft)
+            let currentIntersectionRight = AABBProc.PlaneIntersection(currentAABB,&planeRight)
+            let currentIntersectionTop = AABBProc.PlaneIntersection(currentAABB,&planeTop)
+            let currentIntersectionBottom = AABBProc.PlaneIntersection(currentAABB,&planeBottom)
             let currentIntersectionNear = AABBProc.PlaneIntersection(currentAABB,&planeNear)
             let currentIntersectionFar = AABBProc.PlaneIntersection(currentAABB,&planeFar)
+
             let inside = 
                 currentIntersectionNear = IntersectionResult.Inside &&
-                currentIntersectionFar = IntersectionResult.Inside
+                currentIntersectionFar = IntersectionResult.Inside && 
+                currentIntersectionLeft = IntersectionResult.Inside &&
+                currentIntersectionRight = IntersectionResult.Inside && 
+                currentIntersectionTop = IntersectionResult.Inside &&
+                currentIntersectionBottom = IntersectionResult.Inside
+
             let intersecting = 
                 currentIntersectionNear = IntersectionResult.Intersecting ||
-                currentIntersectionFar = IntersectionResult.Intersecting
+                currentIntersectionFar = IntersectionResult.Intersecting ||
+                currentIntersectionLeft = IntersectionResult.Intersecting ||
+                currentIntersectionRight = IntersectionResult.Intersecting ||
+                currentIntersectionTop = IntersectionResult.Intersecting ||
+                currentIntersectionBottom = IntersectionResult.Intersecting
 
             if (inside || intersecting )  then 
                 validNodeStackOffset <- validNodeStackOffset + 1
@@ -163,7 +165,7 @@ type BVHRuntime private() =
                     match validNodeStack with
                     | struct(-1, -1) -> struct(currentNodeIndex, -1)
                     | struct(x, -1) -> 
-                        toVisitOffset <- 0
+                        toVisitOffset <- 0 // force break
                         struct(x, currentNodeIndex)
                     | _ -> failwithf "TraverseWithFrustum: all node slots are taken"
                 toVisitOffset <- toVisitOffset - 1
@@ -178,23 +180,6 @@ type BVHRuntime private() =
                     toVisitOffset <- toVisitOffset + 1 
                     parentOfCurrentNodeIndex <- currentNodeIndex
                     currentNodeIndex <- rightChildIndex
-
-                    // let endOfRightChild = 
-                    //     if parentOfCurrentNodeIndex = 0 then 
-                    //         bvhArray.Length 
-                    //     else 
-                    //         bvhArray.[parentOfCurrentNodeIndex].interiorNode.secondChildOffset
-
-                    // for i in 0.. endOfRightChild-1 do
-                    //     let n = bvhArray.[i]
-                    //     let offset = n.leafNode.primitivesOffset
-                    //     let nPrims = n.nPrimitives
-                    //     if nPrims > 0 then
-                    //         for j in 0..nPrims-1 do
-                    //             let mesh = orderedPrimitives.[offset+j].Mesh
-                    //             mesh.ValidIndexCount <- 0
-                    //             mesh.ValidVertexCount <- 0    
-
                 else 
                     toVisitOffset <- toVisitOffset - 1
                     if toVisitOffset >= 0 then 
