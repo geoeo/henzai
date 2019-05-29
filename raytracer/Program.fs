@@ -32,6 +32,7 @@ let main argv =
     //mainScene.RenderScene()
     mainScene.RenderSceneParallel()
     //mainScene.RenderSceneSync()
+    stopWatch.Stop()
     printfn "Finished Rendering. Time taken: %f ms" stopWatch.Elapsed.TotalMilliseconds
     mainScene.SaveFrameBuffer()
     mainScene.SaveDepthBuffer()

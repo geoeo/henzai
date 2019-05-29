@@ -117,6 +117,7 @@ namespace Henzai.Core.Acceleration
 
         /// plane encode the 4 coefficients (a,b,c,d) of a plane i.e. 0 = ax + by + cz + d
         /// Assuming positive halfspace is "inside" of the plane i.e. normal pointing inwards
+        /// Intersection with respect to the AABB
         /// Realtime Rendering Third Editin p. 756
         //TODO: Investigate error bound for intersection
         public static IntersectionResult PlaneIntersection(AABB aabb, ref Vector4 plane)

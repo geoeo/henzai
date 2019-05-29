@@ -142,47 +142,7 @@ module Culler =
             let primitiveOffset = runtimeNode.leafNode.primitivesOffset
             for j in 0..nPrimitives-1 do
                 let mesh = orderedPrimitives.[primitiveOffset+j].Mesh
-                let processedIndicesMap = new Dictionary<uint16,uint16>()
-                let vertices = mesh.Vertices
-                let indices = mesh.Indices
-                let validVertices = mesh.ValidVertices
-                let validIndices = mesh.ValidIndices
-                let mutable validIndicesCounter = 0us
-                let mutable validVertexCounter = 0
-                // Every vertex in Intersecting or Inside
-                for i in 0..3..indices.Length-1 do
-                    let i1 = indices.[i]
-                    let i2 = indices.[i + 1]
-                    let i3 = indices.[i + 2]
-                    let vertex1 = vertices.[int i1]
-                    let vertex2 = vertices.[int i2]
-                    let vertex3 = vertices.[int i3]
-                    if (not (processedIndicesMap.ContainsKey(i1))) then
-                        processedIndicesMap.Add(i1, (uint16)validVertexCounter)
-                        validVertices.[validVertexCounter] <- vertex1
-                        validIndices.[(int)validIndicesCounter] <- (uint16)validVertexCounter
-                        validVertexCounter <- validVertexCounter + 1
-                    else
-                        validIndices.[(int)validIndicesCounter] <- processedIndicesMap.Item(i1)
-                    validIndicesCounter <- validIndicesCounter + 1us
-                    if (not (processedIndicesMap.ContainsKey(i2))) then
-                        processedIndicesMap.Add(i2, (uint16)validVertexCounter)
-                        validVertices.[validVertexCounter] <- vertex2
-                        validIndices.[(int)validIndicesCounter] <- (uint16)validVertexCounter
-                        validVertexCounter <- validVertexCounter + 1
-                    else
-                        validIndices.[(int)validIndicesCounter] <- processedIndicesMap.Item(i2)
-                    validIndicesCounter <- validIndicesCounter + 1us
-                    if (not (processedIndicesMap.ContainsKey(i3))) then
-                        processedIndicesMap.Add(i3, (uint16)validVertexCounter)
-                        validVertices.[validVertexCounter] <- vertex3
-                        validIndices.[(int)validIndicesCounter] <- (uint16)validVertexCounter
-                        validVertexCounter <- validVertexCounter + 1
-                    else
-                        validIndices.[(int)validIndicesCounter] <- processedIndicesMap.Item(i3)
-                    validIndicesCounter <- validIndicesCounter + 1us
-                mesh.ValidIndexCount <- (int)validIndicesCounter
-                mesh.ValidVertexCount <- validVertexCounter
+                mesh.AABBIsValid <- true;
             ()
         else
             let leftChildIndex = runtimeNodeIndex + 1
@@ -196,12 +156,22 @@ module Culler =
     /// </summary>
     let FrustumCullBVH (bvhArray : BVHRuntimeNode[], orderedPrimitives : IndexedTriangleEngine<'T>[], worldViewProjectionMatrix : byref<Matrix4x4>) =
         let bvhTraversalStack = Array.zeroCreate orderedPrimitives.Length
+
+        let stopWatch = System.Diagnostics.Stopwatch.StartNew()
         let indices = BVHRuntime.TraverseWithFrustum(bvhArray, orderedPrimitives, bvhTraversalStack, &worldViewProjectionMatrix)
+        stopWatch.Stop()
+        let perfTimeBVHTraverse = stopWatch.Elapsed.TotalMilliseconds
+
+        stopWatch.Restart();
         match indices with
         | struct(-1, -1) -> failwithf "No FrustumCullBVH index!"
         | struct(indexA, -1) -> processInteriorNodeForCulling indexA bvhArray orderedPrimitives
         | struct(indexA, indexB) ->
             processInteriorNodeForCulling indexA bvhArray orderedPrimitives
             processInteriorNodeForCulling indexB bvhArray orderedPrimitives
+        stopWatch.Stop();
+        let perfTimeNodeProcessing = stopWatch.Elapsed.TotalMilliseconds
+        ()
+
 
 

@@ -56,7 +56,8 @@ namespace Henzai.Core.VertexGeometry
         /// Disclaimer: In general you want ValidIndexCount
         /// </summary>
         public int IndexCount => _indices.Length;
-        public bool IsCulled => ValidIndexCount == 0;
+        public bool AABBIsValid {get; set;}
+        public bool IsCulled => ValidIndexCount == 0 && !AABBIsValid;
         public ref Matrix4x4 World => ref _world;
         // public Dictionary<ushort, bool> ProcessedIndicesMap => _processedIndicesMap;
 
@@ -80,6 +81,7 @@ namespace Henzai.Core.VertexGeometry
 
             _indexClean = new ushort[IndexCount];
             _vertexClean = new T[VertexCount];
+            AABBIsValid = true;
 
             // _processedIndicesMap = new Dictionary<ushort, bool>();
         
@@ -112,6 +114,8 @@ namespace Henzai.Core.VertexGeometry
 
             _indexClean = new ushort[IndexCount];
             _vertexClean = new T[VertexCount];
+
+            AABBIsValid = true;
 
             //  _processedIndicesMap = new Dictionary<ushort, bool>();
         }

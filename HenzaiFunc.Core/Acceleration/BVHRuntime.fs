@@ -118,6 +118,8 @@ type BVHRuntime private() =
         let mutable currentNodeIndex = 0
         let mutable parentOfCurrentNodeIndex = -1
 
+        //TODO Compute world transformation form AABB
+
         // let mutable planeLeft =
         //     Geometry.ExtractLeftPlane(&viewProjectionMatrix)
         // let mutable planeRight =
@@ -130,11 +132,18 @@ type BVHRuntime private() =
             Geometry.ExtractNearPlane(&viewProjectionMatrix)
         let mutable planeFar =
             Geometry.ExtractFarPlane(&viewProjectionMatrix)
-           
+
         while toVisitOffset >= 0 do
             let node = bvhArray.[currentNodeIndex]
-            let nPrimitives = node.nPrimitives
             let currentAABB = node.aabb
+            //let nPrimitives = node.nPrimitives
+
+            //let world = currentAABB.World();
+            //let mvp = world * viewProjectionMatrix;
+
+
+               
+
             //let currentIntersectionLeft = AABBProc.PlaneIntersection(currentAABB,&planeLeft)
             //let currentIntersectionRight = AABBProc.PlaneIntersection(currentAABB,&planeRight)
             //let currentIntersectionTop = AABBProc.PlaneIntersection(currentAABB,&planeTop)
@@ -148,11 +157,7 @@ type BVHRuntime private() =
                 currentIntersectionNear = IntersectionResult.Intersecting ||
                 currentIntersectionFar = IntersectionResult.Intersecting
 
-            let outside = 
-                currentIntersectionNear = IntersectionResult.Outside ||
-                currentIntersectionFar = IntersectionResult.Outside
-
-            if (inside || intersecting)  then 
+            if (inside || intersecting )  then 
                 validNodeStackOffset <- validNodeStackOffset + 1
                 validNodeStack <-
                     match validNodeStack with

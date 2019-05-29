@@ -48,7 +48,8 @@ namespace Henzai.Examples
             gui.SetOverlayFor(scene);
 
             scene.PreRender_Models += BuildBVH;
-            scene.PreDraw_Time_GraphicsDevice_CommandList_Camera_Models += EnableCulling;
+            scene.PreDraw_Time_GraphicsDevice_CommandList_Camera_Models += EnableBVHCulling;
+            //scene.PreDraw_Time_GraphicsDevice_CommandList_Camera_Models += EnableCulling;
 
             scene.Run(renderResolution);
         }

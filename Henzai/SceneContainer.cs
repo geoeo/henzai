@@ -138,69 +138,62 @@ namespace Henzai
             var bvhRuntimePN = BVHRuntime.ConstructBVHRuntime(PNTree, PNTotalNodes);
             var bvhRuntimePT = BVHRuntime.ConstructBVHRuntime(PTTree, PTTotalNodes);
             var bvhRuntimePC = BVHRuntime.ConstructBVHRuntime(PCTree, PCTotalNodes);
-
+                                                                                                                                                              
         
         }
-
+        
          protected void EnableBVHCulling(float deltaTime, GraphicsDevice graphicsDevice, CommandList commandList, Camera camera, ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] modelPNTTBDescriptorArray, ModelRuntimeDescriptor<VertexPositionNormal>[] modelPNDescriptorArray, ModelRuntimeDescriptor<VertexPositionTexture>[] modelPTDescriptorArray, ModelRuntimeDescriptor<VertexPositionColor>[] modelPCDescriptorArray, ModelRuntimeDescriptor<VertexPosition>[] modelPDescriptorArray){
 
-            var updateBuffers = true;
-            if (updateBuffers)
+            var updateBuffers = false;
+            if (updateBuffers) {
                 commandList.Begin();
 
+                foreach (var modelDescriptor in modelPNTTBDescriptorArray)
+                {
+                    var model = modelDescriptor.Model;
+                    byte vertexSizeInBytes = model.GetMesh(0).Vertices[0].GetSizeInBytes();
 
-            foreach (var modelDescriptor in modelPNTTBDescriptorArray)
-            {
-                var model = modelDescriptor.Model;
-                byte vertexSizeInBytes = model.GetMesh(0).Vertices[0].GetSizeInBytes();
-
-                if (updateBuffers){
                     var meshCount = model.MeshCount;
                     for (int i = 0; i < meshCount; i++){
                         var mesh = model.GetMesh(i);
-                        //mesh.ValidIndexCount = 0;
-                        //mesh.ValidVertexCount = 0;
+                        mesh.ValidIndexCount = 0;
+                        mesh.ValidVertexCount = 0;
                     }
                 }
-
             }
 
             Culler.FrustumCullBVH(_bvhRuntimeNodesPNTTB, _orderedPNTTB, ref camera.ViewProjectionMatirx);
 
-            foreach (var modelDescriptor in modelPNTTBDescriptorArray)
-            {
-                var model = modelDescriptor.Model;
-                byte vertexSizeInBytes = model.GetMesh(0).Vertices[0].GetSizeInBytes();
+            if (updateBuffers) {
 
-                var meshCount = model.MeshCount;
-                for (int i = 0; i < meshCount; i++){
-                    var vertexBuffer = modelDescriptor.VertexBuffers[i];
-                    var indexBuffer = modelDescriptor.IndexBuffers[i];
-                    var mesh = model.GetMesh(i);
+                foreach (var modelDescriptor in modelPNTTBDescriptorArray)
+                {
+                    var model = modelDescriptor.Model;
+                    byte vertexSizeInBytes = model.GetMesh(0).Vertices[0].GetSizeInBytes();
 
-                    if (updateBuffers)
-                    {
-                        mesh.CleanIndices.CopyTo(mesh.ValidIndices, 0);
-                        mesh.CleanVertices.CopyTo(mesh.ValidVertices, 0);
+                    var meshCount = model.MeshCount;
+                    for (int i = 0; i < meshCount; i++){
+                        var vertexBuffer = modelDescriptor.VertexBuffers[i];
+                        var indexBuffer = modelDescriptor.IndexBuffers[i];
+                        var mesh = model.GetMesh(i);
 
-                        uint vertexBytesToCopy = (vertexSizeInBytes * mesh.ValidVertexCount).ToUnsigned();
-                        uint indexBytesToCopy = (sizeof(ushort) * mesh.ValidIndexCount).ToUnsigned();
-                        uint allIndexBytesToCopy = (sizeof(ushort) * mesh.IndexCount).ToUnsigned();
-                        uint allVertexBytesToCopy = (vertexSizeInBytes * mesh.VertexCount).ToUnsigned();
+                            mesh.CleanIndices.CopyTo(mesh.ValidIndices, 0);
+                            mesh.CleanVertices.CopyTo(mesh.ValidVertices, 0);
 
-                        commandList.UpdateBuffer<VertexPositionNormalTextureTangentBitangent>(vertexBuffer, 0, ref mesh.CleanVertices[0], allVertexBytesToCopy);
-                        commandList.UpdateBuffer<ushort>(indexBuffer, 0, ref mesh.CleanIndices[0], allIndexBytesToCopy);
+                            uint vertexBytesToCopy = (vertexSizeInBytes * mesh.ValidVertexCount).ToUnsigned();
+                            uint indexBytesToCopy = (sizeof(ushort) * mesh.ValidIndexCount).ToUnsigned();
+                            uint allIndexBytesToCopy = (sizeof(ushort) * mesh.IndexCount).ToUnsigned();
+                            uint allVertexBytesToCopy = (vertexSizeInBytes * mesh.VertexCount).ToUnsigned();
 
-                        commandList.UpdateBuffer<VertexPositionNormalTextureTangentBitangent>(vertexBuffer, 0, ref mesh.ValidVertices[0], vertexBytesToCopy);
-                        commandList.UpdateBuffer<ushort>(indexBuffer, 0, ref mesh.ValidIndices[0], indexBytesToCopy);
-                    }
+                            commandList.UpdateBuffer<VertexPositionNormalTextureTangentBitangent>(vertexBuffer, 0, ref mesh.CleanVertices[0], allVertexBytesToCopy);
+                            commandList.UpdateBuffer<ushort>(indexBuffer, 0, ref mesh.CleanIndices[0], allIndexBytesToCopy);
 
+                            commandList.UpdateBuffer<VertexPositionNormalTextureTangentBitangent>(vertexBuffer, 0, ref mesh.ValidVertices[0], vertexBytesToCopy);
+                            commandList.UpdateBuffer<ushort>(indexBuffer, 0, ref mesh.ValidIndices[0], indexBytesToCopy);
+                        
+                    }      
                 }
-                    
-            }
 
-            if (updateBuffers)
-            {
                 commandList.End();
                 graphicsDevice.SubmitCommands(commandList);
             }
@@ -208,7 +201,7 @@ namespace Henzai
 
         protected void EnableCulling(float deltaTime, GraphicsDevice graphicsDevice, CommandList commandList, Camera camera, ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] modelPNTTBDescriptorArray, ModelRuntimeDescriptor<VertexPositionNormal>[] modelPNDescriptorArray, ModelRuntimeDescriptor<VertexPositionTexture>[] modelPTDescriptorArray, ModelRuntimeDescriptor<VertexPositionColor>[] modelPCDescriptorArray, ModelRuntimeDescriptor<VertexPosition>[] modelPDescriptorArray)
         {
-            var updateBuffers = true;
+            var updateBuffers = false;
             if (updateBuffers)
                 commandList.Begin();
 
