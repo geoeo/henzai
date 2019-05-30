@@ -63,7 +63,7 @@ namespace Henzai.Runtime
         /// Bind Actions that have to be executed prior to every draw call
         /// </summary>
         //TODO: Maybe unify some
-        public event Action<float> PreDraw;
+        public event Action<float, Camera> PreDraw_Time_Camera;
         public event Action<float, InputSnapshot> PreDraw_Time_Input;
         public event Action<float, GraphicsDevice, CommandList, Camera, ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[], ModelRuntimeDescriptor<VertexPositionNormal>[], ModelRuntimeDescriptor<VertexPositionTexture>[], ModelRuntimeDescriptor<VertexPositionColor>[], ModelRuntimeDescriptor<VertexPosition>[]> PreDraw_Time_GraphicsDevice_CommandList_Camera_Models;
         public event Action<float, Camera, ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[], ModelRuntimeDescriptor<VertexPositionNormal>[], ModelRuntimeDescriptor<VertexPositionTexture>[], ModelRuntimeDescriptor<VertexPositionColor>[], ModelRuntimeDescriptor<VertexPosition>[]> PreDraw_Time_Camera_Models;
@@ -235,7 +235,7 @@ namespace Henzai.Runtime
                 if (_contextWindow.Exists)
                 {
 
-                    PreDraw?.Invoke(_frameTimer.prevFrameTicksInSeconds);
+                    PreDraw_Time_Camera?.Invoke(_frameTimer.prevFrameTicksInSeconds, _camera);
                     PreDraw_Time_Input?.Invoke(_frameTimer.prevFrameTicksInSeconds, inputSnapshot);
                     PreDraw_Time_GraphicsDevice_CommandList_Camera_Models?.Invoke(
                         _frameTimer.prevFrameTicksInSeconds,

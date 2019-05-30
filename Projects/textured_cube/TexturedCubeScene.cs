@@ -25,11 +25,11 @@ namespace Henzai.Examples
 
         public TexturedCubeScene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
             : base(title,windowSize,graphicsDeviceOptions,renderOptions){
-                PreDraw += rotateCameraAround;
+                PreDraw_Time_Camera += rotateCameraAround;
                 _worldTransCube = Matrix4x4.CreateWorld(new Vector3(0,0,0),-Vector3.UnitZ,Vector3.UnitY);
             }
 
-        private void rotateCameraAround(float deltaSeconds){
+        private void rotateCameraAround(float deltaSeconds, Camera camera){
             float radian = (float)Math.PI/180.0f;
             radian *= 10.0f*deltaSeconds;
             // Matrix4x4 rotationAroundY = Matrix4x4.CreateRotationY(radian);

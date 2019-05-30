@@ -52,7 +52,7 @@ namespace Henzai.Examples
         public SDL2GUIScene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
             : base(title,windowSize,graphicsDeviceOptions,renderOptions){
             PreRender_Camera += ScaleTextureQuadToMatchResolution;
-            PreDraw += this.RotateCube;
+            PreDraw_Time_Camera += this.RotateCube;
         }
 
         override protected void CreateResources(){
@@ -455,7 +455,7 @@ namespace Henzai.Examples
             _worldTransTexturedQuad= scale*_worldTransTexturedQuad;
         }
 
-        private void RotateCube(float deltaSeconds){
+        private void RotateCube(float deltaSeconds, Camera camera){
             // float radian = (float)Math.PI/180.0f;
             // radian *= 10.0f*deltaSeconds;
             // Matrix4x4 rotationAroundY = Matrix4x4.CreateRotationY(radian);

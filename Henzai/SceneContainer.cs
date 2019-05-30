@@ -6,6 +6,7 @@ using HenzaiFunc.Core.Types;
 using HenzaiFunc.Core.Acceleration;
 using Henzai.Core.Acceleration;
 using Henzai.Core.Extensions;
+using Henzai.Core.Raytracing;
 using Henzai.Core;
 using Henzai.UI;
 
@@ -26,7 +27,7 @@ namespace Henzai
         private IndexedTriangleEngine<VertexPositionTexture>[] _orderedPT;
         private BVHRuntimeNode[] _bvhRuntimeNodesPC;
         private IndexedTriangleEngine<VertexPositionColor>[] _orderedPC;
-        private Vector4[,] _zCullingRays;
+        private Ray[,] _zCullingRays;
 
 
         public abstract void createScene(GraphicsBackend graphicsBackend, Sdl2Window contextWindow = null);
@@ -42,15 +43,33 @@ namespace Henzai
             //TODO: Refactor this once geometry can be changes at runtime
             var height = (int)camera.WindowHeight;
             var width = (int)camera.WindowWidth;
+            _zCullingRays = new Ray[height, width];
+
+            var cameraPos = new Vector4(camera.Position, 1.0f);
             var cameraToWS = RaytraceCamera.CameraToWorld(camera.ViewMatrix);
             var cameraToWSRot = Core.Numerics.Geometry.Rotation(ref cameraToWS);
-            _zCullingRays = new Vector4[height, width];
 
             for (int py = 0; py < height; py++){
                 for(int px = 0; px < width; px ++){
                     var dirCS = RaytraceCamera.RayDirection(px, py);
                     var dirWS = Vector4.Normalize(Vector4.Transform(dirCS, cameraToWSRot));
-                    _zCullingRays[py,px] = dirWS;
+                    _zCullingRays[py,px] = new Ray(cameraPos,dirWS);
+                }
+            }
+        }
+
+        protected void UpdateZCullingRays(float delta, Camera camera){
+            var height = (int)camera.WindowHeight;
+            var width = (int)camera.WindowWidth;
+            var cameraPos = new Vector4(camera.Position, 1.0f);
+            var cameraToWS = RaytraceCamera.CameraToWorld(camera.ViewMatrix);
+            var cameraToWSRot = Core.Numerics.Geometry.Rotation(ref cameraToWS);
+
+            for (int py = 0; py < height; py++){
+                for(int px = 0; px < width; px ++){
+                    var dirCS = RaytraceCamera.RayDirection(px, py);
+                    var dirWS = Vector4.Normalize(Vector4.Transform(dirCS, cameraToWSRot));
+                    _zCullingRays[py,px] = new Ray(cameraPos,dirWS);
                 }
             }
         }

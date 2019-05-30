@@ -38,18 +38,17 @@ namespace Henzai.UI
 
 
         public void SetOverlayFor(Renderable scene){
-            scene.PreDraw += UpdateImGui;
+            scene.PreDraw_Time_Camera += UpdateImGui;
             AddThisAsPostTo(scene);
         }
 
-        public void UpdateImGui(float deltaSeconds){
+        public void UpdateImGui(float deltaSeconds, Camera camera){
 
             ImGuiNET.IO io = ImGui.GetIO();
             io.DeltaTime = deltaSeconds;
             io.DisplaySize = new System.Numerics.Vector2(ContextWindow.Width, ContextWindow.Height);
             io.DisplayFramebufferScale = new System.Numerics.Vector2(ContextWindow.Width / ContextWindow.Height);
             
-
             ImGui.NewFrame();
             SubmitImGUICommands(deltaSeconds);
             ImGui.Render();

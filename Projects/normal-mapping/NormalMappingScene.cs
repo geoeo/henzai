@@ -36,14 +36,14 @@ namespace Henzai.Examples
         Model<VertexPositionNormalTextureTangent, RealtimeMaterial> _model;
 
         public NormalMappingScene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
-            : base(title,windowSize,graphicsDeviceOptions,renderOptions){
+            : base(title,windowSize,graphicsDeviceOptions, renderOptions){
                 _vertexBuffers = new List<DeviceBuffer>();
                 _indexBuffers = new List<DeviceBuffer>();
 
-                PreDraw+=RotateSphereModel;
+                PreDraw_Time_Camera+=RotateSphereModel;
         }
 
-        private void RotateSphereModel(){
+        private void RotateSphereModel(float delta, Camera camera){
             var newWorld = _model.GetWorld_DontMutate*Matrix4x4.CreateRotationY(Math.PI.ToFloat());
             _model.SetNewWorldTransformation(ref newWorld,true);
         }

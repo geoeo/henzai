@@ -3,7 +3,6 @@ namespace HenzaiFunc.Core.Acceleration
 open System.Numerics
 open System.Collections.Generic
 open Henzai.Core.Numerics
-open Henzai.Core.VertexGeometry
 open HenzaiFunc.Core.Types
 open Henzai.Core.Acceleration
 
@@ -144,6 +143,10 @@ module Culler =
         ()
 
 
+    let ZCullBVH (bvhArray : BVHRuntimeNode[], orderedPrimitives : IndexedTriangleEngine<'T>[], viewProjectionMatrix : byref<Matrix4x4>) = 
+        let bvhTraversalStack = Array.zeroCreate orderedPrimitives.Length
+
+        ()
     
     //TODO: Make ray AABB intersection for IndexedTriangle which saves the hit aabb in a resolution grid
 
