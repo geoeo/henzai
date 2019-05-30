@@ -87,7 +87,7 @@ namespace Henzai.Core.VertexGeometry
         
         }
 
-        //TODO: Support trianlge strips
+        //TODO: Support trianlge strips e.g. offscreen and sdl project
         //TODO: Support instancing
         public Mesh(T[] vertices, ushort[] indices)
         {
