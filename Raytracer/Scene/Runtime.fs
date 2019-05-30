@@ -132,7 +132,7 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
 
     let renderPassParallel px py = 
         let dirCS = 
-            RayDirection (PixelToCamera (float32 px) (float32 py) (float32 width) (float32 height) fov)
+            RayDirection (PixelToCamera (float32 px) (float32 py) (float32 width) (float32 height) fov) -1.0f
         let rot : Matrix4x4 = Henzai.Core.Numerics.Geometry.Rotation(ref cameraWS)
         let dirWS = Vector4.Normalize(Vector4.Transform(dirCS, rot))
         let ray = Ray(Vector4(cameraWS.Translation, 1.0f), dirWS)
@@ -150,7 +150,7 @@ type RuntimeScene (surfaces : Surface [], nonBoundableSurfaces : Surface [], bvh
 
     let renderPass px py threadId it = 
         let dirCS = 
-            RayDirection (PixelToCamera (float32 px) (float32 py) (float32 width) (float32 height) fov)
+            RayDirection (PixelToCamera (float32 px) (float32 py) (float32 width) (float32 height) fov) -1.0f
         let rot : Matrix4x4 = Henzai.Core.Numerics.Geometry.Rotation(ref cameraWS)
         let dirWS = Vector4.Normalize(Vector4.Transform(dirCS, rot))
         let ray = Ray(Vector4(cameraWS.Translation, 1.0f), dirWS)
