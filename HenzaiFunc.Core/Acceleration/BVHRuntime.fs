@@ -158,6 +158,7 @@ type BVHRuntime private() =
                 currentIntersectionTop = IntersectionResult.Intersecting ||
                 currentIntersectionBottom = IntersectionResult.Intersecting
 
+            // "or"-ing seems to faster than "not"-ing i.e. not outside
             let outside = 
                 currentIntersectionNear = IntersectionResult.Outside &&
                 currentIntersectionFar = IntersectionResult.Outside &&
