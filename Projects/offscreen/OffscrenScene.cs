@@ -50,7 +50,7 @@ namespace Henzai.Examples
 
         public OffscreenScene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
             : base(title,windowSize,graphicsDeviceOptions,renderOptions){
-            PreRenderLoop += ScaleTextureQuadToMatchResolution;
+            PreRender_Camera += ScaleTextureQuadToMatchResolution;
             PreDraw += this.RotateCube;
         }
 
@@ -451,8 +451,8 @@ namespace Henzai.Examples
             GraphicsDevice.SubmitCommands(_commandList);
         }
 
-        private void ScaleTextureQuadToMatchResolution(){
-            float horizontal = RenderResoultion.Horizontal.ToFloat()/RenderResoultion.Vertical.ToFloat();
+        private void ScaleTextureQuadToMatchResolution(Camera camera){
+            float horizontal = camera.AspectRatio;
             float vertical = 1;
             Matrix4x4 scale = Matrix4x4.CreateScale(horizontal,vertical,1f,new Vector3(-1,0,0));
             _worldTransTexturedQuad= scale*_worldTransTexturedQuad;

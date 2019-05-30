@@ -4,7 +4,6 @@ open System.Numerics
 open Henzai.Core.VertexGeometry
 open Henzai.Core.Numerics
 
-
 module VertexGeometry = 
     
     let vertexPositionTransform(transform : Matrix4x4) (v : VertexPosition) = 

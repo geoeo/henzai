@@ -1,10 +1,12 @@
 using System.Numerics;
 using Veldrid;
 using Veldrid.Sdl2;
+using HenzaiFunc.Core;
 using HenzaiFunc.Core.Types;
 using HenzaiFunc.Core.Acceleration;
 using Henzai.Core.Acceleration;
 using Henzai.Core.Extensions;
+using Henzai.Core;
 using Henzai.UI;
 
 using Henzai.Runtime;
@@ -24,7 +26,7 @@ namespace Henzai
         private IndexedTriangleEngine<VertexPositionTexture>[] _orderedPT;
         private BVHRuntimeNode[] _bvhRuntimeNodesPC;
         private IndexedTriangleEngine<VertexPositionColor>[] _orderedPC;
-        private Vector4[][] _zCullingRays;
+        private Vector4[,] _zCullingRays;
 
 
         public abstract void createScene(GraphicsBackend graphicsBackend, Sdl2Window contextWindow = null);
@@ -36,12 +38,25 @@ namespace Henzai
             createScene(graphicsBackend, contextWindow);
         }
 
+        protected void GenerateZCullingRays(Camera camera){
+            //TODO: Refactor this once geometry can be changes at runtime
+            var height = (int)camera.WindowHeight;
+            var width = (int)camera.WindowWidth;
+            var cameraToWS = RaytraceCamera.CameraToWorld(camera.ViewMatrix);
+            var cameraToWSRot = Core.Numerics.Geometry.Rotation(ref cameraToWS);
+            _zCullingRays = new Vector4[height, width];
+
+            for (int py = 0; py < height; py++){
+                for(int px = 0; px < width; px ++){
+                    var dirCS = RaytraceCamera.RayDirection(px, py);
+                    var dirWS = Vector4.Normalize(Vector4.Transform(dirCS, cameraToWSRot));
+                    _zCullingRays[py,px] = dirWS;
+                }
+            }
+        }
+
         protected void BuildBVH(ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] modelPNTTBDescriptorArray, ModelRuntimeDescriptor<VertexPositionNormal>[] modelPNDescriptorArray, ModelRuntimeDescriptor<VertexPositionTexture>[] modelPTDescriptorArray, ModelRuntimeDescriptor<VertexPositionColor>[] modelPCDescriptorArray, ModelRuntimeDescriptor<VertexPosition>[] modelPDescriptorArray)
         {
-
-            //TODO: Refactor this once geometry can be changes at runtime
-            
-
             var allTrianglesCountPNTTB = 0;
             var allTrianglesCountPN = 0;
             var allTrianglesCountPT = 0;

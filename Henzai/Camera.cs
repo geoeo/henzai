@@ -46,7 +46,8 @@ namespace Henzai
         public float FarDistance { get => _far; set { _far = value; UpdateViewMatrix();} }
         public float FieldOfView { get => _fov; set { _fov = value; UpdateViewMatrix();} }
         public float NearDistance { get => _near; set { _near = value; UpdateViewMatrix();} }
-
+        public float WindowHeight => _windowHeight;
+        public float WindowWidth => _windowWidth;
         public float AspectRatio => _windowWidth / _windowHeight;
 
         public float Yaw { get => _yaw; set { _yaw = value; UpdateViewMatrix(); } }

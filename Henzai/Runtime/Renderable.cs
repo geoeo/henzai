@@ -57,7 +57,7 @@ namespace Henzai.Runtime
         // /// <summary>
         // /// Bind Actions that have to be executed prior to entering the render loop
         // /// </summary>
-        public event Action PreRenderLoop;
+        public event Action<Camera> PreRender_Camera;
         public event Action<ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[], ModelRuntimeDescriptor<VertexPositionNormal>[], ModelRuntimeDescriptor<VertexPositionTexture>[], ModelRuntimeDescriptor<VertexPositionColor>[], ModelRuntimeDescriptor<VertexPosition>[]> PreRender_Models;
         /// <summary>
         /// Bind Actions that have to be executed prior to every draw call
@@ -184,9 +184,6 @@ namespace Henzai.Runtime
 
             if (!_isChild)
                 _uiCancellationTokenSource = new CancellationTokenSource();
-
-
-
         }
 
         //TODO: Investigate passing Render options
@@ -226,7 +223,7 @@ namespace Henzai.Runtime
             drawTasksPre = new Task[_childrenPre.Count];
             drawTasksPost = new Task[_childrenPost.Count];
 
-            PreRenderLoop?.Invoke();
+            PreRender_Camera?.Invoke(_camera);
             PreRender_Models?.Invoke(_modelPNTTBDescriptorArray,_modelPNDescriptorArray,_modelPTDescriptorArray,_modelPCDescriptorArray,_modelPDescriptorArray);
             while (_contextWindow.Exists)
             {
