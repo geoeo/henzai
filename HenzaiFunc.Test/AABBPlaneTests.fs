@@ -24,7 +24,7 @@ let AABBOutsideFrustumLeft() =
     let pMax = Vector4(-19.0f,1.0f,-0.0f,1.0f)
     let aabb = AABB(pMin,pMax)
     let mutable leftPlane = Geometry.ExtractLeftPlane(&viewProjectionMatrix)
-    let intersectionResult = AABBProc.PlaneIntersection(aabb,&leftPlane)
+    let intersectionResult = AABBProc.PlaneIntersection(aabb,leftPlane)
 
     Assert.Equal(IntersectionResult.Outside, intersectionResult)
 
@@ -44,7 +44,7 @@ let AABBInsideFrustumLeft() =
     let pMax = Vector4(1.0f,1.0f,0.0f, 1.0f)
     let aabb = AABB(pMin,pMax)
     let mutable leftPlane = Geometry.ExtractLeftPlane(&viewProjectionMatrix)
-    let intersectionResult = AABBProc.PlaneIntersection(aabb,&leftPlane)
+    let intersectionResult = AABBProc.PlaneIntersection(aabb,leftPlane)
     Assert.Equal(IntersectionResult.Inside, intersectionResult)
 
 [<Fact>]
@@ -67,8 +67,8 @@ let AABBInsideFrustumLeftObjectSpace() =
     let aabb = AABB(pMin,pMax)
     let mutable leftPlaneObjSpace = Geometry.ExtractLeftPlane(&worldViewProjectionMatrix)
     let mutable leftPlaneWorldSpace = Geometry.ExtractLeftPlane(&viewProjectionMatrix)
-    let intersectionResult1 = AABBProc.PlaneIntersection(aabb,&leftPlaneObjSpace)
-    let intersectionResult2 = AABBProc.PlaneIntersection(aabb,&leftPlaneWorldSpace)
+    let intersectionResult1 = AABBProc.PlaneIntersection(aabb,leftPlaneObjSpace)
+    let intersectionResult2 = AABBProc.PlaneIntersection(aabb,leftPlaneWorldSpace)
     Assert.Equal(IntersectionResult.Inside, intersectionResult1)
     Assert.Equal(IntersectionResult.Outside, intersectionResult2)
 
@@ -89,7 +89,7 @@ let AABBIntersectingFrustumLeft() =
     let pMax = Vector4(5.0f,1.0f,-0.0f, 1.0f)
     let aabb = AABB(pMin, pMax)
     let mutable leftPlane = Geometry.ExtractLeftPlane(&viewProjectionMatrix)
-    let intersectionResult = AABBProc.PlaneIntersection(aabb,&leftPlane)
+    let intersectionResult = AABBProc.PlaneIntersection(aabb,leftPlane)
 
     Assert.Equal(IntersectionResult.Intersecting, intersectionResult)
 
@@ -109,7 +109,7 @@ let AABBIntersectingFarFrustumLeft() =
     let pMax = Vector4(15.0f,1.0f,-0.0f, 1.0f)
     let aabb = AABB(pMin, pMax)
     let mutable leftPlane = Geometry.ExtractLeftPlane(&viewProjectionMatrix)
-    let intersectionResult = AABBProc.PlaneIntersection(aabb,&leftPlane)
+    let intersectionResult = AABBProc.PlaneIntersection(aabb,leftPlane)
     
     Assert.Equal(IntersectionResult.Intersecting, intersectionResult)
 
