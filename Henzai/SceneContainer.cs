@@ -1,3 +1,4 @@
+using System.Numerics;
 using Veldrid;
 using Veldrid.Sdl2;
 using HenzaiFunc.Core.Types;
@@ -5,6 +6,7 @@ using HenzaiFunc.Core.Acceleration;
 using Henzai.Core.Acceleration;
 using Henzai.Core.Extensions;
 using Henzai.UI;
+
 using Henzai.Runtime;
 using Henzai.Core.VertexGeometry;
 
@@ -22,6 +24,7 @@ namespace Henzai
         private IndexedTriangleEngine<VertexPositionTexture>[] _orderedPT;
         private BVHRuntimeNode[] _bvhRuntimeNodesPC;
         private IndexedTriangleEngine<VertexPositionColor>[] _orderedPC;
+        private Vector4[][] _zCullingRays;
 
 
         public abstract void createScene(GraphicsBackend graphicsBackend, Sdl2Window contextWindow = null);
@@ -35,6 +38,10 @@ namespace Henzai
 
         protected void BuildBVH(ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] modelPNTTBDescriptorArray, ModelRuntimeDescriptor<VertexPositionNormal>[] modelPNDescriptorArray, ModelRuntimeDescriptor<VertexPositionTexture>[] modelPTDescriptorArray, ModelRuntimeDescriptor<VertexPositionColor>[] modelPCDescriptorArray, ModelRuntimeDescriptor<VertexPosition>[] modelPDescriptorArray)
         {
+
+            //TODO: Refactor this once geometry can be changes at runtime
+            
+
             var allTrianglesCountPNTTB = 0;
             var allTrianglesCountPN = 0;
             var allTrianglesCountPT = 0;
