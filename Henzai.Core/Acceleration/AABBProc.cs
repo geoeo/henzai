@@ -122,7 +122,6 @@ namespace Henzai.Core.Acceleration
         //TODO: Investigate error bound for intersection
         public static IntersectionResult PlaneIntersection(AABB aabb, Vector4 plane)
         {
-            plane *= -1;
             var intersection = IntersectionResult.Intersecting;
             var c = Center(aabb);
             var d = plane.W;
@@ -132,8 +131,8 @@ namespace Henzai.Core.Acceleration
             var s = Numerics.Vector.InMemoryDotProduct3(ref c, ref plane) + d;
             var eps = 0.0f;
 
-            var isOutside = s - e > eps;
-            var isInside = s + e < eps;
+            var isInside = s - e > eps;
+            var isOutside = s + e < eps;
             
             if (isInside)
                 intersection = IntersectionResult.Inside;

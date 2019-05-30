@@ -150,8 +150,6 @@ type BVHRuntime private() =
                 currentIntersectionTop = IntersectionResult.Inside &&
                 currentIntersectionBottom = IntersectionResult.Inside
 
-
-
             let intersecting = 
                 currentIntersectionNear = IntersectionResult.Intersecting ||
                 currentIntersectionFar = IntersectionResult.Intersecting ||
@@ -186,7 +184,6 @@ type BVHRuntime private() =
                 toVisitOffset <- toVisitOffset - 1
                 if toVisitOffset >= 0 then 
                     currentNodeIndex <- nodesToVisit.[toVisitOffset]
-
         ()
 
 

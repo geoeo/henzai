@@ -135,22 +135,6 @@ module Culler =
         mesh.ValidVertexCount <- validVertexCounter
         ()
 
-    let rec processInteriorNodeForCulling (runtimeNodeIndex : int) (bvhArray : BVHRuntimeNode[]) (orderedPrimitives : IndexedTriangleEngine<'T>[]) =
-        let runtimeNode = bvhArray.[runtimeNodeIndex]
-        let nPrimitives = runtimeNode.nPrimitives
-        if nPrimitives > 0 then
-            let primitiveOffset = runtimeNode.leafNode.primitivesOffset
-            for j in 0..nPrimitives-1 do
-                let mesh = orderedPrimitives.[primitiveOffset+j].Mesh
-                mesh.AABBIsValid <- true;
-            ()
-        else
-            let leftChildIndex = runtimeNodeIndex + 1
-            let rightChildIndex = runtimeNode.interiorNode.secondChildOffset
-            processInteriorNodeForCulling leftChildIndex bvhArray orderedPrimitives
-            processInteriorNodeForCulling rightChildIndex bvhArray orderedPrimitives
-            ()
-
     /// <summary>
     /// Culls a list of <see cref="Henzai.Core.Acceleration.IndexedTriangleEngine"/> with the camera view frustum
     /// </summary>

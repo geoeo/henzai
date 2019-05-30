@@ -133,7 +133,7 @@ let AABBInsideFrustumNearSimple() =
     let aabb = AABB(pMin,pMax)
 
     let mutable leftPlaneObjSpace = Geometry.ExtractLeftPlane(&worldViewProjectionMatrix)
-    let intersectionResult1 = AABBProc.PlaneIntersection(aabb,&leftPlaneObjSpace)
+    let intersectionResult1 = AABBProc.PlaneIntersection(aabb,leftPlaneObjSpace)
     Assert.Equal(IntersectionResult.Inside, intersectionResult1)
 
 [<Fact>]
@@ -155,7 +155,7 @@ let AABBInsideFrustumNear_LookingDown() =
     let aabb = AABB(pMin,pMax)
 
     let mutable leftPlaneObjSpace = Geometry.ExtractLeftPlane(&worldViewProjectionMatrix)
-    let intersectionResult1 = AABBProc.PlaneIntersection(aabb,&leftPlaneObjSpace)
+    let intersectionResult1 = AABBProc.PlaneIntersection(aabb,leftPlaneObjSpace)
     Assert.Equal(IntersectionResult.Inside, intersectionResult1)
 
 
@@ -178,7 +178,7 @@ let AABBInsideFrustumNear_LookingDownIntersect() =
     let aabb = AABB(pMin,pMax)
 
     let mutable leftPlaneObjSpace = Geometry.ExtractLeftPlane(&worldViewProjectionMatrix)
-    let intersectionResult1 = AABBProc.PlaneIntersection(aabb,&leftPlaneObjSpace)
+    let intersectionResult1 = AABBProc.PlaneIntersection(aabb,leftPlaneObjSpace)
     Assert.Equal(IntersectionResult.Intersecting, intersectionResult1)
 
 [<Fact>]
@@ -200,7 +200,7 @@ let AABBInsideFrustumNear_LookingDownOutside() =
     let aabb = AABB(pMin,pMax)
 
     let mutable leftPlaneObjSpace = Geometry.ExtractLeftPlane(&worldViewProjectionMatrix)
-    let intersectionResult1 = AABBProc.PlaneIntersection(aabb,&leftPlaneObjSpace)
+    let intersectionResult1 = AABBProc.PlaneIntersection(aabb,leftPlaneObjSpace)
     Assert.Equal(IntersectionResult.Intersecting, intersectionResult1)
 
 [<Fact>]
@@ -222,7 +222,7 @@ let AABBInsideFrustumFar_LookingDown() =
     let aabb = AABB(pMin,pMax)
 
     let mutable leftPlaneObjSpace = Geometry.ExtractLeftPlane(&worldViewProjectionMatrix)
-    let intersectionResult1 = AABBProc.PlaneIntersection(aabb,&leftPlaneObjSpace)
+    let intersectionResult1 = AABBProc.PlaneIntersection(aabb,leftPlaneObjSpace)
     Assert.Equal(IntersectionResult.Inside, intersectionResult1)
 
 [<Fact>]
@@ -244,7 +244,7 @@ let AABBInsideFrustumFar_LookingDownOutside() =
     let aabb = AABB(pMin,pMax)
 
     let mutable leftPlaneObjSpace = Geometry.ExtractLeftPlane(&worldViewProjectionMatrix)
-    let intersectionResult1 = AABBProc.PlaneIntersection(aabb,&leftPlaneObjSpace)
+    let intersectionResult1 = AABBProc.PlaneIntersection(aabb,leftPlaneObjSpace)
     Assert.Equal(IntersectionResult.Inside, intersectionResult1)
 
 
