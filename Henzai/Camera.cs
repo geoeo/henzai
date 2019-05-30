@@ -54,7 +54,7 @@ namespace Henzai
 
         public Camera(float width, float height, float far = 1000f, float moveSpeed = 10f)
         {
-            _fov = MathF.PI/4;
+            _fov = MathF.PI/4; // Might be redundant as GPU assumes its always 90 degrees
             _near = 0.1f;
             _far = far;
             _position = DEFAULT_POSITION;

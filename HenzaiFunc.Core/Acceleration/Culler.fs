@@ -144,4 +144,8 @@ module Culler =
         ()
 
 
+    
+    //TODO: Make ray AABB intersection for IndexedTriangle which saves the hit aabb in a resolution grid
+
+
 
