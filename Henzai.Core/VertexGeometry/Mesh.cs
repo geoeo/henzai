@@ -120,14 +120,20 @@ namespace Henzai.Core.VertexGeometry
             //  _processedIndicesMap = new Dictionary<ushort, bool>();
         }
 
-        //TODO: recalculate IndexedTriangles!
         public void SetNewWorldTransformation(ref Matrix4x4 world){
             _world = world;
+            for (int i = 0; i < _triangles.Length; i++){
+                var tri = _triangles[i];
+                _triangles[i] = new IndexedTriangleEngine<T>(ref tri, ref _world);
+            }
         }
 
-        //TODO: recalculate IndexedTriangles!
         public void SetNewWorldTranslation(ref Vector3 translation){
             _world.Translation = translation;
+            for (int i = 0; i < _triangles.Length; i++){
+                var tri = _triangles[i];
+                _triangles[i] = new IndexedTriangleEngine<T>(ref tri, ref _world);
+            } 
         }
 
         public void PrintAllVertexPositions(){
