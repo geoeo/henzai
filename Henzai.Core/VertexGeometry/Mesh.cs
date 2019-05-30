@@ -75,12 +75,12 @@ namespace Henzai.Core.VertexGeometry
             ValidIndexCount = 0;
             _validIndices = null;
 
-            _triangles = new IndexedTriangleEngine<T>[VertexCount/3];
-            for(int i = 0; i < VertexCount; i+=3)
-                _triangles[i/3] = new IndexedTriangleEngine<T>(i, i+1, i+2, this);
-
-            _indexClean = new ushort[IndexCount];
-            _vertexClean = new T[VertexCount];
+            // _triangles = new IndexedTriangleEngine<T>[VertexCount/3];
+            // for(int i = 0; i < VertexCount; i+=3)
+            //     _triangles[i/3] = new IndexedTriangleEngine<T>(i, i+1, i+2, this);
+            _triangles = null;
+            _indexClean = null;
+            _vertexClean = null;
             AABBIsValid = true;
 
             // _processedIndicesMap = new Dictionary<ushort, bool>();
