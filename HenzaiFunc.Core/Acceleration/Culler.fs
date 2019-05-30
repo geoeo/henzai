@@ -154,23 +154,9 @@ module Culler =
     /// <summary>
     /// Culls a list of <see cref="Henzai.Core.Acceleration.IndexedTriangleEngine"/> with the camera view frustum
     /// </summary>
-    let FrustumCullBVH (bvhArray : BVHRuntimeNode[], orderedPrimitives : IndexedTriangleEngine<'T>[], worldViewProjectionMatrix : byref<Matrix4x4>) =
+    let FrustumCullBVH (bvhArray : BVHRuntimeNode[], orderedPrimitives : IndexedTriangleEngine<'T>[], viewProjectionMatrix : byref<Matrix4x4>) =
         let bvhTraversalStack = Array.zeroCreate orderedPrimitives.Length
-
-        let stopWatch = System.Diagnostics.Stopwatch.StartNew()
-        let indices = BVHRuntime.TraverseWithFrustum(bvhArray, bvhTraversalStack, &worldViewProjectionMatrix)
-        stopWatch.Stop()
-        let perfTimeBVHTraverse = stopWatch.Elapsed.TotalMilliseconds
-
-        stopWatch.Restart();
-        match indices with
-        | struct(-1, -1) -> () // everything is culled
-        | struct(indexA, -1) -> processInteriorNodeForCulling indexA bvhArray orderedPrimitives
-        | struct(indexA, indexB) ->
-            processInteriorNodeForCulling indexA bvhArray orderedPrimitives
-            processInteriorNodeForCulling indexB bvhArray orderedPrimitives
-        stopWatch.Stop();
-        let perfTimeNodeProcessing = stopWatch.Elapsed.TotalMilliseconds
+        BVHRuntime.TraverseWithFrustum(bvhArray, orderedPrimitives, bvhTraversalStack, &viewProjectionMatrix)
         ()
 
 

@@ -153,11 +153,12 @@ namespace Henzai.Core.Numerics
             var a = modelViewProjectionMatrix.M14 + modelViewProjectionMatrix.M11;
             var b = modelViewProjectionMatrix.M24 + modelViewProjectionMatrix.M21;
             var c = modelViewProjectionMatrix.M34 + modelViewProjectionMatrix.M31;
+            var d = modelViewProjectionMatrix.M44 + modelViewProjectionMatrix.M41;
             var mag = MathF.Sqrt(a * a + b * b + c * c);
             a /= mag;
             b /= mag;
             c /= mag;
-            var d = (modelViewProjectionMatrix.M44 + modelViewProjectionMatrix.M41)/mag;
+            d /= mag;
             return new Vector4(a, b, c, d);
         }
 
@@ -165,11 +166,12 @@ namespace Henzai.Core.Numerics
             var a = modelViewProjectionMatrix.M14 - modelViewProjectionMatrix.M11;
             var b = modelViewProjectionMatrix.M24 - modelViewProjectionMatrix.M21;
             var c = modelViewProjectionMatrix.M34 - modelViewProjectionMatrix.M31;
+            var d = modelViewProjectionMatrix.M44 - modelViewProjectionMatrix.M41;
             var mag = MathF.Sqrt(a * a + b * b + c * c);
             a /= mag;
             b /= mag;
             c /= mag;
-            var d = (modelViewProjectionMatrix.M44 - modelViewProjectionMatrix.M41)/mag;
+            d /= mag;
             return new Vector4(a, b, c, d);
         }
 
@@ -177,11 +179,12 @@ namespace Henzai.Core.Numerics
             var a = modelViewProjectionMatrix.M14 - modelViewProjectionMatrix.M12;
             var b = modelViewProjectionMatrix.M24 - modelViewProjectionMatrix.M22;
             var c = modelViewProjectionMatrix.M34 - modelViewProjectionMatrix.M32;
+            var d = modelViewProjectionMatrix.M44 - modelViewProjectionMatrix.M42;
             var mag = MathF.Sqrt(a * a + b * b + c * c);
             a /= mag;
             b /= mag;
             c /= mag;
-            var d = (modelViewProjectionMatrix.M44 - modelViewProjectionMatrix.M42)/mag;
+            d /= mag;
             return new Vector4(a, b, c, d);
         }
 
@@ -189,11 +192,12 @@ namespace Henzai.Core.Numerics
             var a = modelViewProjectionMatrix.M14 + modelViewProjectionMatrix.M12;
             var b = modelViewProjectionMatrix.M24 + modelViewProjectionMatrix.M22;
             var c = modelViewProjectionMatrix.M34 + modelViewProjectionMatrix.M32;
+            var d = modelViewProjectionMatrix.M44 + modelViewProjectionMatrix.M42;            
             var mag = MathF.Sqrt(a * a + b * b + c * c);
             a /= mag;
             b /= mag;
             c /= mag;
-            var d = (modelViewProjectionMatrix.M44 + modelViewProjectionMatrix.M42)/mag;
+            d /= mag;
             return new Vector4(a, b, c, d);
         }
 
@@ -201,11 +205,12 @@ namespace Henzai.Core.Numerics
             var a = modelViewProjectionMatrix.M13;
             var b = modelViewProjectionMatrix.M23;
             var c = modelViewProjectionMatrix.M33;
+            var d = modelViewProjectionMatrix.M43;
             var mag = MathF.Sqrt(a * a + b * b + c * c);
             a /= mag;
             b /= mag;
             c /= mag;
-            var d = modelViewProjectionMatrix.M43/mag;
+            d /= mag;
             return new Vector4(a, b, c, d);
         }
 
@@ -213,11 +218,12 @@ namespace Henzai.Core.Numerics
             var a = modelViewProjectionMatrix.M14 - modelViewProjectionMatrix.M13;
             var b = modelViewProjectionMatrix.M24 - modelViewProjectionMatrix.M23;
             var c = modelViewProjectionMatrix.M34 - modelViewProjectionMatrix.M33;
+            var d = modelViewProjectionMatrix.M44 - modelViewProjectionMatrix.M43;
             var mag = MathF.Sqrt(a * a + b * b + c * c);
             a /= mag;
             b /= mag;
             c /= mag;
-            var d = (modelViewProjectionMatrix.M44 - modelViewProjectionMatrix.M43)/mag;
+            d /= mag;
             return new Vector4(a, b, c, d);
         }
 

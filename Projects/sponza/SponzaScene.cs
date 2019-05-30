@@ -97,8 +97,8 @@ namespace Henzai.Examples
             sunRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPN;
 
             //TODO: Automate this
-            _modelPNTTBDescriptorList.Add(sponzaRuntimeState);
-            _modelPCDescriptorList.Add(sponzaRuntimeStateColorOnly);
+            //_modelPNTTBDescriptorList.Add(sponzaRuntimeState);
+            //_modelPCDescriptorList.Add(sponzaRuntimeStateColorOnly);
             _modelPDescriptorList.Add(_skyBoxRuntimeState);
             // _modelPTDescriptorList.Add(sponzaRuntimeStateTexOnly);
             // _modelStatesList.Add(sunRuntimeState);

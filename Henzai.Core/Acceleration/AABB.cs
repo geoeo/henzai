@@ -9,47 +9,29 @@ namespace Henzai.Core.Acceleration
     public sealed class AABB : Hitable
     {
         private readonly Vector4[] _boundingCorners;
-        //private Matrix4x4 _world;
 
         public AABB()
         {
             _boundingCorners = new Vector4[] { new Vector4(System.Single.MaxValue), new Vector4(System.Single.MinValue) };
-            //setWorldTransform(PMin,PMax);
         }
 
         public AABB(Vector4 pMin, Vector4 pMax)
         {
             _boundingCorners = new Vector4[] { pMin, pMax };
-            //setWorldTransform(PMin, PMax);
         }
 
         public AABB(Vector3 pMin, Vector3 pMax)
         {
             _boundingCorners = new Vector4[] { new Vector4(pMin, 1.0f), new Vector4(pMax, 1.0f) };
-            //setWorldTransform(PMin, PMax);
         }
 
         public Vector4 PMin => _boundingCorners[0];
         public Vector4 PMax => _boundingCorners[1];
         public float TMin() => 0.001f;
         public float TMax() => 500.0f;
-        // TODO: Maybe return a ref
-        //public Matrix4x4 World() => _world;
         public bool IntersectionAcceptable(bool hasIntersection, float t, float dotView, Vector4 point) => hasIntersection;
         public Vector4 NormalForSurfacePoint(Vector4 point) => Vector4.Zero;
         public bool IsObstructedBySelf(Ray ray) => false;
-
-        // private void setWorldTransform(Vector4 pMin, Vector4 pMax)
-        // {
-        //     var scale = pMax - pMin;
-            
-        //     _world =
-        //         new Matrix4x4(
-        //         scale.X, 0.0f, 0.0f, 0.0f,
-        //         0.0f, scale.Y, 0.0f, 0.0f,
-        //         0.0f, 0.0f, scale.Z, 0.0f,
-        //         pMin.X, pMin.Y, pMax.Z, 1.0f);
-        // }
 
         public bool HasIntersection(Ray ray)
         {

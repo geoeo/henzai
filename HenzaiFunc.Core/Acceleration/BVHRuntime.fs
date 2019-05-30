@@ -111,12 +111,10 @@ type BVHRuntime private() =
                     currentNodeIndex <- nodesToVisit.[toVisitOffset]
         struct(hasIntersection, tHit, intersectedGeometry)
 
-    static member TraverseWithFrustum (bvhArray : BVHRuntimeNode[], nodesToVisit : int[], viewProjectionMatrix : byref<Matrix4x4>) =
-        let mutable validNodeStack : struct(int*int) = struct(-1, -1)
-        let mutable validNodeStackOffset = -1
+    static member TraverseWithFrustum (bvhArray : BVHRuntimeNode[], orderedPrimitives : IndexedTriangleEngine<'T> [], nodesToVisit : int[], viewProjectionMatrix : byref<Matrix4x4>) =
+        //let mutable validNodeStack : struct(int*int) = struct(-1, -1)
         let mutable toVisitOffset = 0
         let mutable currentNodeIndex = 0
-        let mutable parentOfCurrentNodeIndex = -1
 
         let mutable planeLeft =
             Geometry.ExtractLeftPlane(&viewProjectionMatrix)
@@ -133,23 +131,26 @@ type BVHRuntime private() =
 
         while toVisitOffset >= 0 do
             let node = bvhArray.[currentNodeIndex]
+            let nPrimitives = node.nPrimitives
             let currentAABB = node.aabb
 
-            // These impact performance
-            let currentIntersectionLeft = AABBProc.PlaneIntersection(currentAABB,&planeLeft)
-            let currentIntersectionRight = AABBProc.PlaneIntersection(currentAABB,&planeRight)
-            let currentIntersectionTop = AABBProc.PlaneIntersection(currentAABB,&planeTop)
-            let currentIntersectionBottom = AABBProc.PlaneIntersection(currentAABB,&planeBottom)
-            let currentIntersectionNear = AABBProc.PlaneIntersection(currentAABB,&planeNear)
-            let currentIntersectionFar = AABBProc.PlaneIntersection(currentAABB,&planeFar)
+            // These impact performance a little
+            let currentIntersectionLeft = AABBProc.PlaneIntersection(currentAABB,planeLeft)
+            let currentIntersectionRight = AABBProc.PlaneIntersection(currentAABB,planeRight)
+            let currentIntersectionTop = AABBProc.PlaneIntersection(currentAABB,planeTop)
+            let currentIntersectionBottom = AABBProc.PlaneIntersection(currentAABB,planeBottom)
+            let currentIntersectionNear = AABBProc.PlaneIntersection(currentAABB,planeNear)
+            let currentIntersectionFar = AABBProc.PlaneIntersection(currentAABB,planeFar)
 
             let inside = 
                 currentIntersectionNear = IntersectionResult.Inside &&
-                currentIntersectionFar = IntersectionResult.Inside && 
+                currentIntersectionFar = IntersectionResult.Inside &&
                 currentIntersectionLeft = IntersectionResult.Inside &&
                 currentIntersectionRight = IntersectionResult.Inside && 
                 currentIntersectionTop = IntersectionResult.Inside &&
                 currentIntersectionBottom = IntersectionResult.Inside
+
+
 
             let intersecting = 
                 currentIntersectionNear = IntersectionResult.Intersecting ||
@@ -159,34 +160,35 @@ type BVHRuntime private() =
                 currentIntersectionTop = IntersectionResult.Intersecting ||
                 currentIntersectionBottom = IntersectionResult.Intersecting
 
-            if (inside || intersecting )  then 
-                validNodeStackOffset <- validNodeStackOffset + 1
-                validNodeStack <-
-                    match validNodeStack with
-                    | struct(-1, -1) -> struct(currentNodeIndex, -1)
-                    | struct(x, -1) -> 
-                        toVisitOffset <- 0 // force break
-                        struct(x, currentNodeIndex)
-                    | _ -> failwithf "TraverseWithFrustum: all node slots are taken"
-                toVisitOffset <- toVisitOffset - 1
-                if toVisitOffset >= 0 then 
-                    currentNodeIndex <- nodesToVisit.[toVisitOffset]
-            else
-                if node.nPrimitives = 0 then
-                    let interiorNode = node.interiorNode
-                    let leftChildIndex = currentNodeIndex + 1
-                    let rightChildIndex = interiorNode.secondChildOffset
-                    nodesToVisit.[toVisitOffset] <- leftChildIndex
-                    toVisitOffset <- toVisitOffset + 1 
-                    parentOfCurrentNodeIndex <- currentNodeIndex
-                    currentNodeIndex <- rightChildIndex
-                else 
+            let outside = 
+                currentIntersectionNear = IntersectionResult.Outside &&
+                currentIntersectionFar = IntersectionResult.Outside &&
+                currentIntersectionLeft = IntersectionResult.Outside &&
+                currentIntersectionRight = IntersectionResult.Outside && 
+                currentIntersectionTop = IntersectionResult.Outside &&
+                currentIntersectionBottom = IntersectionResult.Outside
+
+            if (inside || intersecting) then 
+                if nPrimitives > 0 then 
+                    let primitiveOffset = node.leafNode.primitivesOffset
+                    for j in 0..nPrimitives-1 do
+                        let mesh = orderedPrimitives.[primitiveOffset+j].Mesh
+                        mesh.AABBIsValid <- true;
                     toVisitOffset <- toVisitOffset - 1
                     if toVisitOffset >= 0 then 
                         currentNodeIndex <- nodesToVisit.[toVisitOffset]
+                else
+                    let interiorNode = node.interiorNode
+                    nodesToVisit.[toVisitOffset] <- currentNodeIndex + 1
+                    toVisitOffset <- toVisitOffset + 1 
+                    currentNodeIndex <- interiorNode.secondChildOffset
+            else 
+                toVisitOffset <- toVisitOffset - 1
+                if toVisitOffset >= 0 then 
+                    currentNodeIndex <- nodesToVisit.[toVisitOffset]
 
-      
-        validNodeStack
+        ()
+
 
 
         

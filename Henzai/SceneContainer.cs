@@ -64,7 +64,6 @@ namespace Henzai
                 var meshCount = model.MeshCount;
                 for (int i = 0; i < meshCount; i++)
                 {
-
                     var mesh = model.GetMesh(i);
                     var triangles = mesh.Triangles;
                     triangles.CopyTo(allBVHTrianglesPNTTB, indexPNTTB);
@@ -80,7 +79,6 @@ namespace Henzai
                 var meshCount = model.MeshCount;
                 for (int i = 0; i < meshCount; i++)
                 {
-
                     var mesh = model.GetMesh(i);
                     var triangles = mesh.Triangles;
                     triangles.CopyTo(allBVHTrianglesPN, indexPN);
@@ -96,7 +94,6 @@ namespace Henzai
                 var meshCount = model.MeshCount;
                 for (int i = 0; i < meshCount; i++)
                 {
-
                     var mesh = model.GetMesh(i);
                     var triangles = mesh.Triangles;
                     triangles.CopyTo(allBVHTrianglesPT, indexPT);
@@ -112,7 +109,6 @@ namespace Henzai
                 var meshCount = model.MeshCount;
                 for (int i = 0; i < meshCount; i++)
                 {
-
                     var mesh = model.GetMesh(i);
                     var triangles = mesh.Triangles;
                     triangles.CopyTo(allBVHTrianglesPC, indexPC);

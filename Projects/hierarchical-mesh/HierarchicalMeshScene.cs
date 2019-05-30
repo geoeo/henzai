@@ -19,7 +19,7 @@ namespace Henzai.Examples
         public HierarchicalMeshScene(string title,Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
             : base(title,windowSize,graphicsDeviceOptions,renderOptions){
 
-                PreDraw+=RotateModel;
+                //PreDraw+=RotateModel;
         }
 
         private void RotateModel(float delta){

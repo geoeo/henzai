@@ -120,8 +120,9 @@ namespace Henzai.Core.Acceleration
         /// Intersection with respect to the AABB
         /// Realtime Rendering Third Editin p. 756
         //TODO: Investigate error bound for intersection
-        public static IntersectionResult PlaneIntersection(AABB aabb, ref Vector4 plane)
+        public static IntersectionResult PlaneIntersection(AABB aabb, Vector4 plane)
         {
+            plane *= -1;
             var intersection = IntersectionResult.Intersecting;
             var c = Center(aabb);
             var d = plane.W;
@@ -129,14 +130,15 @@ namespace Henzai.Core.Acceleration
             var planeNormalAbs = Vector4.Abs(plane);
             var e = h.X * planeNormalAbs.X + h.Y * planeNormalAbs.Y + h.Z * planeNormalAbs.Z;
             var s = Numerics.Vector.InMemoryDotProduct3(ref c, ref plane) + d;
+            var eps = 0.0f;
 
-            var isOutside = s - e < 0.0f;
-            var isInside = s + e > 0.0f;
+            var isOutside = s - e > eps;
+            var isInside = s + e < eps;
             
-            if (isOutside && !isInside)
-                intersection = IntersectionResult.Outside;
-            else if (isInside && !isOutside)
+            if (isInside)
                 intersection = IntersectionResult.Inside;
+            else if (isOutside)
+                intersection = IntersectionResult.Outside;
             return intersection;
         }
     }
