@@ -21,8 +21,12 @@ module RaytraceCamera =
         (px + xOff, py+yOff)
 
     // ndc is [0,1] from top left
-    let PixelToNDC px py width height =
-        let px_pert, py_pert = pertrube (px + 0.5f) (py + 0.5f) width height
+    let PixelToNDC px py width height pertrubePixels =
+        let px_pert, py_pert = 
+            if pertrubePixels then 
+                pertrube (px + 0.5f) (py + 0.5f) width height 
+            else 
+                (px + 0.5f), (py + 0.5f)
         (px_pert/width , py_pert/height)
 
     // screen space is [-1,1] from top left
@@ -33,10 +37,13 @@ module RaytraceCamera =
     // pixel coordiantes / sample points (X,Y) in camera space (3D)
     // focal length is implicit in the tan(alpha / 2) calc
     let ScreenToCamera (x_screen, y_screen) aspectRatio fov =
-        (x_screen*aspectRatio*MathF.Tan(fov/2.0f), y_screen*MathF.Tan(fov/2.0f))
+        // @Performance -> Precompute tangentFactor
+        let tangentFactor = MathF.Tan(fov/2.0f)
+        (x_screen*aspectRatio*tangentFactor, y_screen*tangentFactor)
 
-    let PixelToCamera x y width height fov =
-        ScreenToCamera (NDCToScreen (PixelToNDC x y width height)) (AspectRatio width height) fov
+    let PixelToCamera x y width height fov pertrubePixels  =
+        // @Performance -> Precompute AspectRatio
+        ScreenToCamera (NDCToScreen (PixelToNDC x y width height pertrubePixels)) (AspectRatio width height) fov
 
     // ray direction wrt to camera
     // We choose a RHS i.e. zDir is always -1

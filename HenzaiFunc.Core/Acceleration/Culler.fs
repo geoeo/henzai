@@ -5,6 +5,7 @@ open System.Collections.Generic
 open Henzai.Core.Numerics
 open HenzaiFunc.Core.Types
 open Henzai.Core.Acceleration
+open Henzai.Core.Raytracing
 
 module Culler =
     let halfSpaceCheck (plane : byref<Vector4>)
@@ -137,18 +138,13 @@ module Culler =
     /// <summary>
     /// Culls a list of <see cref="Henzai.Core.Acceleration.IndexedTriangleEngine"/> with the camera view frustum
     /// </summary>
-    let FrustumCullBVH (bvhArray : BVHRuntimeNode[], orderedPrimitives : IndexedTriangleEngine<'T>[], viewProjectionMatrix : byref<Matrix4x4>) =
-        let bvhTraversalStack = Array.zeroCreate orderedPrimitives.Length
+    let FrustumCullBVH (bvhArray : BVHRuntimeNode[], orderedPrimitives : IndexedTriangleEngine<'T>[], bvhTraversalStack: int[], viewProjectionMatrix : byref<Matrix4x4>) =
         BVHRuntime.TraverseWithFrustum(bvhArray, orderedPrimitives, bvhTraversalStack, &viewProjectionMatrix)
-        ()
 
 
-    let ZCullBVH (bvhArray : BVHRuntimeNode[], orderedPrimitives : IndexedTriangleEngine<'T>[], viewProjectionMatrix : byref<Matrix4x4>) = 
-        let bvhTraversalStack = Array.zeroCreate orderedPrimitives.Length
-
-        ()
-    
-    //TODO: Make ray AABB intersection for IndexedTriangle which saves the hit aabb in a resolution grid
+    let ZCullBVH (bvhArray : BVHRuntimeNode[], orderedPrimitives : IndexedTriangleEngine<'T>[], bvhTraversalStack: int[], ray: Ray) =
+        BVHRuntime.TraverseForZCulling bvhArray orderedPrimitives bvhTraversalStack ray
+ 
 
 
 

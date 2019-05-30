@@ -54,10 +54,11 @@ namespace Henzai.Examples
             gui.SetOverlayFor(scene);
             gui.changeBackendAction += ChangeBackend;
 
-            scene.PreRender_Camera += GenerateZCullingRays;
-            scene.PreDraw_Time_Camera += UpdateZCullingRays;
-
+            //scene.PreRender_Camera += GenerateZCullingRays;
             scene.PreRender_Models += BuildBVH;
+
+            //scene.PreDraw_Time_Camera += UpdateZCullingRays;
+            //scene.PreDraw_Time_GraphicsDevice_CommandList_Camera_Models += EnableZCulling;
             scene.PreDraw_Time_GraphicsDevice_CommandList_Camera_Models += EnableBVHCulling;
             //scene.PreDraw_Time_GraphicsDevice_CommandList_Camera_Models += EnableCulling;
 

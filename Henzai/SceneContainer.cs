@@ -1,3 +1,4 @@
+using System;
 using System.Numerics;
 using Veldrid;
 using Veldrid.Sdl2;
@@ -28,6 +29,9 @@ namespace Henzai
         private BVHRuntimeNode[] _bvhRuntimeNodesPC;
         private IndexedTriangleEngine<VertexPositionColor>[] _orderedPC;
         private Ray[,] _zCullingRays;
+        private Vector4[,] _zCullingDirections;
+        private int[] _bvhTraversalStack;
+
 
 
         public abstract void createScene(GraphicsBackend graphicsBackend, Sdl2Window contextWindow = null);
@@ -44,6 +48,7 @@ namespace Henzai
             var height = (int)camera.WindowHeight;
             var width = (int)camera.WindowWidth;
             _zCullingRays = new Ray[height, width];
+            _zCullingDirections = new Vector4[height, width];
 
             var cameraPos = new Vector4(camera.Position, 1.0f);
             var cameraToWS = RaytraceCamera.CameraToWorld(camera.ViewMatrix);
@@ -51,25 +56,9 @@ namespace Henzai
 
             for (int py = 0; py < height; py++){
                 for(int px = 0; px < width; px ++){
-                    var dirCS = RaytraceCamera.RayDirection(px, py);
-                    var dirWS = Vector4.Normalize(Vector4.Transform(dirCS, cameraToWSRot));
-                    _zCullingRays[py,px] = new Ray(cameraPos,dirWS);
-                }
-            }
-        }
-
-        protected void UpdateZCullingRays(float delta, Camera camera){
-            var height = (int)camera.WindowHeight;
-            var width = (int)camera.WindowWidth;
-            var cameraPos = new Vector4(camera.Position, 1.0f);
-            var cameraToWS = RaytraceCamera.CameraToWorld(camera.ViewMatrix);
-            var cameraToWSRot = Core.Numerics.Geometry.Rotation(ref cameraToWS);
-
-            for (int py = 0; py < height; py++){
-                for(int px = 0; px < width; px ++){
-                    var dirCS = RaytraceCamera.RayDirection(px, py);
-                    var dirWS = Vector4.Normalize(Vector4.Transform(dirCS, cameraToWSRot));
-                    _zCullingRays[py,px] = new Ray(cameraPos,dirWS);
+                    var cameraSamples = RaytraceCamera.PixelToCamera(px, py, width, height, camera.FieldOfView, false);
+                    var dirCS = RaytraceCamera.RayDirection(cameraSamples.Item1, cameraSamples.Item2);
+                    _zCullingDirections[py,px] = dirCS;
                 }
             }
         }
@@ -180,7 +169,50 @@ namespace Henzai
             _bvhRuntimeNodesPNTTB = BVHRuntime.ConstructBVHRuntime(PNTTBTree, PNTTBTotalNodes);
             _bvhRuntimeNodesPN = BVHRuntime.ConstructBVHRuntime(PNTree, PNTotalNodes);
             _bvhRuntimeNodesPT = BVHRuntime.ConstructBVHRuntime(PTTree, PTTotalNodes);
-            _bvhRuntimeNodesPC = BVHRuntime.ConstructBVHRuntime(PCTree, PCTotalNodes);                                                                                                                                                 
+            _bvhRuntimeNodesPC = BVHRuntime.ConstructBVHRuntime(PCTree, PCTotalNodes);   
+
+            var maxPrimitives = Math.Max(_orderedPNTTB.Length,Math.Max(_orderedPN.Length,Math.Max(_orderedPT.Length,_orderedPC.Length)));
+            _bvhTraversalStack = new int[maxPrimitives];                                                                                                        
+        }
+
+        protected void UpdateZCullingRays(float delta, Camera camera){
+            var height = (int)camera.WindowHeight;
+            var width = (int)camera.WindowWidth;
+            var cameraPos = new Vector4(camera.Position, 1.0f);
+            var cameraToWS = RaytraceCamera.CameraToWorld(camera.ViewMatrix);
+            var cameraToWSRot = Core.Numerics.Geometry.Rotation(ref cameraToWS);
+
+            for (int py = 0; py < height; py++){
+                for(int px = 0; px < width; px++){
+                    var dirCS = _zCullingDirections[py,px];
+                    var dirWS = Vector4.Normalize(Vector4.Transform(dirCS, cameraToWSRot));
+                    _zCullingRays[py,px] = new Ray(cameraPos,dirWS);
+                }
+            }
+        }
+
+        // Abysmal performance!
+        protected void EnableZCulling(float deltaTime, GraphicsDevice graphicsDevice, CommandList commandList, Camera camera, ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] modelPNTTBDescriptorArray, ModelRuntimeDescriptor<VertexPositionNormal>[] modelPNDescriptorArray, ModelRuntimeDescriptor<VertexPositionTexture>[] modelPTDescriptorArray, ModelRuntimeDescriptor<VertexPositionColor>[] modelPCDescriptorArray, ModelRuntimeDescriptor<VertexPosition>[] modelPDescriptorArray){
+
+            invalidateAABB(modelPNTTBDescriptorArray);
+            invalidateAABB(modelPNDescriptorArray);
+            invalidateAABB(modelPTDescriptorArray);
+            invalidateAABB(modelPCDescriptorArray);
+
+            var height = _zCullingRays.GetLength(0);
+            var width = _zCullingRays.GetLength(1);
+
+            if (_orderedPNTTB.Length > 0){
+                
+                for (int py = 0; py < height; py++){
+                    for(int px = 0; px < width; px++){
+                        var ray = _zCullingRays[py,px];
+                        Culler.ZCullBVH(_bvhRuntimeNodesPNTTB, _orderedPNTTB, _bvhTraversalStack, ray);
+                    }
+                }
+            }
+
+
         }
 
          protected void EnableBVHCulling(float deltaTime, GraphicsDevice graphicsDevice, CommandList commandList, Camera camera, ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] modelPNTTBDescriptorArray, ModelRuntimeDescriptor<VertexPositionNormal>[] modelPNDescriptorArray, ModelRuntimeDescriptor<VertexPositionTexture>[] modelPTDescriptorArray, ModelRuntimeDescriptor<VertexPositionColor>[] modelPCDescriptorArray, ModelRuntimeDescriptor<VertexPosition>[] modelPDescriptorArray){
@@ -191,13 +223,13 @@ namespace Henzai
             invalidateAABB(modelPCDescriptorArray);
                         
             if (_orderedPNTTB.Length > 0)
-                Culler.FrustumCullBVH(_bvhRuntimeNodesPNTTB, _orderedPNTTB, ref camera.ViewProjectionMatirx);
+                Culler.FrustumCullBVH(_bvhRuntimeNodesPNTTB, _orderedPNTTB, _bvhTraversalStack, ref camera.ViewProjectionMatirx);
             if (_orderedPN.Length > 0)
-                Culler.FrustumCullBVH(_bvhRuntimeNodesPN, _orderedPN, ref camera.ViewProjectionMatirx);
+                Culler.FrustumCullBVH(_bvhRuntimeNodesPN, _orderedPN, _bvhTraversalStack, ref camera.ViewProjectionMatirx);
             if (_orderedPT.Length > 0)
-                Culler.FrustumCullBVH(_bvhRuntimeNodesPT, _orderedPT, ref camera.ViewProjectionMatirx);
+                Culler.FrustumCullBVH(_bvhRuntimeNodesPT, _orderedPT, _bvhTraversalStack, ref camera.ViewProjectionMatirx);
             if (_orderedPC.Length > 0)
-                Culler.FrustumCullBVH(_bvhRuntimeNodesPC, _orderedPC, ref camera.ViewProjectionMatirx);
+                Culler.FrustumCullBVH(_bvhRuntimeNodesPC, _orderedPC, _bvhTraversalStack, ref camera.ViewProjectionMatirx);
          }
 
         protected void EnableCulling(float deltaTime, GraphicsDevice graphicsDevice, CommandList commandList, Camera camera, ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] modelPNTTBDescriptorArray, ModelRuntimeDescriptor<VertexPositionNormal>[] modelPNDescriptorArray, ModelRuntimeDescriptor<VertexPositionTexture>[] modelPTDescriptorArray, ModelRuntimeDescriptor<VertexPositionColor>[] modelPCDescriptorArray, ModelRuntimeDescriptor<VertexPosition>[] modelPDescriptorArray)

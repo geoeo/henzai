@@ -111,6 +111,37 @@ type BVHRuntime private() =
                     currentNodeIndex <- nodesToVisit.[toVisitOffset]
         struct(hasIntersection, tHit, intersectedGeometry)
 
+
+    /// Finds the closest intersection for the given ray
+    static member TraverseForZCulling (bvhArray : BVHRuntimeNode []) (orderedPrimitives : IndexedTriangleEngine<'T> []) (nodesToVisit : int[]) (ray : Ray) = 
+        let mutable toVisitOffset = 0
+        let mutable currentNodeIndex = 0
+
+        while toVisitOffset >= 0 do
+            let node = bvhArray.[currentNodeIndex]
+            let nPrimitives = node.nPrimitives
+            if node.aabb.HasIntersection(ray) then 
+                // leaf
+                if nPrimitives > 0 then
+                    let primitiveOffset = node.leafNode.primitivesOffset
+                    for j in 0..nPrimitives-1 do
+                        let mesh = orderedPrimitives.[primitiveOffset+j].Mesh
+                        mesh.AABBIsValid <- true;
+                    toVisitOffset <- toVisitOffset - 1
+                    if toVisitOffset >= 0 then 
+                        currentNodeIndex <- nodesToVisit.[toVisitOffset]
+                // interor node
+                else
+                    let interiorNode = node.interiorNode
+                    nodesToVisit.[toVisitOffset] <- currentNodeIndex + 1
+                    toVisitOffset <- toVisitOffset + 1 
+                    currentNodeIndex <- interiorNode.secondChildOffset
+            else
+                toVisitOffset <- toVisitOffset - 1
+                if toVisitOffset >= 0 then 
+                    currentNodeIndex <- nodesToVisit.[toVisitOffset]
+        ()
+
     static member TraverseWithFrustum (bvhArray : BVHRuntimeNode[], orderedPrimitives : IndexedTriangleEngine<'T> [], nodesToVisit : int[], viewProjectionMatrix : byref<Matrix4x4>) =
         //let mutable validNodeStack : struct(int*int) = struct(-1, -1)
         let mutable toVisitOffset = 0
