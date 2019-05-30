@@ -1,16 +1,18 @@
-module Raytracer.Camera
+module HenzaiFunc.Core.RaytraceCamera
 
 open System
 open System.Numerics
 open Henzai.Core.Numerics
 
 // https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-generating-camera-rays/generating-camera-rays
+// TODO: refactor this into HenzaiFunc.Core
 
 let pertrube px py width height = 
+    //TODO: @Investigate -> Performance of sync random
     let randVec = RandomSampling.RandomInUnitSphere_Sync()
     let xOff = randVec.X/((float32)(width))
     let yOff = randVec.Y/((float32)(height))
-    //TODO: investigate artefacts: Maybe a convergence issue
+    //TODO: @Investigate -> artefacts: Maybe a convergence issue
     // let xOff = randVec.X/10.0f
     // let yOff = randVec.Y/10.0f
     // let xOff = randVec.X/2.0f

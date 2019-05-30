@@ -5,10 +5,11 @@ open SixLabors.ImageSharp
 open System.IO
 open System
 open System.Numerics
-open Raytracer.Camera
+//open Raytracer.RaytraceCamera
 open HenzaiFunc.Core.RaytraceGeometry
 open Henzai.Core.Numerics
 open Henzai.Core.Raytracing
+open HenzaiFunc.Core.RaytraceCamera
 open HenzaiFunc.Core.Types
 open HenzaiFunc.Core.Acceleration
 open Raytracer.Surface.Surface

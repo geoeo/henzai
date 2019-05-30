@@ -24,6 +24,7 @@
     <Compile Include="Acceleration/BVHRuntime.fs" />
     <Compile Include="Acceleration/Culler.fs" />
     <Compile Include="VertexGeometry.fs"/>
+    <Compile Include="RaytraceCamera.fs"/>
     <ProjectReference Include="../Henzai.Core/Henzai.Core.csproj" />
   </ItemGroup>
 </Project>

@@ -6,7 +6,6 @@
 
   <ItemGroup>
     <Compile Include="RuntimeParameters.fs" />
-    <Compile Include="Camera.fs" />
     <Compile Include="Surface/SurfaceTypes.fs" />
     <Compile Include="Surface/Surface.fs" />
     <Compile Include="Surface/Lambertian.fs" />
