@@ -10,7 +10,6 @@ namespace Henzai.Core.Acceleration
     {
         private AABB _aabb;
         public bool AABBIsValid;
-        //public readonly Mesh<T> mesh;
 
         public MeshBVH(Mesh<T> mesh){
             AABBIsValid = true;    
