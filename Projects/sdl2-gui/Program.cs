@@ -35,7 +35,7 @@ namespace Henzai.Examples
                 rdOptions
             );
 
-            SimpleGUIOverlay gui = new SimpleGUIOverlay(scene.GraphicsDevice,scene.ContextWindow);
+            StandardGUIOverlay gui = new StandardGUIOverlay(scene.GraphicsDevice,scene.ContextWindow);
             gui.SetOverlayFor(scene);
 
             scene.Run(renderResolution);

@@ -44,7 +44,7 @@ namespace Henzai.Examples
             );
 
 
-            SimpleGUIOverlay gui = new SimpleGUIOverlay(scene.GraphicsDevice,scene.ContextWindow);
+            StandardGUIOverlay gui = new StandardGUIOverlay(scene.GraphicsDevice,scene.ContextWindow);
             gui.SetOverlayFor(scene);
             
             //scene.PreRender_Camera += GenerateZCullingRays;
