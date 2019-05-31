@@ -41,9 +41,6 @@ namespace Henzai.Core
             for(int i = 0; i < meshes.Length; i++)
                 _meshes[i] = new MeshBVH<T>(meshes[i]);
             _materials = materials;
-
-            TotalTriangleCount = CalculateTotalValidTriangles(_meshes);
-            //SetCullingUpdateEvent(_meshes);
         }
 
         public Model(MeshBVH<T>[] meshes, U[] materials)
@@ -54,9 +51,6 @@ namespace Henzai.Core
             for(int i = 0; i < meshes.Length; i++)
                 _meshes[i] = meshes[i];
             _materials = materials;
-
-            TotalTriangleCount = CalculateTotalValidTriangles(meshes);
-            //SetCullingUpdateEvent(_meshes);
         }
 
         public Model(Mesh<T>[] meshesIn, U[] materials)
@@ -67,9 +61,6 @@ namespace Henzai.Core
             for(int i = 0; i < meshesIn.Length; i++)
                 _meshes[i] = new MeshBVH<T>(meshesIn[i]);
             _materials = materials;
-
-            TotalTriangleCount = CalculateTotalValidTriangles(_meshes);
-            //SetCullingUpdateEvent(_meshes);
         }
 
         public Model(string directoy, Mesh<T> meshIn, U material)
@@ -81,9 +72,6 @@ namespace Henzai.Core
 
             _materials = new U[1];
             _materials[0] = material;
-
-            TotalTriangleCount = meshIn.TriangleCount;
-            //SetCullingUpdateEvent(_meshes);
         }
 
         public Mesh<T> GetMesh(int index)
@@ -94,6 +82,11 @@ namespace Henzai.Core
         public MeshBVH<T> GetMeshBVH(int index)
         {
             return _meshes[index];
+        }
+
+        public void SetMeshBVH(int index, MeshBVH<T> meshBVH)
+        {
+            _meshes[index] = meshBVH;
         }
 
         public void SetIsCulled(){
@@ -108,7 +101,7 @@ namespace Henzai.Core
         public bool AreMeshesCulled(){
             bool isCulled = true;
             foreach(var meshBVH in _meshes)
-                if(!meshBVH.mesh.IsCulled){
+                if(!meshBVH.AABBIsValid){
                     isCulled = false;
                     break;
                 }
@@ -144,12 +137,6 @@ namespace Henzai.Core
             throw new NotImplementedException();
         }
 
-        // Performance for this seems to be worse than simple for loop through all meshes
-        private void SetCullingUpdateEvent(Mesh<T>[] meshes){
-            foreach(var mesh in meshes)
-                mesh.CulledStateSubscruber += UpdateCulled;
-        }
-
         public static Model<T, RaytraceMaterial> ConvertToRaytracingModel(Model<T, RealtimeMaterial> rtModel)
         {
             var materialCount = rtModel.MaterialCount;
@@ -169,13 +156,6 @@ namespace Henzai.Core
                 raytraceMaterials[i] = new RaytraceMaterial(diffuse, emissive);
             }
             return new Model<T, RaytraceMaterial>(rtModel._meshes, raytraceMaterials);
-        }
-
-        private static int CalculateTotalValidTriangles(MeshBVH<T>[] meshes){
-            var total = 0;
-            foreach(var meshBVH in meshes)
-                total += meshBVH.mesh.TriangleCount;
-            return total;
         }
     }
 }

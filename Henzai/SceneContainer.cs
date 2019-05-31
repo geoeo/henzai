@@ -28,12 +28,8 @@ namespace Henzai
         private MeshBVH<VertexPositionTexture>[] _orderedPT;
         private BVHRuntimeNode[] _bvhRuntimeNodesPC;
         private MeshBVH<VertexPositionColor>[] _orderedPC;
-        private Ray[,] _zCullingRays;
-        private Vector4[,] _zCullingDirections;
         private int[] _bvhTraversalStack;
         private const int CULLING_THRESH = 10;
-
-
 
         public abstract void createScene(GraphicsBackend graphicsBackend, Sdl2Window contextWindow = null);
 
@@ -42,26 +38,6 @@ namespace Henzai
             Sdl2Window contextWindow = scene.ContextWindow;
             scene.Dispose();
             createScene(graphicsBackend, contextWindow);
-        }
-
-        protected void GenerateZCullingRays(Camera camera){
-            //TODO: Refactor this once geometry can be changes at runtime
-            var height = (int)camera.WindowHeight;
-            var width = (int)camera.WindowWidth;
-            _zCullingRays = new Ray[height, width];
-            _zCullingDirections = new Vector4[height, width];
-
-            var cameraPos = new Vector4(camera.Position, 1.0f);
-            var cameraToWS = RaytraceCamera.CameraToWorld(camera.ViewMatrix);
-            var cameraToWSRot = Core.Numerics.Geometry.Rotation(ref cameraToWS);
-
-            for (int py = 0; py < height; py++){
-                for(int px = 0; px < width; px ++){
-                    var cameraSamples = RaytraceCamera.PixelToCamera(px, py, width, height, camera.FieldOfView, false);
-                    var dirCS = RaytraceCamera.RayDirection(cameraSamples.Item1, cameraSamples.Item2);
-                    _zCullingDirections[py,px] = dirCS;
-                }
-            }
         }
 
         protected void BuildBVH(ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] modelPNTTBDescriptorArray, ModelRuntimeDescriptor<VertexPositionNormal>[] modelPNDescriptorArray, ModelRuntimeDescriptor<VertexPositionTexture>[] modelPTDescriptorArray, ModelRuntimeDescriptor<VertexPositionColor>[] modelPCDescriptorArray, ModelRuntimeDescriptor<VertexPosition>[] modelPDescriptorArray)
@@ -173,45 +149,6 @@ namespace Henzai
             _bvhTraversalStack = new int[maxPrimitives];                                                                                                        
         }
 
-        protected void UpdateZCullingRays(float delta, Camera camera){
-            var height = (int)camera.WindowHeight;
-            var width = (int)camera.WindowWidth;
-            var cameraPos = new Vector4(camera.Position, 1.0f);
-            var cameraToWS = RaytraceCamera.CameraToWorld(camera.ViewMatrix);
-            var cameraToWSRot = Core.Numerics.Geometry.Rotation(ref cameraToWS);
-
-            for (int py = 0; py < height; py++){
-                for(int px = 0; px < width; px++){
-                    var dirCS = _zCullingDirections[py,px];
-                    var dirWS = Vector4.Normalize(Vector4.Transform(dirCS, cameraToWSRot));
-                    _zCullingRays[py,px] = new Ray(cameraPos,dirWS);
-                }
-            }
-        }
-
-        // Abysmal performance for triangles!
-        protected void EnableZCulling(float deltaTime, GraphicsDevice graphicsDevice, CommandList commandList, Camera camera, ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] modelPNTTBDescriptorArray, ModelRuntimeDescriptor<VertexPositionNormal>[] modelPNDescriptorArray, ModelRuntimeDescriptor<VertexPositionTexture>[] modelPTDescriptorArray, ModelRuntimeDescriptor<VertexPositionColor>[] modelPCDescriptorArray, ModelRuntimeDescriptor<VertexPosition>[] modelPDescriptorArray){
-
-        //     invalidateAABB(modelPNTTBDescriptorArray);
-        //     invalidateAABB(modelPNDescriptorArray);
-        //     invalidateAABB(modelPTDescriptorArray);
-        //     invalidateAABB(modelPCDescriptorArray);
-
-        //     var height = _zCullingRays.GetLength(0);
-        //     var width = _zCullingRays.GetLength(1);
-
-        //     if (_orderedPNTTB.Length > 0){
-                
-        //         for (int py = 0; py < height; py++){
-        //             for(int px = 0; px < width; px++){
-        //                 var ray = _zCullingRays[py,px];
-        //                 Culler.ZCullBVH(_bvhRuntimeNodesPNTTB, _orderedPNTTB, _bvhTraversalStack, ray);
-        //             }
-        //         }
-        //     }
-
-        }
-
          protected void EnableBVHCulling(float deltaTime, GraphicsDevice graphicsDevice, CommandList commandList, Camera camera, ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] modelPNTTBDescriptorArray, ModelRuntimeDescriptor<VertexPositionNormal>[] modelPNDescriptorArray, ModelRuntimeDescriptor<VertexPositionTexture>[] modelPTDescriptorArray, ModelRuntimeDescriptor<VertexPositionColor>[] modelPCDescriptorArray, ModelRuntimeDescriptor<VertexPosition>[] modelPDescriptorArray){
       
             if (_orderedPNTTB.Length > CULLING_THRESH){
@@ -302,9 +239,11 @@ namespace Henzai
                 model.SetIsCulled();
                 var meshCount = model.MeshCount;
                 for (int i = 0; i < meshCount; i++){
-                    var mesh = model.GetMesh(i);
-                    mesh.AABBIsValid = false;
+                    var meshBVH = model.GetMeshBVH(i);
+                    meshBVH.AABBIsValid = false;
+                    model.SetMeshBVH(i, meshBVH);
                 }
+                    
             }
         }
 

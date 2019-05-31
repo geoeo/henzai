@@ -12,6 +12,7 @@ namespace Henzai.Core.Acceleration
         public readonly int i2;
         public readonly Mesh<T> mesh;
         private AABB _aabb;
+        public bool AABBIsValid;
 
         //TODO: Once we start inserting/removing models at runtime this has to check for null
         //public Mesh<T> Mesh => mesh;
@@ -21,7 +22,8 @@ namespace Henzai.Core.Acceleration
             this.i1 = i1;
             this.i2 = i2;
             this.mesh = mesh;
-            
+            AABBIsValid = true;
+
             var vertices = mesh.Vertices;
             var v0 = vertices[this.i0].GetPosition();
             var v1 = vertices[this.i1].GetPosition();
@@ -33,11 +35,11 @@ namespace Henzai.Core.Acceleration
         }
 
         public IndexedTriangleBVH(ref IndexedTriangleBVH<T> triangle, ref Matrix4x4 world){
-   
             i0 = triangle.i0;
             i1 = triangle.i1;
             i2 = triangle.i2;
             mesh = triangle.mesh;
+            AABBIsValid = true;
 
             var vertices = mesh.Vertices;
             var v0 = vertices[i0].GetPosition();

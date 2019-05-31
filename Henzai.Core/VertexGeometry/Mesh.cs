@@ -24,8 +24,6 @@ namespace Henzai.Core.VertexGeometry
         /// The array may be larger than actual index count.
         /// </summary>
         private readonly ushort[] _validIndices;
-        private readonly IndexedTriangleBVH<T>[] _triangles;
-        // private readonly Dictionary<ushort, bool> _processedIndicesMap;
         private ushort[] _indexClean; 
         private T[] _vertexClean;
         private Matrix4x4 _world = Matrix4x4.Identity;
@@ -40,12 +38,10 @@ namespace Henzai.Core.VertexGeometry
         /// Gives the blit range of <see cref="culledVerticies"/>
         /// </summary>
         public int ValidVertexCount {get; set;}
-        public int TriangleCount => _triangles.Length;
         public T[] Vertices => _vertices;
         public ushort[] Indices => _indices;
         public T[] ValidVertices => _validVertices;
         public T[] CleanVertices => _vertexClean;
-        public IndexedTriangleBVH<T>[] Triangles => _triangles;
         /// <summary>
         /// Disclaimer: In general you want ValidVertexCount
         /// </summary>
@@ -56,13 +52,8 @@ namespace Henzai.Core.VertexGeometry
         /// Disclaimer: In general you want ValidIndexCount
         /// </summary>
         public int IndexCount => _indices.Length;
-        public bool AABBIsValid;
-        public bool IsCulled => ValidIndexCount == 0 || !AABBIsValid;
+        public bool IsCulled => ValidIndexCount == 0;
         public ref Matrix4x4 World => ref _world;
-
-        #pragma warning disable 67
-        public event Action<bool> CulledStateSubscruber;
-        #pragma warning restore 67
         public Mesh(T[] vertices)
         {
             Debug.Assert(vertices != null);
@@ -77,13 +68,8 @@ namespace Henzai.Core.VertexGeometry
             ValidIndexCount = 0;
             _validIndices = null;
 
-            // _triangles = new IndexedTriangleEngine<T>[VertexCount/3];
-            // for(int i = 0; i < VertexCount; i+=3)
-            //     _triangles[i/3] = new IndexedTriangleEngine<T>(i, i+1, i+2, this);
-            _triangles = null;
             _indexClean = null;
             _vertexClean = null;
-            AABBIsValid = true;    
         }
 
         //TODO: Support trianlge strips e.g. offscreen and sdl project
@@ -103,34 +89,16 @@ namespace Henzai.Core.VertexGeometry
             Buffer.BlockCopy(indices, 0, _validIndices, 0, indices.Length * sizeof(ushort));
             ValidIndexCount = indices.Length;
 
-            _triangles = new IndexedTriangleBVH<T>[IndexCount/3];
-            for(int i = 0; i < IndexCount; i+=3){
-                var i0 = _indices[i];
-                var i1 = _indices[i+1];
-                var i2 = _indices[i+2];  
-                _triangles[i/3] = new IndexedTriangleBVH<T>(i0, i1, i2, this);
-            }
-
             _indexClean = new ushort[IndexCount];
             _vertexClean = new T[VertexCount];
-
-            AABBIsValid = true;
         }
 
         public void SetNewWorldTransformation(ref Matrix4x4 world){
             _world = world;
-            for (int i = 0; i < _triangles.Length; i++){
-                var tri = _triangles[i];
-                _triangles[i] = new IndexedTriangleBVH<T>(ref tri, ref _world);
-            }
         }
 
         public void SetNewWorldTranslation(ref Vector3 translation){
             _world.Translation = translation;
-            for (int i = 0; i < _triangles.Length; i++){
-                var tri = _triangles[i];
-                _triangles[i] = new IndexedTriangleBVH<T>(ref tri, ref _world);
-            } 
         }
 
         public void PrintAllVertexPositions(){

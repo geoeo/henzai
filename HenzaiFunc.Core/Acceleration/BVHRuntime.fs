@@ -125,8 +125,9 @@ type BVHRuntime private() =
                 if nPrimitives > 0 then
                     let primitiveOffset = node.leafNode.primitivesOffset
                     for j in 0..nPrimitives-1 do
-                        let mesh = orderedPrimitives.[primitiveOffset+j].mesh
-                        mesh.AABBIsValid <- true;
+                        let mutable indexedTriangle = orderedPrimitives.[primitiveOffset+j]
+                        indexedTriangle.AABBIsValid <- true
+                        orderedPrimitives.[primitiveOffset+j] <- indexedTriangle
                     toVisitOffset <- toVisitOffset - 1
                     if toVisitOffset >= 0 then 
                         currentNodeIndex <- nodesToVisit.[toVisitOffset]
@@ -202,8 +203,9 @@ type BVHRuntime private() =
                 if nPrimitives > 0 then 
                     let primitiveOffset = node.leafNode.primitivesOffset
                     for j in 0..nPrimitives-1 do
-                        let mesh = orderedPrimitives.[primitiveOffset+j].mesh
-                        mesh.AABBIsValid <- true;
+                        let mutable meshBVH = orderedPrimitives.[primitiveOffset+j]
+                        meshBVH.AABBIsValid <- true
+                        orderedPrimitives.[primitiveOffset+j] <- meshBVH
                     toVisitOffset <- toVisitOffset - 1
                     if toVisitOffset >= 0 then 
                         currentNodeIndex <- nodesToVisit.[toVisitOffset]
@@ -279,8 +281,9 @@ type BVHRuntime private() =
                 if nPrimitives > 0 then 
                     let primitiveOffset = node.leafNode.primitivesOffset
                     for j in 0..nPrimitives-1 do
-                        let mesh = orderedPrimitives.[primitiveOffset+j].mesh
-                        mesh.AABBIsValid <- true;
+                        let mutable meshBVH = orderedPrimitives.[primitiveOffset+j]
+                        meshBVH.AABBIsValid <- true
+                        orderedPrimitives.[primitiveOffset+j] <- meshBVH
                     toVisitOffset <- toVisitOffset - 1
                     if toVisitOffset >= 0 then 
                         currentNodeIndex <- nodesToVisit.[toVisitOffset]
