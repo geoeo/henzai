@@ -22,7 +22,7 @@ namespace Henzai.Examples
             GraphicsDeviceOptions gdOptions = new GraphicsDeviceOptions()
             {
                 Debug = false,
-                SwapchainDepthFormat = PixelFormat.R32_Float,
+                SwapchainDepthFormat = PixelFormat.R16_UNorm,
                 SyncToVerticalBlank = false,
                 ResourceBindingModel = ResourceBindingModel.Improved
 
@@ -33,7 +33,7 @@ namespace Henzai.Examples
                 Resolution = renderResolution,
                 PreferredGraphicsBackend = graphicsBackend,
                 UsePreferredGraphicsBackend = true,
-                LimitFrames = true,
+                LimitFrames = false,
                 FPSTarget = 60.0,
                 FarPlane = 500.0f
             };
