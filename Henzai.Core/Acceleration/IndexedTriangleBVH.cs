@@ -5,6 +5,7 @@ using Henzai.Core.VertexGeometry;
 namespace Henzai.Core.Acceleration
 {
     /// This struct serves as a BVH primitive
+    /// Somewhat depreciated
     public struct IndexedTriangleBVH<T> : AxisAlignedBoundable where T : struct, VertexLocateable
     {
         public readonly int i0;

@@ -12,7 +12,8 @@ namespace Henzai.Core
     /// </summary>
     public sealed class Model<T, U> where T : struct, VertexLocateable
     {
-        private readonly MeshBVH<T>[] _meshes;
+        private readonly MeshBVH<T>[] _meshesBVH;
+        private readonly Mesh<T>[] _meshes;
         private readonly U[] _materials;
         private Matrix4x4 _world = Matrix4x4.Identity;
 
@@ -37,19 +38,14 @@ namespace Henzai.Core
         {
             IsCulled = false;
             BaseDir = directory;
-            _meshes = new MeshBVH<T>[meshes.Length];
-            for(int i = 0; i < meshes.Length; i++)
-                _meshes[i] = new MeshBVH<T>(meshes[i]);
-            _materials = materials;
-        }
 
-        public Model(MeshBVH<T>[] meshes, U[] materials)
-        {
-            IsCulled = false;
-            BaseDir = string.Empty;
-            _meshes = new MeshBVH<T>[meshes.Length];
+            _meshes = new Mesh<T>[meshes.Length];
             for(int i = 0; i < meshes.Length; i++)
                 _meshes[i] = meshes[i];
+
+            _meshesBVH = new MeshBVH<T>[meshes.Length];
+            for(int i = 0; i < meshes.Length; i++)
+                _meshesBVH[i] = new MeshBVH<T>(meshes[i]);
             _materials = materials;
         }
 
@@ -57,9 +53,14 @@ namespace Henzai.Core
         {
             IsCulled = false;
             BaseDir = string.Empty;
-            _meshes = new MeshBVH<T>[meshesIn.Length];
+
+            _meshes = new Mesh<T>[meshesIn.Length];
             for(int i = 0; i < meshesIn.Length; i++)
-                _meshes[i] = new MeshBVH<T>(meshesIn[i]);
+                _meshes[i] = meshesIn[i];
+
+            _meshesBVH = new MeshBVH<T>[meshesIn.Length];
+            for(int i = 0; i < meshesIn.Length; i++)
+                _meshesBVH[i] = new MeshBVH<T>(meshesIn[i]);
             _materials = materials;
         }
 
@@ -67,8 +68,12 @@ namespace Henzai.Core
         {
             IsCulled = false;
             BaseDir = directoy;
-            _meshes = new MeshBVH<T>[1];
-            _meshes[0] = new MeshBVH<T>(meshIn);
+
+            _meshes = new Mesh<T>[1];
+            _meshes[0] = meshIn;
+
+            _meshesBVH = new MeshBVH<T>[1];
+            _meshesBVH[0] = new MeshBVH<T>(meshIn);
 
             _materials = new U[1];
             _materials[0] = material;
@@ -76,17 +81,17 @@ namespace Henzai.Core
 
         public Mesh<T> GetMesh(int index)
         {
-            return _meshes[index].mesh;
+            return _meshes[index];
         }
 
         public MeshBVH<T> GetMeshBVH(int index)
         {
-            return _meshes[index];
+            return _meshesBVH[index];
         }
 
         public void SetMeshBVH(int index, MeshBVH<T> meshBVH)
         {
-            _meshes[index] = meshBVH;
+            _meshesBVH[index] = meshBVH;
         }
 
         public void SetIsCulled(){
@@ -100,7 +105,7 @@ namespace Henzai.Core
 
         public bool AreMeshesCulled(){
             bool isCulled = true;
-            foreach(var meshBVH in _meshes)
+            foreach(var meshBVH in _meshesBVH)
                 if(!meshBVH.AABBIsValid){
                     isCulled = false;
                     break;
@@ -114,8 +119,9 @@ namespace Henzai.Core
             if (applyToAllMeshes)
             { 
                 for(int i = 0; i < _meshes.Length; i++){
-                    var meshBVH = _meshes[i];
-                    _meshes[i] = new MeshBVH<T>(ref meshBVH, ref world);
+                    var mesh = _meshes[i];
+                    mesh.SetNewWorldTransformation(ref world);
+                    _meshesBVH[i] = new MeshBVH<T>(mesh, ref world);
                 }
             }
         }
@@ -125,8 +131,9 @@ namespace Henzai.Core
             _world.Translation = translation;
             if (applyToAllMeshes){
                 for(int i = 0; i < _meshes.Length; i++){
-                    var meshBVH = _meshes[i];
-                    _meshes[i] = new MeshBVH<T>(ref meshBVH, ref _world);
+                    var mesh= _meshes[i];
+                    mesh.SetNewWorldTranslation(ref translation);
+                    _meshesBVH[i] = new MeshBVH<T>(mesh, ref _world);
                 }
             }
         }

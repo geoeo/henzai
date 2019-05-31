@@ -6,7 +6,7 @@ using Henzai.Core.Acceleration;
 
 namespace Henzai.Core.VertexGeometry
 {
-    //TODO Could remove this class entierly. World has to move into GeometryDefinition
+    //TODO: @Investigate -> Make this a struct
     /// <summary>
     /// Mesh holds Vertex and Texture/Color information
     /// </summary>
@@ -72,7 +72,6 @@ namespace Henzai.Core.VertexGeometry
             _vertexClean = null;
         }
 
-        //TODO: Support trianlge strips e.g. offscreen and sdl project
         //TODO: Support instancing
         public Mesh(T[] vertices, ushort[] indices)
         {
