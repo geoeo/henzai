@@ -2,6 +2,7 @@
 using System.Numerics;
 using Henzai.Core.VertexGeometry;
 using Henzai.Core.Materials;
+using Henzai.Core.Acceleration;
 
 namespace Henzai.Core
 {
@@ -11,7 +12,7 @@ namespace Henzai.Core
     /// </summary>
     public sealed class Model<T, U> where T : struct, VertexLocateable
     {
-        private readonly Mesh<T>[] _meshes;
+        private readonly MeshBVH<T>[] _meshes;
         private readonly U[] _materials;
         private Matrix4x4 _world = Matrix4x4.Identity;
 
@@ -36,7 +37,22 @@ namespace Henzai.Core
         {
             IsCulled = false;
             BaseDir = directory;
-            _meshes = meshes;
+            _meshes = new MeshBVH<T>[meshes.Length];
+            for(int i = 0; i < meshes.Length; i++)
+                _meshes[i] = new MeshBVH<T>(meshes[i]);
+            _materials = materials;
+
+            TotalTriangleCount = CalculateTotalValidTriangles(_meshes);
+            //SetCullingUpdateEvent(_meshes);
+        }
+
+        public Model(MeshBVH<T>[] meshes, U[] materials)
+        {
+            IsCulled = false;
+            BaseDir = string.Empty;
+            _meshes = new MeshBVH<T>[meshes.Length];
+            for(int i = 0; i < meshes.Length; i++)
+                _meshes[i] = meshes[i];
             _materials = materials;
 
             TotalTriangleCount = CalculateTotalValidTriangles(meshes);
@@ -47,10 +63,12 @@ namespace Henzai.Core
         {
             IsCulled = false;
             BaseDir = string.Empty;
-            _meshes = meshesIn;
+            _meshes = new MeshBVH<T>[meshesIn.Length];
+            for(int i = 0; i < meshesIn.Length; i++)
+                _meshes[i] = new MeshBVH<T>(meshesIn[i]);
             _materials = materials;
 
-            TotalTriangleCount = CalculateTotalValidTriangles(meshesIn);
+            TotalTriangleCount = CalculateTotalValidTriangles(_meshes);
             //SetCullingUpdateEvent(_meshes);
         }
 
@@ -58,8 +76,8 @@ namespace Henzai.Core
         {
             IsCulled = false;
             BaseDir = directoy;
-            _meshes = new Mesh<T>[1];
-            _meshes[0] = meshIn;
+            _meshes = new MeshBVH<T>[1];
+            _meshes[0] = new MeshBVH<T>(meshIn);
 
             _materials = new U[1];
             _materials[0] = material;
@@ -69,6 +87,11 @@ namespace Henzai.Core
         }
 
         public Mesh<T> GetMesh(int index)
+        {
+            return _meshes[index].mesh;
+        }
+
+        public MeshBVH<T> GetMeshBVH(int index)
         {
             return _meshes[index];
         }
@@ -84,8 +107,8 @@ namespace Henzai.Core
 
         public bool AreMeshesCulled(){
             bool isCulled = true;
-            foreach(var mesh in _meshes)
-                if(!mesh.IsCulled){
+            foreach(var meshBVH in _meshes)
+                if(!meshBVH.mesh.IsCulled){
                     isCulled = false;
                     break;
                 }
@@ -96,9 +119,11 @@ namespace Henzai.Core
         {
             _world = world;
             if (applyToAllMeshes)
-            {
-                foreach (var mesh in _meshes)
-                    mesh.SetNewWorldTransformation(ref world);
+            { 
+                for(int i = 0; i < _meshes.Length; i++){
+                    var meshBVH = _meshes[i];
+                    _meshes[i] = new MeshBVH<T>(ref meshBVH, ref world);
+                }
             }
         }
 
@@ -106,8 +131,10 @@ namespace Henzai.Core
         {
             _world.Translation = translation;
             if (applyToAllMeshes){
-                foreach (var mesh in _meshes)
-                    mesh.SetNewWorldTranslation(ref translation);
+                for(int i = 0; i < _meshes.Length; i++){
+                    var meshBVH = _meshes[i];
+                    _meshes[i] = new MeshBVH<T>(ref meshBVH, ref _world);
+                }
             }
         }
 
@@ -144,10 +171,10 @@ namespace Henzai.Core
             return new Model<T, RaytraceMaterial>(rtModel._meshes, raytraceMaterials);
         }
 
-        private static int CalculateTotalValidTriangles(Mesh<T>[] meshes){
+        private static int CalculateTotalValidTriangles(MeshBVH<T>[] meshes){
             var total = 0;
-            foreach(var mesh in meshes)
-                total += mesh.TriangleCount;
+            foreach(var meshBVH in meshes)
+                total += meshBVH.mesh.TriangleCount;
             return total;
         }
     }

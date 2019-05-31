@@ -219,6 +219,83 @@ type BVHRuntime private() =
         ()
 
 
+    static member TraverseWithFrustumForMesh (bvhArray : BVHRuntimeNode[], orderedPrimitives : MeshBVH<'T> [], nodesToVisit : int[], viewProjectionMatrix : byref<Matrix4x4>) =
+        //let mutable validNodeStack : struct(int*int) = struct(-1, -1)
+        let mutable toVisitOffset = 0
+        let mutable currentNodeIndex = 0
+
+        let mutable planeLeft =
+            Geometry.ExtractLeftPlane(&viewProjectionMatrix)
+        let mutable planeRight =
+            Geometry.ExtractRightPlane(&viewProjectionMatrix)
+        let mutable planeTop =
+            Geometry.ExtractTopPlane(&viewProjectionMatrix)
+        let mutable planeBottom =
+            Geometry.ExtractBottomPlane(&viewProjectionMatrix)
+        let mutable planeNear =
+            Geometry.ExtractNearPlane(&viewProjectionMatrix)
+        let mutable planeFar =
+            Geometry.ExtractFarPlane(&viewProjectionMatrix)
+
+        while toVisitOffset >= 0 do
+            let node = bvhArray.[currentNodeIndex]
+            let nPrimitives = node.nPrimitives
+            let currentAABB = node.aabb
+
+            // These impact performance a little
+            let currentIntersectionLeft = AABBProc.PlaneIntersection(currentAABB,planeLeft)
+            let currentIntersectionRight = AABBProc.PlaneIntersection(currentAABB,planeRight)
+            let currentIntersectionTop = AABBProc.PlaneIntersection(currentAABB,planeTop)
+            let currentIntersectionBottom = AABBProc.PlaneIntersection(currentAABB,planeBottom)
+            let currentIntersectionNear = AABBProc.PlaneIntersection(currentAABB,planeNear)
+            let currentIntersectionFar = AABBProc.PlaneIntersection(currentAABB,planeFar)
+
+            let inside = 
+                currentIntersectionNear = IntersectionResult.Inside &&
+                currentIntersectionFar = IntersectionResult.Inside &&
+                currentIntersectionLeft = IntersectionResult.Inside &&
+                currentIntersectionRight = IntersectionResult.Inside && 
+                currentIntersectionTop = IntersectionResult.Inside &&
+                currentIntersectionBottom = IntersectionResult.Inside
+
+            let intersecting = 
+                currentIntersectionNear = IntersectionResult.Intersecting ||
+                currentIntersectionFar = IntersectionResult.Intersecting ||
+                currentIntersectionLeft = IntersectionResult.Intersecting ||
+                currentIntersectionRight = IntersectionResult.Intersecting ||
+                currentIntersectionTop = IntersectionResult.Intersecting ||
+                currentIntersectionBottom = IntersectionResult.Intersecting
+
+            // "or"-ing seems to faster than "not"-ing i.e. not outside
+            let outside = 
+                currentIntersectionNear = IntersectionResult.Outside &&
+                currentIntersectionFar = IntersectionResult.Outside &&
+                currentIntersectionLeft = IntersectionResult.Outside &&
+                currentIntersectionRight = IntersectionResult.Outside && 
+                currentIntersectionTop = IntersectionResult.Outside &&
+                currentIntersectionBottom = IntersectionResult.Outside
+
+            if (inside || intersecting) then 
+                if nPrimitives > 0 then 
+                    let primitiveOffset = node.leafNode.primitivesOffset
+                    for j in 0..nPrimitives-1 do
+                        let mesh = orderedPrimitives.[primitiveOffset+j].mesh
+                        mesh.AABBIsValid <- true;
+                    toVisitOffset <- toVisitOffset - 1
+                    if toVisitOffset >= 0 then 
+                        currentNodeIndex <- nodesToVisit.[toVisitOffset]
+                else
+                    let interiorNode = node.interiorNode
+                    nodesToVisit.[toVisitOffset] <- currentNodeIndex + 1
+                    toVisitOffset <- toVisitOffset + 1 
+                    currentNodeIndex <- interiorNode.secondChildOffset
+            else 
+                toVisitOffset <- toVisitOffset - 1
+                if toVisitOffset >= 0 then 
+                    currentNodeIndex <- nodesToVisit.[toVisitOffset]
+        ()
+
+
 
         
             

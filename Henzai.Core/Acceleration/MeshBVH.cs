@@ -54,6 +54,7 @@ namespace Henzai.Core.Acceleration
 
         public MeshBVH(ref MeshBVH<T> meshBVH, ref Matrix4x4 world){    
             mesh = meshBVH.mesh;
+            mesh.SetNewWorldTransformation(ref world);
 
             var vertices = mesh.Vertices;
             var v = vertices[0].GetPosition();
@@ -90,7 +91,6 @@ namespace Henzai.Core.Acceleration
                 else if(x > zMax)
                     zMax = z;
             }
-
 
             var pMin = new Vector4(xMin, yMin, zMin, 1.0f);
             var pMax = new Vector4(xMax, yMax, zMax, 1.0f);

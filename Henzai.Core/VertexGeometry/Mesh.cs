@@ -56,16 +56,7 @@ namespace Henzai.Core.VertexGeometry
         /// Disclaimer: In general you want ValidIndexCount
         /// </summary>
         public int IndexCount => _indices.Length;
-        private bool _AABBIsValid;
-        public bool AABBIsValid 
-        {
-            get {return _AABBIsValid;} 
-            set 
-            {
-                _AABBIsValid = value;
-                //CulledStateSubscruber?.Invoke(_AABBIsValid);
-            }
-        }
+        public bool AABBIsValid;
         public bool IsCulled => ValidIndexCount == 0 || !AABBIsValid;
         public ref Matrix4x4 World => ref _world;
 
