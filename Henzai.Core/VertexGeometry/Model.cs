@@ -94,19 +94,10 @@ namespace Henzai.Core
             _meshesBVH[index] = meshBVH;
         }
 
-        public void SetIsCulled(){
-            IsCulled = true;
-        }
-
-        public void UpdateCulled(bool aabbIsValid){
-            if(aabbIsValid && IsCulled)
-                IsCulled = !aabbIsValid;
-        }
-
         public bool AreMeshesCulled(){
             bool isCulled = true;
             foreach(var meshBVH in _meshesBVH)
-                if(!meshBVH.AABBIsValid){
+                if(meshBVH.AABBIsValid){
                     isCulled = false;
                     break;
                 }

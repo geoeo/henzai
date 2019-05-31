@@ -72,7 +72,7 @@ namespace Henzai
                 var meshCount = model.MeshCount;
                 for (int i = 0; i < meshCount; i++)
                 {
-                    var meshBVH = model.GetMeshBVH(i);
+                    var meshBVH = model.GetMeshBVH(i); 
                     allMeshBVHPNTTB[indexPNTTB] = meshBVH;
                     indexPNTTB++;
                 }
@@ -120,23 +120,23 @@ namespace Henzai
                 }
             }
 
-            var tuplePNTTB  = BVHTreeBuilder<MeshBVH<VertexPositionNormalTextureTangentBitangent>>.Build(allMeshBVHPNTTB, splitMethod);
+            var tuplePNTTB = BVHTreeBuilder<MeshBVH<VertexPositionNormalTextureTangentBitangent>>.Build(allMeshBVHPNTTB, splitMethod);
             BVHTree PNTTBTree = tuplePNTTB.Item1;
             _orderedPNTTB = tuplePNTTB.Item2;
             int PNTTBTotalNodes = tuplePNTTB.Item3;
 
-            var tuplePN  = BVHTreeBuilder<MeshBVH<VertexPositionNormal>>.Build(allMeshBVHPN, splitMethod);
+            var tuplePN = BVHTreeBuilder<MeshBVH<VertexPositionNormal>>.Build(allMeshBVHPN, splitMethod);
             BVHTree PNTree= tuplePN.Item1;
-            _orderedPN= tuplePN.Item2;
+            _orderedPN = tuplePN.Item2;
             int PNTotalNodes = tuplePN.Item3;
 
-            var tuplePT  = BVHTreeBuilder<MeshBVH<VertexPositionTexture>>.Build(allMeshBVHPT, splitMethod);
-            BVHTree PTTree= tuplePT.Item1;
+            var tuplePT = BVHTreeBuilder<MeshBVH<VertexPositionTexture>>.Build(allMeshBVHPT, splitMethod);
+            BVHTree PTTree = tuplePT.Item1;
             _orderedPT = tuplePT.Item2;
             int PTTotalNodes = tuplePT.Item3;
 
-            var tuplePC  = BVHTreeBuilder<MeshBVH<VertexPositionColor>>.Build(allMeshBVHPC, splitMethod);
-            BVHTree PCTree= tuplePC.Item1;
+            var tuplePC = BVHTreeBuilder<MeshBVH<VertexPositionColor>>.Build(allMeshBVHPC, splitMethod);
+            BVHTree PCTree = tuplePC.Item1;
             _orderedPC = tuplePC.Item2;
             int PCTotalNodes = tuplePC.Item3;
 
@@ -149,27 +149,77 @@ namespace Henzai
             _bvhTraversalStack = new int[maxPrimitives];                                                                                                        
         }
 
-        /// Depreciated as culling Meshes seems more efficient
          protected void EnableBVHCulling(float deltaTime, GraphicsDevice graphicsDevice, CommandList commandList, Camera camera, ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] modelPNTTBDescriptorArray, ModelRuntimeDescriptor<VertexPositionNormal>[] modelPNDescriptorArray, ModelRuntimeDescriptor<VertexPositionTexture>[] modelPTDescriptorArray, ModelRuntimeDescriptor<VertexPositionColor>[] modelPCDescriptorArray, ModelRuntimeDescriptor<VertexPosition>[] modelPDescriptorArray){
       
             if (_orderedPNTTB.Length > CULLING_THRESH){
                 invalidateAABB(modelPNTTBDescriptorArray);
                 BVHRuntime.TraverseWithFrustumForMesh(_bvhRuntimeNodesPNTTB, _orderedPNTTB, _bvhTraversalStack, ref camera.ViewProjectionMatirx);
+                // since meshBVH is a struct we have to copy it back
+                // @Investigate -> use the same array for culling and generating render commands
+                var indexPNTTB = 0;
+                foreach (var modelDescriptor in modelPNTTBDescriptorArray)
+                {
+                    var model = modelDescriptor.Model;
+                    var meshCount = model.MeshCount;
+                    for (int i = 0; i < meshCount; i++)
+                    {
+                        var meshBVH = _orderedPNTTB[indexPNTTB]; 
+                        model.SetMeshBVH(i, meshBVH);
+                        indexPNTTB++;
+                    }
+                }
             }
             if (_orderedPN.Length > CULLING_THRESH){
                 invalidateAABB(modelPNDescriptorArray);
                 BVHRuntime.TraverseWithFrustumForMesh(_bvhRuntimeNodesPN, _orderedPN, _bvhTraversalStack, ref camera.ViewProjectionMatirx);
+                var indexPN = 0;
+                foreach (var modelDescriptor in modelPNDescriptorArray)
+                {
+                    var model = modelDescriptor.Model;
+                    var meshCount = model.MeshCount;
+                    for (int i = 0; i < meshCount; i++)
+                    {
+                        var meshBVH = _orderedPN[indexPN];
+                        model.SetMeshBVH(i, meshBVH);
+                        indexPN++;
+                    }
+                }
             }
             if (_orderedPT.Length > CULLING_THRESH){
                 invalidateAABB(modelPTDescriptorArray);
                 BVHRuntime.TraverseWithFrustumForMesh(_bvhRuntimeNodesPT, _orderedPT, _bvhTraversalStack, ref camera.ViewProjectionMatirx);
+                var indexPT = 0;
+                foreach (var modelDescriptor in modelPTDescriptorArray)
+                {
+                    var model = modelDescriptor.Model;
+                    var meshCount = model.MeshCount;
+                    for (int i = 0; i < meshCount; i++)
+                    {
+                        var meshBVH = _orderedPT[indexPT];
+                        model.SetMeshBVH(i, meshBVH);
+                        indexPT++;
+                    }
+                }
             }
             if (_orderedPC.Length > CULLING_THRESH){
                 invalidateAABB(modelPCDescriptorArray);
                 BVHRuntime.TraverseWithFrustumForMesh(_bvhRuntimeNodesPC, _orderedPC, _bvhTraversalStack, ref camera.ViewProjectionMatirx);
+                var indexPC = 0;
+                foreach (var modelDescriptor in modelPCDescriptorArray)
+                {
+                    var model = modelDescriptor.Model;
+                    var meshCount = model.MeshCount;
+                    for (int i = 0; i < meshCount; i++)
+                    {
+                        var meshBVH = _orderedPC[indexPC];
+                        model.SetMeshBVH(i, meshBVH);
+                        indexPC++;
+                    }
+                }
             }
          }
 
+        /// Depreciated as culling Meshes seems more efficient
         protected void EnableCulling(float deltaTime, GraphicsDevice graphicsDevice, CommandList commandList, Camera camera, ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] modelPNTTBDescriptorArray, ModelRuntimeDescriptor<VertexPositionNormal>[] modelPNDescriptorArray, ModelRuntimeDescriptor<VertexPositionTexture>[] modelPTDescriptorArray, ModelRuntimeDescriptor<VertexPositionColor>[] modelPCDescriptorArray, ModelRuntimeDescriptor<VertexPosition>[] modelPDescriptorArray)
         {
             var updateBuffers = false;
@@ -237,7 +287,6 @@ namespace Henzai
             foreach (var modelDescriptor in modelDescriptorArray)
             {
                 var model = modelDescriptor.Model;
-                model.SetIsCulled();
                 var meshCount = model.MeshCount;
                 for (int i = 0; i < meshCount; i++){
                     var meshBVH = model.GetMeshBVH(i);
