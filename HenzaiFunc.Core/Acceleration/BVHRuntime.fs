@@ -144,7 +144,6 @@ type BVHRuntime private() =
         ()
 
     static member TraverseWithFrustum (bvhArray : BVHRuntimeNode[], orderedPrimitives : IndexedTriangleBVH<'T> [], nodesToVisit : int[], viewProjectionMatrix : byref<Matrix4x4>) =
-        //let mutable validNodeStack : struct(int*int) = struct(-1, -1)
         let mutable toVisitOffset = 0
         let mutable currentNodeIndex = 0
 
@@ -222,7 +221,6 @@ type BVHRuntime private() =
 
 
     static member TraverseWithFrustumForMesh (bvhArray : BVHRuntimeNode[], orderedPrimitives : MeshBVH<'T> [], nodesToVisit : int[], viewProjectionMatrix : byref<Matrix4x4>) =
-        //let mutable validNodeStack : struct(int*int) = struct(-1, -1)
         let mutable toVisitOffset = 0
         let mutable currentNodeIndex = 0
 

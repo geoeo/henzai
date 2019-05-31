@@ -149,6 +149,7 @@ namespace Henzai
             _bvhTraversalStack = new int[maxPrimitives];                                                                                                        
         }
 
+        /// Depreciated as culling Meshes seems more efficient
          protected void EnableBVHCulling(float deltaTime, GraphicsDevice graphicsDevice, CommandList commandList, Camera camera, ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] modelPNTTBDescriptorArray, ModelRuntimeDescriptor<VertexPositionNormal>[] modelPNDescriptorArray, ModelRuntimeDescriptor<VertexPositionTexture>[] modelPTDescriptorArray, ModelRuntimeDescriptor<VertexPositionColor>[] modelPCDescriptorArray, ModelRuntimeDescriptor<VertexPosition>[] modelPDescriptorArray){
       
             if (_orderedPNTTB.Length > CULLING_THRESH){
