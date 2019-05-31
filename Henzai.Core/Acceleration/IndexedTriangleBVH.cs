@@ -14,7 +14,7 @@ namespace Henzai.Core.Acceleration
         private AABB _aabb;
 
         //TODO: Once we start inserting/removing models at runtime this has to check for null
-        public Mesh<T> Mesh => mesh;
+        //public Mesh<T> Mesh => mesh;
 
         public IndexedTriangleBVH(int i0, int i1, int i2, Mesh<T> mesh){
             this.i0 = i0;

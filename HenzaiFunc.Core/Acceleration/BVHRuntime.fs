@@ -125,7 +125,7 @@ type BVHRuntime private() =
                 if nPrimitives > 0 then
                     let primitiveOffset = node.leafNode.primitivesOffset
                     for j in 0..nPrimitives-1 do
-                        let mesh = orderedPrimitives.[primitiveOffset+j].Mesh
+                        let mesh = orderedPrimitives.[primitiveOffset+j].mesh
                         mesh.AABBIsValid <- true;
                     toVisitOffset <- toVisitOffset - 1
                     if toVisitOffset >= 0 then 
@@ -202,7 +202,7 @@ type BVHRuntime private() =
                 if nPrimitives > 0 then 
                     let primitiveOffset = node.leafNode.primitivesOffset
                     for j in 0..nPrimitives-1 do
-                        let mesh = orderedPrimitives.[primitiveOffset+j].Mesh
+                        let mesh = orderedPrimitives.[primitiveOffset+j].mesh
                         mesh.AABBIsValid <- true;
                     toVisitOffset <- toVisitOffset - 1
                     if toVisitOffset >= 0 then 
