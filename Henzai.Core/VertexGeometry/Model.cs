@@ -2,6 +2,7 @@
 using System.Numerics;
 using Henzai.Core.VertexGeometry;
 using Henzai.Core.Materials;
+using Henzai.Core.Acceleration;
 
 namespace Henzai.Core
 {
@@ -11,6 +12,7 @@ namespace Henzai.Core
     /// </summary>
     public sealed class Model<T, U> where T : struct, VertexLocateable
     {
+        private readonly MeshBVH<T>[] _meshesBVH;
         private readonly Mesh<T>[] _meshes;
         private readonly U[] _materials;
         private Matrix4x4 _world = Matrix4x4.Identity;
@@ -36,36 +38,45 @@ namespace Henzai.Core
         {
             IsCulled = false;
             BaseDir = directory;
-            _meshes = meshes;
-            _materials = materials;
 
-            TotalTriangleCount = CalculateTotalValidTriangles(meshes);
-            //SetCullingUpdateEvent(_meshes);
+            _meshes = new Mesh<T>[meshes.Length];
+            for(int i = 0; i < meshes.Length; i++)
+                _meshes[i] = meshes[i];
+
+            _meshesBVH = new MeshBVH<T>[meshes.Length];
+            for(int i = 0; i < meshes.Length; i++)
+                _meshesBVH[i] = new MeshBVH<T>(meshes[i]);
+            _materials = materials;
         }
 
         public Model(Mesh<T>[] meshesIn, U[] materials)
         {
             IsCulled = false;
             BaseDir = string.Empty;
-            _meshes = meshesIn;
-            _materials = materials;
 
-            TotalTriangleCount = CalculateTotalValidTriangles(meshesIn);
-            //SetCullingUpdateEvent(_meshes);
+            _meshes = new Mesh<T>[meshesIn.Length];
+            for(int i = 0; i < meshesIn.Length; i++)
+                _meshes[i] = meshesIn[i];
+
+            _meshesBVH = new MeshBVH<T>[meshesIn.Length];
+            for(int i = 0; i < meshesIn.Length; i++)
+                _meshesBVH[i] = new MeshBVH<T>(meshesIn[i]);
+            _materials = materials;
         }
 
         public Model(string directoy, Mesh<T> meshIn, U material)
         {
             IsCulled = false;
             BaseDir = directoy;
+
             _meshes = new Mesh<T>[1];
             _meshes[0] = meshIn;
 
+            _meshesBVH = new MeshBVH<T>[1];
+            _meshesBVH[0] = new MeshBVH<T>(meshIn);
+
             _materials = new U[1];
             _materials[0] = material;
-
-            TotalTriangleCount = meshIn.TriangleCount;
-            //SetCullingUpdateEvent(_meshes);
         }
 
         public Mesh<T> GetMesh(int index)
@@ -73,19 +84,20 @@ namespace Henzai.Core
             return _meshes[index];
         }
 
-        public void SetIsCulled(){
-            IsCulled = true;
+        public MeshBVH<T> GetMeshBVH(int index)
+        {
+            return _meshesBVH[index];
         }
 
-        public void UpdateCulled(bool aabbIsValid){
-            if(aabbIsValid && IsCulled)
-                IsCulled = !aabbIsValid;
+        public void SetMeshBVH(int index, MeshBVH<T> meshBVH)
+        {
+            _meshesBVH[index] = meshBVH;
         }
 
         public bool AreMeshesCulled(){
             bool isCulled = true;
-            foreach(var mesh in _meshes)
-                if(!mesh.IsCulled){
+            foreach(var meshBVH in _meshesBVH)
+                if(meshBVH.AABBIsValid){
                     isCulled = false;
                     break;
                 }
@@ -96,9 +108,12 @@ namespace Henzai.Core
         {
             _world = world;
             if (applyToAllMeshes)
-            {
-                foreach (var mesh in _meshes)
+            { 
+                for(int i = 0; i < _meshes.Length; i++){
+                    var mesh = _meshes[i];
                     mesh.SetNewWorldTransformation(ref world);
+                    _meshesBVH[i] = new MeshBVH<T>(mesh, ref world);
+                }
             }
         }
 
@@ -106,8 +121,11 @@ namespace Henzai.Core
         {
             _world.Translation = translation;
             if (applyToAllMeshes){
-                foreach (var mesh in _meshes)
+                for(int i = 0; i < _meshes.Length; i++){
+                    var mesh= _meshes[i];
                     mesh.SetNewWorldTranslation(ref translation);
+                    _meshesBVH[i] = new MeshBVH<T>(mesh, ref _world);
+                }
             }
         }
 
@@ -115,12 +133,6 @@ namespace Henzai.Core
         public Model<T, U> SplitByString(string id)
         {
             throw new NotImplementedException();
-        }
-
-        // Performance for this seems to be worse than simple for loop through all meshes
-        private void SetCullingUpdateEvent(Mesh<T>[] meshes){
-            foreach(var mesh in meshes)
-                mesh.CulledStateSubscruber += UpdateCulled;
         }
 
         public static Model<T, RaytraceMaterial> ConvertToRaytracingModel(Model<T, RealtimeMaterial> rtModel)
@@ -142,13 +154,6 @@ namespace Henzai.Core
                 raytraceMaterials[i] = new RaytraceMaterial(diffuse, emissive);
             }
             return new Model<T, RaytraceMaterial>(rtModel._meshes, raytraceMaterials);
-        }
-
-        private static int CalculateTotalValidTriangles(Mesh<T>[] meshes){
-            var total = 0;
-            foreach(var mesh in meshes)
-                total += mesh.TriangleCount;
-            return total;
         }
     }
 }

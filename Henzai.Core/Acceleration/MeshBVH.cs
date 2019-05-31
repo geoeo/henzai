@@ -9,12 +9,11 @@ namespace Henzai.Core.Acceleration
     public struct MeshBVH<T> : AxisAlignedBoundable where T : struct, VertexLocateable
     {
         private AABB _aabb;
-
-        public readonly Mesh<T> mesh;
+        public bool AABBIsValid;
 
         public MeshBVH(Mesh<T> mesh){
-            this.mesh = mesh;
-            
+            AABBIsValid = true;    
+
             var vertices = mesh.Vertices;
             var v = vertices[0].GetPosition();
             var xMin = v.X;
@@ -52,8 +51,8 @@ namespace Henzai.Core.Acceleration
             _aabb = new AABB(pMin, pMax);
         }
 
-        public MeshBVH(ref MeshBVH<T> meshBVH, ref Matrix4x4 world){    
-            mesh = meshBVH.mesh;
+        public MeshBVH(Mesh<T> mesh, ref Matrix4x4 world){    
+            AABBIsValid = true;    
 
             var vertices = mesh.Vertices;
             var v = vertices[0].GetPosition();
@@ -90,7 +89,6 @@ namespace Henzai.Core.Acceleration
                 else if(x > zMax)
                     zMax = z;
             }
-
 
             var pMin = new Vector4(xMin, yMin, zMin, 1.0f);
             var pMax = new Vector4(xMax, yMax, zMax, 1.0f);
