@@ -31,6 +31,7 @@ namespace Henzai
         private Ray[,] _zCullingRays;
         private Vector4[,] _zCullingDirections;
         private int[] _bvhTraversalStack;
+        private const int CULLING_THRESH = 10;
 
 
 
@@ -212,20 +213,23 @@ namespace Henzai
         }
 
          protected void EnableBVHCulling(float deltaTime, GraphicsDevice graphicsDevice, CommandList commandList, Camera camera, ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] modelPNTTBDescriptorArray, ModelRuntimeDescriptor<VertexPositionNormal>[] modelPNDescriptorArray, ModelRuntimeDescriptor<VertexPositionTexture>[] modelPTDescriptorArray, ModelRuntimeDescriptor<VertexPositionColor>[] modelPCDescriptorArray, ModelRuntimeDescriptor<VertexPosition>[] modelPDescriptorArray){
-
-            invalidateAABB(modelPNTTBDescriptorArray);
-            invalidateAABB(modelPNDescriptorArray);
-            invalidateAABB(modelPTDescriptorArray);
-            invalidateAABB(modelPCDescriptorArray);
-                        
-            if (_orderedPNTTB.Length > 0)
+      
+            if (_orderedPNTTB.Length > CULLING_THRESH){
+                invalidateAABB(modelPNTTBDescriptorArray);
                 BVHRuntime.TraverseWithFrustumForMesh(_bvhRuntimeNodesPNTTB, _orderedPNTTB, _bvhTraversalStack, ref camera.ViewProjectionMatirx);
-            if (_orderedPN.Length > 0)
+            }
+            if (_orderedPN.Length > CULLING_THRESH){
+                invalidateAABB(modelPNDescriptorArray);
                 BVHRuntime.TraverseWithFrustumForMesh(_bvhRuntimeNodesPN, _orderedPN, _bvhTraversalStack, ref camera.ViewProjectionMatirx);
-            if (_orderedPT.Length > 0)
+            }
+            if (_orderedPT.Length > CULLING_THRESH){
+                invalidateAABB(modelPTDescriptorArray);
                 BVHRuntime.TraverseWithFrustumForMesh(_bvhRuntimeNodesPT, _orderedPT, _bvhTraversalStack, ref camera.ViewProjectionMatirx);
-            if (_orderedPC.Length > 0)
+            }
+            if (_orderedPC.Length > CULLING_THRESH){
+                invalidateAABB(modelPCDescriptorArray);
                 BVHRuntime.TraverseWithFrustumForMesh(_bvhRuntimeNodesPC, _orderedPC, _bvhTraversalStack, ref camera.ViewProjectionMatirx);
+            }
          }
 
         protected void EnableCulling(float deltaTime, GraphicsDevice graphicsDevice, CommandList commandList, Camera camera, ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] modelPNTTBDescriptorArray, ModelRuntimeDescriptor<VertexPositionNormal>[] modelPNDescriptorArray, ModelRuntimeDescriptor<VertexPositionTexture>[] modelPTDescriptorArray, ModelRuntimeDescriptor<VertexPositionColor>[] modelPCDescriptorArray, ModelRuntimeDescriptor<VertexPosition>[] modelPDescriptorArray)
