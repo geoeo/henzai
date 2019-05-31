@@ -5,7 +5,7 @@ using Henzai.Core.VertexGeometry;
 namespace Henzai.Core.Acceleration
 {
     /// This struct serves as a BVH primitive
-    public struct IndexedTriangleEngine<T> : AxisAlignedBoundable where T : struct, VertexLocateable
+    public struct IndexedTriangleBVH<T> : AxisAlignedBoundable where T : struct, VertexLocateable
     {
         public readonly int i0;
         public readonly int i1;
@@ -16,7 +16,7 @@ namespace Henzai.Core.Acceleration
         //TODO: Once we start inserting/removing models at runtime this has to check for null
         public Mesh<T> Mesh => mesh;
 
-        public IndexedTriangleEngine(int i0, int i1, int i2, Mesh<T> mesh){
+        public IndexedTriangleBVH(int i0, int i1, int i2, Mesh<T> mesh){
             this.i0 = i0;
             this.i1 = i1;
             this.i2 = i2;
@@ -32,7 +32,7 @@ namespace Henzai.Core.Acceleration
             _aabb = new AABB(pMin, pMax);
         }
 
-        public IndexedTriangleEngine(ref IndexedTriangleEngine<T> triangle, ref Matrix4x4 world){
+        public IndexedTriangleBVH(ref IndexedTriangleBVH<T> triangle, ref Matrix4x4 world){
    
             i0 = triangle.i0;
             i1 = triangle.i1;

@@ -96,7 +96,7 @@ type BVHTreeBuilder<'T when 'T :> AxisAlignedBoundable> private() =
                     struct(mid, smaller, largerOrEqual)
         | x -> failwithf "Recursive splitmethod %u not yet implemented" (LanguagePrimitives.EnumToValue x)
 
-    static let buildLeafFromMultiplePrimitives bvhInfoArray (geometryArray: 'T []) subArray orderedGeometryList centroidBounds nPrimitives axis =
+    static let buildLeafFromMultiplePrimitives (geometryArray: 'T []) subArray orderedGeometryList nPrimitives axis =
         let bounds = Array.fold (fun acc (elem : BVHPrimitive) -> AABBProc.UnionWithAABB(acc, elem.aabb)) (AABB()) subArray
         let newOrderedList = Array.fold (fun acc (elem : BVHPrimitive) -> (geometryArray.[elem.indexOfBoundable] :: acc)) orderedGeometryList subArray
         let leaf = Node (BVHBuildNode(SplitAxis.None, orderedGeometryList.Length, nPrimitives, bounds), Empty, Empty)
@@ -119,11 +119,11 @@ type BVHTreeBuilder<'T when 'T :> AxisAlignedBoundable> private() =
             let axis = AABBProc.MaximumExtent(centroidBounds)
             // Unusual case e.g. multiple instances of the same geometry
             if accessPointBySplitAxis centroidBounds.PMin axis = accessPointBySplitAxis centroidBounds.PMax axis then
-                buildLeafFromMultiplePrimitives bvhInfoArray geometryArray subArray orderedGeometryList centroidBounds nPrimitives axis
+                buildLeafFromMultiplePrimitives geometryArray subArray orderedGeometryList nPrimitives axis
             else
                 let struct(splitPoint , smallerThanMidArray, largerThanMidArray) = calculateSplitPoint subArray start finish centroidBounds axis splitMethod
                 if largerThanMidArray.Length = 0 || smallerThanMidArray.Length = 0 then
-                    buildLeafFromMultiplePrimitives bvhInfoArray geometryArray subArray orderedGeometryList centroidBounds nPrimitives axis
+                    buildLeafFromMultiplePrimitives geometryArray subArray orderedGeometryList nPrimitives axis
                 else
                     Array.blit smallerThanMidArray 0 bvhInfoArray start smallerThanMidArray.Length
                     Array.blit largerThanMidArray 0 bvhInfoArray (start + smallerThanMidArray.Length) largerThanMidArray.Length

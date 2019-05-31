@@ -136,13 +136,13 @@ module Culler =
         ()
 
     /// <summary>
-    /// Culls a list of <see cref="Henzai.Core.Acceleration.IndexedTriangleEngine"/> with the camera view frustum
+    /// Culls a list of <see cref="Henzai.Core.Acceleration.IndexedTriangleBVH"/> with the camera view frustum
     /// </summary>
-    let FrustumCullBVH (bvhArray : BVHRuntimeNode[], orderedPrimitives : IndexedTriangleEngine<'T>[], bvhTraversalStack: int[], viewProjectionMatrix : byref<Matrix4x4>) =
+    let FrustumCullBVH (bvhArray : BVHRuntimeNode[], orderedPrimitives : IndexedTriangleBVH<'T>[], bvhTraversalStack: int[], viewProjectionMatrix : byref<Matrix4x4>) =
         BVHRuntime.TraverseWithFrustum(bvhArray, orderedPrimitives, bvhTraversalStack, &viewProjectionMatrix)
 
 
-    let ZCullBVH (bvhArray : BVHRuntimeNode[], orderedPrimitives : IndexedTriangleEngine<'T>[], bvhTraversalStack: int[], ray: Ray) =
+    let ZCullBVH (bvhArray : BVHRuntimeNode[], orderedPrimitives : IndexedTriangleBVH<'T>[], bvhTraversalStack: int[], ray: Ray) =
         BVHRuntime.TraverseForZCulling bvhArray orderedPrimitives bvhTraversalStack ray
  
 

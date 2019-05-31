@@ -24,7 +24,7 @@ namespace Henzai.Core.VertexGeometry
         /// The array may be larger than actual index count.
         /// </summary>
         private readonly ushort[] _validIndices;
-        private readonly IndexedTriangleEngine<T>[] _triangles;
+        private readonly IndexedTriangleBVH<T>[] _triangles;
         // private readonly Dictionary<ushort, bool> _processedIndicesMap;
         private ushort[] _indexClean; 
         private T[] _vertexClean;
@@ -45,7 +45,7 @@ namespace Henzai.Core.VertexGeometry
         public ushort[] Indices => _indices;
         public T[] ValidVertices => _validVertices;
         public T[] CleanVertices => _vertexClean;
-        public IndexedTriangleEngine<T>[] Triangles => _triangles;
+        public IndexedTriangleBVH<T>[] Triangles => _triangles;
         /// <summary>
         /// Disclaimer: In general you want ValidVertexCount
         /// </summary>
@@ -112,12 +112,12 @@ namespace Henzai.Core.VertexGeometry
             Buffer.BlockCopy(indices, 0, _validIndices, 0, indices.Length * sizeof(ushort));
             ValidIndexCount = indices.Length;
 
-            _triangles = new IndexedTriangleEngine<T>[IndexCount/3];
+            _triangles = new IndexedTriangleBVH<T>[IndexCount/3];
             for(int i = 0; i < IndexCount; i+=3){
                 var i0 = _indices[i];
                 var i1 = _indices[i+1];
                 var i2 = _indices[i+2];  
-                _triangles[i/3] = new IndexedTriangleEngine<T>(i0, i1, i2, this);
+                _triangles[i/3] = new IndexedTriangleBVH<T>(i0, i1, i2, this);
             }
 
             _indexClean = new ushort[IndexCount];
@@ -130,7 +130,7 @@ namespace Henzai.Core.VertexGeometry
             _world = world;
             for (int i = 0; i < _triangles.Length; i++){
                 var tri = _triangles[i];
-                _triangles[i] = new IndexedTriangleEngine<T>(ref tri, ref _world);
+                _triangles[i] = new IndexedTriangleBVH<T>(ref tri, ref _world);
             }
         }
 
@@ -138,7 +138,7 @@ namespace Henzai.Core.VertexGeometry
             _world.Translation = translation;
             for (int i = 0; i < _triangles.Length; i++){
                 var tri = _triangles[i];
-                _triangles[i] = new IndexedTriangleEngine<T>(ref tri, ref _world);
+                _triangles[i] = new IndexedTriangleBVH<T>(ref tri, ref _world);
             } 
         }
 

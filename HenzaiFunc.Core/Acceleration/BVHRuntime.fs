@@ -113,7 +113,7 @@ type BVHRuntime private() =
 
 
     /// Finds the closest intersection for the given ray
-    static member TraverseForZCulling (bvhArray : BVHRuntimeNode []) (orderedPrimitives : IndexedTriangleEngine<'T> []) (nodesToVisit : int[]) (ray : Ray) = 
+    static member TraverseForZCulling (bvhArray : BVHRuntimeNode []) (orderedPrimitives : IndexedTriangleBVH<'T> []) (nodesToVisit : int[]) (ray : Ray) = 
         let mutable toVisitOffset = 0
         let mutable currentNodeIndex = 0
 
@@ -142,7 +142,7 @@ type BVHRuntime private() =
                     currentNodeIndex <- nodesToVisit.[toVisitOffset]
         ()
 
-    static member TraverseWithFrustum (bvhArray : BVHRuntimeNode[], orderedPrimitives : IndexedTriangleEngine<'T> [], nodesToVisit : int[], viewProjectionMatrix : byref<Matrix4x4>) =
+    static member TraverseWithFrustum (bvhArray : BVHRuntimeNode[], orderedPrimitives : IndexedTriangleBVH<'T> [], nodesToVisit : int[], viewProjectionMatrix : byref<Matrix4x4>) =
         //let mutable validNodeStack : struct(int*int) = struct(-1, -1)
         let mutable toVisitOffset = 0
         let mutable currentNodeIndex = 0

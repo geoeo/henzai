@@ -21,13 +21,13 @@ namespace Henzai
         protected static Renderable scene;
         protected static UserInterface gui;
         private BVHRuntimeNode[] _bvhRuntimeNodesPNTTB;
-        private IndexedTriangleEngine<VertexPositionNormalTextureTangentBitangent>[] _orderedPNTTB;
+        private IndexedTriangleBVH<VertexPositionNormalTextureTangentBitangent>[] _orderedPNTTB;
         private BVHRuntimeNode[] _bvhRuntimeNodesPN;
-        private IndexedTriangleEngine<VertexPositionNormal>[] _orderedPN;
+        private IndexedTriangleBVH<VertexPositionNormal>[] _orderedPN;
         private BVHRuntimeNode[] _bvhRuntimeNodesPT;
-        private IndexedTriangleEngine<VertexPositionTexture>[] _orderedPT;
+        private IndexedTriangleBVH<VertexPositionTexture>[] _orderedPT;
         private BVHRuntimeNode[] _bvhRuntimeNodesPC;
-        private IndexedTriangleEngine<VertexPositionColor>[] _orderedPC;
+        private IndexedTriangleBVH<VertexPositionColor>[] _orderedPC;
         private Ray[,] _zCullingRays;
         private Vector4[,] _zCullingDirections;
         private int[] _bvhTraversalStack;
@@ -83,10 +83,10 @@ namespace Henzai
             foreach (var modelDescriptor in modelPCDescriptorArray)
                 allTrianglesCountPC += modelDescriptor.Model.TotalTriangleCount;
 
-            var allBVHTrianglesPNTTB = new IndexedTriangleEngine<VertexPositionNormalTextureTangentBitangent>[allTrianglesCountPNTTB];
-            var allBVHTrianglesPN = new IndexedTriangleEngine<VertexPositionNormal>[allTrianglesCountPN];
-            var allBVHTrianglesPT = new IndexedTriangleEngine<VertexPositionTexture>[allTrianglesCountPT];
-            var allBVHTrianglesPC = new IndexedTriangleEngine<VertexPositionColor>[allTrianglesCountPC];
+            var allBVHTrianglesPNTTB = new IndexedTriangleBVH<VertexPositionNormalTextureTangentBitangent>[allTrianglesCountPNTTB];
+            var allBVHTrianglesPN = new IndexedTriangleBVH<VertexPositionNormal>[allTrianglesCountPN];
+            var allBVHTrianglesPT = new IndexedTriangleBVH<VertexPositionTexture>[allTrianglesCountPT];
+            var allBVHTrianglesPC = new IndexedTriangleBVH<VertexPositionColor>[allTrianglesCountPC];
 
             var indexPNTTB = 0;
             foreach (var modelDescriptor in modelPNTTBDescriptorArray)
@@ -147,22 +147,22 @@ namespace Henzai
                 }
             }
 
-            var tuplePNTTB  = BVHTreeBuilder<IndexedTriangleEngine<VertexPositionNormalTextureTangentBitangent>>.Build(allBVHTrianglesPNTTB, splitMethod);
+            var tuplePNTTB  = BVHTreeBuilder<IndexedTriangleBVH<VertexPositionNormalTextureTangentBitangent>>.Build(allBVHTrianglesPNTTB, splitMethod);
             BVHTree PNTTBTree = tuplePNTTB.Item1;
             _orderedPNTTB = tuplePNTTB.Item2;
             int PNTTBTotalNodes = tuplePNTTB.Item3;
 
-            var tuplePN  = BVHTreeBuilder<IndexedTriangleEngine<VertexPositionNormal>>.Build(allBVHTrianglesPN, splitMethod);
+            var tuplePN  = BVHTreeBuilder<IndexedTriangleBVH<VertexPositionNormal>>.Build(allBVHTrianglesPN, splitMethod);
             BVHTree PNTree= tuplePN.Item1;
             _orderedPN= tuplePN.Item2;
             int PNTotalNodes = tuplePN.Item3;
 
-            var tuplePT  = BVHTreeBuilder<IndexedTriangleEngine<VertexPositionTexture>>.Build(allBVHTrianglesPT, splitMethod);
+            var tuplePT  = BVHTreeBuilder<IndexedTriangleBVH<VertexPositionTexture>>.Build(allBVHTrianglesPT, splitMethod);
             BVHTree PTTree= tuplePT.Item1;
             _orderedPT = tuplePT.Item2;
             int PTTotalNodes = tuplePT.Item3;
 
-            var tuplePC  = BVHTreeBuilder<IndexedTriangleEngine<VertexPositionColor>>.Build(allBVHTrianglesPC, splitMethod);
+            var tuplePC  = BVHTreeBuilder<IndexedTriangleBVH<VertexPositionColor>>.Build(allBVHTrianglesPC, splitMethod);
             BVHTree PCTree= tuplePC.Item1;
             _orderedPC = tuplePC.Item2;
             int PCTotalNodes = tuplePC.Item3;
