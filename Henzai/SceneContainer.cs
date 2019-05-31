@@ -69,6 +69,7 @@ namespace Henzai
             var allTrianglesCountPN = 0;
             var allTrianglesCountPT = 0;
             var allTrianglesCountPC = 0;
+            var splitMethod = SplitMethods.SAH;
 
             foreach (var modelDescriptor in modelPNTTBDescriptorArray)
                 allTrianglesCountPNTTB += modelDescriptor.Model.TotalTriangleCount;
@@ -146,22 +147,22 @@ namespace Henzai
                 }
             }
 
-            var tuplePNTTB  = BVHTreeBuilder<IndexedTriangleEngine<VertexPositionNormalTextureTangentBitangent>>.Build(allBVHTrianglesPNTTB, SplitMethods.SAH);
+            var tuplePNTTB  = BVHTreeBuilder<IndexedTriangleEngine<VertexPositionNormalTextureTangentBitangent>>.Build(allBVHTrianglesPNTTB, splitMethod);
             BVHTree PNTTBTree = tuplePNTTB.Item1;
             _orderedPNTTB = tuplePNTTB.Item2;
             int PNTTBTotalNodes = tuplePNTTB.Item3;
 
-            var tuplePN  = BVHTreeBuilder<IndexedTriangleEngine<VertexPositionNormal>>.Build(allBVHTrianglesPN, SplitMethods.SAH);
+            var tuplePN  = BVHTreeBuilder<IndexedTriangleEngine<VertexPositionNormal>>.Build(allBVHTrianglesPN, splitMethod);
             BVHTree PNTree= tuplePN.Item1;
             _orderedPN= tuplePN.Item2;
             int PNTotalNodes = tuplePN.Item3;
 
-            var tuplePT  = BVHTreeBuilder<IndexedTriangleEngine<VertexPositionTexture>>.Build(allBVHTrianglesPT, SplitMethods.SAH);
+            var tuplePT  = BVHTreeBuilder<IndexedTriangleEngine<VertexPositionTexture>>.Build(allBVHTrianglesPT, splitMethod);
             BVHTree PTTree= tuplePT.Item1;
             _orderedPT = tuplePT.Item2;
             int PTTotalNodes = tuplePT.Item3;
 
-            var tuplePC  = BVHTreeBuilder<IndexedTriangleEngine<VertexPositionColor>>.Build(allBVHTrianglesPC, SplitMethods.SAH);
+            var tuplePC  = BVHTreeBuilder<IndexedTriangleEngine<VertexPositionColor>>.Build(allBVHTrianglesPC, splitMethod);
             BVHTree PCTree= tuplePC.Item1;
             _orderedPC = tuplePC.Item2;
             int PCTotalNodes = tuplePC.Item3;
@@ -299,6 +300,7 @@ namespace Henzai
             foreach (var modelDescriptor in modelDescriptorArray)
             {
                 var model = modelDescriptor.Model;
+                model.SetIsCulled();
                 var meshCount = model.MeshCount;
                 for (int i = 0; i < meshCount; i++){
                     var mesh = model.GetMesh(i);

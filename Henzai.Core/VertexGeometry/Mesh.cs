@@ -56,11 +56,22 @@ namespace Henzai.Core.VertexGeometry
         /// Disclaimer: In general you want ValidIndexCount
         /// </summary>
         public int IndexCount => _indices.Length;
-        public bool AABBIsValid {get; set;}
+        private bool _AABBIsValid;
+        public bool AABBIsValid 
+        {
+            get {return _AABBIsValid;} 
+            set 
+            {
+                _AABBIsValid = value;
+                //CulledStateSubscruber?.Invoke(_AABBIsValid);
+            }
+        }
         public bool IsCulled => ValidIndexCount == 0 || !AABBIsValid;
         public ref Matrix4x4 World => ref _world;
-        // public Dictionary<ushort, bool> ProcessedIndicesMap => _processedIndicesMap;
 
+        #pragma warning disable 67
+        public event Action<bool> CulledStateSubscruber;
+        #pragma warning restore 67
         public Mesh(T[] vertices)
         {
             Debug.Assert(vertices != null);
@@ -81,10 +92,7 @@ namespace Henzai.Core.VertexGeometry
             _triangles = null;
             _indexClean = null;
             _vertexClean = null;
-            AABBIsValid = true;
-
-            // _processedIndicesMap = new Dictionary<ushort, bool>();
-        
+            AABBIsValid = true;    
         }
 
         //TODO: Support trianlge strips e.g. offscreen and sdl project
@@ -116,8 +124,6 @@ namespace Henzai.Core.VertexGeometry
             _vertexClean = new T[VertexCount];
 
             AABBIsValid = true;
-
-            //  _processedIndicesMap = new Dictionary<ushort, bool>();
         }
 
         public void SetNewWorldTransformation(ref Matrix4x4 world){

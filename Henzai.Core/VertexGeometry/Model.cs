@@ -15,6 +15,8 @@ namespace Henzai.Core
         private readonly U[] _materials;
         private Matrix4x4 _world = Matrix4x4.Identity;
 
+        public bool IsCulled{get; private set;}
+
         public int MeshCount => _meshes.Length;
         public int MaterialCount => _materials.Length;
         public int TotalTriangleCount {get; private set;}
@@ -32,24 +34,29 @@ namespace Henzai.Core
 
         public Model(string directory, Mesh<T>[] meshes, U[] materials)
         {
+            IsCulled = false;
             BaseDir = directory;
             _meshes = meshes;
             _materials = materials;
 
             TotalTriangleCount = CalculateTotalValidTriangles(meshes);
+            //SetCullingUpdateEvent(_meshes);
         }
 
         public Model(Mesh<T>[] meshesIn, U[] materials)
         {
+            IsCulled = false;
             BaseDir = string.Empty;
             _meshes = meshesIn;
             _materials = materials;
 
             TotalTriangleCount = CalculateTotalValidTriangles(meshesIn);
+            //SetCullingUpdateEvent(_meshes);
         }
 
         public Model(string directoy, Mesh<T> meshIn, U material)
         {
+            IsCulled = false;
             BaseDir = directoy;
             _meshes = new Mesh<T>[1];
             _meshes[0] = meshIn;
@@ -58,6 +65,7 @@ namespace Henzai.Core
             _materials[0] = material;
 
             TotalTriangleCount = meshIn.TriangleCount;
+            //SetCullingUpdateEvent(_meshes);
         }
 
         public Mesh<T> GetMesh(int index)
@@ -65,7 +73,16 @@ namespace Henzai.Core
             return _meshes[index];
         }
 
-        public bool IsCulled(){
+        public void SetIsCulled(){
+            IsCulled = true;
+        }
+
+        public void UpdateCulled(bool aabbIsValid){
+            if(aabbIsValid && IsCulled)
+                IsCulled = !aabbIsValid;
+        }
+
+        public bool AreMeshesCulled(){
             bool isCulled = true;
             foreach(var mesh in _meshes)
                 if(!mesh.IsCulled){
@@ -98,6 +115,12 @@ namespace Henzai.Core
         public Model<T, U> SplitByString(string id)
         {
             throw new NotImplementedException();
+        }
+
+        // Performance for this seems to be worse than simple for loop through all meshes
+        private void SetCullingUpdateEvent(Mesh<T>[] meshes){
+            foreach(var mesh in meshes)
+                mesh.CulledStateSubscruber += UpdateCulled;
         }
 
         public static Model<T, RaytraceMaterial> ConvertToRaytracingModel(Model<T, RealtimeMaterial> rtModel)

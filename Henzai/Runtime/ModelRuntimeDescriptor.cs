@@ -65,7 +65,8 @@ namespace Henzai.Runtime
         public PrimitiveTopology PrimitiveTopology {get; private set;}
         public uint TotalInstanceCount{get;set;}
         public int TotalMeshCount {get; private set;}
-        public bool IsCulled => Model.IsCulled();
+        //public bool IsCulled => Model.IsCulled;
+        public bool IsCulled => Model.AreMeshesCulled();
         public event Func<VertexLayoutDescription> CallVertexLayoutGeneration;
         public event Func<VertexLayoutDescription> CallVertexInstanceLayoutGeneration;
         public event Func<DisposeCollectorResourceFactory,Sampler> CallSamplerGeneration;

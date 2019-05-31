@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using System.IO;
 using Veldrid;
 using Veldrid.StartupUtilities;
 using Veldrid.Sdl2;
@@ -21,6 +22,7 @@ namespace Henzai.Runtime
     /// </summary>
     public abstract class Renderable : IDisposable
     {
+        private string projectDirectory = Directory.GetParent(AppContext.BaseDirectory).Parent.Parent.Parent.FullName;
         private Camera _camera { get; set; }
         public Camera Camera => _camera;
         private FrameTimer _frameTimer;
@@ -198,6 +200,8 @@ namespace Henzai.Runtime
             Debug.Assert(_graphicsDevice != null);
             Debug.Assert(_factory != null);
 
+            // var deltaTimeQueue = new Queue<float>();
+
             _renderResolution = renderResolution;
 
             if (_renderOptions.FarPlane > 0)
@@ -234,11 +238,12 @@ namespace Henzai.Runtime
 
                 if (_contextWindow.Exists)
                 {
-
-                    PreDraw_Time_Camera?.Invoke(_frameTimer.prevFrameTicksInSeconds, _camera);
-                    PreDraw_Time_Input?.Invoke(_frameTimer.prevFrameTicksInSeconds, inputSnapshot);
+                    var prevFrameTicksInSeconds = _frameTimer.prevFrameTicksInSeconds;
+                    // deltaTimeQueue.Enqueue(prevFrameTicksInSeconds);
+                    PreDraw_Time_Camera?.Invoke(prevFrameTicksInSeconds, _camera);
+                    PreDraw_Time_Input?.Invoke(prevFrameTicksInSeconds, inputSnapshot);
                     PreDraw_Time_GraphicsDevice_CommandList_Camera_Models?.Invoke(
-                        _frameTimer.prevFrameTicksInSeconds,
+                        prevFrameTicksInSeconds,
                         _graphicsDevice,
                         _commandList,
                         _camera,
@@ -247,7 +252,7 @@ namespace Henzai.Runtime
                         _modelPCDescriptorArray,
                         _modelPDescriptorArray);
                     PreDraw_Time_Camera_Models?.Invoke(
-                        _frameTimer.prevFrameTicksInSeconds,
+                        prevFrameTicksInSeconds,
                         _camera,
                         _modelPNTTBDescriptorArray, _modelPNDescriptorArray,
                         _modelPTDescriptorArray,
@@ -278,7 +283,7 @@ namespace Henzai.Runtime
 
                     Draw();
 
-                    PostDraw?.Invoke(_frameTimer.prevFrameTicksInSeconds);
+                    PostDraw?.Invoke(prevFrameTicksInSeconds);
 
                     // Perform draw tasks which should be after after "main" draw e.g. UI updates
                     for (int i = 0; i < _childrenPost.Count; i++)
@@ -306,6 +311,12 @@ namespace Henzai.Runtime
 
             }
 
+            // string logFilePath = Path.Combine(projectDirectory,"log.txt");
+            // using(var streamWriter = new StreamWriter(logFilePath)){
+            //     foreach(var e in deltaTimeQueue){
+            //         streamWriter.WriteLine($"{e.ToString()}");
+            //     }
+            // }
             Dispose();
 
         }
