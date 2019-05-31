@@ -6,7 +6,7 @@ using Henzai.Core.Acceleration;
 
 namespace Henzai.Core.VertexGeometry
 {
-    //TODO: @Investigate -> Make this a struct
+    //TODO: @Investigate -> Make this a struct; Remove "valid" parts as culling triangles is not really feasable 
     /// <summary>
     /// Mesh holds Vertex and Texture/Color information
     /// </summary>
