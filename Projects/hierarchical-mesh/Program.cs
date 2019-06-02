@@ -45,15 +45,10 @@ namespace Henzai.Examples
 
 
             StandardGUIOverlay gui = new StandardGUIOverlay(scene.GraphicsDevice,scene.ContextWindow);
-            gui.SetOverlayFor(scene);
-            
-            //scene.PreRender_Camera += GenerateZCullingRays;
-            scene.PreRender_Models += BuildBVH;
+            gui.SetOverlayFor(scene); 
 
-            //scene.PreDraw_Time_Camera += UpdateZCullingRays;
-            //scene.PreDraw_Time_GraphicsDevice_CommandList_Camera_Models += EnableZCulling;
+            scene.PreRender_Models += BuildBVH;
             scene.PreDraw_Time_GraphicsDevice_CommandList_Camera_Models += EnableBVHCulling;
-            //scene.PreDraw_Time_GraphicsDevice_CommandList_Camera_Models += EnableCulling;
 
             scene.Run(renderResolution);
         }

@@ -42,11 +42,14 @@ namespace Henzai
 
         protected void BuildBVH(ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] modelPNTTBDescriptorArray, ModelRuntimeDescriptor<VertexPositionNormal>[] modelPNDescriptorArray, ModelRuntimeDescriptor<VertexPositionTexture>[] modelPTDescriptorArray, ModelRuntimeDescriptor<VertexPositionColor>[] modelPCDescriptorArray, ModelRuntimeDescriptor<VertexPosition>[] modelPDescriptorArray)
         {
+            var splitMethod = SplitMethods.SAH;
+
+            //TODO: Refactor this into engine
+            // ------------
             var allMeshCountPNTTB = 0;
             var allMeshCountPN = 0;
             var allMeshCountPT = 0;
             var allMeshCountPC = 0;
-            var splitMethod = SplitMethods.SAH;
 
             foreach (var modelDescriptor in modelPNTTBDescriptorArray)
                 allMeshCountPNTTB += modelDescriptor.Model.MeshCount;
@@ -64,6 +67,7 @@ namespace Henzai
             var allMeshBVHPN = new MeshBVH<VertexPositionNormal>[allMeshCountPN];
             var allMeshBVHPT = new MeshBVH<VertexPositionTexture>[allMeshCountPT];
             var allMeshBVHPC = new MeshBVH<VertexPositionColor>[allMeshCountPC];
+            // ------------
 
             var indexPNTTB = 0;
             foreach (var modelDescriptor in modelPNTTBDescriptorArray)
