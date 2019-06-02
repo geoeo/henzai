@@ -347,11 +347,6 @@ namespace Henzai.Runtime
                                                                        ModelRuntimeDescriptor<VertexPositionColor>[] descriptorArray,
                                                                        SceneRuntimeDescriptor sceneRuntimeDescriptor)
         {
-            RenderCommandGenerator.GenerateCommandsForScene_Inline(
-                commandList,
-                sceneRuntimeDescriptor.CameraProjViewBuffer,
-                sceneRuntimeDescriptor.Camera);
-
             for (int j = 0; j < descriptorArray.Length; j++)
             {
                 var modelState = descriptorArray[j];
@@ -381,11 +376,6 @@ namespace Henzai.Runtime
                                                                        ModelRuntimeDescriptor<VertexPositionColor>[] descriptorArray,
                                                                        SceneRuntimeDescriptor sceneRuntimeDescriptor)
         {
-            RenderCommandGenerator.GenerateCommandsForScene_Inline(
-                commandList,
-                sceneRuntimeDescriptor.CameraProjViewBuffer,
-                sceneRuntimeDescriptor.Camera);
-
             for (int j = 0; j < descriptorArray.Length; j++)
             {
                 var modelState = descriptorArray[j];
@@ -419,10 +409,6 @@ namespace Henzai.Runtime
                                                                        ModelRuntimeDescriptor<VertexPositionTexture>[] descriptorArray,
                                                                        SceneRuntimeDescriptor sceneRuntimeDescriptor)
         {
-            RenderCommandGenerator.GenerateCommandsForScene_Inline(
-                commandList,
-                sceneRuntimeDescriptor.CameraProjViewBuffer,
-                sceneRuntimeDescriptor.Camera);
             for (int j = 0; j < descriptorArray.Length; j++)
             {
                 var modelState = descriptorArray[j];
@@ -455,11 +441,6 @@ namespace Henzai.Runtime
                                                                        ModelRuntimeDescriptor<VertexPositionTexture>[] descriptorArray,
                                                                        SceneRuntimeDescriptor sceneRuntimeDescriptor)
         {
-            RenderCommandGenerator.GenerateCommandsForScene_Inline(
-                commandList,
-                sceneRuntimeDescriptor.CameraProjViewBuffer,
-                sceneRuntimeDescriptor.Camera);
-
             for (int j = 0; j < descriptorArray.Length; j++)
             {
                 var modelState = descriptorArray[j];
