@@ -146,6 +146,16 @@ namespace Henzai.Examples
             // RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPCDescriptorArray,_sceneRuntimeState);
             // RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor_Instancing(_commandList,_modelPCDescriptorArray,_sceneRuntimeState);
             // RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor_Instancing(_commandList,_modelPTDescriptorArray,_sceneRuntimeState);
+
+            RenderCommandGenerator.GenerateCommandsForScene_Inline(
+                _commandList,
+                _sceneRuntimeState.CameraProjViewBuffer,
+                _sceneRuntimeState.LightBuffer,
+                _sceneRuntimeState.SpotLightBuffer,
+                _sceneRuntimeState.Camera,
+                _sceneRuntimeState.Light,
+                _sceneRuntimeState.SpotLight);
+
             RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor_Instancing(_commandList,_modelPNTTBDescriptorArray,_sceneRuntimeState);
             RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPNDescriptorArray,_sceneRuntimeState);
             

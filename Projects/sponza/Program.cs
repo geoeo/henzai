@@ -22,7 +22,7 @@ namespace Henzai.Examples
             GraphicsDeviceOptions gdOptions = new GraphicsDeviceOptions()
             {
                 Debug = false,
-                SwapchainDepthFormat = PixelFormat.R16_UNorm,
+                SwapchainDepthFormat = PixelFormat.R32_Float,
                 SyncToVerticalBlank = false,
                 ResourceBindingModel = ResourceBindingModel.Improved
 

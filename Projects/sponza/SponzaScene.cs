@@ -135,6 +135,15 @@ namespace Henzai.Examples
             _commandList.ClearColorTarget(0,RgbaFloat.White);
             _commandList.ClearDepthStencil(1f);
 
+            RenderCommandGenerator.GenerateCommandsForScene_Inline(
+                _commandList,
+                _sceneRuntimeState.CameraProjViewBuffer,
+                _sceneRuntimeState.LightBuffer,
+                _sceneRuntimeState.SpotLightBuffer,
+                _sceneRuntimeState.Camera,
+                _sceneRuntimeState.Light,
+                _sceneRuntimeState.SpotLight);
+
             RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPNTTBDescriptorArray,_sceneRuntimeState);
             RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPNDescriptorArray,_sceneRuntimeState);
             RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPTDescriptorArray,_sceneRuntimeState);
