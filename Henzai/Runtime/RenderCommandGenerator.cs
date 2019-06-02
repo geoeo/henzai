@@ -281,10 +281,6 @@ namespace Henzai.Runtime
                                                                     SceneRuntimeDescriptor sceneRuntimeDescriptor)
         {
             var model = cubeMapRuntimeDescriptor.Model;
-            // RenderCommandGenerator.GenerateCommandsForScene_Inline(
-            //     commandList,
-            //     sceneRuntimeDescriptor.CameraProjViewBuffer,
-            //     sceneRuntimeDescriptor.Camera);
             commandList.SetPipeline(cubeMapRuntimeDescriptor.Pipeline);
             for (int i = 0; i < model.MeshCount; i++)
             {
