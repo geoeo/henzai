@@ -7,6 +7,7 @@ open HenzaiFunc.Core.Types
 open Henzai.Core.Acceleration
 open Henzai.Core.Raytracing
 
+// Whole module is depreciated
 module Culler =
     let halfSpaceCheck (plane : byref<Vector4>)
         (vertexHomogeneous : byref<Vector4>) =
@@ -71,66 +72,66 @@ module Culler =
     /// Culls a <see cref="Henzai.Core.VertexGeometry.Mesh"/> by testing every triangle of the mesh
     /// This sets internal flags in mesh.
     /// </summary>
-    let FrustumCullMesh (worldViewProjectionMatrix : byref<Matrix4x4>)
-        (mesh : Henzai.Core.VertexGeometry.Mesh<'T>) =
-        //TODO: Profile this thoroughly
-        let processedIndicesMap = new Dictionary<uint16,uint16>()
-        let vertices = mesh.Vertices
-        let indices = mesh.Indices
-        let validVertices = mesh.ValidVertices
-        let validIndices = mesh.ValidIndices
-        let mutable validIndicesCounter = 0us
-        let mutable validVertexCounter = 0
-        // let mutable planeLeft =
-        //     Geometry.ExtractLeftPlane(&worldViewProjectionMatrix)
-        // let mutable planeRight =
-        //     Geometry.ExtractRightPlane(&worldViewProjectionMatrix)
-        // let mutable planeTop =
-        //     Geometry.ExtractTopPlane(&worldViewProjectionMatrix)
-        // let mutable planeBottom =
-        //     Geometry.ExtractBottomPlane(&worldViewProjectionMatrix)
-        let mutable planeNear =
-            Geometry.ExtractNearPlane(&worldViewProjectionMatrix)
-        let mutable planeFar =
-            Geometry.ExtractFarPlane(&worldViewProjectionMatrix)
-        for i in 0..3..indices.Length - 1 do
-            let i1 = indices.[i]
-            let i2 = indices.[i + 1]
-            let i3 = indices.[i + 2]
-            let vertex1 = vertices.[int i1]
-            let vertex2 = vertices.[int i2]
-            let vertex3 = vertices.[int i3]
-            let mutable v1 = vertex1.GetPosition()
-            let mutable v2 = vertex2.GetPosition()
-            let mutable v3 = vertex3.GetPosition()
-            // If at least one vertex is within the frustum, the triangle is not culled.
-            if (IsVertexWithinNearFarFrustum &v1 &planeNear &planeFar
-                || IsVertexWithinNearFarFrustum &v2 &planeNear &planeFar
-                || IsVertexWithinNearFarFrustum &v3 &planeNear &planeFar) then
-                if (not (processedIndicesMap.ContainsKey(i1))) then
-                    processedIndicesMap.Add(i1, (uint16)validVertexCounter)
-                    validVertices.[validVertexCounter] <- vertex1
-                    validIndices.[(int)validIndicesCounter] <- (uint16)validVertexCounter
-                    validVertexCounter <- validVertexCounter + 1
-                else
-                    validIndices.[(int)validIndicesCounter] <- processedIndicesMap.Item(i1)
-                validIndicesCounter <- validIndicesCounter + 1us
-                if (not (processedIndicesMap.ContainsKey(i2))) then
-                    processedIndicesMap.Add(i2, (uint16)validVertexCounter)
-                    validVertices.[validVertexCounter] <- vertex2
-                    validIndices.[(int)validIndicesCounter] <- (uint16)validVertexCounter
-                    validVertexCounter <- validVertexCounter + 1
-                else
-                    validIndices.[(int)validIndicesCounter] <- processedIndicesMap.Item(i2)
-                validIndicesCounter <- validIndicesCounter + 1us
-                if (not (processedIndicesMap.ContainsKey(i3))) then
-                    processedIndicesMap.Add(i3, (uint16)validVertexCounter)
-                    validVertices.[validVertexCounter] <- vertex3
-                    validIndices.[(int)validIndicesCounter] <- (uint16)validVertexCounter
-                    validVertexCounter <- validVertexCounter + 1
-                else
-                    validIndices.[(int)validIndicesCounter] <- processedIndicesMap.Item(i3)
-                validIndicesCounter <- validIndicesCounter + 1us
-        mesh.ValidIndexCount <- (int)validIndicesCounter
-        mesh.ValidVertexCount <- validVertexCounter
-        ()
+    // let FrustumCullMesh (worldViewProjectionMatrix : byref<Matrix4x4>)
+    //     (mesh : Henzai.Core.VertexGeometry.Mesh<'T>) =
+    //     //TODO: Profile this thoroughly
+    //     let processedIndicesMap = new Dictionary<uint16,uint16>()
+    //     let vertices = mesh.Vertices
+    //     let indices = mesh.Indices
+    //     let validVertices = mesh.ValidVertices
+    //     let validIndices = mesh.ValidIndices
+    //     let mutable validIndicesCounter = 0us
+    //     let mutable validVertexCounter = 0
+    //     // let mutable planeLeft =
+    //     //     Geometry.ExtractLeftPlane(&worldViewProjectionMatrix)
+    //     // let mutable planeRight =
+    //     //     Geometry.ExtractRightPlane(&worldViewProjectionMatrix)
+    //     // let mutable planeTop =
+    //     //     Geometry.ExtractTopPlane(&worldViewProjectionMatrix)
+    //     // let mutable planeBottom =
+    //     //     Geometry.ExtractBottomPlane(&worldViewProjectionMatrix)
+    //     let mutable planeNear =
+    //         Geometry.ExtractNearPlane(&worldViewProjectionMatrix)
+    //     let mutable planeFar =
+    //         Geometry.ExtractFarPlane(&worldViewProjectionMatrix)
+    //     for i in 0..3..indices.Length - 1 do
+    //         let i1 = indices.[i]
+    //         let i2 = indices.[i + 1]
+    //         let i3 = indices.[i + 2]
+    //         let vertex1 = vertices.[int i1]
+    //         let vertex2 = vertices.[int i2]
+    //         let vertex3 = vertices.[int i3]
+    //         let mutable v1 = vertex1.GetPosition()
+    //         let mutable v2 = vertex2.GetPosition()
+    //         let mutable v3 = vertex3.GetPosition()
+    //         // If at least one vertex is within the frustum, the triangle is not culled.
+    //         if (IsVertexWithinNearFarFrustum &v1 &planeNear &planeFar
+    //             || IsVertexWithinNearFarFrustum &v2 &planeNear &planeFar
+    //             || IsVertexWithinNearFarFrustum &v3 &planeNear &planeFar) then
+    //             if (not (processedIndicesMap.ContainsKey(i1))) then
+    //                 processedIndicesMap.Add(i1, (uint16)validVertexCounter)
+    //                 validVertices.[validVertexCounter] <- vertex1
+    //                 validIndices.[(int)validIndicesCounter] <- (uint16)validVertexCounter
+    //                 validVertexCounter <- validVertexCounter + 1
+    //             else
+    //                 validIndices.[(int)validIndicesCounter] <- processedIndicesMap.Item(i1)
+    //             validIndicesCounter <- validIndicesCounter + 1us
+    //             if (not (processedIndicesMap.ContainsKey(i2))) then
+    //                 processedIndicesMap.Add(i2, (uint16)validVertexCounter)
+    //                 validVertices.[validVertexCounter] <- vertex2
+    //                 validIndices.[(int)validIndicesCounter] <- (uint16)validVertexCounter
+    //                 validVertexCounter <- validVertexCounter + 1
+    //             else
+    //                 validIndices.[(int)validIndicesCounter] <- processedIndicesMap.Item(i2)
+    //             validIndicesCounter <- validIndicesCounter + 1us
+    //             if (not (processedIndicesMap.ContainsKey(i3))) then
+    //                 processedIndicesMap.Add(i3, (uint16)validVertexCounter)
+    //                 validVertices.[validVertexCounter] <- vertex3
+    //                 validIndices.[(int)validIndicesCounter] <- (uint16)validVertexCounter
+    //                 validVertexCounter <- validVertexCounter + 1
+    //             else
+    //                 validIndices.[(int)validIndicesCounter] <- processedIndicesMap.Item(i3)
+    //             validIndicesCounter <- validIndicesCounter + 1us
+    //     mesh.ValidIndexCount <- (int)validIndicesCounter
+    //     mesh.ValidVertexCount <- validVertexCounter
+    //     ()
