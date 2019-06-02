@@ -319,9 +319,9 @@ namespace Henzai.Runtime
                     model);
                 for (int i = 0; i < model.MeshCount; i++)
                 {
-                    var mesh = model.GetMesh(i);
-                    if (mesh.IsCulled)
+                    if (!model.GetMeshBVH(i).AABBIsValid)
                         continue;
+                    var mesh = model.GetMesh(i);
                     var material = model.GetMaterial(i);
                     RenderCommandGenerator.GenerateCommandsForMesh_Inline(
                         commandList,
@@ -352,9 +352,9 @@ namespace Henzai.Runtime
                 var model = modelState.Model;
                 for (int i = 0; i < model.MeshCount; i++)
                 {
-                    var mesh = model.GetMesh(i);
-                    if (mesh.IsCulled)
+                    if (!model.GetMeshBVH(i).AABBIsValid)
                         continue;
+                    var mesh = model.GetMesh(i);
                     RenderCommandGenerator.GenerateCommandsForMesh_Inline(
                         commandList,
                         modelState.VertexBuffers[i],
@@ -384,9 +384,9 @@ namespace Henzai.Runtime
                     commandList.SetVertexBuffer(i.ToUnsigned() + 1, modelState.InstanceBuffers[i]);
                 for (int i = 0; i < model.MeshCount; i++)
                 {
-                    var mesh = model.GetMesh(i);
-                    if (mesh.IsCulled)
+                    if (!model.GetMeshBVH(i).AABBIsValid)
                         continue;
+                    var mesh = model.GetMesh(i);
                     RenderCommandGenerator.GenerateCommandsForMesh_Inline(
                         commandList,
                         modelState.VertexBuffers[i],
@@ -415,9 +415,9 @@ namespace Henzai.Runtime
 
                 for (int i = 0; i < model.MeshCount; i++)
                 {
-                    var mesh = model.GetMesh(i);
-                    if (mesh.IsCulled)
+                    if (!model.GetMeshBVH(i).AABBIsValid)
                         continue;
+                    var mesh = model.GetMesh(i);
                     RenderCommandGenerator.GenerateCommandsForMesh_Inline(
                         commandList,
                         modelState.VertexBuffers[i],
@@ -449,9 +449,9 @@ namespace Henzai.Runtime
                     commandList.SetVertexBuffer(i.ToUnsigned() + 1, modelState.InstanceBuffers[i]);
                 for (int i = 0; i < model.MeshCount; i++)
                 {
-                    var mesh = model.GetMesh(i);
-                    if (mesh.IsCulled)
+                    if (!model.GetMeshBVH(i).AABBIsValid)
                         continue;
+                    var mesh = model.GetMesh(i);
                     RenderCommandGenerator.GenerateCommandsForMesh_Inline(
                         commandList,
                         modelState.VertexBuffers[i],
@@ -481,9 +481,9 @@ namespace Henzai.Runtime
                     commandList.SetVertexBuffer(i.ToUnsigned() + 1, modelState.InstanceBuffers[i]);
                 for (int i = 0; i < model.MeshCount; i++)
                 {
-                    var mesh = model.GetMesh(i);
-                    if (mesh.IsCulled)
+                    if (!model.GetMeshBVH(i).AABBIsValid)
                         continue;
+                    var mesh = model.GetMesh(i);
                     var material = model.GetMaterial(i);
                     RenderCommandGenerator.GenerateCommandsForMesh_Inline(
                         commandList,
@@ -518,9 +518,9 @@ namespace Henzai.Runtime
                 commandList.SetPipeline(modelState.Pipeline);
                 for (int i = 0; i < model.MeshCount; i++)
                 {
-                    var mesh = model.GetMesh(i);
-                    if (mesh.IsCulled)
+                    if (!model.GetMeshBVH(i).AABBIsValid)
                         continue;
+                    var mesh = model.GetMesh(i);
                     var material = model.GetMaterial(i);
                     RenderCommandGenerator.GenerateCommandsForMesh_Inline(
                         commandList,
