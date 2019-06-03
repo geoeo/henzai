@@ -10,9 +10,14 @@ namespace Henzai.Core.Acceleration
     {
         private AABB _aabb;
         public bool AABBIsValid;
+        public int ModelRuntimeIndex;
+        public int MeshRuntimeIndex;
 
         public MeshBVH(Mesh<T> mesh){
             AABBIsValid = true;    
+
+            ModelRuntimeIndex = -1;
+            MeshRuntimeIndex = -1;
 
             var vertices = mesh.Vertices;
             var v = vertices[0].GetPosition();
@@ -53,6 +58,9 @@ namespace Henzai.Core.Acceleration
 
         public MeshBVH(Mesh<T> mesh, ref Matrix4x4 world){    
             AABBIsValid = true;    
+
+            ModelRuntimeIndex = -1;
+            MeshRuntimeIndex = -1;
 
             var vertices = mesh.Vertices;
             var v = vertices[0].GetPosition();

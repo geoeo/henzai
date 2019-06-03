@@ -98,10 +98,12 @@ namespace Henzai.Examples
 
             foreach(var modelDescriptor in _modelPNTTBDescriptorList){
                 FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,InstancingData.NO_DATA); 
+                PNTTBRuntimeGeometry.AddModel(modelDescriptor);
             }
 
             foreach(var modelDescriptor in _modelPNDescriptorList){
                 FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,InstancingData.NO_DATA); 
+                PNRuntimeGeometry.AddModel(modelDescriptor);
             }
 
         }

@@ -107,23 +107,29 @@ namespace Henzai.Examples
             //TODO: Abstrct this
             foreach(var modelDescriptor in _modelPNTTBDescriptorList){
                 FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,InstancingData.NO_DATA); 
+                PNTTBRuntimeGeometry.AddModel(modelDescriptor);
             }
 
             foreach(var modelDescriptor in _modelPNDescriptorList){
                 FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,InstancingData.NO_DATA); 
+                PNRuntimeGeometry.AddModel(modelDescriptor);
             }
 
             foreach(var modelDescriptor in _modelPTDescriptorList){
                 FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,InstancingData.NO_DATA); 
+                PTRuntimeGeometry.AddModel(modelDescriptor);
             }
 
             foreach(var modelDescriptor in _modelPCDescriptorList){
                 FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,InstancingData.NO_DATA); 
+                PCRuntimeGeometry.AddModel(modelDescriptor);
             }
 
             foreach(var modelDescriptor in _modelPDescriptorList){
                 FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,InstancingData.NO_DATA); 
+                PRuntimeGeometry.AddModel(modelDescriptor);
             }
+
 
         }
 
@@ -144,7 +150,8 @@ namespace Henzai.Examples
                 _sceneRuntimeState.Light,
                 _sceneRuntimeState.SpotLight);
 
-            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPNTTBDescriptorArray,_sceneRuntimeState);
+            //RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPNTTBDescriptorArray,_sceneRuntimeState);
+            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPNTTBDescriptorArray,_sceneRuntimeState, PNTTBMeshBVHArray);
             RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPNDescriptorArray,_sceneRuntimeState);
             RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPTDescriptorArray,_sceneRuntimeState);
             RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPCDescriptorArray,_sceneRuntimeState);

@@ -5,6 +5,7 @@ using Henzai.Geometry;
 using Henzai.Core;
 using Henzai.Core.Materials;
 using Henzai.Core.VertexGeometry;
+using Henzai.Core.Acceleration;
 
 namespace Henzai.Runtime
 {
@@ -306,8 +307,6 @@ namespace Henzai.Runtime
             for (int j = 0; j < descriptorArray.Length; j++)
             {
                 var modelState = descriptorArray[j];
-                if (modelState.IsCulled)
-                    continue;
                 var model = modelState.Model;
                 RenderCommandGenerator.GenerateCommandsForModel_Inline(
                     commandList,
@@ -346,8 +345,6 @@ namespace Henzai.Runtime
             for (int j = 0; j < descriptorArray.Length; j++)
             {
                 var modelState = descriptorArray[j];
-                if (modelState.IsCulled)
-                    continue;
                 commandList.SetPipeline(modelState.Pipeline);
                 var model = modelState.Model;
                 for (int i = 0; i < model.MeshCount; i++)
@@ -375,8 +372,6 @@ namespace Henzai.Runtime
             for (int j = 0; j < descriptorArray.Length; j++)
             {
                 var modelState = descriptorArray[j];
-                if (modelState.IsCulled)
-                    continue;
                 commandList.SetPipeline(modelState.Pipeline);
                 var model = modelState.Model;
                 //TODO:Inline this if more instance buffers are ever used
@@ -408,8 +403,6 @@ namespace Henzai.Runtime
             for (int j = 0; j < descriptorArray.Length; j++)
             {
                 var modelState = descriptorArray[j];
-                if (modelState.IsCulled)
-                    continue;
                 commandList.SetPipeline(modelState.Pipeline);
                 var model = modelState.Model;
 
@@ -440,8 +433,6 @@ namespace Henzai.Runtime
             for (int j = 0; j < descriptorArray.Length; j++)
             {
                 var modelState = descriptorArray[j];
-                if (modelState.IsCulled)
-                    continue;
                 commandList.SetPipeline(modelState.Pipeline); 
                 var model = modelState.Model;
                 //TODO:Inline this if more instance buffers are ever used
@@ -473,8 +464,6 @@ namespace Henzai.Runtime
             for (int j = 0; j < descriptorArray.Length; j++)
             {
                 var modelState = descriptorArray[j];
-                if (modelState.IsCulled)
-                    continue;
                 commandList.SetPipeline(modelState.Pipeline);
                 var model = modelState.Model;
                 for (int i = 0; i < modelState.InstanceBuffers.Length; i++)
@@ -512,8 +501,6 @@ namespace Henzai.Runtime
             for (int j = 0; j < descriptorArray.Length; j++)
             {
                 var modelState = descriptorArray[j];
-                if (modelState.IsCulled)
-                    continue;
                 var model = modelState.Model;
                 commandList.SetPipeline(modelState.Pipeline);
                 for (int i = 0; i < model.MeshCount; i++)
@@ -539,6 +526,45 @@ namespace Henzai.Runtime
                     );
                 }
             }
+        }
+
+        public static void GenerateRenderCommandsForModelDescriptor(CommandList commandList,
+                                                                    ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] descriptorArray,
+                                                                    SceneRuntimeDescriptor sceneRuntimeDescriptor,
+                                                                    MeshBVH<VertexPositionNormalTextureTangentBitangent>[] meshBVHArray)
+        {
+            var meshCount = meshBVHArray.Length;
+            for(int j = 0; j < meshCount; j++){
+                var meshBVH = meshBVHArray[j];
+                if(!meshBVH.AABBIsValid)
+                    continue;
+                var modelStateIndex = meshBVH.ModelRuntimeIndex;
+                var meshIndex = meshBVH.MeshRuntimeIndex;
+                var modelState = descriptorArray[modelStateIndex];
+                var model = modelState.Model;
+                commandList.SetPipeline(modelState.Pipeline);
+
+                var mesh = model.GetMesh(j);
+                var material = model.GetMaterial(meshIndex);
+                RenderCommandGenerator.GenerateCommandsForMesh_Inline(
+                    commandList,
+                    modelState.VertexBuffers[meshIndex],
+                    modelState.IndexBuffers[meshIndex],
+                    sceneRuntimeDescriptor.CameraProjViewBuffer,
+                    sceneRuntimeDescriptor.MaterialBuffer,
+                    sceneRuntimeDescriptor.CameraResourceSet,
+                    sceneRuntimeDescriptor.LightResourceSet,
+                    sceneRuntimeDescriptor.SpotLightResourceSet,
+                    sceneRuntimeDescriptor.MaterialResourceSet,
+                    modelState.TextureResourceSets[meshIndex],
+                    material,
+                    mesh,
+                    modelState.TotalInstanceCount
+                );
+                
+
+            }
+
         }
 
     }
