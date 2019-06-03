@@ -101,15 +101,15 @@ namespace Henzai.Runtime
         protected ModelRuntimeDescriptor<VertexPosition>[] _modelPDescriptorArray;
 
         protected GeometryDescriptor<VertexPositionNormalTextureTangentBitangent> PNTTBRuntimeGeometry;
-        protected MeshBVH<VertexPositionNormalTextureTangentBitangent>[] PNTTBMeshBVHArray;
+        //protected MeshBVH<VertexPositionNormalTextureTangentBitangent>[] PNTTBMeshBVHArray;
         protected GeometryDescriptor<VertexPositionNormal> PNRuntimeGeometry;
-        protected MeshBVH<VertexPositionNormal>[] PNMeshBVHArray;
+        //protected MeshBVH<VertexPositionNormal>[] PNMeshBVHArray;
         protected GeometryDescriptor<VertexPositionTexture> PTRuntimeGeometry;
-        protected MeshBVH<VertexPositionTexture>[] PTMeshBVHArray;
+        //protected MeshBVH<VertexPositionTexture>[] PTMeshBVHArray;
         protected GeometryDescriptor<VertexPositionColor> PCRuntimeGeometry;
-        protected MeshBVH<VertexPositionColor>[] PCMeshBVHArray;
+        //protected MeshBVH<VertexPositionColor>[] PCMeshBVHArray;
         protected GeometryDescriptor<VertexPosition> PRuntimeGeometry;
-        protected MeshBVH<VertexPosition>[] PMeshBVHArray;
+        //protected MeshBVH<VertexPosition>[] PMeshBVHArray;
 
         public Renderable(string title, Sdl2Window contextWindow, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
         {
@@ -262,7 +262,7 @@ namespace Henzai.Runtime
 
             PreRender_Camera?.Invoke(_camera);
             PreRender_Models?.Invoke(_modelPNTTBDescriptorArray,_modelPNDescriptorArray,_modelPTDescriptorArray,_modelPCDescriptorArray,_modelPDescriptorArray);
-            PreRender_Models_Test?.Invoke(PNTTBMeshBVHArray, PNMeshBVHArray, PTMeshBVHArray, PCMeshBVHArray, PMeshBVHArray);
+            PreRender_Models_Test?.Invoke(PNTTBRuntimeGeometry.MeshBVHArray, PNRuntimeGeometry.MeshBVHArray, PTRuntimeGeometry.MeshBVHArray, PCRuntimeGeometry.MeshBVHArray, PRuntimeGeometry.MeshBVHArray);
             while (_contextWindow.Exists)
             {
                 _frameTimer.Start();
@@ -290,11 +290,11 @@ namespace Henzai.Runtime
                         _graphicsDevice,
                         _commandList,
                         _camera,
-                        PNTTBMeshBVHArray,
-                        PNMeshBVHArray,
-                        PTMeshBVHArray,
-                        PCMeshBVHArray,
-                        PMeshBVHArray);
+                        PNTTBRuntimeGeometry.MeshBVHArray,
+                        PNRuntimeGeometry.MeshBVHArray,
+                        PTRuntimeGeometry.MeshBVHArray,
+                        PCRuntimeGeometry.MeshBVHArray,
+                        PRuntimeGeometry.MeshBVHArray);
                     PreDraw_Time_Camera_Models?.Invoke(
                         prevFrameTicksInSeconds,
                         _camera,
@@ -571,82 +571,11 @@ namespace Henzai.Runtime
             _modelPCDescriptorArray = _modelPCDescriptorList.ToArray();
             _modelPDescriptorArray = _modelPDescriptorList.ToArray();
 
-            PNTTBMeshBVHArray = PNTTBRuntimeGeometry.MeshBVHList.ToArray();
-            PNMeshBVHArray = PNRuntimeGeometry.MeshBVHList.ToArray();
-            PTMeshBVHArray= PTRuntimeGeometry.MeshBVHList.ToArray();
-            PCMeshBVHArray = PCRuntimeGeometry.MeshBVHList.ToArray();
-            PMeshBVHArray = PRuntimeGeometry.MeshBVHList.ToArray();
-
-            var PNTTBIndex = 0;
-            for (int i = 0; i < _modelPNTTBDescriptorArray.Length; i++){
-                var modelState = _modelPNTTBDescriptorArray[i];
-                var geometryCount = modelState.Length;
-                modelState.FormatResourcesForRuntime();
-                for(int j = 0; j < geometryCount; j++){
-                    var meshBVH = PNTTBMeshBVHArray[PNTTBIndex + j];
-                    meshBVH.ModelRuntimeIndex = i;
-                    meshBVH.MeshRuntimeIndex = j;
-                    PNTTBMeshBVHArray[j] = meshBVH;
-                }
-                PNTTBIndex += geometryCount;
-            }
-
-            var PNIndex = 0;
-            for (int i = 0; i < _modelPNDescriptorArray.Length; i++){
-                var modelState = _modelPNDescriptorArray[i];
-                var geometryCount = modelState.Length;
-                modelState.FormatResourcesForRuntime();
-                for(int j = 0; j < geometryCount; j++){
-                    var meshBVH = PNMeshBVHArray[PNIndex + j];
-                    meshBVH.ModelRuntimeIndex = i;
-                    meshBVH.MeshRuntimeIndex = j;
-                    PNMeshBVHArray[j] = meshBVH;
-                }
-                PNIndex += geometryCount;
-            }
-
-            var PTIndex = 0;
-            for (int i = 0; i < _modelPTDescriptorArray.Length; i++){
-                var modelState = _modelPTDescriptorArray[i];
-                var geometryCount = modelState.Length;
-                modelState.FormatResourcesForRuntime();
-                for(int j = 0; j < geometryCount; j++){
-                    var meshBVH = PTMeshBVHArray[PTIndex + j];
-                    meshBVH.ModelRuntimeIndex = i;
-                    meshBVH.MeshRuntimeIndex = j;
-                    PTMeshBVHArray[j] = meshBVH;
-                }
-                PTIndex += geometryCount;
-            }
-
-            var PCIndex = 0;
-            for (int i = 0; i < _modelPCDescriptorArray.Length; i++){
-                var modelState = _modelPCDescriptorArray[i];
-                var geometryCount = modelState.Length;
-                modelState.FormatResourcesForRuntime();
-                for(int j = 0; j < geometryCount; j++){
-                    var meshBVH = PCMeshBVHArray[PCIndex + j];
-                    meshBVH.ModelRuntimeIndex = i;
-                    meshBVH.MeshRuntimeIndex = j;
-                    PCMeshBVHArray[j] = meshBVH;
-                }
-                PCIndex += geometryCount;
-            }
-
-
-            var PIndex = 0;
-            for (int i = 0; i < _modelPDescriptorArray.Length; i++){
-                var modelState = _modelPDescriptorArray[i];
-                var geometryCount = modelState.Length;
-                modelState.FormatResourcesForRuntime();
-                for(int j = 0; j < geometryCount; j++){
-                    var meshBVH = PMeshBVHArray[PIndex + j];
-                    meshBVH.ModelRuntimeIndex = i;
-                    meshBVH.MeshRuntimeIndex = j;
-                    PMeshBVHArray[j] = meshBVH;
-                }
-                PIndex += geometryCount;
-            }
+            PNTTBRuntimeGeometry.FormatForRuntime(_modelPNTTBDescriptorArray);
+            PNRuntimeGeometry.FormatForRuntime(_modelPNDescriptorArray);
+            PTRuntimeGeometry.FormatForRuntime(_modelPTDescriptorArray);
+            PCRuntimeGeometry.FormatForRuntime(_modelPCDescriptorArray);
+            PRuntimeGeometry.FormatForRuntime(_modelPDescriptorArray);
 
             foreach (var modelState in _modelPNDescriptorList)
                 modelState.FormatResourcesForRuntime();
@@ -656,8 +585,6 @@ namespace Henzai.Runtime
                 modelState.FormatResourcesForRuntime();
             foreach (var modelState in _modelPDescriptorList)
                 modelState.FormatResourcesForRuntime();
-
-
         }
 
         //TODO: Unused
