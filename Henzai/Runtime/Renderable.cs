@@ -101,15 +101,10 @@ namespace Henzai.Runtime
         protected ModelRuntimeDescriptor<VertexPosition>[] _modelPDescriptorArray;
 
         protected GeometryDescriptor<VertexPositionNormalTextureTangentBitangent> PNTTBRuntimeGeometry;
-        //protected MeshBVH<VertexPositionNormalTextureTangentBitangent>[] PNTTBMeshBVHArray;
         protected GeometryDescriptor<VertexPositionNormal> PNRuntimeGeometry;
-        //protected MeshBVH<VertexPositionNormal>[] PNMeshBVHArray;
         protected GeometryDescriptor<VertexPositionTexture> PTRuntimeGeometry;
-        //protected MeshBVH<VertexPositionTexture>[] PTMeshBVHArray;
         protected GeometryDescriptor<VertexPositionColor> PCRuntimeGeometry;
-        //protected MeshBVH<VertexPositionColor>[] PCMeshBVHArray;
         protected GeometryDescriptor<VertexPosition> PRuntimeGeometry;
-        //protected MeshBVH<VertexPosition>[] PMeshBVHArray;
 
         public Renderable(string title, Sdl2Window contextWindow, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
         {

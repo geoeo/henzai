@@ -21,13 +21,9 @@ namespace Henzai
         protected static Renderable scene;
         protected static UserInterface gui;
         private BVHRuntimeNode[] _bvhRuntimeNodesPNTTB;
-        //private MeshBVH<VertexPositionNormalTextureTangentBitangent>[] _orderedPNTTB;
         private BVHRuntimeNode[] _bvhRuntimeNodesPN;
-        //private MeshBVH<VertexPositionNormal>[] _orderedPN;
         private BVHRuntimeNode[] _bvhRuntimeNodesPT;
-        //private MeshBVH<VertexPositionTexture>[] _orderedPT;
         private BVHRuntimeNode[] _bvhRuntimeNodesPC;
-        //private MeshBVH<VertexPositionColor>[] _orderedPC;
         private int[] _bvhTraversalStack;
         private const int CULLING_THRESH = 10;
 
@@ -43,86 +39,6 @@ namespace Henzai
         protected void BuildBVH( MeshBVH<VertexPositionNormalTextureTangentBitangent>[] PNTTBMeshBVHArray, MeshBVH<VertexPositionNormal>[] PNMeshBVHArray, MeshBVH<VertexPositionTexture>[] PTMeshBVHArray, MeshBVH<VertexPositionColor>[] PCMeshBVHArray, MeshBVH<VertexPosition>[] PMeshBVHArray)
         {
             var splitMethod = SplitMethods.SAH;
-
-            //TODO: Refactor this into engine
-            // ------------
-            //var allMeshCountPNTTB = 0;
-            //var allMeshCountPN = 0;
-            //var allMeshCountPT = 0;
-            //var allMeshCountPC = 0;
-
-            //foreach (var modelDescriptor in modelPNTTBDescriptorArray)
-            //    allMeshCountPNTTB += modelDescriptor.Model.MeshCount;
-
-            //foreach (var modelDescriptor in modelPNDescriptorArray)
-            //    allMeshCountPN += modelDescriptor.Model.MeshCount;
-
-            //foreach (var modelDescriptor in modelPTDescriptorArray)
-            //    allMeshCountPT += modelDescriptor.Model.MeshCount;
-
-            //foreach (var modelDescriptor in modelPCDescriptorArray)
-            //    allMeshCountPC += modelDescriptor.Model.MeshCount;
-
-            //var allMeshBVHPNTTB = new MeshBVH<VertexPositionNormalTextureTangentBitangent>[allMeshCountPNTTB];
-            //var allMeshBVHPN = new MeshBVH<VertexPositionNormal>[allMeshCountPN];
-            //var allMeshBVHPT = new MeshBVH<VertexPositionTexture>[allMeshCountPT];
-            //var allMeshBVHPC = new MeshBVH<VertexPositionColor>[allMeshCountPC];
-            // ------------
-
-            // var indexPNTTB = 0;
-            // foreach (var modelDescriptor in modelPNTTBDescriptorArray)
-            // {
-            //     var model = modelDescriptor.Model;
-            //     var meshCount = model.MeshCount;
-            //     for (int i = 0; i < meshCount; i++)
-            //     {
-            //         var meshBVH = model.GetMeshBVH(i); 
-            //         allMeshBVHPNTTB[indexPNTTB] = meshBVH;
-            //         indexPNTTB++;
-            //     }
-            // }
-
-            // PN
-            // var indexPN = 0;
-            // foreach (var modelDescriptor in modelPNDescriptorArray)
-            // {
-            //     var model = modelDescriptor.Model;
-            //     var meshCount = model.MeshCount;
-            //     for (int i = 0; i < meshCount; i++)
-            //     {
-            //         var meshBVH = model.GetMeshBVH(i);
-            //         allMeshBVHPN[indexPN] = meshBVH;
-            //         indexPN++;
-            //     }
-            // }
-
-            // // PT
-            // var indexPT = 0;
-            // foreach (var modelDescriptor in modelPTDescriptorArray)
-            // {
-            //     var model = modelDescriptor.Model;
-            //     var meshCount = model.MeshCount;
-            //     for (int i = 0; i < meshCount; i++)
-            //     {
-            //         var meshBVH = model.GetMeshBVH(i);
-            //         allMeshBVHPT[indexPT] = meshBVH;
-            //         indexPT++;
-            //     }
-            // }
-
-            // // PC
-            // var indexPC = 0;
-            // foreach (var modelDescriptor in modelPCDescriptorArray)
-            // {
-            //     var model = modelDescriptor.Model;
-            //     var meshCount = model.MeshCount;
-            //     for (int i = 0; i < meshCount; i++)
-            //     {
-            //         var meshBVH = model.GetMeshBVH(i);
-            //         allMeshBVHPC[indexPC] = meshBVH;
-            //         indexPC++;
-            //     }
-            // }
 
             var tuplePNTTB = BVHTreeBuilder<MeshBVH<VertexPositionNormalTextureTangentBitangent>>.Build(PNTTBMeshBVHArray, splitMethod);
             BVHTree PNTTBTree = tuplePNTTB.Item1;
