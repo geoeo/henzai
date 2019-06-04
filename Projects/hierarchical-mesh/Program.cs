@@ -11,7 +11,7 @@ namespace Henzai.Examples
         static void Main(string[] args)
         {
             Program programm = new Program();
-            programm.createScene(GraphicsBackend.Metal);
+            programm.createScene(GraphicsBackend.OpenGL);
         }
 
         public override void createScene(GraphicsBackend graphicsBackend, Sdl2Window contextWindow = null){
@@ -31,7 +31,7 @@ namespace Henzai.Examples
             {
                 Resolution = renderResolution,
                 PreferredGraphicsBackend = GraphicsBackend.OpenGL,
-                UsePreferredGraphicsBackend = false,
+                UsePreferredGraphicsBackend = true,
                 LimitFrames = true,
                 FPSTarget = 60.0
             };

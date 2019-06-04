@@ -227,8 +227,7 @@ namespace Henzai.Runtime
             Debug.Assert(_commandList != null);
             Debug.Assert(_graphicsDevice != null);
             Debug.Assert(_factory != null);
-
-            // var deltaTimeQueue = new Queue<float>();
+            var inputTracker = new InputTracker();
 
             _renderResolution = renderResolution;
 
@@ -263,12 +262,13 @@ namespace Henzai.Runtime
                 _frameTimer.Start();
 
                 InputSnapshot inputSnapshot = _contextWindow.PumpEvents();
-                InputTracker.UpdateFrameInput(inputSnapshot);
+                inputTracker.UpdateFrameInput(inputSnapshot);
 
                 if (_contextWindow.Exists)
                 {
                     var prevFrameTicksInSeconds = _frameTimer.prevFrameTicksInSeconds;
-                    // deltaTimeQueue.Enqueue(prevFrameTicksInSeconds);
+                    _camera.Update(_frameTimer.prevFrameTicksInSeconds, inputTracker);
+
                     PreDraw_Time_Camera?.Invoke(prevFrameTicksInSeconds, _camera);
                     PreDraw_Time_Input?.Invoke(prevFrameTicksInSeconds, inputSnapshot);
                     PreDraw_Time_GraphicsDevice_CommandList_Camera_Models?.Invoke(
@@ -346,17 +346,10 @@ namespace Henzai.Runtime
                     _graphicsDevice.SwapBuffers();
                 }
 
-                _camera.Update(_frameTimer.prevFrameTicksInSeconds);
                 _frameTimer.Stop();
 
             }
-
-            // string logFilePath = Path.Combine(projectDirectory,"log.txt");
-            // using(var streamWriter = new StreamWriter(logFilePath)){
-            //     foreach(var e in deltaTimeQueue){
-            //         streamWriter.WriteLine($"{e.ToString()}");
-            //     }
-            // }
+            
             Dispose();
 
         }
