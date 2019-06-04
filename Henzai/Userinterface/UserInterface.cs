@@ -137,9 +137,8 @@ namespace Henzai.UI
             _commandList.Begin();
             _commandList.SetFramebuffer(GraphicsDevice.SwapchainFramebuffer);
 
-            unsafe {
-                RenderImDrawData(ImGui.GetDrawData(), GraphicsDevice, _commandList);
-            }
+            RenderImDrawData(ImGui.GetDrawData(), GraphicsDevice, _commandList);
+            
             _commandList.End();
         }
 
@@ -175,7 +174,7 @@ namespace Henzai.UI
             {
                 ImDrawListPtr cmd_list = draw_data.CmdListsRange[i];
 
-                // we seem to write the wrong color (if at all?)
+                // TODO: we seem to write the wrong color (if at all?)
                 cl.UpdateBuffer(
                     _vertexBuffer,
                     vertexOffsetInVertices * (uint)sizeof(ImDrawVert),
