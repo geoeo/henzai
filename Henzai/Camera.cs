@@ -84,40 +84,40 @@ namespace Henzai
             _viewProjectionMatrix = _viewMatrix*_projectionMatrix;
         }
 
-        public void Update(float deltaSeconds)
+        public void Update(float deltaSeconds, InputTracker inputTracker)
         {
-            float sprintFactor = InputTracker.GetKey(Key.ControlLeft)
+            float sprintFactor = inputTracker.GetKey(Key.ControlLeft)
                 ? 0.1f
-                : InputTracker.GetKey(Key.ShiftLeft)
+                : inputTracker.GetKey(Key.ShiftLeft)
                     ? 2.5f
                     : 1f;
             Vector3 motionDir = Vector3.Zero;
-            if (InputTracker.GetKey(Key.A))
+            if (inputTracker.GetKey(Key.A))
             {
                 motionDir += -Vector3.UnitX;
             }
-            if (InputTracker.GetKey(Key.D))
+            if (inputTracker.GetKey(Key.D))
             {
                 motionDir += Vector3.UnitX;
             }
-            if (InputTracker.GetKey(Key.W))
+            if (inputTracker.GetKey(Key.W))
             {
                 motionDir += -Vector3.UnitZ;
             }
-            if (InputTracker.GetKey(Key.S))
+            if (inputTracker.GetKey(Key.S))
             {
                 motionDir += Vector3.UnitZ;
             }
-            if (InputTracker.GetKey(Key.Q))
+            if (inputTracker.GetKey(Key.Q))
             {
                 motionDir += -Vector3.UnitY;
             }
-            if (InputTracker.GetKey(Key.E))
+            if (inputTracker.GetKey(Key.E))
             {
                 motionDir += Vector3.UnitY;
             }
 
-            if(InputTracker.GetKey(Key.R))
+            if(inputTracker.GetKey(Key.R))
             {
                 _position = DEFAULT_POSITION;
                 _lookDirection = DEFAULT_LOOK_DIRECTION;
@@ -127,7 +127,7 @@ namespace Henzai
                 UpdateViewMatrix();
             }
 
-            if(InputTracker.GetKey(Key.J))
+            if(inputTracker.GetKey(Key.J))
             {
                 _position = DEFAULT_POSITION;
                 _lookDirection = Vector3.UnitY;
@@ -148,7 +148,7 @@ namespace Henzai
             Vector2 mouseDelta = InputTracker.MousePosition - _previousMousePos;
             _previousMousePos = InputTracker.MousePosition;
 
-            if (/*!ImGui.IsAnyWindowHovered() && */ (InputTracker.GetMouseButton(MouseButton.Left) || InputTracker.GetMouseButton(MouseButton.Right)))
+            if (/*!ImGui.IsAnyWindowHovered() && */ (inputTracker.GetMouseButton(MouseButton.Left) || inputTracker.GetMouseButton(MouseButton.Right)))
             {
                 _yaw += -mouseDelta.X * 0.01f;
                 _pitch += -mouseDelta.Y * 0.01f;

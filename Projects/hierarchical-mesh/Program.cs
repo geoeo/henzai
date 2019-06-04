@@ -11,7 +11,7 @@ namespace Henzai.Examples
         static void Main(string[] args)
         {
             Program programm = new Program();
-            programm.createScene(GraphicsBackend.Metal);
+            programm.createScene(GraphicsBackend.OpenGL);
         }
 
         public override void createScene(GraphicsBackend graphicsBackend, Sdl2Window contextWindow = null){
@@ -31,12 +31,12 @@ namespace Henzai.Examples
             {
                 Resolution = renderResolution,
                 PreferredGraphicsBackend = GraphicsBackend.OpenGL,
-                UsePreferredGraphicsBackend = false,
+                UsePreferredGraphicsBackend = true,
                 LimitFrames = true,
                 FPSTarget = 60.0
             };
 
-            HierarchicalMeshScene scene = new HierarchicalMeshScene(
+            scene = new HierarchicalMeshScene(
                 "Hierarchical Mesh",
                 windowSize,
                 gdOptions,
@@ -47,8 +47,8 @@ namespace Henzai.Examples
             StandardGUIOverlay gui = new StandardGUIOverlay(scene.GraphicsDevice,scene.ContextWindow);
             gui.SetOverlayFor(scene); 
 
-            scene.PreRender_Models += BuildBVH;
-            scene.PreDraw_Time_GraphicsDevice_CommandList_Camera_Models += EnableBVHCulling;
+            scene.PreRender_Models_Test += BuildBVH;
+            scene.PreDraw_Time_GraphicsDevice_CommandList_Camera_Models_Test += EnableBVHCulling;
 
             scene.Run(renderResolution);
         }

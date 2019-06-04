@@ -11,6 +11,7 @@ using Henzai.Geometry;
 using Henzai.Core.Materials;
 using Henzai.Core.VertexGeometry;
 using Henzai.Core.Extensions;
+using Henzai.Core.Acceleration;
 
 namespace Henzai.Runtime
 {
@@ -61,6 +62,7 @@ namespace Henzai.Runtime
         // /// </summary>
         public event Action<Camera> PreRender_Camera;
         public event Action<ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[], ModelRuntimeDescriptor<VertexPositionNormal>[], ModelRuntimeDescriptor<VertexPositionTexture>[], ModelRuntimeDescriptor<VertexPositionColor>[], ModelRuntimeDescriptor<VertexPosition>[]> PreRender_Models;
+        public event Action<MeshBVH<VertexPositionNormalTextureTangentBitangent>[], MeshBVH<VertexPositionNormal>[], MeshBVH<VertexPositionTexture>[], MeshBVH<VertexPositionColor>[], MeshBVH<VertexPosition>[]> PreRender_Models_Test;
         /// <summary>
         /// Bind Actions that have to be executed prior to every draw call
         /// </summary>
@@ -68,6 +70,7 @@ namespace Henzai.Runtime
         public event Action<float, Camera> PreDraw_Time_Camera;
         public event Action<float, InputSnapshot> PreDraw_Time_Input;
         public event Action<float, GraphicsDevice, CommandList, Camera, ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[], ModelRuntimeDescriptor<VertexPositionNormal>[], ModelRuntimeDescriptor<VertexPositionTexture>[], ModelRuntimeDescriptor<VertexPositionColor>[], ModelRuntimeDescriptor<VertexPosition>[]> PreDraw_Time_GraphicsDevice_CommandList_Camera_Models;
+        public event Action<float, GraphicsDevice, CommandList, Camera, MeshBVH<VertexPositionNormalTextureTangentBitangent>[], MeshBVH<VertexPositionNormal>[], MeshBVH<VertexPositionTexture>[], MeshBVH<VertexPositionColor>[], MeshBVH<VertexPosition>[]> PreDraw_Time_GraphicsDevice_CommandList_Camera_Models_Test;
         public event Action<float, Camera, ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[], ModelRuntimeDescriptor<VertexPositionNormal>[], ModelRuntimeDescriptor<VertexPositionTexture>[], ModelRuntimeDescriptor<VertexPositionColor>[], ModelRuntimeDescriptor<VertexPosition>[]> PreDraw_Time_Camera_Models;
         /// <summary>
         /// Bind Actions that have to be executed after every draw call
@@ -97,6 +100,12 @@ namespace Henzai.Runtime
         protected List<ModelRuntimeDescriptor<VertexPosition>> _modelPDescriptorList;
         protected ModelRuntimeDescriptor<VertexPosition>[] _modelPDescriptorArray;
 
+        protected GeometryDescriptor<VertexPositionNormalTextureTangentBitangent> PNTTBRuntimeGeometry;
+        protected GeometryDescriptor<VertexPositionNormal> PNRuntimeGeometry;
+        protected GeometryDescriptor<VertexPositionTexture> PTRuntimeGeometry;
+        protected GeometryDescriptor<VertexPositionColor> PCRuntimeGeometry;
+        protected GeometryDescriptor<VertexPosition> PRuntimeGeometry;
+
         public Renderable(string title, Sdl2Window contextWindow, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
         {
             _contextWindow = contextWindow;
@@ -118,6 +127,13 @@ namespace Henzai.Runtime
             _modelPTDescriptorList = new List<ModelRuntimeDescriptor<VertexPositionTexture>>();
             _modelPCDescriptorList = new List<ModelRuntimeDescriptor<VertexPositionColor>>();
             _modelPDescriptorList = new List<ModelRuntimeDescriptor<VertexPosition>>();
+
+            PNTTBRuntimeGeometry = new GeometryDescriptor<VertexPositionNormalTextureTangentBitangent>();
+            PNRuntimeGeometry = new GeometryDescriptor<VertexPositionNormal>();
+            PTRuntimeGeometry = new GeometryDescriptor<VertexPositionTexture>();
+            PCRuntimeGeometry = new GeometryDescriptor<VertexPositionColor>();
+            PRuntimeGeometry = new GeometryDescriptor<VertexPosition>();
+
 
             // Tick every millisecond
             _frameTimer = new FrameTimer(1.0);
@@ -157,6 +173,12 @@ namespace Henzai.Runtime
             _modelPCDescriptorList = new List<ModelRuntimeDescriptor<VertexPositionColor>>();
             _modelPDescriptorList = new List<ModelRuntimeDescriptor<VertexPosition>>();
 
+            PNTTBRuntimeGeometry = new GeometryDescriptor<VertexPositionNormalTextureTangentBitangent>();
+            PNRuntimeGeometry = new GeometryDescriptor<VertexPositionNormal>();
+            PTRuntimeGeometry = new GeometryDescriptor<VertexPositionTexture>();
+            PCRuntimeGeometry = new GeometryDescriptor<VertexPositionColor>();
+            PRuntimeGeometry = new GeometryDescriptor<VertexPosition>();
+
             // Tick every millisecond
             _frameTimer = new FrameTimer(1.0);
 
@@ -181,6 +203,12 @@ namespace Henzai.Runtime
             _modelPCDescriptorList = new List<ModelRuntimeDescriptor<VertexPositionColor>>();
             _modelPDescriptorList = new List<ModelRuntimeDescriptor<VertexPosition>>();
 
+            PNTTBRuntimeGeometry = new GeometryDescriptor<VertexPositionNormalTextureTangentBitangent>();
+            PNRuntimeGeometry = new GeometryDescriptor<VertexPositionNormal>();
+            PTRuntimeGeometry = new GeometryDescriptor<VertexPositionTexture>();
+            PCRuntimeGeometry = new GeometryDescriptor<VertexPositionColor>();
+            PRuntimeGeometry = new GeometryDescriptor<VertexPosition>();
+
             // Tick every millisecond
             _frameTimer = new FrameTimer(1.0);
 
@@ -199,8 +227,7 @@ namespace Henzai.Runtime
             Debug.Assert(_commandList != null);
             Debug.Assert(_graphicsDevice != null);
             Debug.Assert(_factory != null);
-
-            // var deltaTimeQueue = new Queue<float>();
+            var inputTracker = new InputTracker();
 
             _renderResolution = renderResolution;
 
@@ -229,17 +256,19 @@ namespace Henzai.Runtime
 
             PreRender_Camera?.Invoke(_camera);
             PreRender_Models?.Invoke(_modelPNTTBDescriptorArray,_modelPNDescriptorArray,_modelPTDescriptorArray,_modelPCDescriptorArray,_modelPDescriptorArray);
+            PreRender_Models_Test?.Invoke(PNTTBRuntimeGeometry.MeshBVHArray, PNRuntimeGeometry.MeshBVHArray, PTRuntimeGeometry.MeshBVHArray, PCRuntimeGeometry.MeshBVHArray, PRuntimeGeometry.MeshBVHArray);
             while (_contextWindow.Exists)
             {
                 _frameTimer.Start();
 
                 InputSnapshot inputSnapshot = _contextWindow.PumpEvents();
-                InputTracker.UpdateFrameInput(inputSnapshot);
+                inputTracker.UpdateFrameInput(inputSnapshot);
 
                 if (_contextWindow.Exists)
                 {
                     var prevFrameTicksInSeconds = _frameTimer.prevFrameTicksInSeconds;
-                    // deltaTimeQueue.Enqueue(prevFrameTicksInSeconds);
+                    _camera.Update(_frameTimer.prevFrameTicksInSeconds, inputTracker);
+
                     PreDraw_Time_Camera?.Invoke(prevFrameTicksInSeconds, _camera);
                     PreDraw_Time_Input?.Invoke(prevFrameTicksInSeconds, inputSnapshot);
                     PreDraw_Time_GraphicsDevice_CommandList_Camera_Models?.Invoke(
@@ -251,10 +280,21 @@ namespace Henzai.Runtime
                         _modelPTDescriptorArray,
                         _modelPCDescriptorArray,
                         _modelPDescriptorArray);
+                    PreDraw_Time_GraphicsDevice_CommandList_Camera_Models_Test?.Invoke(
+                        prevFrameTicksInSeconds,
+                        _graphicsDevice,
+                        _commandList,
+                        _camera,
+                        PNTTBRuntimeGeometry.MeshBVHArray,
+                        PNRuntimeGeometry.MeshBVHArray,
+                        PTRuntimeGeometry.MeshBVHArray,
+                        PCRuntimeGeometry.MeshBVHArray,
+                        PRuntimeGeometry.MeshBVHArray);
                     PreDraw_Time_Camera_Models?.Invoke(
                         prevFrameTicksInSeconds,
                         _camera,
-                        _modelPNTTBDescriptorArray, _modelPNDescriptorArray,
+                        _modelPNTTBDescriptorArray, 
+                        _modelPNDescriptorArray,
                         _modelPTDescriptorArray,
                         _modelPCDescriptorArray,
                         _modelPDescriptorArray);
@@ -306,17 +346,10 @@ namespace Henzai.Runtime
                     _graphicsDevice.SwapBuffers();
                 }
 
-                _camera.Update(_frameTimer.prevFrameTicksInSeconds);
                 _frameTimer.Stop();
 
             }
-
-            // string logFilePath = Path.Combine(projectDirectory,"log.txt");
-            // using(var streamWriter = new StreamWriter(logFilePath)){
-            //     foreach(var e in deltaTimeQueue){
-            //         streamWriter.WriteLine($"{e.ToString()}");
-            //     }
-            // }
+            
             Dispose();
 
         }
@@ -351,6 +384,7 @@ namespace Henzai.Runtime
             for (int i = 0; i < meshCount; i++)
             {
                 var mesh = model.GetMesh(i);
+                var meshBVH = model.GetMeshBVH(i);
                 //TODO: access this through DisposableResourceCollector properly
                 DeviceBuffer vertexBuffer
                     = _factory.CreateBuffer(new BufferDescription(mesh.Vertices.LengthUnsigned() * vertexSizeInBytes, BufferUsage.VertexBuffer));
@@ -376,7 +410,7 @@ namespace Henzai.Runtime
 
                 var resourceSet = modelDescriptor.InvokeTextureResourceSetGeneration(i, _factory, _graphicsDevice);
                 if (resourceSet != null)
-                    modelDescriptor.TextureResourceSetsList.Add(resourceSet);
+                    modelDescriptor.TextureResourceSetsList.Add(resourceSet);                
             }
 
             modelDescriptor.InvokeVertexLayoutGeneration();
@@ -518,8 +552,19 @@ namespace Henzai.Runtime
             //     FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,InstancingData.NO_DATA); 
 
 
-            foreach (var modelState in _modelPNTTBDescriptorList)
-                modelState.FormatResourcesForRuntime();
+
+            _modelPNTTBDescriptorArray = _modelPNTTBDescriptorList.ToArray();
+            _modelPNDescriptorArray = _modelPNDescriptorList.ToArray();
+            _modelPTDescriptorArray = _modelPTDescriptorList.ToArray();
+            _modelPCDescriptorArray = _modelPCDescriptorList.ToArray();
+            _modelPDescriptorArray = _modelPDescriptorList.ToArray();
+
+            PNTTBRuntimeGeometry.FormatForRuntime(_modelPNTTBDescriptorArray);
+            PNRuntimeGeometry.FormatForRuntime(_modelPNDescriptorArray);
+            PTRuntimeGeometry.FormatForRuntime(_modelPTDescriptorArray);
+            PCRuntimeGeometry.FormatForRuntime(_modelPCDescriptorArray);
+            PRuntimeGeometry.FormatForRuntime(_modelPDescriptorArray);
+
             foreach (var modelState in _modelPNDescriptorList)
                 modelState.FormatResourcesForRuntime();
             foreach (var modelState in _modelPTDescriptorList)
@@ -528,13 +573,6 @@ namespace Henzai.Runtime
                 modelState.FormatResourcesForRuntime();
             foreach (var modelState in _modelPDescriptorList)
                 modelState.FormatResourcesForRuntime();
-
-
-            _modelPNTTBDescriptorArray = _modelPNTTBDescriptorList.ToArray();
-            _modelPNDescriptorArray = _modelPNDescriptorList.ToArray();
-            _modelPTDescriptorArray = _modelPTDescriptorList.ToArray();
-            _modelPCDescriptorArray = _modelPCDescriptorList.ToArray();
-            _modelPDescriptorArray = _modelPDescriptorList.ToArray();
         }
 
         //TODO: Unused
@@ -543,7 +581,6 @@ namespace Henzai.Runtime
         /// </summary>
         public void DisposeKeepContextWindow()
         {
-
             _graphicsDevice.WaitForIdle();
             foreach (var child in _allChildren)
                 child.DisposeKeepContextWindow();
@@ -562,7 +599,6 @@ namespace Henzai.Runtime
         /// </summary>
         public virtual void Dispose()
         {
-
             _frameTimer.Cancel();
             if (!_isChild)
                 _uiCancellationTokenSource.Cancel();

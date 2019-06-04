@@ -8,8 +8,10 @@ using Henzai.Core.Reflection;
 
 namespace Henzai.Runtime
 {
+    //TODO: Move all the lists/arrays into a contiuous array and only store start and length
     public sealed class ModelRuntimeDescriptor<T> where T : struct, VertexLocateable
     {
+        public int Length {get; private set;}
         /// <summary>
         /// Used During Resource Creation
         /// </summary>
@@ -57,6 +59,7 @@ namespace Henzai.Runtime
         /// </summary>
         public Pipeline Pipeline {get; set;}
         /// <summary>
+        //TODO: Remove this
         /// Contains Geometry and Material Properties
         /// See: <see cref="Henzai.Geometry.Model{T}"/>
         /// </summary>
@@ -64,8 +67,8 @@ namespace Henzai.Runtime
         public VertexRuntimeTypes VertexRuntimeType {get; private set;}
         public PrimitiveTopology PrimitiveTopology {get; private set;}
         public uint TotalInstanceCount{get;set;}
-        public int TotalMeshCount {get; private set;}
-        public bool IsCulled => Model.AreMeshesCulled();
+        //public int TotalMeshCount {get; private set;}
+        //public bool IsCulled => Model.AreMeshesCulled();
         public event Func<VertexLayoutDescription> CallVertexLayoutGeneration;
         public event Func<VertexLayoutDescription> CallVertexInstanceLayoutGeneration;
         public event Func<DisposeCollectorResourceFactory,Sampler> CallSamplerGeneration;
@@ -79,6 +82,7 @@ namespace Henzai.Runtime
                 throw new ArgumentException($"Type Mismatch ModelRuntimeDescriptor");
 
             Model = modelIn;
+            Length = modelIn.MeshCount;
 
             TotalInstanceCount = 1;
 

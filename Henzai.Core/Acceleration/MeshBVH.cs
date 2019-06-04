@@ -4,15 +4,25 @@ using Henzai.Core.VertexGeometry;
 
 namespace Henzai.Core.Acceleration
 {   
-    //TODO: Try bounding meshes insteade of triangles
     /// This struct serves as a BVH primitive
     public struct MeshBVH<T> : AxisAlignedBoundable where T : struct, VertexLocateable
     {
         private AABB _aabb;
         public bool AABBIsValid;
+        /// <summary>
+        /// The BVH building process will reorder the structs. Therefore we need a way to index the other data parts
+        /// </summary>
+        public int ModelRuntimeIndex;
+        /// <summary>
+        /// The BVH building process will reorder the structs. Therefore we need a way to index the other data parts
+        /// </summary>
+        public int MeshRuntimeIndex;
 
         public MeshBVH(Mesh<T> mesh){
             AABBIsValid = true;    
+
+            ModelRuntimeIndex = -1;
+            MeshRuntimeIndex = -1;
 
             var vertices = mesh.Vertices;
             var v = vertices[0].GetPosition();
@@ -53,6 +63,9 @@ namespace Henzai.Core.Acceleration
 
         public MeshBVH(Mesh<T> mesh, ref Matrix4x4 world){    
             AABBIsValid = true;    
+
+            ModelRuntimeIndex = -1;
+            MeshRuntimeIndex = -1;
 
             var vertices = mesh.Vertices;
             var v = vertices[0].GetPosition();

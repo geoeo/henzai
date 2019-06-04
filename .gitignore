@@ -282,3 +282,9 @@ Output/*
 *.txt
 
 msbuild.binlog
+.idea/.idea.henzai/riderModule.iml
+.idea/.idea.henzai/.idea/contentModel.xml
+.idea/.idea.henzai/.idea/indexLayout.xml
+.idea/.idea.henzai/.idea/modules.xml
+.idea/.idea.henzai/.idea/vcs.xml
+.idea/.idea.henzai/.idea/workspace.xml

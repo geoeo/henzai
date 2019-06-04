@@ -6,13 +6,14 @@ using Henzai.UI;
 
 namespace Henzai.Examples
 {
+    // This has a long startup time in OpenGL. Dont click while it is loading, as the SDL context might get lost.
     internal class Program : SceneContainer
     {
 
         static void Main(string[] args)
         {
             Program programm = new Program();
-            programm.createScene(GraphicsBackend.Metal);
+            programm.createScene(GraphicsBackend.OpenGL);
         }
 
         public override void createScene(GraphicsBackend graphicsBackend, Sdl2Window contextWindow = null){
@@ -38,12 +39,7 @@ namespace Henzai.Examples
                 FarPlane = 500.0f
             };
 
-            scene = contextWindow == null ? new SponzaScene(
-                    "Sponza",
-                    windowSize,
-                    gdOptions,
-                    rdOptions
-                ) : new SponzaScene(
+            scene = new SponzaScene(
                     "Sponza",
                     windowSize,
                     gdOptions,
@@ -54,8 +50,8 @@ namespace Henzai.Examples
             gui.SetOverlayFor(scene);
             gui.changeBackendAction += ChangeBackend;
 
-            scene.PreRender_Models += BuildBVH;
-            scene.PreDraw_Time_GraphicsDevice_CommandList_Camera_Models += EnableBVHCulling;
+            scene.PreRender_Models_Test += BuildBVH;
+            scene.PreDraw_Time_GraphicsDevice_CommandList_Camera_Models_Test += EnableBVHCulling;
 
             scene.Run(renderResolution);
         }

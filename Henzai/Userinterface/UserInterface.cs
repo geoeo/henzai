@@ -21,7 +21,6 @@ namespace Henzai.UI
         private DeviceBuffer _indexBuffer;
         private DeviceBuffer _projMatrixBuffer;
         private Texture _fontTexture;
-        private TextureView _fontTextureView;
         private Shader _vertexShader;
         private Shader _fragmentShader;
         private ResourceLayout _layout;
@@ -36,6 +35,7 @@ namespace Henzai.UI
         private bool _altDown;
 
         protected bool backendCallback = false;
+        //TODO: check this
         protected GraphicsBackend newGraphicsBackend = GraphicsBackend.OpenGL;
         public event Action<GraphicsBackend> changeBackendAction;
 
@@ -43,7 +43,10 @@ namespace Henzai.UI
         public UserInterface(GraphicsDevice graphicsDevice, Sdl2Window contextWindow) : base(graphicsDevice,contextWindow){
             _assembly = typeof(UserInterface).GetTypeInfo().Assembly;
 
-            ImGui.GetIO().FontAtlas.AddDefaultFont();
+            IntPtr context = ImGui.CreateContext();
+            ImGui.SetCurrentContext(context);
+
+            ImGui.GetIO().Fonts.AddFontDefault();
         }
 
         public void SetOverlayFor(Renderable scene){
@@ -56,7 +59,7 @@ namespace Henzai.UI
 
         public void UpdateImGui(float deltaSeconds, InputSnapshot inputSnapshot){
 
-            ImGuiNET.IO io = ImGui.GetIO();
+            var io = ImGui.GetIO();
             io.DeltaTime = deltaSeconds;
             io.DisplaySize = new System.Numerics.Vector2(ContextWindow.Width, ContextWindow.Height);
             io.DisplayFramebufferScale = new System.Numerics.Vector2(ContextWindow.Width / ContextWindow.Height);
@@ -75,22 +78,22 @@ namespace Henzai.UI
 
         abstract protected unsafe void SubmitImGUILayout(float secondsPerFrame);
 
+        //TODO: Add color space handling 
         override protected void CreateResources(){
 
-            _vertexBuffer = GraphicsDevice.ResourceFactory.CreateBuffer(new BufferDescription(10000, BufferUsage.VertexBuffer | BufferUsage.Dynamic));
+            ResourceFactory factory = GraphicsDevice.ResourceFactory;
+            _vertexBuffer = factory.CreateBuffer(new BufferDescription(10000, BufferUsage.VertexBuffer | BufferUsage.Dynamic));
             _vertexBuffer.Name = "ImGui.NET Vertex Buffer";
-            _indexBuffer = GraphicsDevice.ResourceFactory.CreateBuffer(new BufferDescription(2000, BufferUsage.IndexBuffer | BufferUsage.Dynamic));
+            _indexBuffer = factory.CreateBuffer(new BufferDescription(2000, BufferUsage.IndexBuffer | BufferUsage.Dynamic));
             _indexBuffer.Name = "ImGui.NET Index Buffer";
-    
-            RecreateFontDeviceTexture(GraphicsDevice);
 
-            _projMatrixBuffer = _factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
+            _projMatrixBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
             _projMatrixBuffer.Name = "ImGui.NET Projection Buffer";
 
             byte[] vertexShaderBytes = LoadEmbeddedShaderCode(GraphicsDevice.ResourceFactory, "imgui-vertex");
             byte[] fragmentShaderBytes = LoadEmbeddedShaderCode(GraphicsDevice.ResourceFactory, "imgui-frag");
-            _vertexShader = _factory.CreateShader(new ShaderDescription(ShaderStages.Vertex, vertexShaderBytes, "VS"));
-            _fragmentShader = _factory.CreateShader(new ShaderDescription(ShaderStages.Fragment, fragmentShaderBytes, "FS"));
+            _vertexShader = factory.CreateShader(new ShaderDescription(ShaderStages.Vertex, vertexShaderBytes, GraphicsDevice.BackendType == GraphicsBackend.Vulkan ? "main" : "VS"));
+            _fragmentShader = factory.CreateShader(new ShaderDescription(ShaderStages.Fragment, fragmentShaderBytes, GraphicsDevice.BackendType == GraphicsBackend.Vulkan ? "main" : "FS"));
 
             VertexLayoutDescription[] vertexLayouts = new VertexLayoutDescription[]
             {
@@ -100,27 +103,35 @@ namespace Henzai.UI
                     new VertexElementDescription("in_color", VertexElementSemantic.Color, VertexElementFormat.Byte4_Norm))
             };
 
-            _layout = _factory.CreateResourceLayout(new ResourceLayoutDescription(
+            _layout = factory.CreateResourceLayout(new ResourceLayoutDescription(
                 new ResourceLayoutElementDescription("ProjectionMatrixBuffer", ResourceKind.UniformBuffer, ShaderStages.Vertex),
                 new ResourceLayoutElementDescription("MainSampler", ResourceKind.Sampler, ShaderStages.Fragment)));
-            _textureLayout = _factory.CreateResourceLayout(new ResourceLayoutDescription(
+            _textureLayout = factory.CreateResourceLayout(new ResourceLayoutDescription(
                 new ResourceLayoutElementDescription("MainTexture", ResourceKind.TextureReadOnly, ShaderStages.Fragment)));
 
             GraphicsPipelineDescription pd = new GraphicsPipelineDescription(
                 BlendStateDescription.SingleAlphaBlend,
                 new DepthStencilStateDescription(false, false, ComparisonKind.Always),
-                new RasterizerStateDescription(FaceCullMode.None, PolygonFillMode.Solid, FrontFace.Clockwise, false, true),
+                new RasterizerStateDescription(FaceCullMode.None, PolygonFillMode.Solid, FrontFace.Clockwise, true, true),
                 PrimitiveTopology.TriangleList,
-                new ShaderSetDescription(vertexLayouts, new[] { _vertexShader, _fragmentShader }),
+                new ShaderSetDescription(
+                    vertexLayouts,
+                    new[] { _vertexShader, _fragmentShader },
+                    new[]
+                    {
+                        new SpecializationConstant(0, GraphicsDevice.IsClipSpaceYInverted),
+                        new SpecializationConstant(1, true),
+                    }),
                 new ResourceLayout[] { _layout, _textureLayout },
-                GraphicsDevice.SwapchainFramebuffer.OutputDescription);
-            _pipeline = _factory.CreateGraphicsPipeline(ref pd);
+                GraphicsDevice.SwapchainFramebuffer.OutputDescription,
+                ResourceBindingModel.Improved);
+            _pipeline = factory.CreateGraphicsPipeline(ref pd);
 
-            _mainResourceSet = _factory.CreateResourceSet(new ResourceSetDescription(_layout,
+            _mainResourceSet = factory.CreateResourceSet(new ResourceSetDescription(_layout,
                 _projMatrixBuffer,
                 GraphicsDevice.PointSampler));
 
-            _fontTextureResourceSet = _factory.CreateResourceSet(new ResourceSetDescription(_textureLayout, _fontTextureView));
+            RecreateFontDeviceTexture(GraphicsDevice);
 
         }
 
@@ -129,7 +140,7 @@ namespace Henzai.UI
             _commandList.SetFramebuffer(GraphicsDevice.SwapchainFramebuffer);
 
             unsafe {
-                RenderImGuiDrawData(ImGui.GetDrawData(), GraphicsDevice, _commandList);
+                RenderImDrawData(ImGui.GetDrawData(), GraphicsDevice, _commandList);
             }
             _commandList.End();
         }
@@ -138,48 +149,48 @@ namespace Henzai.UI
             GraphicsDevice.SubmitCommands(_commandList);
         }
 
-        private unsafe void RenderImGuiDrawData(DrawData* drawData,GraphicsDevice graphicsDevice, CommandList commandList){
+        private unsafe void RenderImDrawData(ImDrawDataPtr draw_data, GraphicsDevice gd, CommandList cl){
             uint vertexOffsetInVertices = 0;
             uint indexOffsetInElements = 0;
 
-            if (drawData->CmdListsCount == 0)
+            if (draw_data.CmdListsCount == 0)
+            {
                 return;
-            
-            uint totalVBSize = (uint)(drawData->TotalVtxCount * sizeof(DrawVert));
+            }
+
+            uint totalVBSize = (uint)(draw_data.TotalVtxCount * sizeof(ImDrawVert));
             if (totalVBSize > _vertexBuffer.SizeInBytes)
             {
-                graphicsDevice.DisposeWhenIdle(_vertexBuffer);
-                _vertexBuffer = graphicsDevice.ResourceFactory.CreateBuffer(new BufferDescription((uint)(totalVBSize * 1.5f), BufferUsage.VertexBuffer | BufferUsage.Dynamic));
+                _vertexBuffer.Dispose();
+                _vertexBuffer = gd.ResourceFactory.CreateBuffer(new BufferDescription((uint)(totalVBSize * 1.5f), BufferUsage.VertexBuffer | BufferUsage.Dynamic));
             }
 
-            uint totalIBSize = (uint)(drawData->TotalIdxCount * sizeof(ushort));
+            uint totalIBSize = (uint)(draw_data.TotalIdxCount * sizeof(ushort));
             if (totalIBSize > _indexBuffer.SizeInBytes)
             {
-                graphicsDevice.DisposeWhenIdle(_indexBuffer);
-                _indexBuffer = graphicsDevice.ResourceFactory.CreateBuffer(new BufferDescription((uint)(totalIBSize * 1.5f), BufferUsage.IndexBuffer | BufferUsage.Dynamic));
+                _indexBuffer.Dispose();
+                _indexBuffer = gd.ResourceFactory.CreateBuffer(new BufferDescription((uint)(totalIBSize * 1.5f), BufferUsage.IndexBuffer | BufferUsage.Dynamic));
             }
 
-            MappedResource vbMap = graphicsDevice.Map(_vertexBuffer, MapMode.Write);
-            MappedResource ibMap = graphicsDevice.Map(_indexBuffer, MapMode.Write);
-            for (int i = 0; i < drawData->CmdListsCount; i++)
+            for (int i = 0; i < draw_data.CmdListsCount; i++)
             {
-                NativeDrawList* cmd_list = drawData->CmdLists[i];
+                ImDrawListPtr cmd_list = draw_data.CmdListsRange[i];
 
-                System.Runtime.CompilerServices.Unsafe.CopyBlock(
-                    (byte*)vbMap.Data.ToPointer() + vertexOffsetInVertices * sizeof(DrawVert),
-                    cmd_list->VtxBuffer.Data,
-                    (uint)(cmd_list->VtxBuffer.Size * sizeof(DrawVert)));
+                cl.UpdateBuffer(
+                    _vertexBuffer,
+                    vertexOffsetInVertices * (uint)sizeof(ImDrawVert),
+                    cmd_list.VtxBuffer.Data,
+                    (uint)(cmd_list.VtxBuffer.Size * sizeof(ImDrawVert)));
 
-                System.Runtime.CompilerServices.Unsafe.CopyBlock(
-                    (byte*)ibMap.Data.ToPointer() + indexOffsetInElements * sizeof(ushort),
-                    cmd_list->IdxBuffer.Data,
-                    (uint)(cmd_list->IdxBuffer.Size * sizeof(ushort)));
+                cl.UpdateBuffer(
+                    _indexBuffer,
+                    indexOffsetInElements * sizeof(ushort),
+                    cmd_list.IdxBuffer.Data,
+                    (uint)(cmd_list.IdxBuffer.Size * sizeof(ushort)));
 
-                vertexOffsetInVertices += (uint)cmd_list->VtxBuffer.Size;
-                indexOffsetInElements += (uint)cmd_list->IdxBuffer.Size;
+                vertexOffsetInVertices += (uint)cmd_list.VtxBuffer.Size;
+                indexOffsetInElements += (uint)cmd_list.IdxBuffer.Size;
             }
-            graphicsDevice.Unmap(_vertexBuffer);
-            graphicsDevice.Unmap(_indexBuffer);
 
             // Setup orthographic projection matrix into our constant buffer
             {
@@ -193,75 +204,75 @@ namespace Henzai.UI
                     -1.0f,
                     1.0f);
 
-                graphicsDevice.UpdateBuffer(_projMatrixBuffer, 0, ref mvp);
+                gd.UpdateBuffer(_projMatrixBuffer, 0, ref mvp);
             }
 
-            commandList.SetVertexBuffer(0, _vertexBuffer);
-            commandList.SetIndexBuffer(_indexBuffer, IndexFormat.UInt16);
-            commandList.SetPipeline(_pipeline);
-            commandList.SetGraphicsResourceSet(0, _mainResourceSet);
+            cl.SetVertexBuffer(0, _vertexBuffer);
+            cl.SetIndexBuffer(_indexBuffer, IndexFormat.UInt16);
+            cl.SetPipeline(_pipeline);
+            cl.SetGraphicsResourceSet(0, _mainResourceSet);
 
-            ImGui.ScaleClipRects(drawData, ImGui.GetIO().DisplayFramebufferScale);
+            draw_data.ScaleClipRects(ImGui.GetIO().DisplayFramebufferScale);
 
             // Render command lists
             int vtx_offset = 0;
             int idx_offset = 0;
-            for (int n = 0; n < drawData->CmdListsCount; n++)
+            for (int n = 0; n < draw_data.CmdListsCount; n++)
             {
-                NativeDrawList* cmd_list = drawData->CmdLists[n];
-                for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++)
+                ImDrawListPtr cmd_list = draw_data.CmdListsRange[n];
+                for (int cmd_i = 0; cmd_i < cmd_list.CmdBuffer.Size; cmd_i++)
                 {
-                    DrawCmd* pcmd = &(((DrawCmd*)cmd_list->CmdBuffer.Data)[cmd_i]);
-                    if (pcmd->UserCallback != IntPtr.Zero)
+                    ImDrawCmdPtr pcmd = cmd_list.CmdBuffer[cmd_i];
+                    if (pcmd.UserCallback != IntPtr.Zero)
                     {
-                        throw new NotImplementedException("TODO Call function");
+                        throw new NotImplementedException();
                     }
                     else
                     {
-                        if (pcmd->TextureId != IntPtr.Zero)
+                        if (pcmd.TextureId != IntPtr.Zero)
                         {
-                            if (pcmd->TextureId == _fontAtlasID)
+                            if (pcmd.TextureId == _fontAtlasID)
                             {
-                                commandList.SetGraphicsResourceSet(1, _fontTextureResourceSet);
+                                cl.SetGraphicsResourceSet(1, _fontTextureResourceSet);
                             }
                             else
                             {
                                 throw new NotImplementedException("TODO Implement Custom Resources");
-                                // commandList.SetGraphicsResourceSet(1, GetImageResourceSet(pcmd->TextureId));
                             }
                         }
 
-                        commandList.SetScissorRect(
+                        cl.SetScissorRect(
                             0,
-                            (uint)pcmd->ClipRect.X,
-                            (uint)pcmd->ClipRect.Y,
-                            (uint)(pcmd->ClipRect.Z - pcmd->ClipRect.X),
-                            (uint)(pcmd->ClipRect.W - pcmd->ClipRect.Y));
+                            (uint)pcmd.ClipRect.X,
+                            (uint)pcmd.ClipRect.Y,
+                            (uint)(pcmd.ClipRect.Z - pcmd.ClipRect.X),
+                            (uint)(pcmd.ClipRect.W - pcmd.ClipRect.Y));
 
-                        commandList.DrawIndexed(pcmd->ElemCount, 1, (uint)idx_offset, vtx_offset, 0);
+                        cl.DrawIndexed(pcmd.ElemCount, 1, (uint)idx_offset, vtx_offset, 0);
                     }
 
-                    idx_offset += (int)pcmd->ElemCount;
+                    idx_offset += (int)pcmd.ElemCount;
                 }
-                vtx_offset += cmd_list->VtxBuffer.Size;
+                vtx_offset += cmd_list.VtxBuffer.Size;
             }
         }
 
         /// <summary>
         /// Recreates the device texture used to render text.
         /// </summary>
-        private unsafe void RecreateFontDeviceTexture(GraphicsDevice gd)
+        public unsafe void RecreateFontDeviceTexture(GraphicsDevice gd)
         {
-            ImGuiNET.IO io = ImGui.GetIO();
+            ImGuiIOPtr io = ImGui.GetIO();
             // Build
-            FontTextureData textureData = io.FontAtlas.GetTexDataAsRGBA32();
+            io.Fonts.GetTexDataAsRGBA32(out byte* pixels, out int width, out int height, out int bytesPerPixel);
 
             // Store our identifier
-            io.FontAtlas.SetTexID(_fontAtlasID);
+            io.Fonts.SetTexID(_fontAtlasID);
 
-            _fontTexture = _factory.CreateTexture(TextureDescription.Texture2D(
-                (uint)textureData.Width,
-                (uint)textureData.Height,
+            _fontTexture?.Dispose();
+            _fontTexture = gd.ResourceFactory.CreateTexture(TextureDescription.Texture2D(
+                (uint)width,
+                (uint)height,
                 1,
                 1,
                 PixelFormat.R8_G8_B8_A8_UNorm,
@@ -269,42 +280,62 @@ namespace Henzai.UI
             _fontTexture.Name = "ImGui.NET Font Texture";
             gd.UpdateTexture(
                 _fontTexture,
-                (IntPtr)textureData.Pixels,
-                (uint)(textureData.BytesPerPixel * textureData.Width * textureData.Height),
+                (IntPtr)pixels,
+                (uint)(bytesPerPixel * width * height),
                 0,
                 0,
                 0,
-                (uint)textureData.Width,
-                (uint)textureData.Height,
+                (uint)width,
+                (uint)height,
                 1,
                 0,
                 0);
-            _fontTextureView = _factory.CreateTextureView(_fontTexture);
 
-            io.FontAtlas.ClearTexData();
+            _fontTextureResourceSet?.Dispose();
+            _fontTextureResourceSet = gd.ResourceFactory.CreateResourceSet(new ResourceSetDescription(_textureLayout, _fontTexture));
+
+            io.Fonts.ClearTexData();
         }
 
         private unsafe void UpdateImGuiInput(InputSnapshot snapshot)
         {
-            ImGuiNET.IO io = ImGui.GetIO();
+            ImGuiIOPtr io = ImGui.GetIO();
 
-            Vector2 mousePosition = snapshot.MousePosition;
+            // Determine if any of the mouse buttons were pressed during this snapshot period, even if they are no longer held.
+            bool leftPressed = false;
+            bool middlePressed = false;
+            bool rightPressed = false;
+            for (int i = 0; i < snapshot.MouseEvents.Count; i++)
+            {
+                MouseEvent me = snapshot.MouseEvents[i];
+                if (me.Down)
+                {
+                    switch (me.MouseButton)
+                    {
+                        case MouseButton.Left:
+                            leftPressed = true;
+                            break;
+                        case MouseButton.Middle:
+                            middlePressed = true;
+                            break;
+                        case MouseButton.Right:
+                            rightPressed = true;
+                            break;
+                    }
+                }
+            }
 
-            io.MousePosition = mousePosition;
-            io.MouseDown[0] = snapshot.IsMouseDown(MouseButton.Left);
-            io.MouseDown[1] = snapshot.IsMouseDown(MouseButton.Right);
-            io.MouseDown[2] = snapshot.IsMouseDown(MouseButton.Middle);
-
-            float delta = snapshot.WheelDelta;
-            io.MouseWheel = delta;
-
-            ImGui.GetIO().MouseWheel = delta;
+            io.MouseDown[0] = leftPressed || snapshot.IsMouseDown(MouseButton.Left);
+            io.MouseDown[1] = rightPressed || snapshot.IsMouseDown(MouseButton.Right);
+            io.MouseDown[2] = middlePressed || snapshot.IsMouseDown(MouseButton.Middle);
+            io.MousePos = snapshot.MousePosition;
+            io.MouseWheel = snapshot.WheelDelta;
 
             IReadOnlyList<char> keyCharPresses = snapshot.KeyCharPresses;
             for (int i = 0; i < keyCharPresses.Count; i++)
             {
                 char c = keyCharPresses[i];
-                ImGui.AddInputCharacter(c);
+                ImGui.GetIO().AddInputCharacter(c);
             }
 
             IReadOnlyList<KeyEvent> keyEvents = snapshot.KeyEvents;
@@ -326,9 +357,9 @@ namespace Henzai.UI
                 }
             }
 
-            io.CtrlPressed = _controlDown;
-            io.AltPressed = _altDown;
-            io.ShiftPressed = _shiftDown;
+            io.KeyCtrl = _controlDown;
+            io.KeyAlt = _altDown;
+            io.KeyShift = _shiftDown;
         }
 
         private byte[] LoadEmbeddedShaderCode(ResourceFactory factory, string name)
@@ -365,9 +396,17 @@ namespace Henzai.UI
         /// </summary>
         public override void Dispose()
         {
-
             _vertexBuffer.Dispose();
             _indexBuffer.Dispose();
+            _projMatrixBuffer.Dispose();
+            _fontTexture.Dispose();
+            _vertexShader.Dispose();
+            _fragmentShader.Dispose();
+            _layout.Dispose();
+            _textureLayout.Dispose();
+            _pipeline.Dispose();
+            _mainResourceSet.Dispose();
+            _fontTextureResourceSet.Dispose();
 
             base.Dispose();
 
