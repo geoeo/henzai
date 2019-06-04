@@ -47,6 +47,7 @@ namespace Henzai.UI
             ImGui.SetCurrentContext(context);
 
             ImGui.GetIO().Fonts.AddFontDefault();
+
         }
 
         public void SetOverlayFor(Renderable scene){
@@ -64,7 +65,6 @@ namespace Henzai.UI
             io.DisplaySize = new System.Numerics.Vector2(ContextWindow.Width, ContextWindow.Height);
             io.DisplayFramebufferScale = new System.Numerics.Vector2(ContextWindow.Width / ContextWindow.Height);
             
-
             ImGui.NewFrame();
             UpdateImGuiInput(inputSnapshot);
             SubmitImGUILayout(deltaSeconds);
@@ -72,8 +72,6 @@ namespace Henzai.UI
 
             if(backendCallback)
                 changeBackendAction?.Invoke(newGraphicsBackend); 
-
-
         }
 
         abstract protected unsafe void SubmitImGUILayout(float secondsPerFrame);
@@ -150,6 +148,7 @@ namespace Henzai.UI
         }
 
         private unsafe void RenderImDrawData(ImDrawDataPtr draw_data, GraphicsDevice gd, CommandList cl){
+            var io = ImGui.GetIO();
             uint vertexOffsetInVertices = 0;
             uint indexOffsetInElements = 0;
 
@@ -176,6 +175,7 @@ namespace Henzai.UI
             {
                 ImDrawListPtr cmd_list = draw_data.CmdListsRange[i];
 
+                // we seem to write the wrong color (if at all?)
                 cl.UpdateBuffer(
                     _vertexBuffer,
                     vertexOffsetInVertices * (uint)sizeof(ImDrawVert),
@@ -193,19 +193,16 @@ namespace Henzai.UI
             }
 
             // Setup orthographic projection matrix into our constant buffer
-            {
-                var io = ImGui.GetIO();
+            Matrix4x4 mvp = Matrix4x4.CreateOrthographicOffCenter(
+                0f,
+                io.DisplaySize.X,
+                io.DisplaySize.Y,
+                0.0f,
+                -1.0f,
+                1.0f);
 
-                Matrix4x4 mvp = Matrix4x4.CreateOrthographicOffCenter(
-                    0f,
-                    io.DisplaySize.X,
-                    io.DisplaySize.Y,
-                    0.0f,
-                    -1.0f,
-                    1.0f);
-
-                gd.UpdateBuffer(_projMatrixBuffer, 0, ref mvp);
-            }
+            gd.UpdateBuffer(_projMatrixBuffer, 0, ref mvp);
+            
 
             cl.SetVertexBuffer(0, _vertexBuffer);
             cl.SetIndexBuffer(_indexBuffer, IndexFormat.UInt16);
@@ -237,7 +234,7 @@ namespace Henzai.UI
                             }
                             else
                             {
-                                throw new NotImplementedException("TODO Implement Custom Resources");
+                                throw new NotImplementedException("TODO: Implement Custom Resources");
                             }
                         }
 

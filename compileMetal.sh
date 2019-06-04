@@ -12,7 +12,7 @@ do
         break
     fi
     echo "Compiling $metal_shader"
-    xcrun -sdk macosx metal "$metal_shader" -o "$fname.air"
+    xcrun -sdk macosx metal -c "$metal_shader" -o "$fname.air"
     xcrun -sdk macosx metallib "$fname.air" -o "$fname.metallib"
     rm "$fname.air"
 done
