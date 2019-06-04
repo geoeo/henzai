@@ -581,7 +581,6 @@ namespace Henzai.Runtime
         /// </summary>
         public void DisposeKeepContextWindow()
         {
-
             _graphicsDevice.WaitForIdle();
             foreach (var child in _allChildren)
                 child.DisposeKeepContextWindow();
@@ -600,7 +599,6 @@ namespace Henzai.Runtime
         /// </summary>
         public virtual void Dispose()
         {
-
             _frameTimer.Cancel();
             if (!_isChild)
                 _uiCancellationTokenSource.Cancel();
