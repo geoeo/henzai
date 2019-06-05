@@ -28,7 +28,7 @@ namespace Henzai.UI
                 _sampleCounter = 0;
 
             //float fps = 1.0f/secondsPerFrame;
-            string performance = $"Seconds per Frame: {secondsPerFrame.ToString()}";
+            string performance = $"Seconds per Frame: {secondsPerFrame.ToString("N5")}";
             //string performance_2 = $"Frames per Second: {fps.ToString()}";
 
             var acc = 0.0f;
@@ -36,7 +36,7 @@ namespace Henzai.UI
                 acc += _secondsPerFrameSamples[i];
             }
             acc /= MAX_SAMPLES;
-            string avg_performance = $"Average Seconds per Frame: {acc.ToString()}";
+            string avg_performance = $"Average Seconds per Frame: {acc.ToString("N5")}";
 
             if (ImGui.BeginMainMenuBar())
             {
