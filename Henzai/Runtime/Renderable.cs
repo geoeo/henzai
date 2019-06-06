@@ -248,64 +248,61 @@ namespace Henzai.Runtime
                 InputSnapshot inputSnapshot = _contextWindow.PumpEvents();
                 inputTracker.UpdateFrameInput(inputSnapshot);
 
-                if (_contextWindow.Exists)
+                var prevFrameTicksInSeconds = _frameTimer.prevFrameTicksInSeconds;
+                _camera.Update(_frameTimer.prevFrameTicksInSeconds, inputTracker);
+
+                PreDraw_Time_Camera?.Invoke(prevFrameTicksInSeconds, _camera);
+                PreDraw_Time_Input?.Invoke(prevFrameTicksInSeconds, inputSnapshot);
+                PreDraw_Time_Camera_Descriptors?.Invoke(
+                    prevFrameTicksInSeconds,
+                    _camera,
+                    PNTTBRuntimeGeometry,
+                    PNRuntimeGeometry,
+                    PTRuntimeGeometry,
+                    PCRuntimeGeometry,
+                    PRuntimeGeometry);
+
+                // blocking wait for delegates as they may submit to the command buffer
+                _graphicsDevice.WaitForIdle();
+
+                buildCommandListTasks[0] = Task.Run(() => this.BuildCommandList());
+                for (int i = 0; i < _allChildren.Count; i++)
                 {
-                    var prevFrameTicksInSeconds = _frameTimer.prevFrameTicksInSeconds;
-                    _camera.Update(_frameTimer.prevFrameTicksInSeconds, inputTracker);
-
-                    PreDraw_Time_Camera?.Invoke(prevFrameTicksInSeconds, _camera);
-                    PreDraw_Time_Input?.Invoke(prevFrameTicksInSeconds, inputSnapshot);
-                    PreDraw_Time_Camera_Descriptors?.Invoke(
-                        prevFrameTicksInSeconds,
-                        _camera,
-                        PNTTBRuntimeGeometry,
-                        PNRuntimeGeometry,
-                        PTRuntimeGeometry,
-                        PCRuntimeGeometry,
-                        PRuntimeGeometry);
-
-                    // blocking wait for delegates as they may submit to the command buffer
-                    _graphicsDevice.WaitForIdle();
-
-                    buildCommandListTasks[0] = Task.Run(() => this.BuildCommandList());
-                    for (int i = 0; i < _allChildren.Count; i++)
-                    {
-                        var child = _allChildren[i];
-                        buildCommandListTasks[i + 1] = Task.Run(() => child.BuildCommandList());
-                    }
-
-                    // Wait untill every command list has been built
-                    Task.WaitAll(buildCommandListTasks);
-
-                    // Perform draw tasks which should be done before "main" draw e.g. shadow maps
-                    for (int i = 0; i < _childrenPre.Count; i++)
-                    {
-                        var child = _childrenPre[i];
-                        drawTasksPre[i] = Task.Run(() => child.Draw());
-                    }
-
-                    Task.WaitAll(drawTasksPre);
-
-                    Draw();
-
-                    PostDraw?.Invoke(prevFrameTicksInSeconds);
-
-                    // Perform draw tasks which should be after after "main" draw e.g. UI updates
-                    for (int i = 0; i < _childrenPost.Count; i++)
-                    {
-                        var child = _childrenPost[i];
-                        drawTasksPost[i] = Task.Run(() => child.Draw());
-                    }
-
-                    Task.WaitAll(drawTasksPost);
-
-                    if (_renderOptions.LimitFrames)
-                        limitFrameRate_Blocking();
-
-                    // Wait for submitted UI Tasks
-                    _graphicsDevice.WaitForIdle();
-                    _graphicsDevice.SwapBuffers();
+                    var child = _allChildren[i];
+                    buildCommandListTasks[i + 1] = Task.Run(() => child.BuildCommandList());
                 }
+
+                // Wait untill every command list has been built
+                Task.WaitAll(buildCommandListTasks);
+
+                // Perform draw tasks which should be done before "main" draw e.g. shadow maps
+                for (int i = 0; i < _childrenPre.Count; i++)
+                {
+                    var child = _childrenPre[i];
+                    drawTasksPre[i] = Task.Run(() => child.Draw());
+                }
+
+                Task.WaitAll(drawTasksPre);
+
+                Draw();
+
+                PostDraw?.Invoke(prevFrameTicksInSeconds);
+
+                // Perform draw tasks which should be after after "main" draw e.g. UI updates
+                for (int i = 0; i < _childrenPost.Count; i++)
+                {
+                    var child = _childrenPost[i];
+                    drawTasksPost[i] = Task.Run(() => child.Draw());
+                }
+
+                Task.WaitAll(drawTasksPost);
+
+                if (_renderOptions.LimitFrames)
+                    limitFrameRate_Blocking();
+
+                // Wait for submitted UI Tasks
+                _graphicsDevice.WaitForIdle();
+                _graphicsDevice.SwapBuffers();
 
                 _frameTimer.Stop();
 
@@ -523,25 +520,6 @@ namespace Henzai.Runtime
             foreach (var modelState in _modelPDescriptorList)
                 modelState.FormatResourcesForRuntime();
         }
-
-        // //TODO: Unused
-        // /// <summary>
-        // /// Disposes of all elements in _sceneResources except the contexst window
-        // /// </summary>
-        // public void DisposeKeepContextWindow()
-        // {
-        //     _graphicsDevice.WaitForIdle();
-        //     foreach (var child in _allChildren)
-        //         child.DisposeKeepContextWindow();
-        //     _allChildren.Clear();
-        //     _factory.DisposeCollector.DisposeAll();
-        //     if (!_isChild)
-        //     {
-        //         _graphicsDevice.WaitForIdle();
-        //         _graphicsDevice.Dispose();
-        //     }
-
-        // }
 
         /// <summary>
         /// Disposes of all elements in _sceneResources
