@@ -27,23 +27,18 @@ namespace Henzai.Runtime
         private Camera _camera { get; set; }
         public Camera Camera => _camera;
         private FrameTimer _frameTimer;
-        /// <summary>
-        /// Flag indicated if this is a child to another renderable
-        /// </summary>
-        //TODO: refactor children into explicitc RenderableChild classes
-        public bool IsChild = false;
         //TODO: Investigate Switching to Array
         /// <summary>
         /// Renderable objects which should be drawn before this.Draw()
         /// </summary>
-        private List<Renderable> _childrenPre = new List<Renderable>();
-        public List<Renderable> ChildrenPre => _childrenPre;
+        private List<SubRenderable> _childrenPre = new List<SubRenderable>();
+        public List<SubRenderable> ChildrenPre => _childrenPre;
         /// <summary>
         /// Renderable objects which should be drawn after this.Draw()
         /// </summary>
-        private List<Renderable> _childrenPost = new List<Renderable>();
-        public List<Renderable> ChildrenPost => _childrenPost;
-        private List<Renderable> _allChildren = new List<Renderable>();
+        private List<SubRenderable> _childrenPost = new List<SubRenderable>();
+        public List<SubRenderable> ChildrenPost => _childrenPost;
+        private List<SubRenderable> _allChildren = new List<SubRenderable>();
         private Sdl2Window _contextWindow;
         public Sdl2Window ContextWindow => _contextWindow;
         private GraphicsDevice _graphicsDevice;
@@ -59,12 +54,9 @@ namespace Henzai.Runtime
         /// <summary>
         /// Bind Actions that have to be executed prior to every draw call
         /// </summary>
-        //TODO: Maybe unify some
         public event Action<float, Camera> PreDraw_Time_Camera;
         public event Action<float, InputSnapshot> PreDraw_Time_Input;
-        //public event Action<float, GraphicsDevice, CommandList, Camera, ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[], ModelRuntimeDescriptor<VertexPositionNormal>[], ModelRuntimeDescriptor<VertexPositionTexture>[], ModelRuntimeDescriptor<VertexPositionColor>[], ModelRuntimeDescriptor<VertexPosition>[]> PreDraw_Time_GraphicsDevice_CommandList_Camera_Models;
         public event Action<float, Camera, GeometryDescriptor<VertexPositionNormalTextureTangentBitangent>, GeometryDescriptor<VertexPositionNormal>, GeometryDescriptor<VertexPositionTexture>, GeometryDescriptor<VertexPositionColor>, GeometryDescriptor<VertexPosition>> PreDraw_Time_Camera_Descriptors;
-        //public event Action<float, Camera, ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[], ModelRuntimeDescriptor<VertexPositionNormal>[], ModelRuntimeDescriptor<VertexPositionTexture>[], ModelRuntimeDescriptor<VertexPositionColor>[], ModelRuntimeDescriptor<VertexPosition>[]> PreDraw_Time_Camera_Models;
         /// <summary>
         /// Bind Actions that have to be executed after every draw call
         /// </summary>
@@ -75,7 +67,6 @@ namespace Henzai.Runtime
         private Task[] buildCommandListTasks;
         private Task[] drawTasksPre;
         private Task[] drawTasksPost;
-        public Renderable UI { set; private get; }
 
         protected List<ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>> _modelPNTTBDescriptorList;
         protected ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] _modelPNTTBDescriptorArray;
@@ -126,13 +117,8 @@ namespace Henzai.Runtime
             PCRuntimeGeometry = new GeometryDescriptor<VertexPositionColor>();
             PRuntimeGeometry = new GeometryDescriptor<VertexPosition>();
 
-
             // Tick every millisecond
             _frameTimer = new FrameTimer(1.0);
-
-            //if (!_isChild)
-            //    _uiCancellationTokenSource = new CancellationTokenSource();
-
         }
 
         public Renderable(string title, Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
@@ -223,8 +209,6 @@ namespace Henzai.Runtime
 
             _allChildren.AddRange(_childrenPre);
             _allChildren.AddRange(_childrenPost);
-            if (UI != null)
-                _allChildren.Add(UI);
 
             CreateUniforms();
 
@@ -266,10 +250,10 @@ namespace Henzai.Runtime
                 _graphicsDevice.WaitForIdle();
 
                 buildCommandListTasks[0] = Task.Run(() => this.BuildCommandList());
-                for (int i = 0; i < _allChildren.Count; i++)
+                for (int i = 1; i < buildCommandListTasks.Length; i++)
                 {
-                    var child = _allChildren[i];
-                    buildCommandListTasks[i + 1] = Task.Run(() => child.BuildCommandList());
+                    var child = _allChildren[i-1];
+                    buildCommandListTasks[i] = Task.Run(() => child.BuildCommandList());
                 }
 
                 // Wait untill every command list has been built
@@ -343,7 +327,6 @@ namespace Henzai.Runtime
             {
                 var mesh = model.GetMesh(i);
                 var meshBVH = model.GetMeshBVH(i);
-                //TODO: access this through DisposableResourceCollector properly
                 DeviceBuffer vertexBuffer
                     = _factory.CreateBuffer(new BufferDescription(mesh.Vertices.LengthUnsigned() * vertexSizeInBytes, BufferUsage.VertexBuffer));
 
@@ -362,7 +345,6 @@ namespace Henzai.Runtime
                     _graphicsDevice.UpdateBuffer(instancingBuffer, 0, instancingData.Positions);
                 }
 
-                //TODO: Maybe refactor this to support culling better
                 _graphicsDevice.UpdateBuffer<T>(vertexBuffer, 0, ref mesh.Vertices[0], (vertexSizeInBytes * mesh.VertexCount).ToUnsigned());
                 _graphicsDevice.UpdateBuffer<ushort>(indexBuffer, 0, ref mesh.Indices[0], (sizeof(ushort) * mesh.IndexCount).ToUnsigned());
 
@@ -401,7 +383,6 @@ namespace Henzai.Runtime
         public void SetUI(UserInterface ui){
             PreDraw_Time_Input += ui.UpdateImGui;
             _childrenPost.Add(ui);
-            ui.IsChild = true;
         }
 
         private void CreateUniforms()
@@ -533,13 +514,9 @@ namespace Henzai.Runtime
             _allChildren.Clear();
             _frameTimer.Dispose();
             _factory.DisposeCollector.DisposeAll();
-            if (!IsChild)
-            {
-                _graphicsDevice.WaitForIdle();
-                _graphicsDevice.Dispose();
-                _contextWindow.Close();
-            }
-
+            _graphicsDevice.WaitForIdle();
+            _graphicsDevice.Dispose();
+            _contextWindow.Close();
         }
     }
 }

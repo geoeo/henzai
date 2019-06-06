@@ -27,20 +27,23 @@ namespace Henzai.UI
             else
                 _sampleCounter = 0;
 
-            //float fps = 1.0f/secondsPerFrame;
             string performance = $"Seconds per Frame: {secondsPerFrame.ToString("N5")}";
-            //string performance_2 = $"Frames per Second: {fps.ToString()}";
 
             var acc = 0.0f;
             for( int i = 0; i < MAX_SAMPLES; i++){
                 acc += _secondsPerFrameSamples[i];
             }
             acc /= MAX_SAMPLES;
+
+            var avg_fps = 1.0f/acc;
             string avg_performance = $"Average Seconds per Frame: {acc.ToString("N5")}";
+            string performance_fps = $"Average Frames per Second: {avg_fps.ToString("N2")}";
 
             if (ImGui.BeginMainMenuBar())
             {
                 ImGui.Text(performance);
+                ImGui.Text("||");
+                ImGui.Text(performance_fps);
                 ImGui.Text("||");
                 ImGui.Text(avg_performance);
                 ImGui.Text("||");

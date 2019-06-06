@@ -13,7 +13,7 @@ namespace Henzai.UI
 {
     // TODO: Refactor into explicity UI Renderable or a explicit ChildRenderable
     /// See Veldrid.ImGuiRenderer
-    public abstract class UserInterface : Renderable
+    public abstract class UserInterface : SubRenderable
     {
         private readonly Assembly _assembly;
         private DeviceBuffer _vertexBuffer;
@@ -67,21 +67,21 @@ namespace Henzai.UI
         abstract protected unsafe void SubmitImGUILayout(float secondsPerFrame);
 
         //TODO: Add color space handling 
-        override protected void CreateResources(){
+        override public void CreateResources(){
 
-            ResourceFactory factory = GraphicsDevice.ResourceFactory;
-            _vertexBuffer = factory.CreateBuffer(new BufferDescription(10000, BufferUsage.VertexBuffer | BufferUsage.Dynamic));
+            //ResourceFactory factory = GraphicsDevice.ResourceFactory;
+            _vertexBuffer = _factory.CreateBuffer(new BufferDescription(10000, BufferUsage.VertexBuffer | BufferUsage.Dynamic));
             _vertexBuffer.Name = "ImGui.NET Vertex Buffer";
-            _indexBuffer = factory.CreateBuffer(new BufferDescription(2000, BufferUsage.IndexBuffer | BufferUsage.Dynamic));
+            _indexBuffer = _factory.CreateBuffer(new BufferDescription(2000, BufferUsage.IndexBuffer | BufferUsage.Dynamic));
             _indexBuffer.Name = "ImGui.NET Index Buffer";
 
-            _projMatrixBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
+            _projMatrixBuffer = _factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
             _projMatrixBuffer.Name = "ImGui.NET Projection Buffer";
 
             byte[] vertexShaderBytes = LoadEmbeddedShaderCode(GraphicsDevice.ResourceFactory, "imgui-vertex");
             byte[] fragmentShaderBytes = LoadEmbeddedShaderCode(GraphicsDevice.ResourceFactory, "imgui-frag");
-            _vertexShader = factory.CreateShader(new ShaderDescription(ShaderStages.Vertex, vertexShaderBytes, GraphicsDevice.BackendType == GraphicsBackend.Vulkan ? "main" : "VS"));
-            _fragmentShader = factory.CreateShader(new ShaderDescription(ShaderStages.Fragment, fragmentShaderBytes, GraphicsDevice.BackendType == GraphicsBackend.Vulkan ? "main" : "FS"));
+            _vertexShader = _factory.CreateShader(new ShaderDescription(ShaderStages.Vertex, vertexShaderBytes, GraphicsDevice.BackendType == GraphicsBackend.Vulkan ? "main" : "VS"));
+            _fragmentShader = _factory.CreateShader(new ShaderDescription(ShaderStages.Fragment, fragmentShaderBytes, GraphicsDevice.BackendType == GraphicsBackend.Vulkan ? "main" : "FS"));
 
             VertexLayoutDescription[] vertexLayouts = new VertexLayoutDescription[]
             {
@@ -91,10 +91,10 @@ namespace Henzai.UI
                     new VertexElementDescription("in_color", VertexElementSemantic.Color, VertexElementFormat.Byte4_Norm))
             };
 
-            _layout = factory.CreateResourceLayout(new ResourceLayoutDescription(
+            _layout = _factory.CreateResourceLayout(new ResourceLayoutDescription(
                 new ResourceLayoutElementDescription("ProjectionMatrixBuffer", ResourceKind.UniformBuffer, ShaderStages.Vertex),
                 new ResourceLayoutElementDescription("MainSampler", ResourceKind.Sampler, ShaderStages.Fragment)));
-            _textureLayout = factory.CreateResourceLayout(new ResourceLayoutDescription(
+            _textureLayout = _factory.CreateResourceLayout(new ResourceLayoutDescription(
                 new ResourceLayoutElementDescription("MainTexture", ResourceKind.TextureReadOnly, ShaderStages.Fragment)));
 
             GraphicsPipelineDescription pd = new GraphicsPipelineDescription(
@@ -111,11 +111,11 @@ namespace Henzai.UI
                         new SpecializationConstant(1, true),
                     }),
                 new ResourceLayout[] { _layout, _textureLayout },
-                GraphicsDevice.SwapchainFramebuffer.OutputDescription,
+                _frameBuffer.OutputDescription,
                 ResourceBindingModel.Improved);
-            _pipeline = factory.CreateGraphicsPipeline(ref pd);
+            _pipeline = _factory.CreateGraphicsPipeline(ref pd);
 
-            _mainResourceSet = factory.CreateResourceSet(new ResourceSetDescription(_layout,
+            _mainResourceSet = _factory.CreateResourceSet(new ResourceSetDescription(_layout,
                 _projMatrixBuffer,
                 GraphicsDevice.PointSampler));
 
@@ -123,7 +123,7 @@ namespace Henzai.UI
 
         }
 
-        override protected void BuildCommandList(){
+        override public void BuildCommandList(){
             _commandList.Begin();
             _commandList.SetFramebuffer(GraphicsDevice.SwapchainFramebuffer);
 
@@ -132,8 +132,12 @@ namespace Henzai.UI
             _commandList.End();
         }
 
-        override protected void Draw(){
+        override public void Draw(){
             GraphicsDevice.SubmitCommands(_commandList);
+        }
+
+        override protected void SetFramebuffer(){
+            _frameBuffer = _graphicsDevice.SwapchainFramebuffer;
         }
 
         private unsafe void RenderImDrawData(ImDrawDataPtr draw_data, GraphicsDevice gd, CommandList cl){
@@ -376,27 +380,5 @@ namespace Henzai.UI
                     throw new NotImplementedException();
             }
         }
-
-        /// <summary>
-        /// Frees all graphics resources used by the renderer.
-        /// </summary>
-        public override void Dispose()
-        {
-            _vertexBuffer.Dispose();
-            _indexBuffer.Dispose();
-            _projMatrixBuffer.Dispose();
-            _fontTexture.Dispose();
-            _vertexShader.Dispose();
-            _fragmentShader.Dispose();
-            _layout.Dispose();
-            _textureLayout.Dispose();
-            _pipeline.Dispose();
-            _mainResourceSet.Dispose();
-            _fontTextureResourceSet.Dispose();
-
-            base.Dispose();
-
-        }
-
     }
 }
