@@ -11,11 +11,10 @@ using Henzai.Runtime;
 
 namespace Henzai.UI
 {
-    // TODO: Refactor into explicity UI Renderable
+    // TODO: Refactor into explicity UI Renderable or a explicit ChildRenderable
     /// See Veldrid.ImGuiRenderer
     public abstract class UserInterface : Renderable
     {
-
         private readonly Assembly _assembly;
         private DeviceBuffer _vertexBuffer;
         private DeviceBuffer _indexBuffer;
@@ -47,15 +46,7 @@ namespace Henzai.UI
             ImGui.SetCurrentContext(context);
 
             ImGui.GetIO().Fonts.AddFontDefault();
-
-        }
-
-        public void SetOverlayFor(Renderable scene){
-            // Needs to be called before building command lists
-            scene.PreDraw_Time_Input += UpdateImGui;
-            scene.UI = this;
             _isChild = true;
-
         }
 
         public void UpdateImGui(float deltaSeconds, InputSnapshot inputSnapshot){

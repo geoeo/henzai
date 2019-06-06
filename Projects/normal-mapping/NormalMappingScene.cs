@@ -44,13 +44,8 @@ namespace Henzai.Examples
         }
 
         private void RotateSphereModel(float delta, Camera camera){
-            var newWorld = _model.GetWorld_DontMutate*Matrix4x4.CreateRotationY(Math.PI.ToFloat());
+            var newWorld = _model.GetWorld_DontMutate*Matrix4x4.CreateRotationY(Math.PI.ToFloat()/1000.0f);
             _model.SetNewWorldTransformation(ref newWorld,true);
-        }
-
-        private void RotateSphereModel(float delta){
-            var newWorld = _model.GetWorld_DontMutate*Matrix4x4.CreateRotationY(Math.PI.ToFloat()*delta/10.0f);
-            _model.SetNewWorldTransformation(ref newWorld,true); 
         }
 
         // TODO: Abstract Resource Crreation for Uniforms, Vertex Layouts, Disposing

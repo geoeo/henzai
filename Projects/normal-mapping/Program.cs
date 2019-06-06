@@ -33,9 +33,9 @@ namespace Henzai.Examples
                 gdOptions,
                 rdOptions
             );
+            var gui = new StandardGUIOverlay(scene.GraphicsDevice, scene.ContextWindow);
+            scene.SetUI(gui);
 
-            StandardGUIOverlay gui = new StandardGUIOverlay(scene.GraphicsDevice,scene.ContextWindow);
-            gui.SetOverlayFor(scene);
 
             scene.Run(renderResolution);
         }

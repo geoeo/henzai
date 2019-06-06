@@ -36,7 +36,7 @@ namespace Henzai.Examples
             );
 
             StandardGUIOverlay gui = new StandardGUIOverlay(scene.GraphicsDevice,scene.ContextWindow);
-            gui.SetOverlayFor(scene);
+            scene.SetUI(gui);
 
             scene.Run(renderResolution);
         }

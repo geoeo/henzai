@@ -7,6 +7,7 @@ using System.IO;
 using Veldrid;
 using Veldrid.StartupUtilities;
 using Veldrid.Sdl2;
+using Henzai.UI;
 using Henzai.Geometry;
 using Henzai.Core.Materials;
 using Henzai.Core.VertexGeometry;
@@ -23,13 +24,13 @@ namespace Henzai.Runtime
     /// </summary>
     public abstract class Renderable : IDisposable
     {
-        private string projectDirectory = Directory.GetParent(AppContext.BaseDirectory).Parent.Parent.Parent.FullName;
         private Camera _camera { get; set; }
         public Camera Camera => _camera;
         private FrameTimer _frameTimer;
         /// <summary>
         /// Flag indicated if this is a child to another renderable
         /// </summary>
+        //TODO: refactor children into explicitc RenderableChild classes
         protected bool _isChild = false;
         //TODO: Investigate Switching to Array
         /// <summary>
@@ -83,7 +84,7 @@ namespace Henzai.Runtime
         private Task[] drawTasksPre;
         private Task[] drawTasksPost;
         public Renderable UI { set; private get; }
-        private CancellationTokenSource _uiCancellationTokenSource;
+        //private CancellationTokenSource _uiCancellationTokenSource;
 
         protected List<ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>> _modelPNTTBDescriptorList;
         protected ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] _modelPNTTBDescriptorArray;
@@ -138,8 +139,8 @@ namespace Henzai.Runtime
             // Tick every millisecond
             _frameTimer = new FrameTimer(1.0);
 
-            if (!_isChild)
-                _uiCancellationTokenSource = new CancellationTokenSource();
+            //if (!_isChild)
+            //    _uiCancellationTokenSource = new CancellationTokenSource();
 
         }
 
@@ -182,8 +183,8 @@ namespace Henzai.Runtime
             // Tick every millisecond
             _frameTimer = new FrameTimer(1.0);
 
-            if (!_isChild)
-                _uiCancellationTokenSource = new CancellationTokenSource();
+            //if (!_isChild)
+            //    _uiCancellationTokenSource = new CancellationTokenSource();
 
         }
 
@@ -212,8 +213,8 @@ namespace Henzai.Runtime
             // Tick every millisecond
             _frameTimer = new FrameTimer(1.0);
 
-            if (!_isChild)
-                _uiCancellationTokenSource = new CancellationTokenSource();
+            //if (!_isChild)
+            //    _uiCancellationTokenSource = new CancellationTokenSource();
         }
 
         //TODO: Investigate passing Render options
@@ -334,10 +335,6 @@ namespace Henzai.Runtime
 
                     Task.WaitAll(drawTasksPost);
 
-                    // TODO investigate a special class for "main" render object
-                    if (UI != null && !_uiCancellationTokenSource.IsCancellationRequested)
-                        DrawUI();
-
                     if (_renderOptions.LimitFrames)
                         limitFrameRate_Blocking();
 
@@ -452,10 +449,10 @@ namespace Henzai.Runtime
             _isChild = true;
         }
 
-        // TODO: Profile this in VS against being a Post Draw Task (without frame cap)
-        public async void DrawUI()
-        {
-            await Task.Run(() => UI.Draw(), _uiCancellationTokenSource.Token).ConfigureAwait(false);
+        public void SetUI(UserInterface ui){
+            PreDraw_Time_Input += ui.UpdateImGui;
+            _childrenPost.Add(ui);
+            ui._isChild = true;
         }
 
         private void CreateUniforms()
@@ -575,24 +572,24 @@ namespace Henzai.Runtime
                 modelState.FormatResourcesForRuntime();
         }
 
-        //TODO: Unused
-        /// <summary>
-        /// Disposes of all elements in _sceneResources except the contexst window
-        /// </summary>
-        public void DisposeKeepContextWindow()
-        {
-            _graphicsDevice.WaitForIdle();
-            foreach (var child in _allChildren)
-                child.DisposeKeepContextWindow();
-            _allChildren.Clear();
-            _factory.DisposeCollector.DisposeAll();
-            if (!_isChild)
-            {
-                _graphicsDevice.WaitForIdle();
-                _graphicsDevice.Dispose();
-            }
+        // //TODO: Unused
+        // /// <summary>
+        // /// Disposes of all elements in _sceneResources except the contexst window
+        // /// </summary>
+        // public void DisposeKeepContextWindow()
+        // {
+        //     _graphicsDevice.WaitForIdle();
+        //     foreach (var child in _allChildren)
+        //         child.DisposeKeepContextWindow();
+        //     _allChildren.Clear();
+        //     _factory.DisposeCollector.DisposeAll();
+        //     if (!_isChild)
+        //     {
+        //         _graphicsDevice.WaitForIdle();
+        //         _graphicsDevice.Dispose();
+        //     }
 
-        }
+        // }
 
         /// <summary>
         /// Disposes of all elements in _sceneResources
@@ -600,8 +597,6 @@ namespace Henzai.Runtime
         public virtual void Dispose()
         {
             _frameTimer.Cancel();
-            if (!_isChild)
-                _uiCancellationTokenSource.Cancel();
             _graphicsDevice.WaitForIdle();
             foreach (var child in _allChildren)
                 child.Dispose();
@@ -610,7 +605,6 @@ namespace Henzai.Runtime
             _factory.DisposeCollector.DisposeAll();
             if (!_isChild)
             {
-                _uiCancellationTokenSource.Dispose();
                 _graphicsDevice.WaitForIdle();
                 _graphicsDevice.Dispose();
                 _contextWindow.Close();

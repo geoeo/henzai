@@ -46,8 +46,8 @@ namespace Henzai.Examples
                     rdOptions
                 );
 
-            gui = new StandardGUIOverlay(scene.GraphicsDevice,scene.ContextWindow);
-            gui.SetOverlayFor(scene);
+            gui = new StandardGUIOverlay(scene.GraphicsDevice, scene.ContextWindow);
+            scene.SetUI(gui);
             gui.changeBackendAction += ChangeBackend;
 
             scene.PreRender_Models_Test += BuildBVH;
