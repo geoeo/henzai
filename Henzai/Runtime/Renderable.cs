@@ -31,7 +31,7 @@ namespace Henzai.Runtime
         /// Flag indicated if this is a child to another renderable
         /// </summary>
         //TODO: refactor children into explicitc RenderableChild classes
-        protected bool _isChild = false;
+        public bool IsChild = false;
         //TODO: Investigate Switching to Array
         /// <summary>
         /// Renderable objects which should be drawn before this.Draw()
@@ -54,25 +54,17 @@ namespace Henzai.Runtime
         protected CommandList _commandList;
         private Resolution _renderResolution;
         public Resolution RenderResoultion => _renderResolution;
-        /// <summary>
-        /// Holds all created resources which implement IDisposable
-        /// </summary>
-        // private List<IDisposable> _sceneResources;
-        // /// <summary>
-        // /// Bind Actions that have to be executed prior to entering the render loop
-        // /// </summary>
         public event Action<Camera> PreRender_Camera;
-        public event Action<ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[], ModelRuntimeDescriptor<VertexPositionNormal>[], ModelRuntimeDescriptor<VertexPositionTexture>[], ModelRuntimeDescriptor<VertexPositionColor>[], ModelRuntimeDescriptor<VertexPosition>[]> PreRender_Models;
-        public event Action<MeshBVH<VertexPositionNormalTextureTangentBitangent>[], MeshBVH<VertexPositionNormal>[], MeshBVH<VertexPositionTexture>[], MeshBVH<VertexPositionColor>[], MeshBVH<VertexPosition>[]> PreRender_Models_Test;
+        public event Action<GeometryDescriptor<VertexPositionNormalTextureTangentBitangent>, GeometryDescriptor<VertexPositionNormal>, GeometryDescriptor<VertexPositionTexture>, GeometryDescriptor<VertexPositionColor>, GeometryDescriptor<VertexPosition>> PreRender_Descriptors;
         /// <summary>
         /// Bind Actions that have to be executed prior to every draw call
         /// </summary>
         //TODO: Maybe unify some
         public event Action<float, Camera> PreDraw_Time_Camera;
         public event Action<float, InputSnapshot> PreDraw_Time_Input;
-        public event Action<float, GraphicsDevice, CommandList, Camera, ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[], ModelRuntimeDescriptor<VertexPositionNormal>[], ModelRuntimeDescriptor<VertexPositionTexture>[], ModelRuntimeDescriptor<VertexPositionColor>[], ModelRuntimeDescriptor<VertexPosition>[]> PreDraw_Time_GraphicsDevice_CommandList_Camera_Models;
-        public event Action<float, GraphicsDevice, CommandList, Camera, MeshBVH<VertexPositionNormalTextureTangentBitangent>[], MeshBVH<VertexPositionNormal>[], MeshBVH<VertexPositionTexture>[], MeshBVH<VertexPositionColor>[], MeshBVH<VertexPosition>[]> PreDraw_Time_GraphicsDevice_CommandList_Camera_Models_Test;
-        public event Action<float, Camera, ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[], ModelRuntimeDescriptor<VertexPositionNormal>[], ModelRuntimeDescriptor<VertexPositionTexture>[], ModelRuntimeDescriptor<VertexPositionColor>[], ModelRuntimeDescriptor<VertexPosition>[]> PreDraw_Time_Camera_Models;
+        //public event Action<float, GraphicsDevice, CommandList, Camera, ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[], ModelRuntimeDescriptor<VertexPositionNormal>[], ModelRuntimeDescriptor<VertexPositionTexture>[], ModelRuntimeDescriptor<VertexPositionColor>[], ModelRuntimeDescriptor<VertexPosition>[]> PreDraw_Time_GraphicsDevice_CommandList_Camera_Models;
+        public event Action<float, Camera, GeometryDescriptor<VertexPositionNormalTextureTangentBitangent>, GeometryDescriptor<VertexPositionNormal>, GeometryDescriptor<VertexPositionTexture>, GeometryDescriptor<VertexPositionColor>, GeometryDescriptor<VertexPosition>> PreDraw_Time_Camera_Descriptors;
+        //public event Action<float, Camera, ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[], ModelRuntimeDescriptor<VertexPositionNormal>[], ModelRuntimeDescriptor<VertexPositionTexture>[], ModelRuntimeDescriptor<VertexPositionColor>[], ModelRuntimeDescriptor<VertexPosition>[]> PreDraw_Time_Camera_Models;
         /// <summary>
         /// Bind Actions that have to be executed after every draw call
         /// </summary>
@@ -84,7 +76,6 @@ namespace Henzai.Runtime
         private Task[] drawTasksPre;
         private Task[] drawTasksPost;
         public Renderable UI { set; private get; }
-        //private CancellationTokenSource _uiCancellationTokenSource;
 
         protected List<ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>> _modelPNTTBDescriptorList;
         protected ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] _modelPNTTBDescriptorArray;
@@ -182,10 +173,6 @@ namespace Henzai.Runtime
 
             // Tick every millisecond
             _frameTimer = new FrameTimer(1.0);
-
-            //if (!_isChild)
-            //    _uiCancellationTokenSource = new CancellationTokenSource();
-
         }
 
         public Renderable(GraphicsDevice graphicsDevice, Sdl2Window contextWindow)
@@ -212,9 +199,6 @@ namespace Henzai.Runtime
 
             // Tick every millisecond
             _frameTimer = new FrameTimer(1.0);
-
-            //if (!_isChild)
-            //    _uiCancellationTokenSource = new CancellationTokenSource();
         }
 
         //TODO: Investigate passing Render options
@@ -256,8 +240,7 @@ namespace Henzai.Runtime
             drawTasksPost = new Task[_childrenPost.Count];
 
             PreRender_Camera?.Invoke(_camera);
-            PreRender_Models?.Invoke(_modelPNTTBDescriptorArray,_modelPNDescriptorArray,_modelPTDescriptorArray,_modelPCDescriptorArray,_modelPDescriptorArray);
-            PreRender_Models_Test?.Invoke(PNTTBRuntimeGeometry.MeshBVHArray, PNRuntimeGeometry.MeshBVHArray, PTRuntimeGeometry.MeshBVHArray, PCRuntimeGeometry.MeshBVHArray, PRuntimeGeometry.MeshBVHArray);
+            PreRender_Descriptors?.Invoke(PNTTBRuntimeGeometry, PNRuntimeGeometry, PTRuntimeGeometry, PCRuntimeGeometry, PRuntimeGeometry);
             while (_contextWindow.Exists)
             {
                 _frameTimer.Start();
@@ -272,33 +255,14 @@ namespace Henzai.Runtime
 
                     PreDraw_Time_Camera?.Invoke(prevFrameTicksInSeconds, _camera);
                     PreDraw_Time_Input?.Invoke(prevFrameTicksInSeconds, inputSnapshot);
-                    PreDraw_Time_GraphicsDevice_CommandList_Camera_Models?.Invoke(
-                        prevFrameTicksInSeconds,
-                        _graphicsDevice,
-                        _commandList,
-                        _camera,
-                        _modelPNTTBDescriptorArray, _modelPNDescriptorArray,
-                        _modelPTDescriptorArray,
-                        _modelPCDescriptorArray,
-                        _modelPDescriptorArray);
-                    PreDraw_Time_GraphicsDevice_CommandList_Camera_Models_Test?.Invoke(
-                        prevFrameTicksInSeconds,
-                        _graphicsDevice,
-                        _commandList,
-                        _camera,
-                        PNTTBRuntimeGeometry.MeshBVHArray,
-                        PNRuntimeGeometry.MeshBVHArray,
-                        PTRuntimeGeometry.MeshBVHArray,
-                        PCRuntimeGeometry.MeshBVHArray,
-                        PRuntimeGeometry.MeshBVHArray);
-                    PreDraw_Time_Camera_Models?.Invoke(
+                    PreDraw_Time_Camera_Descriptors?.Invoke(
                         prevFrameTicksInSeconds,
                         _camera,
-                        _modelPNTTBDescriptorArray, 
-                        _modelPNDescriptorArray,
-                        _modelPTDescriptorArray,
-                        _modelPCDescriptorArray,
-                        _modelPDescriptorArray);
+                        PNTTBRuntimeGeometry,
+                        PNRuntimeGeometry,
+                        PTRuntimeGeometry,
+                        PCRuntimeGeometry,
+                        PRuntimeGeometry);
 
                     // blocking wait for delegates as they may submit to the command buffer
                     _graphicsDevice.WaitForIdle();
@@ -437,22 +401,10 @@ namespace Henzai.Runtime
             }
         }
 
-        public void AddThisAsPreTo(Renderable parent)
-        {
-            parent._childrenPre.Add(this);
-            _isChild = true;
-        }
-
-        public void AddThisAsPostTo(Renderable parent)
-        {
-            parent._childrenPost.Add(this);
-            _isChild = true;
-        }
-
         public void SetUI(UserInterface ui){
             PreDraw_Time_Input += ui.UpdateImGui;
             _childrenPost.Add(ui);
-            ui._isChild = true;
+            ui.IsChild = true;
         }
 
         private void CreateUniforms()
@@ -603,7 +555,7 @@ namespace Henzai.Runtime
             _allChildren.Clear();
             _frameTimer.Dispose();
             _factory.DisposeCollector.DisposeAll();
-            if (!_isChild)
+            if (!IsChild)
             {
                 _graphicsDevice.WaitForIdle();
                 _graphicsDevice.Dispose();

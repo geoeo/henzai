@@ -46,7 +46,6 @@ namespace Henzai.UI
             ImGui.SetCurrentContext(context);
 
             ImGui.GetIO().Fonts.AddFontDefault();
-            _isChild = true;
         }
 
         public void UpdateImGui(float deltaSeconds, InputSnapshot inputSnapshot){

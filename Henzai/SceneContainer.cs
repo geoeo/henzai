@@ -36,9 +36,14 @@ namespace Henzai
             createScene(graphicsBackend, contextWindow);
         }
 
-        protected void BuildBVH( MeshBVH<VertexPositionNormalTextureTangentBitangent>[] PNTTBMeshBVHArray, MeshBVH<VertexPositionNormal>[] PNMeshBVHArray, MeshBVH<VertexPositionTexture>[] PTMeshBVHArray, MeshBVH<VertexPositionColor>[] PCMeshBVHArray, MeshBVH<VertexPosition>[] PMeshBVHArray)
+        protected void BuildBVH(GeometryDescriptor<VertexPositionNormalTextureTangentBitangent> PNTTBGeometryDescriptor, GeometryDescriptor<VertexPositionNormal> PNGeometryDescriptor, GeometryDescriptor<VertexPositionTexture> PTGeometryDescriptor, GeometryDescriptor<VertexPositionColor> PCGeometryDescriptor, GeometryDescriptor<VertexPosition> PGeometryDescriptor)
         {
             var splitMethod = SplitMethods.SAH;
+            var PNTTBMeshBVHArray = PNTTBGeometryDescriptor.MeshBVHArray;
+            var PNMeshBVHArray = PNGeometryDescriptor.MeshBVHArray;
+            var PTMeshBVHArray = PTGeometryDescriptor.MeshBVHArray;
+            var PCMeshBVHArray = PCGeometryDescriptor.MeshBVHArray;
+            var PMeshBVHArray = PGeometryDescriptor.MeshBVHArray;
 
             var tuplePNTTB = BVHTreeBuilder<MeshBVH<VertexPositionNormalTextureTangentBitangent>>.Build(PNTTBMeshBVHArray, splitMethod);
             BVHTree PNTTBTree = tuplePNTTB.Item1;
@@ -69,8 +74,14 @@ namespace Henzai
             _bvhTraversalStack = new int[maxPrimitives];                                                                                                        
         }
 
-         protected void EnableBVHCulling(float deltaTime, GraphicsDevice graphicsDevice, CommandList commandList, Camera camera, MeshBVH<VertexPositionNormalTextureTangentBitangent>[] PNTTBMeshBVHArray, MeshBVH<VertexPositionNormal>[] PNMeshBVHArray, MeshBVH<VertexPositionTexture>[] PTMeshBVHArray, MeshBVH<VertexPositionColor>[] PCMeshBVHArray, MeshBVH<VertexPosition>[] PMeshBVHArray){
-      
+        protected void EnableBVHCulling(float deltaTime, Camera camera, GeometryDescriptor<VertexPositionNormalTextureTangentBitangent> PNTTBGeometryDescriptor, GeometryDescriptor<VertexPositionNormal> PNGeometryDescriptor, GeometryDescriptor<VertexPositionTexture> PTGeometryDescriptor, GeometryDescriptor<VertexPositionColor> PCGeometryDescriptor, GeometryDescriptor<VertexPosition> PGeometryDescriptor){
+
+            var PNTTBMeshBVHArray = PNTTBGeometryDescriptor.MeshBVHArray;
+            var PNMeshBVHArray = PNGeometryDescriptor.MeshBVHArray;
+            var PTMeshBVHArray = PTGeometryDescriptor.MeshBVHArray;
+            var PCMeshBVHArray = PCGeometryDescriptor.MeshBVHArray;
+            var PMeshBVHArray = PGeometryDescriptor.MeshBVHArray;
+              
             if (PNTTBMeshBVHArray.Length > CULLING_THRESH){
                 invalidateAABB(PNTTBMeshBVHArray);
                 BVHRuntime.TraverseWithFrustumForMesh(_bvhRuntimeNodesPNTTB, PNTTBMeshBVHArray, _bvhTraversalStack, ref camera.ViewProjectionMatirx);
@@ -87,7 +98,7 @@ namespace Henzai
                 invalidateAABB(PCMeshBVHArray);
                 BVHRuntime.TraverseWithFrustumForMesh(_bvhRuntimeNodesPC, PCMeshBVHArray, _bvhTraversalStack, ref camera.ViewProjectionMatirx);
             }
-         }
+        }
 
         private static void invalidateAABB<T>(MeshBVH<T>[] meshBVHArray) where T : struct, VertexLocateable {
 
