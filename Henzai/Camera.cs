@@ -6,7 +6,7 @@ using Henzai.Core.Extensions;
 
 namespace Henzai
 {
-    public class Camera
+    public abstract class Camera
     {
         /// <summary>
         /// Size of MVP pipeline.
@@ -17,9 +17,9 @@ namespace Henzai
         private readonly Vector3 DEFAULT_POSITION = new Vector3(0,0,10f);
         private readonly Vector3 DEFAULT_LOOK_DIRECTION = new Vector3(0,0,-1f);
 
-        private float _fov;
-        private float _near;
-        private float _far;
+        protected float _fov;
+        protected float _near;
+        protected float _far;
 
         private Vector3 _position;
         private Vector3 _lookDirection;
@@ -34,7 +34,7 @@ namespace Henzai
         private float _windowHeight;
 
         private Matrix4x4 _viewMatrix;
-        private Matrix4x4 _projectionMatrix;
+        protected Matrix4x4 _projectionMatrix;
         private Matrix4x4 _viewProjectionMatrix;
 
         public ref Matrix4x4 ViewMatrix => ref _viewMatrix;
@@ -64,14 +64,14 @@ namespace Henzai
 
             _windowWidth = width;
             _windowHeight = height;
-            UpdatePerspectiveMatrix(width, height);
+            UpdateProjectionMatrix(width, height);
             UpdateViewMatrix();
         }
 
-        private void UpdatePerspectiveMatrix(float width, float height)
-        {
-            _projectionMatrix = Matrix4x4.CreatePerspectiveFieldOfView(_fov, width / height, _near, _far);
-        }
+        public abstract void UpdateProjectionMatrix(float width, float height);
+        // {
+        //     _projectionMatrix = Matrix4x4.CreatePerspectiveFieldOfView(_fov, width / height, _near, _far);
+        // }
 
         private void UpdateViewMatrix()
         {
@@ -158,22 +158,22 @@ namespace Henzai
             }
         }
 
-        public CameraInfo GetCameraInfo() => new CameraInfo
-        {
-            CameraPosition_WorldSpace = _position,
-            CameraLookDirection = _lookDirection
-        };
+        // public CameraInfo GetCameraInfo() => new CameraInfo
+        // {
+        //     CameraPosition_WorldSpace = _position,
+        //     CameraLookDirection = _lookDirection
+        // };
     }
 
     //[StructLayout(LayoutKind.Sequential)]
-    [StructLayout(LayoutKind.Explicit)]
-    public struct CameraInfo
-    {
-        [FieldOffset(0)]
-        public Vector3 CameraPosition_WorldSpace;
-        //private float _padding1;
-        [FieldOffset(16)]
-        public Vector3 CameraLookDirection;
-        //private float _padding2;
-    }
+    // [StructLayout(LayoutKind.Explicit)]
+    // public struct CameraInfo
+    // {
+    //     [FieldOffset(0)]
+    //     public Vector3 CameraPosition_WorldSpace;
+    //     //private float _padding1;
+    //     [FieldOffset(16)]
+    //     public Vector3 CameraLookDirection;
+    //     //private float _padding2;
+    // }
 }

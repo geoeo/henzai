@@ -203,9 +203,9 @@ namespace Henzai.Runtime
             _renderResolution = renderResolution;
 
             if (_renderOptions.FarPlane > 0)
-                _camera = new Camera(renderResolution.Horizontal, renderResolution.Vertical, _renderOptions.FarPlane);
+                _camera = new PerspectiveCamera(renderResolution.Horizontal, renderResolution.Vertical, _renderOptions.FarPlane);
             else
-                _camera = new Camera(renderResolution.Horizontal, renderResolution.Vertical);
+                _camera = new PerspectiveCamera(renderResolution.Horizontal, renderResolution.Vertical);
 
             _allChildren.AddRange(_childrenPre);
             _allChildren.AddRange(_childrenPost);

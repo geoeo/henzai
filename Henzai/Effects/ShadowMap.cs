@@ -16,7 +16,7 @@ namespace Henzai.Effects
         public TextureView ShadowMapTexView {get; private set;}
 
         public ShadowMap(GraphicsDevice graphicsDevice, Resolution resolution) : base(graphicsDevice, resolution){      
-            lightCam = new Camera(resolution.Horizontal,resolution.Vertical);
+            lightCam = new OrthographicCamera(resolution.Horizontal,resolution.Vertical);
         }
 
         protected override void SetFramebuffer(){
