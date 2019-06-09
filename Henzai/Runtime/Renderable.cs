@@ -444,6 +444,7 @@ namespace Henzai.Runtime
                     new BindableResource[] { _sceneRuntimeState.SpotLightBuffer });
         }
 
+        //TODO: Maybe replace this by non virtual as it seems to always be the same
         /// <summary>
         /// Executes the defined command list(s)
         /// </summary>
