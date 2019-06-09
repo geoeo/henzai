@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.CompilerServices;
 using Veldrid;
 using Veldrid.StartupUtilities;
 using Henzai.UI;
@@ -44,7 +45,10 @@ namespace Henzai.Runtime
         /// <summary>
         /// Executes the defined command list(s)
         /// </summary>
-        abstract public void Draw();
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Draw(){
+            _graphicsDevice.SubmitCommands(_commandList);
+        }
 
         /// <summary>
         /// Creates resources used to render e.g. Buffers, Textures etc.

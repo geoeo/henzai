@@ -130,11 +130,7 @@ namespace Henzai.UI
             
             _commandList.End();
         }
-
-        override public void Draw(){
-            GraphicsDevice.SubmitCommands(_commandList);
-        }
-
+        
         override protected void SetFramebuffer(){
             _frameBuffer = _graphicsDevice.SwapchainFramebuffer;
         }

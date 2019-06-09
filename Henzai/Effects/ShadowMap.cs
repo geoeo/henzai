@@ -46,12 +46,5 @@ namespace Henzai.Effects
         public override void BuildCommandList(){
             //TODO:
         }
-
-        public override void Draw(){
-            //TODO:
-        }
-
-
-
     }
 }

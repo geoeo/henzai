@@ -159,10 +159,7 @@ namespace Henzai.Examples
             
             _commandList.End();
         }
-
-        override protected void Draw(){
-            GraphicsDevice.SubmitCommands(_commandList);
-        }
+        
     }
     
 }

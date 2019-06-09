@@ -444,11 +444,7 @@ namespace Henzai.Examples
             _commandList.End();
 
         }
-
-        override protected void Draw(){
-            GraphicsDevice.SubmitCommands(_commandList);
-        }
-
+        
         private void ScaleTextureQuadToMatchResolution(Camera camera){
             float horizontal = camera.AspectRatio;
             float vertical = 1;
