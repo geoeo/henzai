@@ -10,6 +10,7 @@ using Henzai.Core.Materials;
 using Henzai.Core.VertexGeometry;
 using Henzai.Geometry;
 using Henzai.Runtime;
+using Henzai.Cameras;
 
 namespace Henzai.Examples
 {

@@ -2,6 +2,7 @@ using System.Runtime.CompilerServices;
 using Veldrid;
 using Henzai.Core.Extensions;
 using Henzai.Geometry;
+using Henzai.Cameras;
 using Henzai.Core;
 using Henzai.Core.Materials;
 using Henzai.Core.VertexGeometry;

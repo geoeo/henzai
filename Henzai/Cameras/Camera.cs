@@ -1,10 +1,11 @@
 using System;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Veldrid;
 using Henzai.Core.Extensions;
 
-namespace Henzai
+namespace Henzai.Cameras
 {
     public abstract class Camera
     {
@@ -69,9 +70,6 @@ namespace Henzai
         }
 
         public abstract void UpdateProjectionMatrix(float width, float height);
-        // {
-        //     _projectionMatrix = Matrix4x4.CreatePerspectiveFieldOfView(_fov, width / height, _near, _far);
-        // }
 
         private void UpdateViewMatrix()
         {
@@ -158,22 +156,5 @@ namespace Henzai
             }
         }
 
-        // public CameraInfo GetCameraInfo() => new CameraInfo
-        // {
-        //     CameraPosition_WorldSpace = _position,
-        //     CameraLookDirection = _lookDirection
-        // };
     }
-
-    //[StructLayout(LayoutKind.Sequential)]
-    // [StructLayout(LayoutKind.Explicit)]
-    // public struct CameraInfo
-    // {
-    //     [FieldOffset(0)]
-    //     public Vector3 CameraPosition_WorldSpace;
-    //     //private float _padding1;
-    //     [FieldOffset(16)]
-    //     public Vector3 CameraLookDirection;
-    //     //private float _padding2;
-    // }
 }

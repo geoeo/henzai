@@ -47,7 +47,7 @@ namespace Henzai
         public ref Vector4 Direction_DontMutate => ref _direction;
         /// <summary>
         /// PointL: outer cutoff, inner cutoff, Unused, Unused
-        /// </summary>
+        /// </summary>s
         public ref Vector4 Parameters_DontMutate => ref _parameters;
 
         public Light(){

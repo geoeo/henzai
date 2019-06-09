@@ -10,6 +10,7 @@ using Henzai.Core.Extensions;
 using Henzai.Core.Raytracing;
 using Henzai.Core;
 using Henzai.UI;
+using Henzai.Cameras;
 
 using Henzai.Runtime;
 using Henzai.Core.VertexGeometry;

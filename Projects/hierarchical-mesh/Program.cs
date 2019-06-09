@@ -3,6 +3,7 @@ using Henzai;
 using Veldrid;
 using Veldrid.Sdl2;
 using Henzai.UI;
+using Henzai.Cameras;
 
 namespace Henzai.Examples
 {

@@ -8,6 +8,7 @@ using Henzai.Core.Extensions;
 using Henzai.Geometry;
 using Henzai.Runtime;
 using Henzai.Core.VertexGeometry;
+using Henzai.Cameras;
 
 namespace Henzai.Examples
 {

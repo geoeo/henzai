@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using Veldrid;
+using Henzai.Cameras;
 using Henzai.Runtime;
 
 namespace Henzai.Effects 
