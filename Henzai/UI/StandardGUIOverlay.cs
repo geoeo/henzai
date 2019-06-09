@@ -1,7 +1,6 @@
 using System.Numerics;
 using ImGuiNET;
 using Veldrid;
-using Veldrid.Sdl2;
 using System;
 
 namespace Henzai.UI
@@ -13,8 +12,8 @@ namespace Henzai.UI
        private float[] _secondsPerFrameSamples;
        private int _sampleCounter;
 
-        public StandardGUIOverlay(GraphicsDevice graphicsDevice, Sdl2Window contextWindow) 
-        : base(graphicsDevice,contextWindow){
+        public StandardGUIOverlay(GraphicsDevice graphicsDevice, Resolution resolution) 
+        : base(graphicsDevice, resolution){
             _secondsPerFrameSamples = new float[MAX_SAMPLES];
             _sampleCounter = 0;
         }

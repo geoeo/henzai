@@ -5,7 +5,6 @@ using System.Reflection;
 using System.Numerics;
 using ImGuiNET;
 using Veldrid;
-using Veldrid.Sdl2;
 using Henzai.Runtime;
 
 
@@ -39,7 +38,7 @@ namespace Henzai.UI
         public event Action<GraphicsBackend> changeBackendAction;
 
 
-        public UserInterface(GraphicsDevice graphicsDevice, Sdl2Window contextWindow) : base(graphicsDevice,contextWindow){
+        public UserInterface(GraphicsDevice graphicsDevice, Resolution resolution) : base(graphicsDevice, resolution){
             _assembly = typeof(UserInterface).GetTypeInfo().Assembly;
 
             IntPtr context = ImGui.CreateContext();
@@ -52,8 +51,8 @@ namespace Henzai.UI
 
             var io = ImGui.GetIO();
             io.DeltaTime = deltaSeconds;
-            io.DisplaySize = new System.Numerics.Vector2(ContextWindow.Width, ContextWindow.Height);
-            io.DisplayFramebufferScale = new System.Numerics.Vector2(ContextWindow.Width / ContextWindow.Height);
+            io.DisplaySize = new System.Numerics.Vector2(Resolution.Horizontal, Resolution.Vertical);
+            io.DisplayFramebufferScale = new System.Numerics.Vector2(Resolution.Horizontal / Resolution.Vertical);
             
             ImGui.NewFrame();
             UpdateImGuiInput(inputSnapshot);

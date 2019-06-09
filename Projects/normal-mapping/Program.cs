@@ -33,7 +33,7 @@ namespace Henzai.Examples
                 gdOptions,
                 rdOptions
             );
-            var gui = new StandardGUIOverlay(scene.GraphicsDevice, scene.ContextWindow);
+            var gui = new StandardGUIOverlay(scene.GraphicsDevice, renderResolution);
             scene.SetUI(gui);
 
 

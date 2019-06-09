@@ -6,7 +6,6 @@ using System.Diagnostics;
 using System.IO;
 using Veldrid;
 using Veldrid.StartupUtilities;
-using Veldrid.Sdl2;
 using Henzai.UI;
 using Henzai.Geometry;
 using Henzai.Core.Materials;
@@ -22,8 +21,8 @@ namespace Henzai.Runtime
     /// </summary>
     public abstract class SubRenderable : IDisposable
     {
-        private Sdl2Window _contextWindow;
-        public Sdl2Window ContextWindow => _contextWindow;
+        private Resolution _resolution;
+        public Resolution Resolution => _resolution;
         protected GraphicsDevice _graphicsDevice;
         public GraphicsDevice GraphicsDevice => _graphicsDevice;
         protected Framebuffer _frameBuffer;
@@ -31,10 +30,10 @@ namespace Henzai.Runtime
         protected DisposeCollectorResourceFactory _factory;
         protected CommandList _commandList;
       
-        public SubRenderable(GraphicsDevice graphicsDevice, Sdl2Window contextWindow)
+        public SubRenderable(GraphicsDevice graphicsDevice, Resolution resolution)
         {
             _graphicsDevice = graphicsDevice;
-            _contextWindow = contextWindow;
+            _resolution = resolution;
 
             _factory = new DisposeCollectorResourceFactory(_graphicsDevice.ResourceFactory);
             _commandList = _factory.CreateCommandList();

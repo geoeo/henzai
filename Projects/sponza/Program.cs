@@ -46,7 +46,7 @@ namespace Henzai.Examples
                     rdOptions
                 );
 
-            gui = new StandardGUIOverlay(scene.GraphicsDevice, scene.ContextWindow);
+            gui = new StandardGUIOverlay(scene.GraphicsDevice, renderResolution);
             scene.SetUI(gui);
             gui.changeBackendAction += ChangeBackend;
 
