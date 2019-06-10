@@ -4,6 +4,7 @@ using System.Numerics;
 using Veldrid;
 using Henzai.Cameras;
 using Henzai.Runtime;
+using Henzai.Core.VertexGeometry;
 
 namespace Henzai.Effects 
 {
@@ -16,8 +17,23 @@ namespace Henzai.Effects
         public ResourceSet lightCamSet {get; private set;}
         public TextureView ShadowMapTexView {get; private set;}
 
-        public ShadowMap(GraphicsDevice graphicsDevice, Resolution resolution) : base(graphicsDevice, resolution){      
+        // These hold the scene's geometry information
+        private ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] _modelPNTTBDescriptorArray;
+        private ModelRuntimeDescriptor<VertexPositionNormal>[] _modelPNDescriptorArray;
+        private ModelRuntimeDescriptor<VertexPositionTexture>[] _modelPTDescriptorArray;
+        private ModelRuntimeDescriptor<VertexPositionColor>[] _modelPCDescriptorArray;
+
+        public ShadowMap(GraphicsDevice graphicsDevice, 
+                        Resolution resolution, 
+                        ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] modelPNTTBDescriptorArray, 
+                        ModelRuntimeDescriptor<VertexPositionNormal>[] modelPNDescriptorArray, 
+                        ModelRuntimeDescriptor<VertexPositionTexture>[] modelPTDescriptorArray, 
+                        ModelRuntimeDescriptor<VertexPositionColor>[] modelPCDescriptorArray) : base(graphicsDevice, resolution){      
             lightCam = new OrthographicCamera(resolution.Horizontal,resolution.Vertical);
+            _modelPNTTBDescriptorArray = modelPNTTBDescriptorArray;
+            _modelPNDescriptorArray = modelPNDescriptorArray;
+            _modelPTDescriptorArray = modelPTDescriptorArray;
+            _modelPCDescriptorArray = modelPCDescriptorArray;
         }
 
         protected override void SetFramebuffer(){

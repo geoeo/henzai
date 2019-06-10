@@ -11,6 +11,7 @@ using Veldrid.Sdl2;
 using Henzai.UI;
 using Henzai.Geometry;
 using Henzai.Cameras;
+using Henzai.Effects;
 using Henzai.Core.Materials;
 using Henzai.Core.VertexGeometry;
 using Henzai.Core.Extensions;
@@ -382,11 +383,6 @@ namespace Henzai.Runtime
             }
         }
 
-        public void SetUI(UserInterface ui){
-            PreDraw_Time_Input += ui.UpdateImGui;
-            _childrenPost.Add(ui);
-        }
-
         private void CreateUniforms()
         {
             // Uniform 1 - Camera
@@ -506,6 +502,18 @@ namespace Henzai.Runtime
                 modelState.FormatResourcesForRuntime();
             foreach (var modelState in _modelPDescriptorList)
                 modelState.FormatResourcesForRuntime();
+        }
+
+        //TODO: Refactor these methods into a class
+        public void SetUI(UserInterface ui){
+            PreDraw_Time_Input += ui.UpdateImGui;
+            _childrenPost.Add(ui);
+        }
+
+        public void CreateShadowMap(Resolution resolution){
+            //TODO: Needs different shaders!
+            var shadowMap = new ShadowMap(_graphicsDevice, resolution, _modelPNTTBDescriptorArray, _modelPNDescriptorArray, _modelPTDescriptorArray, _modelPCDescriptorArray);
+            _childrenPre.Add(shadowMap);
         }
 
         /// <summary>
