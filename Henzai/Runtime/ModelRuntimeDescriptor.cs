@@ -52,6 +52,8 @@ namespace Henzai.Runtime
         private string _vertexShaderName;
         public Shader FragmentShader {get; private set;}
         private string _fragmentShaderName;
+        public Shader VertexShadowMapShader {get; private set;}
+        public Shader FragmentShadowMapShader {get; private set;}
         /// <summary>
         /// Defines a Higher Level Render State.
         /// Buffers, Layouts, Shaders, Ratsterizer.
@@ -67,8 +69,6 @@ namespace Henzai.Runtime
         public VertexRuntimeTypes VertexRuntimeType {get; private set;}
         public PrimitiveTopology PrimitiveTopology {get; private set;}
         public uint TotalInstanceCount{get;set;}
-        //public int TotalMeshCount {get; private set;}
-        //public bool IsCulled => Model.AreMeshesCulled();
         public event Func<VertexLayoutDescription> CallVertexLayoutGeneration;
         public event Func<VertexLayoutDescription> CallVertexInstanceLayoutGeneration;
         public event Func<DisposeCollectorResourceFactory,Sampler> CallSamplerGeneration;
@@ -118,8 +118,14 @@ namespace Henzai.Runtime
         }
 
         public void LoadShaders(GraphicsDevice graphicsDevice){
-            VertexShader = IO.LoadShader(_vertexShaderName,ShaderStages.Vertex,graphicsDevice);
-            FragmentShader = IO.LoadShader(_fragmentShaderName,ShaderStages.Fragment,graphicsDevice);
+            VertexShader = IO.LoadShader(_vertexShaderName,ShaderStages.Vertex, graphicsDevice);
+            FragmentShader = IO.LoadShader(_fragmentShaderName,ShaderStages.Fragment, graphicsDevice);
+
+            var vertexShadowMapName = "";
+            var fragmentShadowMapName = "";
+            
+            VertexShadowMapShader = IO.LoadShader(vertexShadowMapName,ShaderStages.Vertex, graphicsDevice);
+            FragmentShadowMapShader = IO.LoadShader(fragmentShadowMapName,ShaderStages.Vertex, graphicsDevice);
         }
 
         public void InvokeVertexLayoutGeneration(){

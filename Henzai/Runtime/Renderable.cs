@@ -511,7 +511,7 @@ namespace Henzai.Runtime
         }
 
         public void CreateShadowMap(Resolution resolution){
-            //TODO: Needs different shaders!
+            //TODO: Needs different shaders! Maybe harcore options in ModelDescriptors!
             var shadowMap = new ShadowMap(_graphicsDevice, resolution, _modelPNTTBDescriptorArray, _modelPNDescriptorArray, _modelPTDescriptorArray, _modelPCDescriptorArray);
             _childrenPre.Add(shadowMap);
         }
