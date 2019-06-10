@@ -50,7 +50,7 @@ namespace Henzai.Effects
             lightCamBuffer = _factory.CreateBuffer(new BufferDescription(Camera.SizeInBytes, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
             lightCamLayout = ResourceGenerator.GenerateResourceLayout(
                     _factory,
-                    "lightProjViewWorld",
+                    "projViewWorld",
                     ResourceKind.UniformBuffer,
                     ShaderStages.Vertex);
             lightCamSet = ResourceGenerator.GenrateResourceSet(
