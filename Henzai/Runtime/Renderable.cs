@@ -215,8 +215,8 @@ namespace Henzai.Runtime
             _allChildren.AddRange(_childrenPost);
 
             CreateUniforms();
-
             CreateResources();
+            
             foreach (var child in _allChildren)
                 child.CreateResources();
 

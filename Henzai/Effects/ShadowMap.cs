@@ -23,6 +23,8 @@ namespace Henzai.Effects
         private ModelRuntimeDescriptor<VertexPositionTexture>[] _modelPTDescriptorArray;
         private ModelRuntimeDescriptor<VertexPositionColor>[] _modelPCDescriptorArray;
 
+        private SceneRuntimeDescriptor _sceneRuntimeDescriptor;
+
         public ShadowMap(GraphicsDevice graphicsDevice, 
                         Resolution resolution, 
                         Vector4 lightPos,
@@ -35,6 +37,8 @@ namespace Henzai.Effects
             _modelPNDescriptorArray = modelPNDescriptorArray;
             _modelPTDescriptorArray = modelPTDescriptorArray;
             _modelPCDescriptorArray = modelPCDescriptorArray;
+
+            _sceneRuntimeDescriptor = new SceneRuntimeDescriptor();
         }
 
         protected override void SetFramebuffer(){
@@ -47,6 +51,21 @@ namespace Henzai.Effects
         }
 
         public override void CreateResources(){
+
+            _sceneRuntimeDescriptor.CameraProjViewBuffer = _factory.CreateBuffer(new BufferDescription(Camera.SizeInBytes, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
+            _sceneRuntimeDescriptor.CameraResourceLayout
+                = ResourceGenerator.GenerateResourceLayout(
+                    _factory,
+                    "projViewWorld",
+                    ResourceKind.UniformBuffer,
+                    ShaderStages.Vertex);
+            _sceneRuntimeDescriptor.CameraResourceSet
+                = ResourceGenerator.GenrateResourceSet(
+                    _factory,
+                    _sceneRuntimeDescriptor.CameraResourceLayout,
+                    new BindableResource[] { _sceneRuntimeDescriptor.CameraProjViewBuffer });
+
+
             lightCamBuffer = _factory.CreateBuffer(new BufferDescription(Camera.SizeInBytes, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
             lightCamLayout = ResourceGenerator.GenerateResourceLayout(
                     _factory,
@@ -60,7 +79,6 @@ namespace Henzai.Effects
         }
 
         public override void BuildCommandList(){
-            //TODO:
             _commandList.Begin();
             _commandList.SetFramebuffer(_frameBuffer);
             _commandList.SetFullViewports();
@@ -68,11 +86,17 @@ namespace Henzai.Effects
             _commandList.ClearColorTarget(0,RgbaFloat.White);
             _commandList.ClearDepthStencil(1f);
 
-            // RenderCommandGenerator.GenerateCommandsForShadowMapScene_Inline(
-            //     _commandList,
-            //     lightCamBuffer,
-            //     lightCam);
+            RenderCommandGenerator.GenerateCommandsForScene_Inline(
+                _commandList,
+                lightCamBuffer,
+                lightCam);
 
+            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionNormalTextureTangentBitangent>(_commandList,_modelPNTTBDescriptorArray,_sceneRuntimeDescriptor);
+            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionNormal>(_commandList,_modelPNDescriptorArray,_sceneRuntimeDescriptor);
+            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionTexture>(_commandList,_modelPTDescriptorArray,_sceneRuntimeDescriptor);
+            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionColor>(_commandList,_modelPCDescriptorArray,_sceneRuntimeDescriptor);
+
+            _commandList.End();
         }
     }
 }

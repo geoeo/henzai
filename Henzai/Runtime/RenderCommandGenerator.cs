@@ -71,7 +71,7 @@ namespace Henzai.Runtime
         /// <see cref="VertexStructs"/> which only need to be displayed in 3D
         ///</summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void GenerateCommandsForScene_Inline(
+        public static void GenerateCommandsForScene_Inline(
                                                     CommandList commandList,
                                                     DeviceBuffer cameraProjViewBuffer,
                                                     Camera camera)
@@ -165,7 +165,7 @@ namespace Henzai.Runtime
         /// <see cref="Henzai.Geometry.VertexPositionTexture"/> 
         ///</summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void GenerateCommandsForMesh_Inline(
+        private static void GenerateCommandsForMesh_Inline<T>(
                                                     CommandList commandList,
                                                     DeviceBuffer vertexBuffer,
                                                     DeviceBuffer indexBuffer,
@@ -173,7 +173,7 @@ namespace Henzai.Runtime
                                                     ResourceSet cameraResourceSet,
                                                     ResourceSet textureResourceSet,
                                                     Mesh<VertexPositionTexture> mesh,
-                                                    uint modelInstanceCount)
+                                                    uint modelInstanceCount) where T : struct, VertexLocateable
         {
             commandList.SetVertexBuffer(0, vertexBuffer);
             commandList.SetIndexBuffer(indexBuffer, IndexFormat.UInt16);
@@ -195,14 +195,14 @@ namespace Henzai.Runtime
         /// <see cref="Henzai.Geometry.VertexPositionColor"/> 
         ///</summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void GenerateCommandsForMesh_Inline(
+        private static void GenerateCommandsForMesh_Inline<T>(
                                                     CommandList commandList,
                                                     DeviceBuffer vertexBuffer,
                                                     DeviceBuffer indexBuffer,
                                                     DeviceBuffer cameraProjViewBuffer,
                                                     ResourceSet cameraResourceSet,
-                                                    Mesh<VertexPositionColor> mesh,
-                                                    uint modelInstanceCount)
+                                                    Mesh<T> mesh,
+                                                    uint modelInstanceCount) where T : struct, VertexLocateable
         {
             commandList.SetVertexBuffer(0, vertexBuffer);
             commandList.SetIndexBuffer(indexBuffer, IndexFormat.UInt16);
@@ -339,9 +339,9 @@ namespace Henzai.Runtime
                 }
             }
         }
-        public static void GenerateRenderCommandsForModelDescriptor(CommandList commandList,
-                                                                       ModelRuntimeDescriptor<VertexPositionColor>[] descriptorArray,
-                                                                       SceneRuntimeDescriptor sceneRuntimeDescriptor)
+        public static void GenerateRenderCommandsForModelDescriptor<T>(CommandList commandList,
+                                                                       ModelRuntimeDescriptor<T>[] descriptorArray,
+                                                                       SceneRuntimeDescriptor sceneRuntimeDescriptor) where T : struct, VertexLocateable
         {
             for (int j = 0; j < descriptorArray.Length; j++)
             {
@@ -412,7 +412,7 @@ namespace Henzai.Runtime
                     if (!model.GetMeshBVH(i).AABBIsValid)
                         continue;
                     var mesh = model.GetMesh(i);
-                    RenderCommandGenerator.GenerateCommandsForMesh_Inline(
+                    RenderCommandGenerator.GenerateCommandsForMesh_Inline<VertexPositionTexture>(
                         commandList,
                         modelState.VertexBuffers[i],
                         modelState.IndexBuffers[i],
@@ -444,7 +444,7 @@ namespace Henzai.Runtime
                     if (!model.GetMeshBVH(i).AABBIsValid)
                         continue;
                     var mesh = model.GetMesh(i);
-                    RenderCommandGenerator.GenerateCommandsForMesh_Inline(
+                    RenderCommandGenerator.GenerateCommandsForMesh_Inline<VertexPositionTexture>(
                         commandList,
                         modelState.VertexBuffers[i],
                         modelState.IndexBuffers[i],
