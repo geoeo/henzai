@@ -216,7 +216,7 @@ namespace Henzai.Runtime
 
             CreateUniforms();
             CreateResources();
-            
+
             foreach (var child in _allChildren)
                 child.CreateResources();
 
@@ -400,21 +400,7 @@ namespace Henzai.Runtime
                     _sceneRuntimeState.CameraResourceLayout,
                     new BindableResource[] { _sceneRuntimeState.CameraProjViewBuffer });
 
-            // Uniform 2 - Material
-            _sceneRuntimeState.MaterialBuffer = _factory.CreateBuffer(new BufferDescription(RealtimeMaterial.SizeInBytes, BufferUsage.UniformBuffer));
-            _sceneRuntimeState.MaterialResourceLayout
-                = ResourceGenerator.GenerateResourceLayout(
-                    _factory,
-                    "material",
-                    ResourceKind.UniformBuffer,
-                    ShaderStages.Fragment);
-            _sceneRuntimeState.MaterialResourceSet
-                = ResourceGenerator.GenrateResourceSet(
-                    _factory,
-                    _sceneRuntimeState.MaterialResourceLayout,
-                    new BindableResource[] { _sceneRuntimeState.MaterialBuffer });
-
-            // Uniform 3 - Light
+            // Uniform 2 - Light
             _sceneRuntimeState.LightBuffer = _factory.CreateBuffer(new BufferDescription(Light.SizeInBytes, BufferUsage.UniformBuffer));
             _sceneRuntimeState.LightResourceLayout
                 = ResourceGenerator.GenerateResourceLayout(
@@ -428,7 +414,7 @@ namespace Henzai.Runtime
                     _sceneRuntimeState.LightResourceLayout,
                     new BindableResource[] { _sceneRuntimeState.LightBuffer });
 
-            // Uniform 4 - PointLight
+            // Uniform 3 - PointLight
             _sceneRuntimeState.SpotLightBuffer = _factory.CreateBuffer(new BufferDescription(4 * 4 * 4, BufferUsage.UniformBuffer));
             _sceneRuntimeState.SpotLightResourceLayout
                 = ResourceGenerator.GenerateResourceLayout(
@@ -441,6 +427,20 @@ namespace Henzai.Runtime
                     _factory,
                     _sceneRuntimeState.SpotLightResourceLayout,
                     new BindableResource[] { _sceneRuntimeState.SpotLightBuffer });
+
+            // Uniform 4 - Material
+            _sceneRuntimeState.MaterialBuffer = _factory.CreateBuffer(new BufferDescription(RealtimeMaterial.SizeInBytes, BufferUsage.UniformBuffer));
+            _sceneRuntimeState.MaterialResourceLayout
+                = ResourceGenerator.GenerateResourceLayout(
+                    _factory,
+                    "material",
+                    ResourceKind.UniformBuffer,
+                    ShaderStages.Fragment);
+            _sceneRuntimeState.MaterialResourceSet
+                = ResourceGenerator.GenrateResourceSet(
+                    _factory,
+                    _sceneRuntimeState.MaterialResourceLayout,
+                    new BindableResource[] { _sceneRuntimeState.MaterialBuffer });
         }
 
         //TODO: Maybe replace this by non virtual as it seems to always be the same
