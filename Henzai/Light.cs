@@ -16,7 +16,7 @@ namespace Henzai
         /// Postion, Color and Attenuation are passed to shaders. 3xVector4
         /// </summary>
         public static uint SizeInBytes => 48;
-        private Vector4 _light; 
+        private Vector4 _lightPos; 
 
         // W channel used for intensity
         private Vector4 _color;
@@ -32,7 +32,7 @@ namespace Henzai
         /// <summary>
         /// W channel is 1 for point and 0 for directional
         /// </summary>
-        public ref Vector4 LightPos_DontMutate => ref _light;
+        public ref Vector4 LightPos_DontMutate => ref _lightPos;
         /// <summary>
         /// W channel used for intensity
         /// </summary>
@@ -51,52 +51,52 @@ namespace Henzai
         public ref Vector4 Parameters_DontMutate => ref _parameters;
 
         public Light(){
-            _light = DEFAULT_POSITION;
+            _lightPos = DEFAULT_POSITION;
             _color = DEFAULT_COLOR;
         }
 
         public Light(Vector4 lightPos){
-            _light = lightPos;
+            _lightPos = lightPos;
             _color = DEFAULT_COLOR;
         }
 
-        public Light(Vector4 light, Vector4 color){
-            _light = light;
+        public Light(Vector4 lightPos, Vector4 color){
+            _lightPos = lightPos;
             _color = color;
         }
 
         public Light(RgbaFloat color){
             _color = color.ToVector4();
-            _light = DEFAULT_POSITION;
+            _lightPos = DEFAULT_POSITION;
         }
 
         public Light(RgbaFloat color, float intensity){
             _color = color.ToVector4();
             _color.W = intensity;
-            _light = DEFAULT_POSITION;
+            _lightPos = DEFAULT_POSITION;
         }
 
-        public Light(Vector4 light, RgbaFloat color, float intensity){
+        public Light(Vector4 lightPos, RgbaFloat color, float intensity){
             _color = color.ToVector4();
             _color.W = intensity;
-            _light = light;
+            _lightPos = lightPos;
         }
 
-        public Light(Vector4 light, RgbaFloat color){
+        public Light(Vector4 lightPos, RgbaFloat color){
             _color = color.ToVector4();
-            _light = light;
+            _lightPos = lightPos;
         }
 
-        public Light(Vector4 light, RgbaFloat color, Vector4 attenuation){
+        public Light(Vector4 lightPos, RgbaFloat color, Vector4 attenuation){
             _color = color.ToVector4();
             _attenuation = attenuation;
-            _light = light;
+            _lightPos = lightPos;
         }
 
         public Light(Vector4 light, RgbaFloat color, float intensity,Vector4 direction, Vector4 parameters){
             _color = color.ToVector4();
             _color.W = intensity;
-            _light = light;
+            _lightPos = light;
             _direction = direction;
             _parameters = parameters;
         }
