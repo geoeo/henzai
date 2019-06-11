@@ -1,4 +1,5 @@
 using System;
+using System.Numerics;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -206,9 +207,9 @@ namespace Henzai.Runtime
             _renderResolution = renderResolution;
 
             if (_renderOptions.FarPlane > 0)
-                _camera = new PerspectiveCamera(renderResolution.Horizontal, renderResolution.Vertical, _renderOptions.FarPlane);
+                _camera = new PerspectiveCamera(renderResolution.Horizontal, renderResolution.Vertical, Camera.DEFAULT_POSITION, _renderOptions.FarPlane);
             else
-                _camera = new PerspectiveCamera(renderResolution.Horizontal, renderResolution.Vertical);
+                _camera = new PerspectiveCamera(renderResolution.Horizontal, renderResolution.Vertical, Camera.DEFAULT_POSITION);
 
             _allChildren.AddRange(_childrenPre);
             _allChildren.AddRange(_childrenPost);
@@ -510,9 +511,9 @@ namespace Henzai.Runtime
             _childrenPost.Add(ui);
         }
 
-        public void CreateShadowMap(Resolution resolution){
+        public void CreateShadowMap(Resolution resolution, Vector4 lightPos){
             //TODO: Needs different shaders! Maybe harcore options in ModelDescriptors!
-            var shadowMap = new ShadowMap(_graphicsDevice, resolution, _modelPNTTBDescriptorArray, _modelPNDescriptorArray, _modelPTDescriptorArray, _modelPCDescriptorArray);
+            var shadowMap = new ShadowMap(_graphicsDevice, resolution, lightPos, _modelPNTTBDescriptorArray, _modelPNDescriptorArray, _modelPTDescriptorArray, _modelPCDescriptorArray);
             _childrenPre.Add(shadowMap);
         }
 

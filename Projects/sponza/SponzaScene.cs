@@ -89,7 +89,7 @@ namespace Henzai.Examples
             _sun = new Model<VertexPositionNormal, RealtimeMaterial>(string.Empty, GeometryFactory.GenerateSphereNormal(100,100,1), new RealtimeMaterial());
             _sun.GetMaterial(0).ambient = lightColor.ToVector4();
             // _sun.meshes[0].TryGetMaterial().ambient = lightColor.ToVector4();
-            ref Vector4 lightPos = ref _sceneRuntimeState.Light.LightPos_DontMutate;
+            Vector4 lightPos = _sceneRuntimeState.Light.LightPos;
             Vector3 newTranslation = new Vector3(lightPos.X,lightPos.Y,lightPos.Z);
             _sun.SetNewWorldTranslation(ref newTranslation, true);
 

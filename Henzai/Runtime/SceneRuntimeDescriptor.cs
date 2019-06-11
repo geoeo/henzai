@@ -79,7 +79,7 @@ namespace Henzai.Runtime
        /// <summary>
        /// Encapsulates Lighting Layout.
        /// </summary>
-       public Light Light {get;set;}
+       public Light Light {get; set;}
        public Light SpotLight {get;set;}
        public Camera Camera {get;set;}
 

@@ -29,16 +29,14 @@ namespace Henzai.Runtime
                                                     Light light,
                                                     Model<T, RealtimeMaterial> model) where T : struct, VertexLocateable
         {
-
             commandList.SetPipeline(pipeline);
 
+            var lightPos = light.LightPos;
             commandList.UpdateBuffer(cameraProjViewBuffer, 0, camera.ViewMatrix);
             commandList.UpdateBuffer(cameraProjViewBuffer, 64, camera.ProjectionMatrix);
-            commandList.UpdateBuffer(lightBuffer, 0, ref light.LightPos_DontMutate);
+            commandList.UpdateBuffer(lightBuffer, 0, lightPos);
             commandList.UpdateBuffer(lightBuffer, 16, ref light.Color_DontMutate);
             commandList.UpdateBuffer(lightBuffer, 32, ref light.Attentuation_DontMutate);
-
-
         }
 
         /// <summary>
@@ -55,12 +53,14 @@ namespace Henzai.Runtime
                                                     Light light,
                                                     Light pointLight)
         {
+            var lightPos = light.LightPos;
+            var pointLightPos = pointLight.LightPos;
             commandList.UpdateBuffer(cameraProjViewBuffer, 0, camera.ViewMatrix);
             commandList.UpdateBuffer(cameraProjViewBuffer, 64, camera.ProjectionMatrix);
-            commandList.UpdateBuffer(lightBuffer, 0, ref light.LightPos_DontMutate);
+            commandList.UpdateBuffer(lightBuffer, 0, ref lightPos);
             commandList.UpdateBuffer(lightBuffer, 16, ref light.Color_DontMutate);
             commandList.UpdateBuffer(lightBuffer, 32, ref light.Attentuation_DontMutate);
-            commandList.UpdateBuffer(pointLightBuffer, 0, ref pointLight.LightPos_DontMutate);
+            commandList.UpdateBuffer(pointLightBuffer, 0, ref pointLightPos);
             commandList.UpdateBuffer(pointLightBuffer, 16, ref pointLight.Color_DontMutate);
             commandList.UpdateBuffer(pointLightBuffer, 32, ref pointLight.Direction_DontMutate);
             commandList.UpdateBuffer(pointLightBuffer, 48, ref pointLight.Parameters_DontMutate);

@@ -72,7 +72,7 @@ namespace Henzai.Examples
             materialZero.textureNormal = "WaterNorm.jpg";
             materialZero.ambient = lightColor.ToVector4();
             // _sun.meshes[0].TryGetMaterial().ambient = lightColor.ToVector4();
-            ref Vector4 lightPos = ref _sceneRuntimeState.Light.LightPos_DontMutate;
+            Vector4 lightPos = _sceneRuntimeState.Light.LightPos;
             Vector3 newTranslation = new Vector3(lightPos.X,lightPos.Y,lightPos.Z);
             _sun.SetNewWorldTranslation(ref newTranslation, true);
 

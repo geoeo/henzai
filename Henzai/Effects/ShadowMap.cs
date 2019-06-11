@@ -10,8 +10,8 @@ namespace Henzai.Effects
 {
     public sealed class ShadowMap : SubRenderable {
 
+        //TODO: Maybe put this into Light class
         public Camera lightCam {get; private set;}
-
         public DeviceBuffer lightCamBuffer {get; private set;}
         public ResourceLayout lightCamLayout {get; private set;}
         public ResourceSet lightCamSet {get; private set;}
@@ -25,11 +25,12 @@ namespace Henzai.Effects
 
         public ShadowMap(GraphicsDevice graphicsDevice, 
                         Resolution resolution, 
+                        Vector4 lightPos,
                         ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] modelPNTTBDescriptorArray, 
                         ModelRuntimeDescriptor<VertexPositionNormal>[] modelPNDescriptorArray, 
                         ModelRuntimeDescriptor<VertexPositionTexture>[] modelPTDescriptorArray, 
                         ModelRuntimeDescriptor<VertexPositionColor>[] modelPCDescriptorArray) : base(graphicsDevice, resolution){      
-            lightCam = new OrthographicCamera(resolution.Horizontal,resolution.Vertical);
+            lightCam = new OrthographicCamera(resolution.Horizontal,resolution.Vertical, lightPos);
             _modelPNTTBDescriptorArray = modelPNTTBDescriptorArray;
             _modelPNDescriptorArray = modelPNDescriptorArray;
             _modelPTDescriptorArray = modelPTDescriptorArray;
@@ -46,7 +47,6 @@ namespace Henzai.Effects
         }
 
         public override void CreateResources(){
-            //TODO:
             lightCamBuffer = _factory.CreateBuffer(new BufferDescription(Camera.SizeInBytes, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
             lightCamLayout = ResourceGenerator.GenerateResourceLayout(
                     _factory,
@@ -61,6 +61,18 @@ namespace Henzai.Effects
 
         public override void BuildCommandList(){
             //TODO:
+            _commandList.Begin();
+            _commandList.SetFramebuffer(_frameBuffer);
+            _commandList.SetFullViewports();
+
+            _commandList.ClearColorTarget(0,RgbaFloat.White);
+            _commandList.ClearDepthStencil(1f);
+
+            // RenderCommandGenerator.GenerateCommandsForShadowMapScene_Inline(
+            //     _commandList,
+            //     lightCamBuffer,
+            //     lightCam);
+
         }
     }
 }

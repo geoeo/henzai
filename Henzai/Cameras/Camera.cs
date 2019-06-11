@@ -15,15 +15,15 @@ namespace Henzai.Cameras
         /// </summary>
         public static uint SizeInBytes => 192;
 
-        private readonly Vector3 DEFAULT_POSITION = new Vector3(0,0,10f);
-        private readonly Vector3 DEFAULT_LOOK_DIRECTION = new Vector3(0,0,-1f);
+        public static readonly Vector4 DEFAULT_POSITION = new Vector4(0, 0, 10f, 1.0f);
+        private static readonly Vector4 DEFAULT_LOOK_DIRECTION = new Vector4(0, 0, -1f, 0);
 
         protected float _fov;
         protected float _near;
         protected float _far;
 
-        private Vector3 _position;
-        private Vector3 _lookDirection;
+        private Vector4 _position;
+        private Vector4 _lookDirection;
         private Vector3 _upDirection;
         private float _moveSpeed;
 
@@ -41,8 +41,8 @@ namespace Henzai.Cameras
         public ref Matrix4x4 ViewMatrix => ref _viewMatrix;
         public ref Matrix4x4 ProjectionMatrix => ref _projectionMatrix;
         public ref Matrix4x4 ViewProjectionMatirx => ref _viewProjectionMatrix;
-        public Vector3 Position { get => _position; set { _position = value; UpdateViewMatrix(); } }
-        public Vector3 LookDirection { get => _lookDirection; set { _lookDirection = value; UpdateViewMatrix();} }
+        public Vector4 Position { get => _position; set { _position = value; UpdateViewMatrix(); } }
+        public Vector4 LookDirection { get => _lookDirection; set { _lookDirection = value; UpdateViewMatrix();} }
         public Vector3 UpDirection { get => _upDirection; set { _upDirection = value; UpdateViewMatrix();} }
         public float FarDistance { get => _far; set { _far = value; UpdateViewMatrix();} }
         public float FieldOfView { get => _fov; set { _fov = value; UpdateViewMatrix();} }
@@ -54,12 +54,12 @@ namespace Henzai.Cameras
         public float Yaw { get => _yaw; set { _yaw = value; UpdateViewMatrix(); } }
         public float Pitch { get => _pitch; set { _pitch = value; UpdateViewMatrix(); } }
 
-        public Camera(float width, float height, float far = 1000f, float moveSpeed = 10f)
+        public Camera(float width, float height, Vector4 position, float far = 1000f, float moveSpeed = 10f)
         {
             _fov = MathF.PI/4; // Might be redundant as GPU assumes its always 90 degrees
             _near = 0.1f;
             _far = far;
-            _position = DEFAULT_POSITION;
+            _position = position;
             _lookDirection = DEFAULT_LOOK_DIRECTION;
             _moveSpeed = moveSpeed;
 
@@ -74,11 +74,13 @@ namespace Henzai.Cameras
         private void UpdateViewMatrix()
         {
             Quaternion lookRotation = Quaternion.CreateFromYawPitchRoll(_yaw, _pitch, 0f);
-            Vector3 lookDir = Vector3.Transform(DEFAULT_LOOK_DIRECTION, lookRotation);
-            Vector3 up = Vector3.Transform(Vector3.UnitY, lookRotation);            
-            _lookDirection = Vector3.Normalize(lookDir);
+            var lookDir = Vector4.Transform(DEFAULT_LOOK_DIRECTION, lookRotation);
+            var up = Vector3.Transform(Vector3.UnitY, lookRotation);           
+            var position_Vec3 = _position.ToVec3DiscardW(); 
+            _lookDirection = Vector4.Normalize(lookDir);
+            var lookAt = _position + _lookDirection;
             _upDirection = Vector3.Normalize(up);
-            _viewMatrix = Matrix4x4.CreateLookAt(_position, _position + _lookDirection, _upDirection);
+            _viewMatrix = Matrix4x4.CreateLookAt(position_Vec3, lookAt.ToVec3DiscardW(), _upDirection);
             _viewProjectionMatrix = _viewMatrix*_projectionMatrix;
         }
 
@@ -128,7 +130,7 @@ namespace Henzai.Cameras
             if(inputTracker.GetKey(Key.J))
             {
                 _position = DEFAULT_POSITION;
-                _lookDirection = Vector3.UnitY;
+                _lookDirection = Vector4.UnitY;
                 _upDirection = -Vector3.UnitZ;
                 _yaw = 0; _pitch = MathF.PI/2.0f;
 
@@ -139,7 +141,9 @@ namespace Henzai.Cameras
             {
                 Quaternion lookRotation = Quaternion.CreateFromYawPitchRoll(_yaw, _pitch, 0f);
                 motionDir = Vector3.Transform(motionDir, lookRotation);
-                _position += motionDir * _moveSpeed * sprintFactor * deltaSeconds;
+                var position_Vec3 = _position.ToVec3DiscardW(); 
+                position_Vec3 += motionDir * _moveSpeed * sprintFactor * deltaSeconds;
+                _position = new Vector4(position_Vec3, 1.0f);
                 UpdateViewMatrix();
             }
 

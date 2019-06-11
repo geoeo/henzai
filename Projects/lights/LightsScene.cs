@@ -48,7 +48,7 @@ namespace Henzai.Examples
             var sunMaterialZero = _sun.GetMaterial(0);
             // _sun.meshes[0].TryGetMaterial().ambient = new Vector4(0.0f,0.0f,0.0f,0.0f);
             sunMaterialZero.ambient = lightColor.ToVector4();
-            ref Vector4 lightPos = ref _sceneRuntimeState.Light.LightPos_DontMutate;
+            Vector4 lightPos = _sceneRuntimeState.Light.LightPos;
             Vector3 newTranslation = new Vector3(lightPos.X,lightPos.Y,lightPos.Z);
             _sun.SetNewWorldTranslation(ref newTranslation, true);
 
@@ -62,7 +62,7 @@ namespace Henzai.Examples
             spotlightMaterialZero.ambient = _sceneRuntimeState.SpotLight.Color_DontMutate;
             // spotlight.meshes[0].TryGetMaterial().ambient = new Vector4(1.0f,1.0f,1.0f,1.0f);
             // _sun.meshes[0].TryGetMaterial().ambient = lightColor.ToVector4();
-            ref Vector4 lightPosSpot = ref _sceneRuntimeState.SpotLight.LightPos_DontMutate;
+            Vector4 lightPosSpot = _sceneRuntimeState.SpotLight.LightPos;
             Vector3 newTranslationSpot = new Vector3(lightPosSpot.X,lightPosSpot.Y,lightPosSpot.Z);
             spotlight.SetNewWorldTranslation(ref newTranslationSpot, true);
 

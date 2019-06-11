@@ -35,10 +35,11 @@ namespace Henzai.Examples
             radian *= 10.0f*deltaSeconds;
             // Matrix4x4 rotationAroundY = Matrix4x4.CreateRotationY(radian);
             Quaternion rotationAroundY = Quaternion.CreateFromAxisAngle(Vector3.UnitY,radian);
-            Vector3 cubeToCamera = Camera.Position - _worldTransCube.Translation;
-            Vector3 cameraTranslation = Vector3.Transform(cubeToCamera,rotationAroundY);
+            var worldCubeTrans = new Vector4(_worldTransCube.Translation, 1.0f);
+            var cubeToCamera = Camera.Position - worldCubeTrans;
+            var cameraTranslation = Vector4.Transform(cubeToCamera,rotationAroundY);
             Camera.Position = cameraTranslation;
-            Camera.LookDirection = -Vector3.Normalize(cubeToCamera); // not interpolating, might be choppy
+            Camera.LookDirection = -Vector4.Normalize(cubeToCamera); // not interpolating, might be choppy
         }
 
         override protected void CreateResources()
