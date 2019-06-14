@@ -259,7 +259,14 @@ namespace Henzai.Runtime
                                                                     PipelineTypes piplelineType)
         {
             var model = cubeMapRuntimeDescriptor.Model;
-            commandList.SetPipeline(cubeMapRuntimeDescriptor.Pipeline);
+            switch(piplelineType){
+                case PipelineTypes.Normal:
+                    commandList.SetPipeline(cubeMapRuntimeDescriptor.Pipeline);
+                    break;
+                case PipelineTypes.ShadowMap:
+                    commandList.SetPipeline(cubeMapRuntimeDescriptor.ShadowMapPipeline);
+                    break;
+            }
             for (int i = 0; i < model.MeshCount; i++)
             {
                 var mesh = model.GetMesh(i);
@@ -286,7 +293,14 @@ namespace Henzai.Runtime
             {
                 var modelState = descriptorArray[j];
                 var model = modelState.Model;
-                commandList.SetPipeline(modelState.Pipeline);
+                switch(piplelineType){
+                    case PipelineTypes.Normal:
+                        commandList.SetPipeline(modelState.Pipeline);
+                        break;
+                    case PipelineTypes.ShadowMap:
+                        commandList.SetPipeline(modelState.ShadowMapPipeline);
+                        break;
+                }
                 for (int i = 0; i < model.MeshCount; i++)
                 {
                     if (!model.GetMeshBVH(i).AABBIsValid)
@@ -317,7 +331,14 @@ namespace Henzai.Runtime
             for (int j = 0; j < descriptorArray.Length; j++)
             {
                 var modelState = descriptorArray[j];
-                commandList.SetPipeline(modelState.Pipeline);
+                switch(piplelineType){
+                    case PipelineTypes.Normal:
+                        commandList.SetPipeline(modelState.Pipeline);
+                        break;
+                    case PipelineTypes.ShadowMap:
+                        commandList.SetPipeline(modelState.ShadowMapPipeline);
+                        break;
+                }
                 var model = modelState.Model;
                 for (int i = 0; i < model.MeshCount; i++)
                 {
@@ -345,7 +366,14 @@ namespace Henzai.Runtime
             for (int j = 0; j < descriptorArray.Length; j++)
             {
                 var modelState = descriptorArray[j];
-                commandList.SetPipeline(modelState.Pipeline);
+                switch(piplelineType){
+                    case PipelineTypes.Normal:
+                        commandList.SetPipeline(modelState.Pipeline);
+                        break;
+                    case PipelineTypes.ShadowMap:
+                        commandList.SetPipeline(modelState.ShadowMapPipeline);
+                        break;
+                }
                 var model = modelState.Model;
                 //TODO:Inline this if more instance buffers are ever used
                 for (int i = 0; i < modelState.InstanceBuffers.Length; i++)
@@ -377,7 +405,14 @@ namespace Henzai.Runtime
             for (int j = 0; j < descriptorArray.Length; j++)
             {
                 var modelState = descriptorArray[j];
-                commandList.SetPipeline(modelState.Pipeline);
+                switch(piplelineType){
+                    case PipelineTypes.Normal:
+                        commandList.SetPipeline(modelState.Pipeline);
+                        break;
+                    case PipelineTypes.ShadowMap:
+                        commandList.SetPipeline(modelState.ShadowMapPipeline);
+                        break;
+                }
                 var model = modelState.Model;
 
                 for (int i = 0; i < model.MeshCount; i++)
@@ -408,7 +443,14 @@ namespace Henzai.Runtime
             for (int j = 0; j < descriptorArray.Length; j++)
             {
                 var modelState = descriptorArray[j];
-                commandList.SetPipeline(modelState.Pipeline); 
+                switch(piplelineType){
+                    case PipelineTypes.Normal:
+                        commandList.SetPipeline(modelState.Pipeline);
+                        break;
+                    case PipelineTypes.ShadowMap:
+                        commandList.SetPipeline(modelState.ShadowMapPipeline);
+                        break;
+                }
                 var model = modelState.Model;
                 //TODO:Inline this if more instance buffers are ever used
                 for (int i = 0; i < modelState.InstanceBuffers.Length; i++)
@@ -440,7 +482,14 @@ namespace Henzai.Runtime
             for (int j = 0; j < descriptorArray.Length; j++)
             {
                 var modelState = descriptorArray[j];
-                commandList.SetPipeline(modelState.Pipeline);
+                switch(piplelineType){
+                    case PipelineTypes.Normal:
+                        commandList.SetPipeline(modelState.Pipeline);
+                        break;
+                    case PipelineTypes.ShadowMap:
+                        commandList.SetPipeline(modelState.ShadowMapPipeline);
+                        break;
+                }
                 var model = modelState.Model;
                 for (int i = 0; i < modelState.InstanceBuffers.Length; i++)
                     commandList.SetVertexBuffer(i.ToUnsigned() + 1, modelState.InstanceBuffers[i]);
@@ -479,7 +528,14 @@ namespace Henzai.Runtime
             {
                 var modelState = descriptorArray[j];
                 var model = modelState.Model;
-                commandList.SetPipeline(modelState.Pipeline);
+                switch(piplelineType){
+                    case PipelineTypes.Normal:
+                        commandList.SetPipeline(modelState.Pipeline);
+                        break;
+                    case PipelineTypes.ShadowMap:
+                        commandList.SetPipeline(modelState.ShadowMapPipeline);
+                        break;
+                }
                 for (int i = 0; i < model.MeshCount; i++)
                 {
                     if (!model.GetMeshBVH(i).AABBIsValid)
@@ -520,7 +576,14 @@ namespace Henzai.Runtime
                 var meshIndex = meshBVH.MeshRuntimeIndex;
                 var modelState = descriptorArray[modelStateIndex];
                 var model = modelState.Model;
-                commandList.SetPipeline(modelState.Pipeline);
+                switch(piplelineType){
+                    case PipelineTypes.Normal:
+                        commandList.SetPipeline(modelState.Pipeline);
+                        break;
+                    case PipelineTypes.ShadowMap:
+                        commandList.SetPipeline(modelState.ShadowMapPipeline);
+                        break;
+                }
 
                 var mesh = model.GetMesh(j);
                 var material = model.GetMaterial(meshIndex);
