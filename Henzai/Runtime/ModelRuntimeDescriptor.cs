@@ -60,6 +60,7 @@ namespace Henzai.Runtime
         /// See: <see cref="Veldrid.Pipeline"/>
         /// </summary>
         public Pipeline Pipeline {get; set;}
+        public Pipeline ShadowMapPipeline {get; set;}
         /// <summary>
         //TODO: Remove this
         /// Contains Geometry and Material Properties

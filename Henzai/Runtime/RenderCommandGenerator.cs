@@ -14,31 +14,6 @@ namespace Henzai.Runtime
     public static class RenderCommandGenerator
     {
 
-
-        /// <summary>
-        /// Render Commands for Model of Type:
-        /// <see cref="VertexStructs"/> which need light/material interactions
-        ///</summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void GenerateCommandsForModel_Inline<T>(
-                                                    CommandList commandList,
-                                                    Pipeline pipeline,
-                                                    DeviceBuffer cameraProjViewBuffer,
-                                                    DeviceBuffer lightBuffer,
-                                                    Camera camera,
-                                                    Light light,
-                                                    Model<T, RealtimeMaterial> model) where T : struct, VertexLocateable
-        {
-            commandList.SetPipeline(pipeline);
-
-            var lightPos = light.LightPos;
-            commandList.UpdateBuffer(cameraProjViewBuffer, 0, camera.ViewMatrix);
-            commandList.UpdateBuffer(cameraProjViewBuffer, 64, camera.ProjectionMatrix);
-            commandList.UpdateBuffer(lightBuffer, 0, lightPos);
-            commandList.UpdateBuffer(lightBuffer, 16, ref light.Color_DontMutate);
-            commandList.UpdateBuffer(lightBuffer, 32, ref light.Attentuation_DontMutate);
-        }
-
         /// <summary>
         /// Render Commands for Model of Type:
         /// <see cref="VertexStructs"/> which need light/material interactions
@@ -280,7 +255,8 @@ namespace Henzai.Runtime
 
         public static void GenerateRenderCommandsForCubeMapModelDescriptor(CommandList commandList,
                                                                     ModelRuntimeDescriptor<VertexPosition> cubeMapRuntimeDescriptor,
-                                                                    SceneRuntimeDescriptor sceneRuntimeDescriptor)
+                                                                    SceneRuntimeDescriptor sceneRuntimeDescriptor,
+                                                                    PipelineTypes piplelineType)
         {
             var model = cubeMapRuntimeDescriptor.Model;
             commandList.SetPipeline(cubeMapRuntimeDescriptor.Pipeline);
@@ -303,20 +279,14 @@ namespace Henzai.Runtime
 
         public static void GenerateRenderCommandsForModelDescriptor(CommandList commandList,
                                                                     ModelRuntimeDescriptor<VertexPositionNormal>[] descriptorArray,
-                                                                    SceneRuntimeDescriptor sceneRuntimeDescriptor)
+                                                                    SceneRuntimeDescriptor sceneRuntimeDescriptor,
+                                                                    PipelineTypes piplelineType)
         {
             for (int j = 0; j < descriptorArray.Length; j++)
             {
                 var modelState = descriptorArray[j];
                 var model = modelState.Model;
-                RenderCommandGenerator.GenerateCommandsForModel_Inline(
-                    commandList,
-                    modelState.Pipeline,
-                    sceneRuntimeDescriptor.CameraProjViewBuffer,
-                    sceneRuntimeDescriptor.LightBuffer,
-                    sceneRuntimeDescriptor.Camera,
-                    sceneRuntimeDescriptor.Light,
-                    model);
+                commandList.SetPipeline(modelState.Pipeline);
                 for (int i = 0; i < model.MeshCount; i++)
                 {
                     if (!model.GetMeshBVH(i).AABBIsValid)
@@ -341,7 +311,8 @@ namespace Henzai.Runtime
         }
         public static void GenerateRenderCommandsForModelDescriptor<T>(CommandList commandList,
                                                                        ModelRuntimeDescriptor<T>[] descriptorArray,
-                                                                       SceneRuntimeDescriptor sceneRuntimeDescriptor) where T : struct, VertexLocateable
+                                                                       SceneRuntimeDescriptor sceneRuntimeDescriptor,
+                                                                       PipelineTypes piplelineType) where T : struct, VertexLocateable
         {
             for (int j = 0; j < descriptorArray.Length; j++)
             {
@@ -368,7 +339,8 @@ namespace Henzai.Runtime
 
         public static void GenerateRenderCommandsForModelDescriptor_Instancing(CommandList commandList,
                                                                        ModelRuntimeDescriptor<VertexPositionColor>[] descriptorArray,
-                                                                       SceneRuntimeDescriptor sceneRuntimeDescriptor)
+                                                                       SceneRuntimeDescriptor sceneRuntimeDescriptor,
+                                                                       PipelineTypes piplelineType)
         {
             for (int j = 0; j < descriptorArray.Length; j++)
             {
@@ -399,7 +371,8 @@ namespace Henzai.Runtime
 
         public static void GenerateRenderCommandsForModelDescriptor(CommandList commandList,
                                                                        ModelRuntimeDescriptor<VertexPositionTexture>[] descriptorArray,
-                                                                       SceneRuntimeDescriptor sceneRuntimeDescriptor)
+                                                                       SceneRuntimeDescriptor sceneRuntimeDescriptor,
+                                                                       PipelineTypes piplelineType)
         {
             for (int j = 0; j < descriptorArray.Length; j++)
             {
@@ -429,7 +402,8 @@ namespace Henzai.Runtime
 
         public static void GenerateRenderCommandsForModelDescriptor_Instancing(CommandList commandList,
                                                                        ModelRuntimeDescriptor<VertexPositionTexture>[] descriptorArray,
-                                                                       SceneRuntimeDescriptor sceneRuntimeDescriptor)
+                                                                       SceneRuntimeDescriptor sceneRuntimeDescriptor,
+                                                                       PipelineTypes piplelineType)
         {
             for (int j = 0; j < descriptorArray.Length; j++)
             {
@@ -460,7 +434,8 @@ namespace Henzai.Runtime
 
         public static void GenerateRenderCommandsForModelDescriptor_Instancing(CommandList commandList,
                                                                     ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] descriptorArray,
-                                                                    SceneRuntimeDescriptor sceneRuntimeDescriptor)
+                                                                    SceneRuntimeDescriptor sceneRuntimeDescriptor,
+                                                                    PipelineTypes piplelineType)
         {
             for (int j = 0; j < descriptorArray.Length; j++)
             {
@@ -497,7 +472,8 @@ namespace Henzai.Runtime
 
         public static void GenerateRenderCommandsForModelDescriptor(CommandList commandList,
                                                                     ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] descriptorArray,
-                                                                    SceneRuntimeDescriptor sceneRuntimeDescriptor)
+                                                                    SceneRuntimeDescriptor sceneRuntimeDescriptor,
+                                                                    PipelineTypes piplelineType)
         {
             for (int j = 0; j < descriptorArray.Length; j++)
             {
@@ -532,7 +508,8 @@ namespace Henzai.Runtime
         public static void GenerateRenderCommandsForModelDescriptor(CommandList commandList,
                                                                     ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] descriptorArray,
                                                                     SceneRuntimeDescriptor sceneRuntimeDescriptor,
-                                                                    MeshBVH<VertexPositionNormalTextureTangentBitangent>[] meshBVHArray)
+                                                                    MeshBVH<VertexPositionNormalTextureTangentBitangent>[] meshBVHArray,
+                                                                    PipelineTypes piplelineType)
         {
             var meshCount = meshBVHArray.Length;
             for(int j = 0; j < meshCount; j++){

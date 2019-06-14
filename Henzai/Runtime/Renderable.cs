@@ -366,18 +366,23 @@ namespace Henzai.Runtime
             {
                 case VertexRuntimeTypes.VertexPosition:
                     modelDescriptor.Pipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GeneratePipelineP(modelDescriptor, sceneRuntimeDescriptor, _graphicsDevice));
+                    modelDescriptor.ShadowMapPipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GenerateShadowMapPipelineP(modelDescriptor, sceneRuntimeDescriptor, _graphicsDevice));
                     break;
                 case VertexRuntimeTypes.VertexPositionNormal:
                     modelDescriptor.Pipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GeneratePipelinePN(modelDescriptor, sceneRuntimeDescriptor, _graphicsDevice));
+                    modelDescriptor.ShadowMapPipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GenerateShadowMapPipelinePN(modelDescriptor, sceneRuntimeDescriptor, _graphicsDevice));
                     break;
                 case VertexRuntimeTypes.VertexPositionNormalTextureTangentBitangent:
                     modelDescriptor.Pipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GeneratePipelinePNTTB(modelDescriptor, sceneRuntimeDescriptor, _graphicsDevice));
+                    modelDescriptor.ShadowMapPipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GenerateShadowMapPipelinePNTTB(modelDescriptor, sceneRuntimeDescriptor, _graphicsDevice));
                     break;
                 case VertexRuntimeTypes.VertexPositionColor:
                     modelDescriptor.Pipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GeneratePipelinePC(modelDescriptor, sceneRuntimeDescriptor, _graphicsDevice));
+                    modelDescriptor.ShadowMapPipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GenerateShadowMapPipelinePC(modelDescriptor, sceneRuntimeDescriptor, _graphicsDevice));
                     break;
                 case VertexRuntimeTypes.VertexPositionTexture:
                     modelDescriptor.Pipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GeneratePipelinePT(modelDescriptor, sceneRuntimeDescriptor, _graphicsDevice));
+                    modelDescriptor.ShadowMapPipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GenerateShadowMapPipelinePT(modelDescriptor, sceneRuntimeDescriptor, _graphicsDevice));
                     break;
                 default:
                     throw new NotImplementedException($"{modelDescriptor.VertexRuntimeType.ToString("g")} not implemented");

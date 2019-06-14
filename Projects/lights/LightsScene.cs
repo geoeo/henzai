@@ -158,8 +158,8 @@ namespace Henzai.Examples
                 _sceneRuntimeState.Light,
                 _sceneRuntimeState.SpotLight);
 
-            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor_Instancing(_commandList,_modelPNTTBDescriptorArray,_sceneRuntimeState);
-            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPNDescriptorArray,_sceneRuntimeState);
+            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor_Instancing(_commandList,_modelPNTTBDescriptorArray,_sceneRuntimeState, PipelineTypes.Normal);
+            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPNDescriptorArray,_sceneRuntimeState, PipelineTypes.Normal);
             
             _commandList.End();
         }
