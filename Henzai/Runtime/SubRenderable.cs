@@ -53,7 +53,11 @@ namespace Henzai.Runtime
         /// <summary>
         /// Creates resources used to render e.g. Buffers, Textures etc.
         /// </summary>
-        abstract public void CreateResources();
+        abstract public void CreateResources(SceneRuntimeDescriptor SceneRuntimeDescriptor,                        
+                        ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] modelPNTTBDescriptorArray, 
+                        ModelRuntimeDescriptor<VertexPositionNormal>[] modelPNDescriptorArray, 
+                        ModelRuntimeDescriptor<VertexPositionTexture>[] modelPTDescriptorArray, 
+                        ModelRuntimeDescriptor<VertexPositionColor>[] modelPCDescriptorArray);
 
         /// <summary>
         /// Creates the command list and its containing render commands

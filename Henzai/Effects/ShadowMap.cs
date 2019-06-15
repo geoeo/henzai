@@ -15,6 +15,9 @@ namespace Henzai.Effects
         public DeviceBuffer lightCamBuffer {get; private set;}
         public ResourceLayout lightCamLayout {get; private set;}
         public ResourceSet lightCamSet {get; private set;}
+        ///<summary>
+        /// Holds the texture that the framebuffer renders into
+        ///</summary>
         public TextureView ShadowMapTexView {get; private set;}
 
         // These hold the scene's geometry information
@@ -24,20 +27,10 @@ namespace Henzai.Effects
         private ModelRuntimeDescriptor<VertexPositionColor>[] _modelPCDescriptorArray;
 
         private SceneRuntimeDescriptor _sceneRuntimeDescriptor;
+        private Resolution _resolution;
 
-        public ShadowMap(GraphicsDevice graphicsDevice, 
-                        Resolution resolution, 
-                        Vector4 lightPos,
-                        ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] modelPNTTBDescriptorArray, 
-                        ModelRuntimeDescriptor<VertexPositionNormal>[] modelPNDescriptorArray, 
-                        ModelRuntimeDescriptor<VertexPositionTexture>[] modelPTDescriptorArray, 
-                        ModelRuntimeDescriptor<VertexPositionColor>[] modelPCDescriptorArray) : base(graphicsDevice, resolution){      
-            lightCam = new OrthographicCamera(resolution.Horizontal,resolution.Vertical, lightPos);
-            _modelPNTTBDescriptorArray = modelPNTTBDescriptorArray;
-            _modelPNDescriptorArray = modelPNDescriptorArray;
-            _modelPTDescriptorArray = modelPTDescriptorArray;
-            _modelPCDescriptorArray = modelPCDescriptorArray;
-
+        public ShadowMap(GraphicsDevice graphicsDevice, Resolution resolution) : base(graphicsDevice, resolution){      
+            _resolution = resolution;
             _sceneRuntimeDescriptor = new SceneRuntimeDescriptor();
         }
 
@@ -50,7 +43,18 @@ namespace Henzai.Effects
                 new FramebufferAttachmentDescription(depthTexture, 0), Array.Empty<FramebufferAttachmentDescription>()));
         }
 
-        public override void CreateResources(){
+        public override void CreateResources(SceneRuntimeDescriptor mainSceneRuntimeDescriptor,                        
+                        ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] modelPNTTBDescriptorArray, 
+                        ModelRuntimeDescriptor<VertexPositionNormal>[] modelPNDescriptorArray, 
+                        ModelRuntimeDescriptor<VertexPositionTexture>[] modelPTDescriptorArray, 
+                        ModelRuntimeDescriptor<VertexPositionColor>[] modelPCDescriptorArray){
+
+            _modelPNTTBDescriptorArray = modelPNTTBDescriptorArray;
+            _modelPNDescriptorArray = modelPNDescriptorArray;
+            _modelPTDescriptorArray = modelPTDescriptorArray;
+            _modelPCDescriptorArray = modelPCDescriptorArray;
+            var lightPos  = mainSceneRuntimeDescriptor.Light.LightPos;
+            lightCam = new OrthographicCamera(_resolution.Horizontal,_resolution.Vertical, lightPos);
 
             _sceneRuntimeDescriptor.CameraProjViewBuffer = _factory.CreateBuffer(new BufferDescription(Camera.SizeInBytes, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
             _sceneRuntimeDescriptor.CameraResourceLayout
@@ -69,29 +73,32 @@ namespace Henzai.Effects
             lightCamBuffer = _factory.CreateBuffer(new BufferDescription(Camera.SizeInBytes, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
             lightCamLayout = ResourceGenerator.GenerateResourceLayout(
                     _factory,
-                    "projViewWorld",
+                    "light",
                     ResourceKind.UniformBuffer,
                     ShaderStages.Vertex);
             lightCamSet = ResourceGenerator.GenrateResourceSet(
                     _factory,
                     lightCamLayout,
                     new BindableResource[] { lightCamBuffer });
+
+            _sceneRuntimeDescriptor.LightBuffer = lightCamBuffer;
+            _sceneRuntimeDescriptor.LightResourceLayout = lightCamLayout;
+            _sceneRuntimeDescriptor.LightResourceSet = lightCamSet;
         }
 
         public override void BuildCommandList(){
             _commandList.Begin();
             _commandList.SetFramebuffer(_frameBuffer);
             _commandList.SetFullViewports();
-
-            _commandList.ClearColorTarget(0,RgbaFloat.White);
             _commandList.ClearDepthStencil(1f);
 
             RenderCommandGenerator.GenerateCommandsForScene_Inline(
                 _commandList,
-                lightCamBuffer,
+                _sceneRuntimeDescriptor.CameraProjViewBuffer,
                 lightCam);
 
-            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionNormalTextureTangentBitangent>(_commandList,_modelPNTTBDescriptorArray,_sceneRuntimeDescriptor, PipelineTypes.ShadowMap);
+            //TODO: Problem with instancing
+            //RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionNormalTextureTangentBitangent>(_commandList,_modelPNTTBDescriptorArray,_sceneRuntimeDescriptor, PipelineTypes.ShadowMap);
             RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionNormal>(_commandList,_modelPNDescriptorArray,_sceneRuntimeDescriptor, PipelineTypes.ShadowMap);
             RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionTexture>(_commandList,_modelPTDescriptorArray,_sceneRuntimeDescriptor, PipelineTypes.ShadowMap);
             RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionColor>(_commandList,_modelPCDescriptorArray,_sceneRuntimeDescriptor, PipelineTypes.ShadowMap);

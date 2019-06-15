@@ -6,6 +6,7 @@ using System.Numerics;
 using ImGuiNET;
 using Veldrid;
 using Henzai.Runtime;
+using Henzai.Core.VertexGeometry;
 
 
 namespace Henzai.UI
@@ -66,7 +67,11 @@ namespace Henzai.UI
         abstract protected unsafe void SubmitImGUILayout(float secondsPerFrame);
 
         //TODO: Add color space handling 
-        override public void CreateResources(){
+        override public void CreateResources(SceneRuntimeDescriptor sceneRuntimeDescriptor,                        
+                        ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] modelPNTTBDescriptorArray, 
+                        ModelRuntimeDescriptor<VertexPositionNormal>[] modelPNDescriptorArray, 
+                        ModelRuntimeDescriptor<VertexPositionTexture>[] modelPTDescriptorArray, 
+                        ModelRuntimeDescriptor<VertexPositionColor>[] modelPCDescriptorArray){
 
             //ResourceFactory factory = GraphicsDevice.ResourceFactory;
             _vertexBuffer = _factory.CreateBuffer(new BufferDescription(10000, BufferUsage.VertexBuffer | BufferUsage.Dynamic));

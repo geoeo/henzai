@@ -345,6 +345,7 @@ namespace Henzai.Runtime
                     if (!model.GetMeshBVH(i).AABBIsValid)
                         continue;
                     var mesh = model.GetMesh(i);
+
                     RenderCommandGenerator.GenerateCommandsForMesh_Inline(
                         commandList,
                         modelState.VertexBuffers[i],

@@ -50,6 +50,7 @@ namespace Henzai.Runtime
         private RenderOptions _renderOptions;
         protected DisposeCollectorResourceFactory _factory;
         protected SceneRuntimeDescriptor _sceneRuntimeState;
+        public SceneRuntimeDescriptor SceneRuntimeDescriptor => _sceneRuntimeState;
         protected CommandList _commandList;
         private Resolution _renderResolution;
         public Resolution RenderResoultion => _renderResolution;
@@ -191,18 +192,11 @@ namespace Henzai.Runtime
             _frameTimer = new FrameTimer(1.0);
         }
 
-        //TODO: Investigate passing Render options
-        /// <summary>
-        /// Sets up windowing and keyboard input
-        /// Calls Draw() method in rendering loop
-        /// Calls Dispose() when done
-        /// </summary>
-        public void Run(Resolution renderResolution)
-        {
+        public void SetUp(Resolution renderResolution) {
+
             Debug.Assert(_commandList != null);
             Debug.Assert(_graphicsDevice != null);
             Debug.Assert(_factory != null);
-            var inputTracker = new InputTracker();
 
             _renderResolution = renderResolution;
 
@@ -216,11 +210,11 @@ namespace Henzai.Runtime
 
             CreateUniforms();
             CreateResources();
+            FormatResourcesForRuntime();
 
             foreach (var child in _allChildren)
-                child.CreateResources();
+                child.CreateResources(_sceneRuntimeState,_modelPNTTBDescriptorArray,_modelPNDescriptorArray, _modelPTDescriptorArray, _modelPCDescriptorArray);
 
-            FormatResourcesForRuntime();
             // includes itself in the build command list process
             buildCommandListTasks = new Task[_allChildren.Count + 1];
 
@@ -229,6 +223,17 @@ namespace Henzai.Runtime
 
             PreRender_Camera?.Invoke(_camera);
             PreRender_Descriptors?.Invoke(PNTTBRuntimeGeometry, PNRuntimeGeometry, PTRuntimeGeometry, PCRuntimeGeometry, PRuntimeGeometry);
+        }
+
+        //TODO: Investigate passing Render options
+        /// <summary>
+        /// Sets up windowing and keyboard input
+        /// Calls Draw() method in rendering loop
+        /// Calls Dispose() when done
+        /// </summary>
+        public void Run()
+        {
+            var inputTracker = new InputTracker();
             while (_contextWindow.Exists)
             {
                 _frameTimer.Start();
@@ -268,6 +273,7 @@ namespace Henzai.Runtime
                 {
                     var child = _childrenPre[i];
                     drawTasksPre[i] = Task.Run(() => child.Draw());
+                    //TODO: Maybe WaitForIdle
                 }
 
                 Task.WaitAll(drawTasksPre);
@@ -362,27 +368,28 @@ namespace Henzai.Runtime
 
             modelDescriptor.FormatResourcesForPipelineGeneration();
 
+            var shadowMapEnabled = _childrenPre.Count > 0;
             switch (modelDescriptor.VertexRuntimeType)
             {
                 case VertexRuntimeTypes.VertexPosition:
-                    modelDescriptor.Pipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GeneratePipelineP(modelDescriptor, sceneRuntimeDescriptor, _graphicsDevice));
-                    modelDescriptor.ShadowMapPipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GenerateShadowMapPipelineP(modelDescriptor, sceneRuntimeDescriptor, _graphicsDevice));
+                    modelDescriptor.Pipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GeneratePipelineP(modelDescriptor, sceneRuntimeDescriptor, _graphicsDevice.SwapchainFramebuffer));
+                    modelDescriptor.ShadowMapPipeline =  shadowMapEnabled ? _factory.CreateGraphicsPipeline(ResourceGenerator.GenerateShadowMapPipelineP(modelDescriptor, sceneRuntimeDescriptor, _childrenPre[0].FrameBuffer)) : null;
                     break;
                 case VertexRuntimeTypes.VertexPositionNormal:
-                    modelDescriptor.Pipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GeneratePipelinePN(modelDescriptor, sceneRuntimeDescriptor, _graphicsDevice));
-                    modelDescriptor.ShadowMapPipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GenerateShadowMapPipelinePN(modelDescriptor, sceneRuntimeDescriptor, _graphicsDevice));
+                    modelDescriptor.Pipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GeneratePipelinePN(modelDescriptor, sceneRuntimeDescriptor, _graphicsDevice.SwapchainFramebuffer));
+                    modelDescriptor.ShadowMapPipeline = shadowMapEnabled ? _factory.CreateGraphicsPipeline(ResourceGenerator.GenerateShadowMapPipelinePN(modelDescriptor, sceneRuntimeDescriptor, _childrenPre[0].FrameBuffer)) : null;
                     break;
                 case VertexRuntimeTypes.VertexPositionNormalTextureTangentBitangent:
-                    modelDescriptor.Pipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GeneratePipelinePNTTB(modelDescriptor, sceneRuntimeDescriptor, _graphicsDevice));
-                    modelDescriptor.ShadowMapPipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GenerateShadowMapPipelinePNTTB(modelDescriptor, sceneRuntimeDescriptor, _graphicsDevice));
+                    modelDescriptor.Pipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GeneratePipelinePNTTB(modelDescriptor, sceneRuntimeDescriptor, _graphicsDevice.SwapchainFramebuffer));
+                    modelDescriptor.ShadowMapPipeline = shadowMapEnabled ? _factory.CreateGraphicsPipeline(ResourceGenerator.GenerateShadowMapPipelinePNTTB(modelDescriptor, sceneRuntimeDescriptor, _childrenPre[0].FrameBuffer)) : null;
                     break;
                 case VertexRuntimeTypes.VertexPositionColor:
-                    modelDescriptor.Pipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GeneratePipelinePC(modelDescriptor, sceneRuntimeDescriptor, _graphicsDevice));
-                    modelDescriptor.ShadowMapPipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GenerateShadowMapPipelinePC(modelDescriptor, sceneRuntimeDescriptor, _graphicsDevice));
+                    modelDescriptor.Pipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GeneratePipelinePC(modelDescriptor, sceneRuntimeDescriptor, _graphicsDevice.SwapchainFramebuffer));
+                    modelDescriptor.ShadowMapPipeline = shadowMapEnabled ? _factory.CreateGraphicsPipeline(ResourceGenerator.GenerateShadowMapPipelinePC(modelDescriptor, sceneRuntimeDescriptor, _childrenPre[0].FrameBuffer)) : null;
                     break;
                 case VertexRuntimeTypes.VertexPositionTexture:
-                    modelDescriptor.Pipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GeneratePipelinePT(modelDescriptor, sceneRuntimeDescriptor, _graphicsDevice));
-                    modelDescriptor.ShadowMapPipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GenerateShadowMapPipelinePT(modelDescriptor, sceneRuntimeDescriptor, _graphicsDevice));
+                    modelDescriptor.Pipeline = _factory.CreateGraphicsPipeline(ResourceGenerator.GeneratePipelinePT(modelDescriptor, sceneRuntimeDescriptor, _graphicsDevice.SwapchainFramebuffer));
+                    modelDescriptor.ShadowMapPipeline = shadowMapEnabled ? _factory.CreateGraphicsPipeline(ResourceGenerator.GenerateShadowMapPipelinePT(modelDescriptor, sceneRuntimeDescriptor, _childrenPre[0].FrameBuffer)) : null;
                     break;
                 default:
                     throw new NotImplementedException($"{modelDescriptor.VertexRuntimeType.ToString("g")} not implemented");
@@ -516,9 +523,9 @@ namespace Henzai.Runtime
             _childrenPost.Add(ui);
         }
 
-        public void CreateShadowMap(Resolution resolution, Vector4 lightPos){
+        public void CreateShadowMap(Resolution resolution){
             //TODO: Needs different shaders! Maybe harcore options in ModelDescriptors!
-            var shadowMap = new ShadowMap(_graphicsDevice, resolution, lightPos, _modelPNTTBDescriptorArray, _modelPNDescriptorArray, _modelPTDescriptorArray, _modelPCDescriptorArray);
+            var shadowMap = new ShadowMap(_graphicsDevice, resolution);
             _childrenPre.Add(shadowMap);
         }
 

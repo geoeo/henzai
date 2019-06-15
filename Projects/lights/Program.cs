@@ -11,7 +11,7 @@ namespace Henzai.Examples
         static void Main(string[] args)
         {
             Program programm = new Program();
-            programm.createScene(GraphicsBackend.OpenGL);
+            programm.createScene(GraphicsBackend.Metal);
         }
 
         public override void createScene(GraphicsBackend graphicsBackend, Sdl2Window contextWindow = null){
@@ -52,8 +52,9 @@ namespace Henzai.Examples
             scene.SetUI(gui);
             gui.changeBackendAction += ChangeBackend;
 
-
-            scene.Run(renderResolution);
+            scene.CreateShadowMap(renderResolution);
+            scene.SetUp(renderResolution);
+            scene.Run();
         }
     }
 }

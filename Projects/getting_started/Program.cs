@@ -27,7 +27,8 @@ namespace Henzai.Examples
                 rdOptions
             );
 
-            scene.Run(renderResolution);
+            scene.SetUp(renderResolution);
+            scene.Run();
         }
     }
 }
