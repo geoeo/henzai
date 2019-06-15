@@ -1,6 +1,7 @@
 #version 330 core
 
 uniform sampler2D Texture;
+uniform sampler2D ShadowMap;
 
 in vec2 fsin_UV;
 out vec4 fsout_Color;

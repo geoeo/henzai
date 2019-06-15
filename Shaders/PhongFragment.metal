@@ -23,7 +23,7 @@ struct Light {
     float4 Attenuation;
 };
 
-fragment float4 FS(PixelInput input[[stage_in]],constant Light &light [[buffer(1)]], constant Material &material [[buffer(2)]])
+fragment float4 FS(PixelInput input[[stage_in]],constant Light &light [[buffer(1)]], constant Material &material [[buffer(2)]], texture2d<float> shadowMapTexture [[texture(0)]], sampler shadowMapSampler [[sampler(0)]])
 {
     float4 lightColor = light.Color.w*float4(light.Color.x,light.Color.y,light.Color.z,1.0);
     

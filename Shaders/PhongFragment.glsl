@@ -1,5 +1,7 @@
 #version 330 core
 
+uniform sampler2D ShadowMap;
+
 layout(std140) uniform material
 {
     vec4 Diffuse;

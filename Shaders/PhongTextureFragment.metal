@@ -24,8 +24,10 @@ fragment float4 FS(PixelInput input[[stage_in]],
                    constant Material &material [[buffer(2)]],
                    texture2d<float> diffuseTexture [[texture(0)]],
                    texture2d<float> normalTexture [[texture(1)]],
+                   texture2d<float> shadowMapTexture [[texture(2)]],
                    sampler diffuseSampler [[sampler(0)]],
-                   sampler normalSampler [[sampler(1)]])
+                   sampler normalSampler [[sampler(1)]], 
+                   sampler shadowMapSampler [[sampler(2)]])
 {
     float4 diffuseTextureSample = diffuseTexture.sample(diffuseSampler,input.UV);
     float3 normalTextureSample = normalTexture.sample(normalSampler,input.UV).xyz;

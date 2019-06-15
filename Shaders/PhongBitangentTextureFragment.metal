@@ -39,8 +39,10 @@ fragment float4 FS(PixelInput input[[stage_in]],
                    constant Material &material [[buffer(3)]],
                    texture2d<float> diffuseTexture [[texture(0)]],
                    texture2d<float> normalTexture [[texture(1)]],
+                   texture2d<float> shadowMapTexture [[texture(2)]],
                    sampler diffuseSampler [[sampler(0)]],
-                   sampler normalSampler [[sampler(1)]])
+                   sampler normalSampler [[sampler(1)]],
+                   sampler shadowMapSampler [[sampler(2)]])
 {
     float4 lightColor = light.Color.w*float4(light.Color.x,light.Color.y,light.Color.z,1.0);
 
