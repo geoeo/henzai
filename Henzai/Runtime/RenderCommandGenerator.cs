@@ -226,18 +226,10 @@ namespace Henzai.Runtime
 
         public static void GenerateRenderCommandsForCubeMapModelDescriptor(CommandList commandList,
                                                                     ModelRuntimeDescriptor<VertexPosition> cubeMapRuntimeDescriptor,
-                                                                    SceneRuntimeDescriptor sceneRuntimeDescriptor,
-                                                                    PipelineTypes piplelineType)
+                                                                    SceneRuntimeDescriptor sceneRuntimeDescriptor)
         {
             var model = cubeMapRuntimeDescriptor.Model;
-            switch(piplelineType){
-                case PipelineTypes.Normal:
-                    commandList.SetPipeline(cubeMapRuntimeDescriptor.Pipeline);
-                    break;
-                case PipelineTypes.ShadowMap:
-                    commandList.SetPipeline(cubeMapRuntimeDescriptor.ShadowMapPipeline);
-                    break;
-            }
+            commandList.SetPipeline(cubeMapRuntimeDescriptor.Pipeline);
             for (int i = 0; i < model.MeshCount; i++)
             {
                 var mesh = model.GetMesh(i);
