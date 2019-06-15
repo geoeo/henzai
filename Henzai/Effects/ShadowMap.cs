@@ -69,7 +69,7 @@ namespace Henzai.Effects
                     _sceneRuntimeDescriptor.CameraResourceLayout,
                     new BindableResource[] { _sceneRuntimeDescriptor.CameraProjViewBuffer });
 
-
+            //TODO: Cleanup
             lightCamBuffer = _factory.CreateBuffer(new BufferDescription(Camera.SizeInBytes, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
             lightCamLayout = ResourceGenerator.GenerateResourceLayout(
                     _factory,

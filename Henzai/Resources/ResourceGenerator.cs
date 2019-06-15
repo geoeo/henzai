@@ -292,6 +292,7 @@ namespace Henzai
             );
         }
 
+        //TODO: Unify generators again
         /// <summary>
         /// For now this is only used with cube maps!
         /// </summary>
