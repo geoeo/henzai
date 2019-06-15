@@ -40,6 +40,15 @@ namespace Henzai
 
         }
 
+        public static ResourceLayout GenerateTextureResourceLayoutForShadowMapping(DisposeCollectorResourceFactory factory){
+            return factory.CreateResourceLayout(
+                    new ResourceLayoutDescription(
+                        new ResourceLayoutElementDescription("ShadowMapTexture", ResourceKind.TextureReadOnly, ShaderStages.Fragment),
+                        new ResourceLayoutElementDescription("ShadowMapSampler", ResourceKind.Sampler, ShaderStages.Fragment)
+                        ));
+
+        }
+
         public static ResourceLayout GenerateTextureResourceLayoutForDiffuseMapping(DisposeCollectorResourceFactory factory){
             return factory.CreateResourceLayout(
                     new ResourceLayoutDescription(
@@ -101,7 +110,7 @@ namespace Henzai
                 });
         }
 
-        public static ResourceSet GenerateTextureResourceSetForNormalMapping<T>(ModelRuntimeDescriptor<T> modelRuntimeState,int meshIndex, DisposeCollectorResourceFactory factory, GraphicsDevice graphicsDevice) where T : struct , VertexLocateable {
+        public static ResourceSet GenerateTextureResourceSetForNormalMapping<T>(ModelRuntimeDescriptor<T> modelRuntimeState, int meshIndex, DisposeCollectorResourceFactory factory, GraphicsDevice graphicsDevice) where T : struct , VertexLocateable {
             RealtimeMaterial material = modelRuntimeState.Model.GetMaterial(meshIndex);
 
             ImageSharpTexture diffuseTextureIS = new ImageSharpTexture(Path.Combine(AppContext.BaseDirectory, modelRuntimeState.Model.BaseDir, material.textureDiffuse));
@@ -121,7 +130,17 @@ namespace Henzai
             normalTextureView,
             modelRuntimeState.TextureSampler
             ));
+        }
 
+        public static ResourceSet GenerateTextureResourceSetForShadowMapping(TextureView shadowMapTexView, DisposeCollectorResourceFactory factory) {
+            var textureLayout = GenerateTextureResourceLayoutForShadowMapping(factory);
+            var sampler = ResourceGenerator.GenerateBiLinearSampler(factory);
+
+            return factory.CreateResourceSet(new ResourceSetDescription(
+            textureLayout,
+            shadowMapTexView,
+            sampler
+            ));
         }
 
         public static ResourceSet GenerateTextureResourceSetForDiffuseMapping<T>(ModelRuntimeDescriptor<T> modelRuntimeState,int meshIndex, DisposeCollectorResourceFactory factory, GraphicsDevice graphicsDevice) where T : struct, VertexLocateable {

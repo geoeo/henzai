@@ -16,16 +16,23 @@ namespace Henzai
             ModelRuntimeDescriptor<T> modelRuntimeState, 
             SceneRuntimeDescriptor sceneRuntimeState, 
             RasterizerStateDescription rasterizerState,
-            Framebuffer framebuffer) where T : struct, VertexLocateable {
+            Framebuffer framebuffer,
+            ResourceLayout[] effectLayouts) where T : struct, VertexLocateable {
+
+            var resourceLayout = new ResourceLayout[] {
+                    sceneRuntimeState.CameraResourceLayout,
+                    modelRuntimeState.TextureResourceLayout};
+            
+            var completeResourceLayout = new ResourceLayout[resourceLayout.Length + effectLayouts.Length];
+            resourceLayout.CopyTo(completeResourceLayout,0);
+            effectLayouts.CopyTo(completeResourceLayout,resourceLayout.Length);
 
             return new GraphicsPipelineDescription(){
                 BlendState = BlendStateDescription.SingleOverrideBlend,
                 DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
                 RasterizerState = rasterizerState,
                 PrimitiveTopology = modelRuntimeState.PrimitiveTopology,
-                ResourceLayouts = new ResourceLayout[] {
-                    sceneRuntimeState.CameraResourceLayout,
-                    modelRuntimeState.TextureResourceLayout},
+                ResourceLayouts = completeResourceLayout,
                 ShaderSet = new ShaderSetDescription(
                     vertexLayouts: modelRuntimeState.VertexLayouts,
                     shaders: new Shader[] {modelRuntimeState.VertexShader,modelRuntimeState.FragmentShader}
@@ -58,17 +65,24 @@ namespace Henzai
             ModelRuntimeDescriptor<T> modelRuntimeState, 
             SceneRuntimeDescriptor sceneRuntimeState, 
             RasterizerStateDescription rasterizerState,
-            Framebuffer framebuffer) where T : struct, VertexLocateable {
+            Framebuffer framebuffer,
+            ResourceLayout[] effectLayouts) where T : struct, VertexLocateable {
+
+            var resourceLayout = new ResourceLayout[] {
+                    sceneRuntimeState.CameraResourceLayout,
+                    sceneRuntimeState.LightResourceLayout,
+                    sceneRuntimeState.MaterialResourceLayout};
+
+            var completeResourceLayout = new ResourceLayout[resourceLayout.Length + effectLayouts.Length];
+            resourceLayout.CopyTo(completeResourceLayout,0);
+            effectLayouts.CopyTo(completeResourceLayout,resourceLayout.Length);
 
             return new GraphicsPipelineDescription(){
                 BlendState = BlendStateDescription.SingleOverrideBlend,
                 DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
                 RasterizerState = rasterizerState,
                 PrimitiveTopology = modelRuntimeState.PrimitiveTopology,
-                ResourceLayouts = new ResourceLayout[] {
-                    sceneRuntimeState.CameraResourceLayout,
-                    sceneRuntimeState.LightResourceLayout,
-                    sceneRuntimeState.MaterialResourceLayout},
+                ResourceLayouts = completeResourceLayout,
                 ShaderSet = new ShaderSetDescription(
                     vertexLayouts: modelRuntimeState.VertexLayouts,
                     shaders: new Shader[] {modelRuntimeState.VertexShader,modelRuntimeState.FragmentShader}
@@ -101,19 +115,26 @@ namespace Henzai
             ModelRuntimeDescriptor<T> modelRuntimeState, 
             SceneRuntimeDescriptor sceneRuntimeState, 
             RasterizerStateDescription rasterizerState,
-            Framebuffer framebuffer) where T : struct, VertexLocateable {
+            Framebuffer framebuffer,
+            ResourceLayout[] effectLayouts) where T : struct, VertexLocateable {
+
+            var resourceLayout = new ResourceLayout[] {
+                        sceneRuntimeState.CameraResourceLayout,
+                        sceneRuntimeState.LightResourceLayout,
+                        sceneRuntimeState.SpotLightResourceLayout,
+                        sceneRuntimeState.MaterialResourceLayout,
+                        modelRuntimeState.TextureResourceLayout};
+
+            var completeResourceLayout = new ResourceLayout[resourceLayout.Length + effectLayouts.Length];
+            resourceLayout.CopyTo(completeResourceLayout,0);
+            effectLayouts.CopyTo(completeResourceLayout,resourceLayout.Length);
 
             return new GraphicsPipelineDescription(){
                     BlendState = BlendStateDescription.SingleOverrideBlend,
                     DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
                     RasterizerState = rasterizerState,
                     PrimitiveTopology = modelRuntimeState.PrimitiveTopology,
-                    ResourceLayouts = new ResourceLayout[] {
-                        sceneRuntimeState.CameraResourceLayout,
-                        sceneRuntimeState.LightResourceLayout,
-                        sceneRuntimeState.SpotLightResourceLayout,
-                        sceneRuntimeState.MaterialResourceLayout,
-                        modelRuntimeState.TextureResourceLayout},
+                    ResourceLayouts = completeResourceLayout,
                     ShaderSet = new ShaderSetDescription(
                         vertexLayouts: modelRuntimeState.VertexLayouts,
                         shaders: new Shader[] {modelRuntimeState.VertexShader,modelRuntimeState.FragmentShader}
@@ -146,15 +167,21 @@ namespace Henzai
             ModelRuntimeDescriptor<T> modelRuntimeState, 
             SceneRuntimeDescriptor sceneRuntimeState, 
             RasterizerStateDescription rasterizerState,
-            Framebuffer framebuffer) where T : struct, VertexLocateable {
+            Framebuffer framebuffer,
+            ResourceLayout[] effectLayouts) where T : struct, VertexLocateable {
+
+            var resourceLayout = new ResourceLayout[] {sceneRuntimeState.CameraResourceLayout};
+
+            var completeResourceLayout = new ResourceLayout[resourceLayout.Length + effectLayouts.Length];
+            resourceLayout.CopyTo(completeResourceLayout,0);
+            effectLayouts.CopyTo(completeResourceLayout,resourceLayout.Length);
 
             return new GraphicsPipelineDescription(){
                     BlendState = BlendStateDescription.SingleOverrideBlend,
                     DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
                     RasterizerState = rasterizerState,
                     PrimitiveTopology = modelRuntimeState.PrimitiveTopology,
-                    ResourceLayouts = new ResourceLayout[] {
-                        sceneRuntimeState.CameraResourceLayout},
+                    ResourceLayouts = completeResourceLayout,
                     ShaderSet = new ShaderSetDescription(
                         vertexLayouts: modelRuntimeState.VertexLayouts,
                         shaders: new Shader[] {modelRuntimeState.VertexShader,modelRuntimeState.FragmentShader}
@@ -188,16 +215,23 @@ namespace Henzai
             ModelRuntimeDescriptor<T> modelRuntimeState, 
             SceneRuntimeDescriptor sceneRuntimeState,
             RasterizerStateDescription rasterizerState, 
-            Framebuffer framebuffer) where T : struct, VertexLocateable {
+            Framebuffer framebuffer,
+            ResourceLayout[] effectLayouts) where T : struct, VertexLocateable {
+
+            var resourceLayout = new ResourceLayout[] {
+                        sceneRuntimeState.CameraResourceLayout,
+                        modelRuntimeState.TextureResourceLayout};
+
+            var completeResourceLayout = new ResourceLayout[resourceLayout.Length + effectLayouts.Length];
+            resourceLayout.CopyTo(completeResourceLayout,0);
+            effectLayouts.CopyTo(completeResourceLayout,resourceLayout.Length);
 
             return new GraphicsPipelineDescription(){
                     BlendState = BlendStateDescription.SingleOverrideBlend,
                     DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
                     RasterizerState = rasterizerState,
                     PrimitiveTopology = modelRuntimeState.PrimitiveTopology,
-                    ResourceLayouts = new ResourceLayout[] {
-                        sceneRuntimeState.CameraResourceLayout,
-                        modelRuntimeState.TextureResourceLayout},
+                    ResourceLayouts = completeResourceLayout,
                     ShaderSet = new ShaderSetDescription(
                         vertexLayouts: modelRuntimeState.VertexLayouts,
                         shaders: new Shader[] {modelRuntimeState.VertexShader,modelRuntimeState.FragmentShader}

@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Numerics;
 using Veldrid;
 using Henzai.Cameras;
 using Henzai.Runtime;
@@ -54,7 +52,7 @@ namespace Henzai.Effects
             _modelPTDescriptorArray = modelPTDescriptorArray;
             _modelPCDescriptorArray = modelPCDescriptorArray;
             var lightPos  = mainSceneRuntimeDescriptor.Light.LightPos;
-            lightCam = new OrthographicCamera(_resolution.Horizontal,_resolution.Vertical, lightPos);
+            lightCam = new OrthographicCamera(_resolution.Horizontal, _resolution.Vertical, lightPos);
 
             _sceneRuntimeDescriptor.CameraProjViewBuffer = _factory.CreateBuffer(new BufferDescription(Camera.SizeInBytes, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
             _sceneRuntimeDescriptor.CameraResourceLayout

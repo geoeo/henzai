@@ -1,6 +1,4 @@
-﻿using System;
-using Henzai;
-using Veldrid;
+﻿using Veldrid;
 using Veldrid.Sdl2;
 using Henzai.UI;
 

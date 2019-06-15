@@ -71,10 +71,12 @@ namespace Henzai.Runtime
                                                     ResourceSet pointlightResourceSet,
                                                     ResourceSet materialResourceSet,
                                                     ResourceSet textureResourceSet,
+                                                    ResourceSet[] effectResourceSets,
                                                     RealtimeMaterial material,
                                                     Mesh<VertexPositionNormalTextureTangentBitangent> mesh,
                                                     uint modelInstanceCount)
         {
+            var effectIndex = 5;
             commandList.SetVertexBuffer(0, vertexBuffer);
             commandList.SetIndexBuffer(indexBuffer, IndexFormat.UInt16);
             commandList.UpdateBuffer(cameraProjViewBuffer, 128, mesh.World);
@@ -87,6 +89,11 @@ namespace Henzai.Runtime
             commandList.UpdateBuffer(materialBuffer, 48, material.coefficients);
             commandList.SetGraphicsResourceSet(3, materialResourceSet);
             commandList.SetGraphicsResourceSet(4, textureResourceSet);
+            for(int i = 0; i < effectResourceSets.Length; i++){
+                var resourceSet = effectResourceSets[i];
+                var resourceSetIndex = effectIndex + i;
+                commandList.SetGraphicsResourceSet((uint)resourceSetIndex, resourceSet);
+            }
             commandList.DrawIndexed(
                 indexCount: mesh.Indices.Length.ToUnsigned(),
                 instanceCount: modelInstanceCount,
@@ -111,10 +118,12 @@ namespace Henzai.Runtime
                                                     ResourceSet cameraResourceSet,
                                                     ResourceSet lightResourceSet,
                                                     ResourceSet materialResourceSet,
+                                                    ResourceSet[] effectResourceSets,
                                                     RealtimeMaterial material,
                                                     Mesh<VertexPositionNormal> mesh,
                                                     uint modelInstanceCount)
         {
+            var effectIndex = 3;
             commandList.SetVertexBuffer(0, vertexBuffer);
             commandList.SetIndexBuffer(indexBuffer, IndexFormat.UInt16);
             commandList.UpdateBuffer(cameraProjViewBuffer, 128, mesh.World);
@@ -125,6 +134,11 @@ namespace Henzai.Runtime
             commandList.UpdateBuffer(materialBuffer, 32, material.ambient);
             commandList.UpdateBuffer(materialBuffer, 48, material.coefficients);
             commandList.SetGraphicsResourceSet(2, materialResourceSet);
+            for(int i = 0; i < effectResourceSets.Length; i++){
+                var resourceSet = effectResourceSets[i];
+                var resourceSetIndex = effectIndex + i;
+                commandList.SetGraphicsResourceSet((uint)resourceSetIndex, resourceSet);
+            }
             commandList.DrawIndexed(
                 indexCount: mesh.Indices.Length.ToUnsigned(),
                 instanceCount: modelInstanceCount,
@@ -147,14 +161,21 @@ namespace Henzai.Runtime
                                                     DeviceBuffer cameraProjViewBuffer,
                                                     ResourceSet cameraResourceSet,
                                                     ResourceSet textureResourceSet,
+                                                    ResourceSet[] effectResourceSets,
                                                     Mesh<VertexPositionTexture> mesh,
                                                     uint modelInstanceCount) where T : struct, VertexLocateable
         {
+            var effectIndex = 2;
             commandList.SetVertexBuffer(0, vertexBuffer);
             commandList.SetIndexBuffer(indexBuffer, IndexFormat.UInt16);
             commandList.UpdateBuffer(cameraProjViewBuffer, 128, mesh.World);
             commandList.SetGraphicsResourceSet(0, cameraResourceSet); // Always after SetPipeline
             commandList.SetGraphicsResourceSet(1, textureResourceSet);
+            for(int i = 0; i < effectResourceSets.Length; i++){
+                var resourceSet = effectResourceSets[i];
+                var resourceSetIndex = effectIndex + i;
+                commandList.SetGraphicsResourceSet((uint)resourceSetIndex, resourceSet);
+            }
             commandList.DrawIndexed(
                 indexCount: mesh.Indices.Length.ToUnsigned(),
                 instanceCount: modelInstanceCount,
@@ -176,13 +197,20 @@ namespace Henzai.Runtime
                                                     DeviceBuffer indexBuffer,
                                                     DeviceBuffer cameraProjViewBuffer,
                                                     ResourceSet cameraResourceSet,
+                                                    ResourceSet[] effectResourceSets,
                                                     Mesh<T> mesh,
                                                     uint modelInstanceCount) where T : struct, VertexLocateable
         {
+            var effectIndex = 1;
             commandList.SetVertexBuffer(0, vertexBuffer);
             commandList.SetIndexBuffer(indexBuffer, IndexFormat.UInt16);
             commandList.UpdateBuffer(cameraProjViewBuffer, 128, mesh.World);
             commandList.SetGraphicsResourceSet(0, cameraResourceSet); // Always after SetPipeline
+            for(int i = 0; i < effectResourceSets.Length; i++){
+                var resourceSet = effectResourceSets[i];
+                var resourceSetIndex = effectIndex + i;
+                commandList.SetGraphicsResourceSet((uint)resourceSetIndex, resourceSet);
+            }
             commandList.DrawIndexed(
                 indexCount: mesh.Indices.Length.ToUnsigned(),
                 instanceCount: modelInstanceCount,
@@ -206,14 +234,21 @@ namespace Henzai.Runtime
                                                     DeviceBuffer cameraProjViewBuffer,
                                                     ResourceSet cameraResourceSet,
                                                     ResourceSet textureResourceSet,
+                                                    ResourceSet[] effectResourceSets,
                                                     Mesh<VertexPosition> mesh,
                                                     uint modelInstanceCount)
         {
+            var effectIndex = 2;
             commandList.SetVertexBuffer(0, vertexBuffer);
             commandList.SetIndexBuffer(indexBuffer, IndexFormat.UInt16);
             commandList.UpdateBuffer(cameraProjViewBuffer, 128, mesh.World);
             commandList.SetGraphicsResourceSet(0, cameraResourceSet); // Always after SetPipeline
             commandList.SetGraphicsResourceSet(1, textureResourceSet);
+            for(int i = 0; i < effectResourceSets.Length; i++){
+                var resourceSet = effectResourceSets[i];
+                var resourceSetIndex = effectIndex + i;
+                commandList.SetGraphicsResourceSet((uint)resourceSetIndex, resourceSet);
+            }
             commandList.DrawIndexed(
                 indexCount: mesh.Indices.Length.ToUnsigned(),
                 instanceCount: modelInstanceCount,
@@ -240,6 +275,7 @@ namespace Henzai.Runtime
                     sceneRuntimeDescriptor.CameraProjViewBuffer,
                     sceneRuntimeDescriptor.CameraResourceSet,
                     cubeMapRuntimeDescriptor.TextureResourceSets[i],
+                    cubeMapRuntimeDescriptor.EffectResourceSets,
                     mesh,
                     cubeMapRuntimeDescriptor.TotalInstanceCount
                 );
@@ -281,6 +317,7 @@ namespace Henzai.Runtime
                         sceneRuntimeDescriptor.CameraResourceSet,
                         sceneRuntimeDescriptor.LightResourceSet,
                         sceneRuntimeDescriptor.MaterialResourceSet,
+                        modelState.EffectResourceSets,
                         material,
                         mesh,
                         modelState.TotalInstanceCount
@@ -296,9 +333,11 @@ namespace Henzai.Runtime
             for (int j = 0; j < descriptorArray.Length; j++)
             {
                 var modelState = descriptorArray[j];
+                var effectSets = sceneRuntimeDescriptor.NO_RESOURCE_SET;
                 switch(piplelineType){
                     case PipelineTypes.Normal:
                         commandList.SetPipeline(modelState.Pipeline);
+                        effectSets = modelState.EffectResourceSets;
                         break;
                     case PipelineTypes.ShadowMap:
                         commandList.SetPipeline(modelState.ShadowMapPipeline);
@@ -319,6 +358,7 @@ namespace Henzai.Runtime
                         modelState.IndexBuffers[i],
                         sceneRuntimeDescriptor.CameraProjViewBuffer,
                         sceneRuntimeDescriptor.CameraResourceSet,
+                        effectSets,
                         mesh,
                         modelState.TotalInstanceCount
                     );
@@ -334,9 +374,11 @@ namespace Henzai.Runtime
             for (int j = 0; j < descriptorArray.Length; j++)
             {
                 var modelState = descriptorArray[j];
+                var effectSets = sceneRuntimeDescriptor.NO_RESOURCE_SET;
                 switch(piplelineType){
                     case PipelineTypes.Normal:
                         commandList.SetPipeline(modelState.Pipeline);
+                        effectSets = modelState.EffectResourceSets;
                         break;
                     case PipelineTypes.ShadowMap:
                         commandList.SetPipeline(modelState.ShadowMapPipeline);
@@ -357,6 +399,7 @@ namespace Henzai.Runtime
                         sceneRuntimeDescriptor.CameraProjViewBuffer,
                         sceneRuntimeDescriptor.CameraResourceSet,
                         modelState.TextureResourceSets[i],
+                        effectSets,
                         mesh,
                         modelState.TotalInstanceCount
                     );
@@ -372,10 +415,12 @@ namespace Henzai.Runtime
             for (int j = 0; j < descriptorArray.Length; j++)
             {
                 var modelState = descriptorArray[j];
+                var effectSets = sceneRuntimeDescriptor.NO_RESOURCE_SET;
                 var model = modelState.Model;
                 switch(piplelineType){
                     case PipelineTypes.Normal:
                         commandList.SetPipeline(modelState.Pipeline);
+                        effectSets = modelState.EffectResourceSets;
                         break;
                     case PipelineTypes.ShadowMap:
                         commandList.SetPipeline(modelState.ShadowMapPipeline);
@@ -400,6 +445,7 @@ namespace Henzai.Runtime
                         sceneRuntimeDescriptor.SpotLightResourceSet,
                         sceneRuntimeDescriptor.MaterialResourceSet,
                         modelState.TextureResourceSets[i],
+                        effectSets,
                         material,
                         mesh,
                         modelState.TotalInstanceCount
@@ -423,9 +469,11 @@ namespace Henzai.Runtime
                 var meshIndex = meshBVH.MeshRuntimeIndex;
                 var modelState = descriptorArray[modelStateIndex];
                 var model = modelState.Model;
+                var effectSets = sceneRuntimeDescriptor.NO_RESOURCE_SET;
                 switch(piplelineType){
                     case PipelineTypes.Normal:
                         commandList.SetPipeline(modelState.Pipeline);
+                        effectSets = modelState.EffectResourceSets;
                         break;
                     case PipelineTypes.ShadowMap:
                         commandList.SetPipeline(modelState.ShadowMapPipeline);
@@ -446,6 +494,7 @@ namespace Henzai.Runtime
                     sceneRuntimeDescriptor.SpotLightResourceSet,
                     sceneRuntimeDescriptor.MaterialResourceSet,
                     modelState.TextureResourceSets[meshIndex],
+                    effectSets,
                     material,
                     mesh,
                     modelState.TotalInstanceCount

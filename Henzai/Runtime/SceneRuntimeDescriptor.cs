@@ -13,6 +13,7 @@ namespace Henzai.Runtime
     ///</summary>
     public sealed class SceneRuntimeDescriptor
    {
+       public ResourceSet[] NO_RESOURCE_SET {get; private set;}
        /// <summary>
        /// Buffer Encapsulates CPU Memory for MVP Matrix
        /// </summary>
@@ -82,6 +83,10 @@ namespace Henzai.Runtime
        public Light Light {get; set;}
        public Light SpotLight {get;set;}
        public Camera Camera {get;set;}
+
+       public SceneRuntimeDescriptor(){
+           NO_RESOURCE_SET = new ResourceSet[0];
+       }
 
    } 
 }

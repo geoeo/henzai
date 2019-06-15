@@ -45,6 +45,7 @@ namespace Henzai.Runtime
         /// </summary>
         public ResourceSet[] TextureResourceSets {get; private set;}
         public ResourceLayout TextureResourceLayout {get; set;}
+        public ResourceSet[] EffectResourceSets {get;set;}
         public Sampler TextureSampler {get;set;}
         public Shader VertexShader {get; private set;}
         public List<VertexLayoutDescription> VertexLayoutList {get;private set;}
