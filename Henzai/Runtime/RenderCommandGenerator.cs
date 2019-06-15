@@ -224,35 +224,6 @@ namespace Henzai.Runtime
 
         }
 
-        /// <summary>
-        /// Render Commands for Mesh of Type:
-        /// <see cref="Henzai.Geometry.VertexPositionColor"/> 
-        ///</summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void GenerateCommandsForMesh_InlineInstancing(
-                                                    CommandList commandList,
-                                                    DeviceBuffer vertexBuffer,
-                                                    DeviceBuffer indexBuffer,
-                                                    DeviceBuffer instanceBuffer,
-                                                    DeviceBuffer cameraProjViewBuffer,
-                                                    ResourceSet cameraResourceSet,
-                                                    Mesh<VertexPositionColor> mesh,
-                                                    uint modelInstanceCount)
-        {
-            commandList.SetVertexBuffer(0, vertexBuffer);
-            commandList.SetIndexBuffer(indexBuffer, IndexFormat.UInt16);
-            commandList.UpdateBuffer(cameraProjViewBuffer, 128, mesh.World);
-            commandList.SetGraphicsResourceSet(0, cameraResourceSet); // Always after SetPipeline
-            commandList.DrawIndexed(
-                indexCount: mesh.Indices.Length.ToUnsigned(),
-                instanceCount: modelInstanceCount,
-                indexStart: 0,
-                vertexOffset: 0,
-                instanceStart: 0
-            );
-
-        }
-
         public static void GenerateRenderCommandsForCubeMapModelDescriptor(CommandList commandList,
                                                                     ModelRuntimeDescriptor<VertexPosition> cubeMapRuntimeDescriptor,
                                                                     SceneRuntimeDescriptor sceneRuntimeDescriptor,
@@ -301,6 +272,8 @@ namespace Henzai.Runtime
                         commandList.SetPipeline(modelState.ShadowMapPipeline);
                         break;
                 }
+                for (int i = 0; i < modelState.InstanceBuffers.Length; i++)
+                    commandList.SetVertexBuffer(i.ToUnsigned() + 1, modelState.InstanceBuffers[i]);
                 for (int i = 0; i < model.MeshCount; i++)
                 {
                     if (!model.GetMeshBVH(i).AABBIsValid)
@@ -340,43 +313,6 @@ namespace Henzai.Runtime
                         break;
                 }
                 var model = modelState.Model;
-                for (int i = 0; i < model.MeshCount; i++)
-                {
-                    if (!model.GetMeshBVH(i).AABBIsValid)
-                        continue;
-                    var mesh = model.GetMesh(i);
-
-                    RenderCommandGenerator.GenerateCommandsForMesh_Inline(
-                        commandList,
-                        modelState.VertexBuffers[i],
-                        modelState.IndexBuffers[i],
-                        sceneRuntimeDescriptor.CameraProjViewBuffer,
-                        sceneRuntimeDescriptor.CameraResourceSet,
-                        mesh,
-                        modelState.TotalInstanceCount
-                    );
-                }
-            }
-        }
-
-        public static void GenerateRenderCommandsForModelDescriptor_Instancing(CommandList commandList,
-                                                                       ModelRuntimeDescriptor<VertexPositionColor>[] descriptorArray,
-                                                                       SceneRuntimeDescriptor sceneRuntimeDescriptor,
-                                                                       PipelineTypes piplelineType)
-        {
-            for (int j = 0; j < descriptorArray.Length; j++)
-            {
-                var modelState = descriptorArray[j];
-                switch(piplelineType){
-                    case PipelineTypes.Normal:
-                        commandList.SetPipeline(modelState.Pipeline);
-                        break;
-                    case PipelineTypes.ShadowMap:
-                        commandList.SetPipeline(modelState.ShadowMapPipeline);
-                        break;
-                }
-                var model = modelState.Model;
-                //TODO:Inline this if more instance buffers are ever used
                 for (int i = 0; i < modelState.InstanceBuffers.Length; i++)
                     commandList.SetVertexBuffer(i.ToUnsigned() + 1, modelState.InstanceBuffers[i]);
                 for (int i = 0; i < model.MeshCount; i++)
@@ -384,6 +320,7 @@ namespace Henzai.Runtime
                     if (!model.GetMeshBVH(i).AABBIsValid)
                         continue;
                     var mesh = model.GetMesh(i);
+
                     RenderCommandGenerator.GenerateCommandsForMesh_Inline(
                         commandList,
                         modelState.VertexBuffers[i],
@@ -396,7 +333,6 @@ namespace Henzai.Runtime
                 }
             }
         }
-
 
         public static void GenerateRenderCommandsForModelDescriptor(CommandList commandList,
                                                                        ModelRuntimeDescriptor<VertexPositionTexture>[] descriptorArray,
@@ -415,45 +351,6 @@ namespace Henzai.Runtime
                         break;
                 }
                 var model = modelState.Model;
-
-                for (int i = 0; i < model.MeshCount; i++)
-                {
-                    if (!model.GetMeshBVH(i).AABBIsValid)
-                        continue;
-                    var mesh = model.GetMesh(i);
-                    RenderCommandGenerator.GenerateCommandsForMesh_Inline<VertexPositionTexture>(
-                        commandList,
-                        modelState.VertexBuffers[i],
-                        modelState.IndexBuffers[i],
-                        sceneRuntimeDescriptor.CameraProjViewBuffer,
-                        sceneRuntimeDescriptor.CameraResourceSet,
-                        modelState.TextureResourceSets[i],
-                        mesh,
-                        modelState.TotalInstanceCount
-                    );
-                }
-            }
-        }
-
-
-        public static void GenerateRenderCommandsForModelDescriptor_Instancing(CommandList commandList,
-                                                                       ModelRuntimeDescriptor<VertexPositionTexture>[] descriptorArray,
-                                                                       SceneRuntimeDescriptor sceneRuntimeDescriptor,
-                                                                       PipelineTypes piplelineType)
-        {
-            for (int j = 0; j < descriptorArray.Length; j++)
-            {
-                var modelState = descriptorArray[j];
-                switch(piplelineType){
-                    case PipelineTypes.Normal:
-                        commandList.SetPipeline(modelState.Pipeline);
-                        break;
-                    case PipelineTypes.ShadowMap:
-                        commandList.SetPipeline(modelState.ShadowMapPipeline);
-                        break;
-                }
-                var model = modelState.Model;
-                //TODO:Inline this if more instance buffers are ever used
                 for (int i = 0; i < modelState.InstanceBuffers.Length; i++)
                     commandList.SetVertexBuffer(i.ToUnsigned() + 1, modelState.InstanceBuffers[i]);
                 for (int i = 0; i < model.MeshCount; i++)
@@ -475,51 +372,6 @@ namespace Henzai.Runtime
             }
         }
 
-        public static void GenerateRenderCommandsForModelDescriptor_Instancing(CommandList commandList,
-                                                                    ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] descriptorArray,
-                                                                    SceneRuntimeDescriptor sceneRuntimeDescriptor,
-                                                                    PipelineTypes piplelineType)
-        {
-            for (int j = 0; j < descriptorArray.Length; j++)
-            {
-                var modelState = descriptorArray[j];
-                switch(piplelineType){
-                    case PipelineTypes.Normal:
-                        commandList.SetPipeline(modelState.Pipeline);
-                        break;
-                    case PipelineTypes.ShadowMap:
-                        commandList.SetPipeline(modelState.ShadowMapPipeline);
-                        break;
-                }
-                var model = modelState.Model;
-                for (int i = 0; i < modelState.InstanceBuffers.Length; i++)
-                    commandList.SetVertexBuffer(i.ToUnsigned() + 1, modelState.InstanceBuffers[i]);
-                for (int i = 0; i < model.MeshCount; i++)
-                {
-                    if (!model.GetMeshBVH(i).AABBIsValid)
-                        continue;
-                    var mesh = model.GetMesh(i);
-                    var material = model.GetMaterial(i);
-                    RenderCommandGenerator.GenerateCommandsForMesh_Inline(
-                        commandList,
-                        modelState.VertexBuffers[i],
-                        modelState.IndexBuffers[i],
-                        sceneRuntimeDescriptor.CameraProjViewBuffer,
-                        sceneRuntimeDescriptor.MaterialBuffer,
-                        sceneRuntimeDescriptor.CameraResourceSet,
-                        sceneRuntimeDescriptor.LightResourceSet,
-                        sceneRuntimeDescriptor.SpotLightResourceSet,
-                        sceneRuntimeDescriptor.MaterialResourceSet,
-                        modelState.TextureResourceSets[i],
-                        material,
-                        mesh,
-                        modelState.TotalInstanceCount
-                    );
-                }
-            }
-        }
-
-
         public static void GenerateRenderCommandsForModelDescriptor(CommandList commandList,
                                                                     ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] descriptorArray,
                                                                     SceneRuntimeDescriptor sceneRuntimeDescriptor,
@@ -537,6 +389,8 @@ namespace Henzai.Runtime
                         commandList.SetPipeline(modelState.ShadowMapPipeline);
                         break;
                 }
+                for (int i = 0; i < modelState.InstanceBuffers.Length; i++)
+                    commandList.SetVertexBuffer(i.ToUnsigned() + 1, modelState.InstanceBuffers[i]);
                 for (int i = 0; i < model.MeshCount; i++)
                 {
                     if (!model.GetMeshBVH(i).AABBIsValid)
@@ -585,7 +439,8 @@ namespace Henzai.Runtime
                         commandList.SetPipeline(modelState.ShadowMapPipeline);
                         break;
                 }
-
+                for (int i = 0; i < modelState.InstanceBuffers.Length; i++)
+                    commandList.SetVertexBuffer(i.ToUnsigned() + 1, modelState.InstanceBuffers[i]);
                 var mesh = model.GetMesh(j);
                 var material = model.GetMaterial(meshIndex);
                 RenderCommandGenerator.GenerateCommandsForMesh_Inline(

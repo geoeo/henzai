@@ -299,18 +299,13 @@ namespace Henzai
         public static GraphicsPipelineDescription GeneratePipelineP<T>(
             ModelRuntimeDescriptor<T> modelRuntimeState, 
             SceneRuntimeDescriptor sceneRuntimeState, 
+            RasterizerStateDescription rasterizerState,
             Framebuffer framebuffer) where T : struct, VertexLocateable {
 
             return new GraphicsPipelineDescription(){
                 BlendState = BlendStateDescription.SingleOverrideBlend,
                 DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
-                RasterizerState = new RasterizerStateDescription(
-                    cullMode: FaceCullMode.Back,
-                    fillMode: PolygonFillMode.Solid,
-                    frontFace: FrontFace.Clockwise,
-                    depthClipEnabled: true,
-                    scissorTestEnabled: false
-                ),
+                RasterizerState = rasterizerState,
                 PrimitiveTopology = modelRuntimeState.PrimitiveTopology,
                 ResourceLayouts = new ResourceLayout[] {
                     sceneRuntimeState.CameraResourceLayout,
@@ -326,18 +321,13 @@ namespace Henzai
         public static GraphicsPipelineDescription GenerateShadowMapPipelineP<T>(
             ModelRuntimeDescriptor<T> modelRuntimeState, 
             SceneRuntimeDescriptor sceneRuntimeState, 
+            RasterizerStateDescription rasterizerState,
             Framebuffer framebuffer) where T : struct, VertexLocateable {
 
             return new GraphicsPipelineDescription(){
                 BlendState = BlendStateDescription.SingleOverrideBlend,
                 DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
-                RasterizerState = new RasterizerStateDescription(
-                    cullMode: FaceCullMode.Front,
-                    fillMode: PolygonFillMode.Solid,
-                    frontFace: FrontFace.Clockwise,
-                    depthClipEnabled: true,
-                    scissorTestEnabled: false
-                ),
+                RasterizerState = rasterizerState,
                 PrimitiveTopology = modelRuntimeState.PrimitiveTopology,
                 ResourceLayouts = new ResourceLayout[] {sceneRuntimeState.CameraResourceLayout},
                 ShaderSet = new ShaderSetDescription(
@@ -351,18 +341,13 @@ namespace Henzai
         public static GraphicsPipelineDescription GeneratePipelinePN<T>(
             ModelRuntimeDescriptor<T> modelRuntimeState, 
             SceneRuntimeDescriptor sceneRuntimeState, 
+            RasterizerStateDescription rasterizerState,
             Framebuffer framebuffer) where T : struct, VertexLocateable {
 
             return new GraphicsPipelineDescription(){
                 BlendState = BlendStateDescription.SingleOverrideBlend,
                 DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
-                RasterizerState = new RasterizerStateDescription(
-                    cullMode: FaceCullMode.Back,
-                    fillMode: PolygonFillMode.Solid,
-                    frontFace: FrontFace.Clockwise,
-                    depthClipEnabled: true,
-                    scissorTestEnabled: false
-                ),
+                RasterizerState = rasterizerState,
                 PrimitiveTopology = modelRuntimeState.PrimitiveTopology,
                 ResourceLayouts = new ResourceLayout[] {
                     sceneRuntimeState.CameraResourceLayout,
@@ -379,18 +364,13 @@ namespace Henzai
         public static GraphicsPipelineDescription GenerateShadowMapPipelinePN<T>(
             ModelRuntimeDescriptor<T> modelRuntimeState, 
             SceneRuntimeDescriptor sceneRuntimeState, 
+            RasterizerStateDescription rasterizerState,
             Framebuffer framebuffer) where T : struct, VertexLocateable {
 
             return new GraphicsPipelineDescription(){
                 BlendState = BlendStateDescription.SingleOverrideBlend,
                 DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
-                RasterizerState = new RasterizerStateDescription(
-                    cullMode: FaceCullMode.Front,
-                    fillMode: PolygonFillMode.Solid,
-                    frontFace: FrontFace.Clockwise,
-                    depthClipEnabled: true,
-                    scissorTestEnabled: false
-                ),
+                RasterizerState = rasterizerState,
                 PrimitiveTopology = modelRuntimeState.PrimitiveTopology,
                 ResourceLayouts = new ResourceLayout[] {sceneRuntimeState.CameraResourceLayout},
                 ShaderSet = new ShaderSetDescription(
@@ -404,18 +384,13 @@ namespace Henzai
         public static GraphicsPipelineDescription GeneratePipelinePNTTB<T>(
             ModelRuntimeDescriptor<T> modelRuntimeState, 
             SceneRuntimeDescriptor sceneRuntimeState, 
+            RasterizerStateDescription rasterizerState,
             Framebuffer framebuffer) where T : struct, VertexLocateable {
 
             return new GraphicsPipelineDescription(){
                     BlendState = BlendStateDescription.SingleOverrideBlend,
                     DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
-                    RasterizerState = new RasterizerStateDescription(
-                        cullMode: FaceCullMode.Back,
-                        fillMode: PolygonFillMode.Solid,
-                        frontFace: FrontFace.Clockwise,
-                        depthClipEnabled: true,
-                        scissorTestEnabled: false
-                    ),
+                    RasterizerState = rasterizerState,
                     PrimitiveTopology = modelRuntimeState.PrimitiveTopology,
                     ResourceLayouts = new ResourceLayout[] {
                         sceneRuntimeState.CameraResourceLayout,
@@ -434,18 +409,13 @@ namespace Henzai
         public static GraphicsPipelineDescription GenerateShadowMapPipelinePNTTB<T>(
             ModelRuntimeDescriptor<T> modelRuntimeState, 
             SceneRuntimeDescriptor sceneRuntimeState, 
+            RasterizerStateDescription rasterizerState,
             Framebuffer framebuffer) where T : struct, VertexLocateable {
 
             return new GraphicsPipelineDescription(){
                     BlendState = BlendStateDescription.SingleOverrideBlend,
                     DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
-                    RasterizerState = new RasterizerStateDescription(
-                        cullMode: FaceCullMode.Front,
-                        fillMode: PolygonFillMode.Solid,
-                        frontFace: FrontFace.Clockwise,
-                        depthClipEnabled: true,
-                        scissorTestEnabled: false
-                    ),
+                    RasterizerState = rasterizerState,
                     PrimitiveTopology = modelRuntimeState.PrimitiveTopology,
                     ResourceLayouts = new ResourceLayout[] {sceneRuntimeState.CameraResourceLayout},
                     ShaderSet = new ShaderSetDescription(
@@ -459,18 +429,13 @@ namespace Henzai
         public static GraphicsPipelineDescription GeneratePipelinePC<T>(
             ModelRuntimeDescriptor<T> modelRuntimeState, 
             SceneRuntimeDescriptor sceneRuntimeState, 
+            RasterizerStateDescription rasterizerState,
             Framebuffer framebuffer) where T : struct, VertexLocateable {
 
             return new GraphicsPipelineDescription(){
                     BlendState = BlendStateDescription.SingleOverrideBlend,
                     DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
-                    RasterizerState = new RasterizerStateDescription(
-                        cullMode: FaceCullMode.Back,
-                        fillMode: PolygonFillMode.Solid,
-                        frontFace: FrontFace.Clockwise,
-                        depthClipEnabled: true,
-                        scissorTestEnabled: false
-                    ),
+                    RasterizerState = rasterizerState,
                     PrimitiveTopology = modelRuntimeState.PrimitiveTopology,
                     ResourceLayouts = new ResourceLayout[] {
                         sceneRuntimeState.CameraResourceLayout},
@@ -485,18 +450,13 @@ namespace Henzai
         public static GraphicsPipelineDescription GenerateShadowMapPipelinePC<T>(
             ModelRuntimeDescriptor<T> modelRuntimeState, 
             SceneRuntimeDescriptor sceneRuntimeState, 
+            RasterizerStateDescription rasterizerState,
             Framebuffer framebuffer) where T : struct, VertexLocateable {
 
             return new GraphicsPipelineDescription(){
                     BlendState = BlendStateDescription.SingleOverrideBlend,
                     DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
-                    RasterizerState = new RasterizerStateDescription(
-                        cullMode: FaceCullMode.Front,
-                        fillMode: PolygonFillMode.Solid,
-                        frontFace: FrontFace.Clockwise,
-                        depthClipEnabled: true,
-                        scissorTestEnabled: false
-                    ),
+                    RasterizerState = rasterizerState,
                     PrimitiveTopology = modelRuntimeState.PrimitiveTopology,
                     ResourceLayouts = new ResourceLayout[] {sceneRuntimeState.CameraResourceLayout},
                     ShaderSet = new ShaderSetDescription(
@@ -510,19 +470,14 @@ namespace Henzai
     
         public static GraphicsPipelineDescription GeneratePipelinePT<T>(
             ModelRuntimeDescriptor<T> modelRuntimeState, 
-            SceneRuntimeDescriptor sceneRuntimeState, 
+            SceneRuntimeDescriptor sceneRuntimeState,
+            RasterizerStateDescription rasterizerState, 
             Framebuffer framebuffer) where T : struct, VertexLocateable {
 
             return new GraphicsPipelineDescription(){
                     BlendState = BlendStateDescription.SingleOverrideBlend,
                     DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
-                    RasterizerState = new RasterizerStateDescription(
-                        cullMode: FaceCullMode.Back,
-                        fillMode: PolygonFillMode.Solid,
-                        frontFace: FrontFace.Clockwise,
-                        depthClipEnabled: true,
-                        scissorTestEnabled: false
-                    ),
+                    RasterizerState = rasterizerState,
                     PrimitiveTopology = modelRuntimeState.PrimitiveTopology,
                     ResourceLayouts = new ResourceLayout[] {
                         sceneRuntimeState.CameraResourceLayout,
@@ -538,18 +493,13 @@ namespace Henzai
         public static GraphicsPipelineDescription GenerateShadowMapPipelinePT<T>(
             ModelRuntimeDescriptor<T> modelRuntimeState, 
             SceneRuntimeDescriptor sceneRuntimeState, 
+            RasterizerStateDescription rasterizerState,
             Framebuffer framebuffer) where T : struct, VertexLocateable {
 
             return new GraphicsPipelineDescription(){
                     BlendState = BlendStateDescription.SingleOverrideBlend,
                     DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
-                    RasterizerState = new RasterizerStateDescription(
-                        cullMode: FaceCullMode.Front,
-                        fillMode: PolygonFillMode.Solid,
-                        frontFace: FrontFace.Clockwise,
-                        depthClipEnabled: true,
-                        scissorTestEnabled: false
-                    ),
+                    RasterizerState = rasterizerState,
                     PrimitiveTopology = modelRuntimeState.PrimitiveTopology,
                     ResourceLayouts = new ResourceLayout[] {sceneRuntimeState.CameraResourceLayout},
                     ShaderSet = new ShaderSetDescription(

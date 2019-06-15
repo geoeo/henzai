@@ -53,6 +53,7 @@ namespace Henzai.Examples
             scene.PreRender_Descriptors += BuildBVH;
             scene.PreDraw_Time_Camera_Descriptors += EnableBVHCulling;
 
+            //scene.CreateShadowMap(renderResolution);
             scene.SetUp(renderResolution);
             scene.Run();
         }

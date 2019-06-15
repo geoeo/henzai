@@ -68,22 +68,6 @@ namespace Henzai.Effects
                     _factory,
                     _sceneRuntimeDescriptor.CameraResourceLayout,
                     new BindableResource[] { _sceneRuntimeDescriptor.CameraProjViewBuffer });
-
-            //TODO: Cleanup
-            lightCamBuffer = _factory.CreateBuffer(new BufferDescription(Camera.SizeInBytes, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
-            lightCamLayout = ResourceGenerator.GenerateResourceLayout(
-                    _factory,
-                    "light",
-                    ResourceKind.UniformBuffer,
-                    ShaderStages.Vertex);
-            lightCamSet = ResourceGenerator.GenrateResourceSet(
-                    _factory,
-                    lightCamLayout,
-                    new BindableResource[] { lightCamBuffer });
-
-            _sceneRuntimeDescriptor.LightBuffer = lightCamBuffer;
-            _sceneRuntimeDescriptor.LightResourceLayout = lightCamLayout;
-            _sceneRuntimeDescriptor.LightResourceSet = lightCamSet;
         }
 
         public override void BuildCommandList(){
@@ -97,8 +81,7 @@ namespace Henzai.Effects
                 _sceneRuntimeDescriptor.CameraProjViewBuffer,
                 lightCam);
 
-            //TODO: Problem with instancing
-            //RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionNormalTextureTangentBitangent>(_commandList,_modelPNTTBDescriptorArray,_sceneRuntimeDescriptor, PipelineTypes.ShadowMap);
+            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionNormalTextureTangentBitangent>(_commandList,_modelPNTTBDescriptorArray,_sceneRuntimeDescriptor, PipelineTypes.ShadowMap);
             RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionNormal>(_commandList,_modelPNDescriptorArray,_sceneRuntimeDescriptor, PipelineTypes.ShadowMap);
             RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionTexture>(_commandList,_modelPTDescriptorArray,_sceneRuntimeDescriptor, PipelineTypes.ShadowMap);
             RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionColor>(_commandList,_modelPCDescriptorArray,_sceneRuntimeDescriptor, PipelineTypes.ShadowMap);
