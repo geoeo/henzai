@@ -121,6 +121,7 @@ namespace Henzai.Examples
                 _sceneRuntimeState.CameraProjViewBuffer,
                 _sceneRuntimeState.LightBuffer,
                 _sceneRuntimeState.SpotLightBuffer,
+                _sceneRuntimeState.LightProvViewBuffer,
                 _sceneRuntimeState.Camera,
                 _sceneRuntimeState.Light,
                 _sceneRuntimeState.SpotLight);

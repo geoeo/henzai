@@ -32,6 +32,10 @@ namespace Henzai.Runtime
        /// </summary>
        public DeviceBuffer MaterialBuffer {get; set;}
        /// <summary>
+       /// Buffer Encapsulates CPU Memory for a VP Matrix
+       /// </summary>
+       public DeviceBuffer LightProvViewBuffer {get; set;}
+       /// <summary>
        /// Encapsulates GPU Memory Layout. See:
        /// <see cref="Veldrid.ResourceLayout"/>
        /// </summary>
@@ -52,6 +56,11 @@ namespace Henzai.Runtime
        /// <see cref="Veldrid.ResourceLayout"/>
        /// </summary>
        public ResourceLayout MaterialResourceLayout {get; set;}
+       /// <summary>
+       /// Encapsulates GPU Memory Layout. See:
+       /// <see cref="Veldrid.ResourceLayout"/>
+       /// </summary>
+       public ResourceLayout LightProvViewResourceLayout {get; set;}
 
        /// <summary>
        /// Encapsulates GPU Memory Layout and Resource. See:
@@ -77,6 +86,12 @@ namespace Henzai.Runtime
        /// <see cref="Veldrid.BindableResource"/>
        /// </summary>
        public ResourceSet MaterialResourceSet {get;set;}
+       /// <summary>
+       /// Encapsulates GPU Memory Layout and Resource. See:
+       /// <see cref="Veldrid.ResourceSet"/>
+       /// <see cref="Veldrid.BindableResource"/>
+       /// </summary>
+       public ResourceSet LightProvViewResourceSet {get;set;}
        /// <summary>
        /// Encapsulates Lighting Layout.
        /// </summary>

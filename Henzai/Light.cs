@@ -35,6 +35,7 @@ namespace Henzai
         /// W channel is 1 for point and 0 for directional
         /// </summary>
         public Vector4 LightPos => LightCam.Position;
+        public Matrix4x4 LightViewProj => LightCam.ViewProjectionMatirx;
         /// <summary>
         /// W channel used for intensity
         /// </summary>

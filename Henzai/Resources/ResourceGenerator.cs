@@ -132,7 +132,7 @@ namespace Henzai
             ));
         }
 
-        public static ResourceSet GenerateTextureResourceSetForShadowMapping(TextureView shadowMapTexView, DisposeCollectorResourceFactory factory) {
+        public static ResourceSet GenerateResourceSetForShadowMapping(TextureView shadowMapTexView, DisposeCollectorResourceFactory factory) {
             var textureLayout = GenerateTextureResourceLayoutForShadowMapping(factory);
             var sampler = ResourceGenerator.GenerateBiLinearSampler(factory);
 

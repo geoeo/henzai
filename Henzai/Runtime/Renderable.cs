@@ -368,7 +368,7 @@ namespace Henzai.Runtime
 
             //TODO: Clean this up
             var shadowMapEnabled = _childrenPre.Count > 0;
-            var effectCount = Convert.ToInt32(shadowMapEnabled);
+            var effectCount = 2*Convert.ToInt32(shadowMapEnabled); // 1 for Vertex Stage 1 for Fragment
             var rasterizerStateCullBack = new RasterizerStateDescription(
                     cullMode: FaceCullMode.Back,
                     fillMode: PolygonFillMode.Solid,
@@ -390,8 +390,10 @@ namespace Henzai.Runtime
             if(shadowMapEnabled){
                 var shadowMapRenderable =  _childrenPre[PreEffects.SHADOW_MAP] as ShadowMap;
                 var shadowMapResourceLayout = ResourceGenerator.GenerateTextureResourceLayoutForShadowMapping(_factory);
+                effectLayoutList.Add(sceneRuntimeDescriptor.LightProvViewResourceLayout);
                 effectLayoutList.Add(shadowMapResourceLayout);
-                modelDescriptor.EffectResourceSets[PreEffects.SHADOW_MAP] = ResourceGenerator.GenerateTextureResourceSetForShadowMapping(shadowMapRenderable.ShadowMapTexView,_factory);
+                modelDescriptor.EffectResourceSets[PreEffects.SHADOW_MAP] = sceneRuntimeDescriptor.LightProvViewResourceSet;
+                modelDescriptor.EffectResourceSets[PreEffects.SHADOW_MAP+1] = ResourceGenerator.GenerateResourceSetForShadowMapping(shadowMapRenderable.ShadowMapTexView,_factory);
             }
 
             var effectLayoutArray = effectLayoutList.ToArray();
@@ -480,6 +482,21 @@ namespace Henzai.Runtime
                     _factory,
                     _sceneRuntimeState.MaterialResourceLayout,
                     new BindableResource[] { _sceneRuntimeState.MaterialBuffer });
+
+            //TODO: Make this conditional on effects
+            // Uniform 5 - LightProjView (ShadowMapping)
+            _sceneRuntimeState.LightProvViewBuffer = _factory.CreateBuffer(new BufferDescription(4*16, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
+            _sceneRuntimeState.LightProvViewResourceLayout
+                = ResourceGenerator.GenerateResourceLayout(
+                    _factory,
+                    "lightProjView",
+                    ResourceKind.UniformBuffer,
+                    ShaderStages.Vertex);
+            _sceneRuntimeState.LightProvViewResourceSet
+                = ResourceGenerator.GenrateResourceSet(
+                    _factory,
+                    _sceneRuntimeState.LightProvViewResourceLayout,
+                    new BindableResource[] { _sceneRuntimeState.LightProvViewBuffer });            
         }
 
         //TODO: Maybe replace this by non virtual as it seems to always be the same
