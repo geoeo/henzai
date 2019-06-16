@@ -29,6 +29,7 @@ smooth out vec3 fsin_FragWorld;
 smooth out vec3 fsin_LightWorld;
 smooth out vec3 fsin_CamPosWorld;
 smooth out vec2 fsin_UV;
+smooth out vec4 fsin_LightFrag;
 
 void main()
 {
@@ -45,4 +46,5 @@ void main()
     fsin_CamPosWorld = View[3].xyz;
     fsin_TangentWorld = normalMatrix*Tangent;
     fsin_UV = UV;
+    fsin_LightFrag = LightProjView * worldPos;
 }

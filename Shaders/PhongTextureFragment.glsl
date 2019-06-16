@@ -18,6 +18,7 @@ in vec3 fsin_FragWorld;
 in vec3 fsin_LightWorld;
 in vec3 fsin_CamPosWorld;
 in vec2 fsin_UV;
+in vec4 fsin_LightFrag;
 
 out vec4 fsout_Color;
 

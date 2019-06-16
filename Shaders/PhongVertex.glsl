@@ -18,6 +18,7 @@ layout(location = 1)in vec3 Normal;
 smooth out vec3 fsin_NormalWorld;
 smooth out vec3 fsin_FragWorld;
 smooth out vec3 fsin_CamPosWorld;
+smooth out vec4 fsin_LightFrag;
 
 void main()
 {
@@ -30,4 +31,5 @@ void main()
     fsin_NormalWorld = normalMatrix*Normal;
     fsin_FragWorld = worldPos.xyz;
     fsin_CamPosWorld = View[3].xyz;
+    fsin_LightFrag = LightProjView * worldPos;
 }

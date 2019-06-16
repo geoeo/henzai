@@ -10,6 +10,7 @@ struct VertexInput
 struct PixelInput
 {
     float4 Position[[position]];
+    float4 LightFrag;
     float2 UV;
 };
 
@@ -28,8 +29,10 @@ vertex PixelInput VS(VertexInput input[[stage_in]],constant transformPipeline &p
 {
     PixelInput output;
     float3 position = input.Position;
-    float4 positionCS = pipeline.Proj*pipeline.View*pipeline.World*float4(position, 1);
+    float4 positionWorld = pipeline.World*float4(position, 1);
+    float4 positionCS = pipeline.Proj*pipeline.View*positionWorld;
     output.Position = positionCS;
     output.UV = input.UV;
+    output.LightFrag = lightpv.LightProjView*positionWorld;
     return output;
 }

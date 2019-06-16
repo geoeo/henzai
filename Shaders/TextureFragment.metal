@@ -4,6 +4,7 @@ using namespace metal;
 struct PixelInput
 {
     float4 Position[[position]];
+    float4 LightFrag;
     float2 UV;
 };
 

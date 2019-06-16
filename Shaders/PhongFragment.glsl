@@ -20,6 +20,7 @@ layout(std140) uniform light
 in vec3 fsin_NormalWorld;
 in vec3 fsin_FragWorld;
 in vec3 fsin_CamPosWorld;
+in vec4 fsin_LightFrag;
 
 out vec4 fsout_Color;
 
