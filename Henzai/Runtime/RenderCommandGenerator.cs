@@ -296,11 +296,16 @@ namespace Henzai.Runtime
             {
                 var modelState = descriptorArray[j];
                 var model = modelState.Model;
+                var renderFlags = modelState.RenderFlags;
                 switch(piplelineType){
                     case PipelineTypes.Normal:
+                    if((renderFlags & RenderFlags.NORMAL) == RenderFlags.NONE)
+                            continue;
                         commandList.SetPipeline(modelState.Pipeline);
                         break;
                     case PipelineTypes.ShadowMap:
+                        if((renderFlags & RenderFlags.SHADOW_MAP) == RenderFlags.NONE)
+                            continue;
                         commandList.SetPipeline(modelState.ShadowMapPipeline);
                         break;
                 }
@@ -338,12 +343,17 @@ namespace Henzai.Runtime
             {
                 var modelState = descriptorArray[j];
                 var effectSets = sceneRuntimeDescriptor.NO_RESOURCE_SET;
+                var renderFlags = modelState.RenderFlags;
                 switch(piplelineType){
                     case PipelineTypes.Normal:
+                        if((renderFlags & RenderFlags.NORMAL) == RenderFlags.NONE)
+                            continue;
                         commandList.SetPipeline(modelState.Pipeline);
                         effectSets = modelState.EffectResourceSets;
                         break;
                     case PipelineTypes.ShadowMap:
+                        if((renderFlags & RenderFlags.SHADOW_MAP) == RenderFlags.NONE)
+                            continue;
                         commandList.SetPipeline(modelState.ShadowMapPipeline);
                         break;
                 }
@@ -379,12 +389,17 @@ namespace Henzai.Runtime
             {
                 var modelState = descriptorArray[j];
                 var effectSets = sceneRuntimeDescriptor.NO_RESOURCE_SET;
+                var renderFlags = modelState.RenderFlags;
                 switch(piplelineType){
                     case PipelineTypes.Normal:
+                        if((renderFlags & RenderFlags.NORMAL) == RenderFlags.NONE)
+                            continue;
                         commandList.SetPipeline(modelState.Pipeline);
                         effectSets = modelState.EffectResourceSets;
                         break;
                     case PipelineTypes.ShadowMap:
+                        if((renderFlags & RenderFlags.SHADOW_MAP) == RenderFlags.NONE)
+                            continue;
                         commandList.SetPipeline(modelState.ShadowMapPipeline);
                         break;
                 }
@@ -419,14 +434,19 @@ namespace Henzai.Runtime
             for (int j = 0; j < descriptorArray.Length; j++)
             {
                 var modelState = descriptorArray[j];
+                var renderFlags = modelState.RenderFlags;
                 var effectSets = sceneRuntimeDescriptor.NO_RESOURCE_SET;
                 var model = modelState.Model;
                 switch(piplelineType){
                     case PipelineTypes.Normal:
+                        if((renderFlags & RenderFlags.NORMAL) == RenderFlags.NONE)
+                            continue;
                         commandList.SetPipeline(modelState.Pipeline);
                         effectSets = modelState.EffectResourceSets;
                         break;
                     case PipelineTypes.ShadowMap:
+                        if((renderFlags & RenderFlags.SHADOW_MAP) == RenderFlags.NONE)
+                            continue;
                         commandList.SetPipeline(modelState.ShadowMapPipeline);
                         break;
                 }
@@ -474,12 +494,17 @@ namespace Henzai.Runtime
                 var modelState = descriptorArray[modelStateIndex];
                 var model = modelState.Model;
                 var effectSets = sceneRuntimeDescriptor.NO_RESOURCE_SET;
+                var renderFlags = modelState.RenderFlags;
                 switch(piplelineType){
                     case PipelineTypes.Normal:
+                        if((renderFlags & RenderFlags.NORMAL) == RenderFlags.NONE)
+                            continue;
                         commandList.SetPipeline(modelState.Pipeline);
                         effectSets = modelState.EffectResourceSets;
                         break;
                     case PipelineTypes.ShadowMap:
+                        if((renderFlags & RenderFlags.SHADOW_MAP) == RenderFlags.NONE)
+                            continue;
                         commandList.SetPipeline(modelState.ShadowMapPipeline);
                         break;
                 }

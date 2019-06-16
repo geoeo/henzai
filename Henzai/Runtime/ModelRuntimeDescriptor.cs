@@ -68,6 +68,7 @@ namespace Henzai.Runtime
         /// See: <see cref="Henzai.Geometry.Model{T}"/>
         /// </summary>
         public Model<T,RealtimeMaterial> Model {get;set;}
+        public uint RenderFlags {get;set;}
         public VertexRuntimeTypes VertexRuntimeType {get; private set;}
         public PrimitiveTopology PrimitiveTopology {get; private set;}
         public uint TotalInstanceCount{get;set;}
@@ -78,7 +79,7 @@ namespace Henzai.Runtime
         // TODO: Investigate Texture Cache for already loaded textures
         public event Func<ModelRuntimeDescriptor<T>,int,DisposeCollectorResourceFactory,GraphicsDevice,ResourceSet> CallTextureResourceSetGeneration;
 
-        public ModelRuntimeDescriptor(Model<T, RealtimeMaterial> modelIn, string vShaderName, string fShaderName, VertexRuntimeTypes vertexRuntimeType, PrimitiveTopology primitiveTopology){
+        public ModelRuntimeDescriptor(Model<T, RealtimeMaterial> modelIn, string vShaderName, string fShaderName, VertexRuntimeTypes vertexRuntimeType, PrimitiveTopology primitiveTopology, uint renderFlags){
 
             if(!Verifier.VerifyVertexStruct<T>(vertexRuntimeType))
                 throw new ArgumentException($"Type Mismatch ModelRuntimeDescriptor");
@@ -93,6 +94,8 @@ namespace Henzai.Runtime
 
             VertexRuntimeType = vertexRuntimeType;
             PrimitiveTopology = primitiveTopology;
+
+            RenderFlags = renderFlags;
 
             VertexBufferList = new List<DeviceBuffer>();
             IndexBufferList = new List<DeviceBuffer>();
