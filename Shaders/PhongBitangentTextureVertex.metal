@@ -28,9 +28,13 @@ struct ProjViewWorld
     float4x4 World;
 };
 
+struct LightProjView
+{
+    float4x4 LightProjView;
+};
 
 
-vertex PixelInput VS(VertexInput input[[stage_in]],constant ProjViewWorld &pjw [[ buffer(0) ]])
+vertex PixelInput VS(VertexInput input[[stage_in]],constant ProjViewWorld &pjw [[ buffer(0) ]], constant LightProjView &lightpv [[buffer(4)]])
 {
     PixelInput output;
     float4 positionWorld = pjw.World*float4(input.Position, 1);
