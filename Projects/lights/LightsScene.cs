@@ -52,7 +52,8 @@ namespace Henzai.Examples
             Vector3 newTranslation = new Vector3(lightPos.X,lightPos.Y,lightPos.Z);
             _sun.SetNewWorldTranslation(ref newTranslation, true);
 
-            var sunRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormal>(_sun,"Phong","Phong", VertexRuntimeTypes.VertexPositionNormal,PrimitiveTopology.TriangleList);
+            //TODO: This geometry will cause problems for shadow mapping
+            var sunRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormal>(_sun,"Phong","PhongNoShadow", VertexRuntimeTypes.VertexPositionNormal,PrimitiveTopology.TriangleList);
             sunRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPN;
             _modelPNDescriptorList.Add(sunRuntimeState);
 
