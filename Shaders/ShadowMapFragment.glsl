@@ -3,4 +3,5 @@
 void main()
 {
     //Passthrough for depth
+    gl_FragDepth = gl_FragCoord.z;
 }

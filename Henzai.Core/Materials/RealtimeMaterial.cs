@@ -14,7 +14,7 @@ namespace Henzai.Core.Materials
         /// <summary>
         /// Currently ambient,diffuse,specular and coefficients are passed to shaders
         /// </summary>
-        public const uint SizeInBytes = 176;
+        public const uint SizeInBytes = 64;
 
         public Vector4 ambient = Vector4.Zero;
         public Vector4 diffuse = Vector4.Zero;

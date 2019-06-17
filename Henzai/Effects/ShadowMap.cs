@@ -67,7 +67,7 @@ namespace Henzai.Effects
             _commandList.Begin();
             _commandList.SetFramebuffer(_frameBuffer);
             _commandList.SetFullViewports();
-            _commandList.ClearDepthStencil(1f);
+            _commandList.ClearDepthStencil(1.0f);
 
             RenderCommandGenerator.GenerateCommandsForScene_Inline(
                 _commandList,
