@@ -199,9 +199,9 @@ namespace Henzai.Runtime
             _renderResolution = renderResolution;
 
             if (_renderOptions.FarPlane > 0)
-                _camera = new PerspectiveCamera(renderResolution.Horizontal, renderResolution.Vertical, Camera.DEFAULT_POSITION, _renderOptions.FarPlane);
+                _camera = new PerspectiveCamera(renderResolution.Horizontal, renderResolution.Vertical, Camera.DEFAULT_POSITION, Camera.DEFAULT_LOOK_DIRECTION, _renderOptions.FarPlane);
             else
-                _camera = new PerspectiveCamera(renderResolution.Horizontal, renderResolution.Vertical, Camera.DEFAULT_POSITION);
+                _camera = new PerspectiveCamera(renderResolution.Horizontal, renderResolution.Vertical, Camera.DEFAULT_POSITION, Camera.DEFAULT_LOOK_DIRECTION);
 
             _allChildren.AddRange(_childrenPre);
             _allChildren.AddRange(_childrenPost);
@@ -485,7 +485,7 @@ namespace Henzai.Runtime
 
             //TODO: Make this conditional on effects
             // Uniform 5 - LightProjView (ShadowMapping)
-            _sceneRuntimeState.LightProvViewBuffer = _factory.CreateBuffer(new BufferDescription(4*16, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
+            _sceneRuntimeState.LightProjViewBuffer = _factory.CreateBuffer(new BufferDescription(4*16, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
             _sceneRuntimeState.LightProvViewResourceLayout
                 = ResourceGenerator.GenerateResourceLayout(
                     _factory,
@@ -496,7 +496,7 @@ namespace Henzai.Runtime
                 = ResourceGenerator.GenrateResourceSet(
                     _factory,
                     _sceneRuntimeState.LightProvViewResourceLayout,
-                    new BindableResource[] { _sceneRuntimeState.LightProvViewBuffer });            
+                    new BindableResource[] { _sceneRuntimeState.LightProjViewBuffer });            
         }
 
         //TODO: Maybe replace this by non virtual as it seems to always be the same

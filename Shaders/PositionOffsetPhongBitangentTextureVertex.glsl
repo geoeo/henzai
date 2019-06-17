@@ -14,6 +14,11 @@ layout(std140) uniform light
     vec4 LightAttenuation;
 };
 
+layout(std140) uniform lightProjView
+{
+    mat4 LightProjView;
+};
+
 layout(location = 0)in vec3 Position;
 layout(location = 1)in vec3 Normal;
 layout(location = 2)in vec2 UV;
@@ -28,6 +33,7 @@ smooth out vec3 fsin_FragWorld;
 smooth out vec3 fsin_LightWorld;
 smooth out vec3 fsin_CamPosWorld;
 smooth out vec2 fsin_UV;
+smooth out vec4 fsin_LightFrag;
 
 void main()
 {
@@ -45,4 +51,6 @@ void main()
     fsin_TangentWorld = normalMatrix*Tangent;
     fsin_BitangentWorld = normalMatrix*Bitangent;
     fsin_UV = UV;
+    fsin_LightFrag = LightProjView*worldPos;
+    fsin_LightFrag.z = 2.0*fsin_LightFrag.z - fsin_LightFrag.w;
 }

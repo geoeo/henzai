@@ -31,12 +31,13 @@ namespace Henzai.Examples
             // RgbaFloat lightColor = RgbaFloat.Orange;
             // RgbaFloat lightColor = RgbaFloat.Blue;
             RgbaFloat lightColor = RgbaFloat.LightGrey;
+            var lightLookDir = new Vector4(0,-1,0,0);
             // RgbaFloat lightColor = new RgbaFloat(1.0f,0.36f,0.0f,0.2f);
-            _sceneRuntimeState.Light = new Light(lightColor,0.1f);
+            _sceneRuntimeState.Light = new Light(lightColor, lightLookDir, 0.1f);
             _sceneRuntimeState.Camera = Camera;
             _sceneRuntimeState.SpotLight 
                 = new Light(
-                    new Vector4(0.0f,5.0f,0.0f,1.0f),
+                    new Vector4(0.0f,5.0f,7.0f,1.0f),
                     RgbaFloat.DarkRed,
                     1.0f,
                     new Vector4(0,-1,0,0.02f),
@@ -155,7 +156,7 @@ namespace Henzai.Examples
                 _sceneRuntimeState.CameraProjViewBuffer,
                 _sceneRuntimeState.LightBuffer,
                 _sceneRuntimeState.SpotLightBuffer,
-                _sceneRuntimeState.LightProvViewBuffer,
+                _sceneRuntimeState.LightProjViewBuffer,
                 _sceneRuntimeState.Camera,
                 _sceneRuntimeState.Light,
                 _sceneRuntimeState.SpotLight);

@@ -8,11 +8,6 @@ namespace Henzai.Effects
 {
     public sealed class ShadowMap : SubRenderable {
 
-        //TODO: Maybe put this into Light class
-        public Camera lightCam {get; private set;}
-        public DeviceBuffer lightCamBuffer {get; private set;}
-        public ResourceLayout lightCamLayout {get; private set;}
-        public ResourceSet lightCamSet {get; private set;}
         ///<summary>
         /// Holds the texture that the framebuffer renders into
         ///</summary>
@@ -51,8 +46,8 @@ namespace Henzai.Effects
             _modelPNDescriptorArray = modelPNDescriptorArray;
             _modelPTDescriptorArray = modelPTDescriptorArray;
             _modelPCDescriptorArray = modelPCDescriptorArray;
-            var lightPos  = mainSceneRuntimeDescriptor.Light.LightPos;
-            lightCam = new OrthographicCamera(_resolution.Horizontal, _resolution.Vertical, lightPos);
+
+            _sceneRuntimeDescriptor.Light = mainSceneRuntimeDescriptor.Light;
 
             _sceneRuntimeDescriptor.CameraProjViewBuffer = _factory.CreateBuffer(new BufferDescription(Camera.SizeInBytes, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
             _sceneRuntimeDescriptor.CameraResourceLayout
@@ -77,7 +72,7 @@ namespace Henzai.Effects
             RenderCommandGenerator.GenerateCommandsForScene_Inline(
                 _commandList,
                 _sceneRuntimeDescriptor.CameraProjViewBuffer,
-                lightCam);
+                _sceneRuntimeDescriptor.Light.LightCam);
 
             RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionNormalTextureTangentBitangent>(_commandList,_modelPNTTBDescriptorArray,_sceneRuntimeDescriptor, PipelineTypes.ShadowMap);
             RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionNormal>(_commandList,_modelPNDescriptorArray,_sceneRuntimeDescriptor, PipelineTypes.ShadowMap);

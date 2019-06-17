@@ -10,6 +10,7 @@ namespace Henzai
     {
         public static Light NO_POINTLIGHT = new Light(Vector4.Zero, RgbaFloat.Black, 0.0f, Vector4.Zero, Vector4.Zero);
         public static Vector4 DEFAULT_POSITION = new Vector4(0,20,15,1);
+        public static Vector4 DEFAULT_LOOKAT = new Vector4(0, -1, 0, 0);
         public static Vector4 DEFAULT_COLOR = new Vector4(1.0f,1.0f,1.0f,0.1f);
         public static Vector4 DEFAULT_ATTENTUATION = new Vector4(1.0f,0.0014f,0.000007f,0.0f);
         // W channel is 1 for point and 0 for directional
@@ -54,50 +55,71 @@ namespace Henzai
         public ref Vector4 Parameters_DontMutate => ref _parameters;
 
         public Light(){
-            LightCam = new OrthographicCamera(0, 0, Light.DEFAULT_POSITION);
+            LightCam = new OrthographicCamera(0, 0, Light.DEFAULT_POSITION, Light.DEFAULT_LOOKAT);
             _color = DEFAULT_COLOR;
         }
 
-        public Light(Vector4 lightPos){
-            LightCam = new OrthographicCamera(0, 0, lightPos);
+        public Light(Vector4 lightPos, Vector4 lookAt){
+            LightCam = new OrthographicCamera(0, 0, lightPos, lookAt);
             _color = DEFAULT_COLOR;
         }
 
-        public Light(Vector4 lightPos, Vector4 color){
-            LightCam = new OrthographicCamera(0, 0, lightPos);
+        public Light(Vector4 lightPos,Vector4 lookAt, Vector4 color){
+            LightCam = new OrthographicCamera(0, 0, lightPos, lookAt);
             _color = color;
         }
 
         public Light(RgbaFloat color){
-            LightCam = new OrthographicCamera(0, 0, Light.DEFAULT_POSITION);
+            LightCam = new OrthographicCamera(0, 0, Light.DEFAULT_POSITION, Light.DEFAULT_LOOKAT);
             _color = color.ToVector4();
+        }
+
+        public Light(RgbaFloat color, Vector4 lookDir, float intensity){
+            LightCam = new OrthographicCamera(0, 0, Light.DEFAULT_POSITION, lookDir);
+            _color = color.ToVector4();
+            _color.W = intensity;
         }
 
         public Light(RgbaFloat color, float intensity){
-            LightCam = new OrthographicCamera(0, 0, Light.DEFAULT_POSITION);
+            LightCam = new OrthographicCamera(0, 0, Light.DEFAULT_POSITION, Light.DEFAULT_LOOKAT);
             _color = color.ToVector4();
             _color.W = intensity;
         }
 
-        public Light(Vector4 lightPos, RgbaFloat color, float intensity){
-            LightCam = new OrthographicCamera(0, 0, lightPos);
+        public Light(Vector4 lightPos,  RgbaFloat color, float intensity){
+            LightCam = new OrthographicCamera(0, 0, lightPos, Light.DEFAULT_LOOKAT);
             _color = color.ToVector4();
             _color.W = intensity;
         }
 
-        public Light(Vector4 lightPos, RgbaFloat color){
-            LightCam = new OrthographicCamera(0, 0, lightPos);
+        public Light(Vector4 lightPos, Vector4 lookAt,  RgbaFloat color, float intensity){
+            LightCam = new OrthographicCamera(0, 0, lightPos, lookAt);
+            _color = color.ToVector4();
+            _color.W = intensity;
+        }
+
+        public Light(Vector4 lightPos, Vector4 lookAt, RgbaFloat color){
+            LightCam = new OrthographicCamera(0, 0, lightPos, lookAt);
             _color = color.ToVector4();
         }
+
 
         public Light(Vector4 lightPos, RgbaFloat color, Vector4 attenuation){
-            LightCam = new OrthographicCamera(0, 0, lightPos);
+            LightCam = new OrthographicCamera(0, 0, lightPos, Light.DEFAULT_LOOKAT);
             _color = color.ToVector4();
             _attenuation = attenuation;
         }
 
-        public Light(Vector4 lightPos, RgbaFloat color, float intensity,Vector4 direction, Vector4 parameters){
-            LightCam = new OrthographicCamera(0, 0, lightPos);
+        public Light(Vector4 lightPos, Vector4 lookAt, RgbaFloat color, Vector4 attenuation){
+            LightCam = new OrthographicCamera(0, 0, lightPos, lookAt);
+            _color = color.ToVector4();
+            _attenuation = attenuation;
+        }
+
+
+        public Light(Vector4 lightPos, RgbaFloat color, float intensity, Vector4 direction, Vector4 parameters){
+            var lookAt = new Vector4(direction.X, direction.Y, direction.Z, 0);
+            LightCam = new OrthographicCamera(0, 0, lightPos, lookAt);
             _color = color.ToVector4();
             _color.W = intensity;
             _direction = direction;
