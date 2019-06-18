@@ -30,7 +30,7 @@ namespace Henzai.Effects
         protected override void SetFramebuffer(){
             var desc = TextureDescription.Texture2D((uint)Resolution.Horizontal, (uint)Resolution.Vertical, 1, 1, PixelFormat.R32_Float, TextureUsage.DepthStencil | TextureUsage.Sampled);
             var depthTexture = _factory.CreateTexture(desc);
-            depthTexture.Name = "Shadow Map";
+            depthTexture.Name = "ShadowMapTexture";
             ShadowMapTexView = _factory.CreateTextureView(depthTexture);
             _frameBuffer = _factory.CreateFramebuffer(new FramebufferDescription(
                 new FramebufferAttachmentDescription(depthTexture, 0), Array.Empty<FramebufferAttachmentDescription>()));

@@ -5,11 +5,11 @@ namespace Henzai.Cameras
     public class OrthographicCamera : Camera
     {
 
-        public OrthographicCamera(float width, float height, Vector4 position, Vector4 lookAt, float far = 1000f, float moveSpeed = 10f) : base(width, height, position, lookAt, far, moveSpeed){
+        public OrthographicCamera(float width, float height, Vector4 position, Vector4 lookAt, Vector3 up, float far = 1000f, float moveSpeed = 10f) : base(width, height, position, lookAt, up, far, moveSpeed){
         }
 
         public override void UpdateProjectionMatrix(float width, float height){
-            _projectionMatrix = Matrix4x4.CreateOrthographic(_fov, width / height, _near, _far);
+            _projectionMatrix = Matrix4x4.CreateOrthographic(width, height, _near, _far);
         }
     }
 }

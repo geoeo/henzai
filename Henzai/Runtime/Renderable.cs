@@ -199,9 +199,9 @@ namespace Henzai.Runtime
             _renderResolution = renderResolution;
 
             if (_renderOptions.FarPlane > 0)
-                _camera = new PerspectiveCamera(renderResolution.Horizontal, renderResolution.Vertical, Camera.DEFAULT_POSITION, Camera.DEFAULT_LOOK_DIRECTION, _renderOptions.FarPlane);
+                _camera = new PerspectiveCamera(renderResolution.Horizontal, renderResolution.Vertical, Camera.DEFAULT_POSITION, Camera.DEFAULT_LOOK_DIRECTION, Camera.DEFAULT_UP, _renderOptions.FarPlane);
             else
-                _camera = new PerspectiveCamera(renderResolution.Horizontal, renderResolution.Vertical, Camera.DEFAULT_POSITION, Camera.DEFAULT_LOOK_DIRECTION);
+                _camera = new PerspectiveCamera(renderResolution.Horizontal, renderResolution.Vertical, Camera.DEFAULT_POSITION, Camera.DEFAULT_LOOK_DIRECTION, Camera.DEFAULT_UP);
 
             _allChildren.AddRange(_childrenPre);
             _allChildren.AddRange(_childrenPost);
@@ -256,10 +256,11 @@ namespace Henzai.Runtime
                 // blocking wait for delegates as they may submit to the command buffer
                 _graphicsDevice.WaitForIdle();
 
-                buildCommandListTasks[0] = Task.Run(() => this.BuildCommandList());
-                for (int i = 1; i < buildCommandListTasks.Length; i++)
+                //TODO: split this up into pre and post too!
+                buildCommandListTasks[buildCommandListTasks.Length-1] = Task.Run(() => this.BuildCommandList());
+                for (int i = 0; i < buildCommandListTasks.Length-1; i++)
                 {
-                    var child = _allChildren[i-1];
+                    var child = _allChildren[i];
                     buildCommandListTasks[i] = Task.Run(() => child.BuildCommandList());
                 }
 
@@ -284,7 +285,7 @@ namespace Henzai.Runtime
                 for (int i = 0; i < _childrenPost.Count; i++)
                 {
                     var child = _childrenPost[i];
-                    drawTasksPost[i] = Task.Run(() => child.Draw());
+                   drawTasksPost[i] = Task.Run(() => child.Draw());
                 }
 
                 Task.WaitAll(drawTasksPost);

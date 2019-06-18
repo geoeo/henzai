@@ -129,7 +129,7 @@ namespace Henzai.Runtime
             //TODO: make shader settable at runtime
             var shadowMapShaderName = "ShadowMap";
             
-            VertexShadowMapShader = IO.LoadShader("ShadowMapOffset", ShaderStages.Vertex, graphicsDevice);
+            VertexShadowMapShader = IO.LoadShader("ShadowMap", ShaderStages.Vertex, graphicsDevice);
             FragmentShadowMapShader = IO.LoadShader(shadowMapShaderName, ShaderStages.Fragment, graphicsDevice);
         }
 

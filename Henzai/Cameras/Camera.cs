@@ -17,6 +17,7 @@ namespace Henzai.Cameras
 
         public static readonly Vector4 DEFAULT_POSITION = new Vector4(0, 0, 10f, 1.0f);
         public static readonly Vector4 DEFAULT_LOOK_DIRECTION = new Vector4(0, 0, -1f, 0);
+        public static readonly Vector3 DEFAULT_UP = new Vector3(0, 1, 0);
 
         protected float _fov;
         protected float _near;
@@ -55,7 +56,7 @@ namespace Henzai.Cameras
         public float Pitch { get => _pitch; set { _pitch = value; UpdateViewMatrix(); } }
 
 
-        public Camera(float width, float height, Vector4 position, Vector4 lookAt, float far = 1000f, float moveSpeed = 10f)
+        public Camera(float width, float height, Vector4 position, Vector4 lookAt, Vector3 up, float far = 1000f, float moveSpeed = 10f)
         {
             _fov = MathF.PI/4; // Might be redundant as GPU assumes its always 90 degrees
             _near = 0.1f;
@@ -70,7 +71,7 @@ namespace Henzai.Cameras
 
             var position_Vec3 = _position.ToVec3DiscardW(); 
             var posLookAt = _position + _lookDirection;
-            _upDirection = Vector3.Normalize(Vector3.UnitY);
+            _upDirection = up;
             _viewMatrix = Matrix4x4.CreateLookAt(position_Vec3, posLookAt.ToVec3DiscardW(), _upDirection);
             _viewProjectionMatrix = _viewMatrix*_projectionMatrix;
         }

@@ -8,9 +8,10 @@ namespace Henzai
     //TODO: Refactor Pointlight - make more efficient
     public sealed class Light
     {
-        public static Light NO_POINTLIGHT = new Light(new OrthographicCamera(1.0f, 1.0f,new Vector4(0,0,0,1),Vector4.Zero), RgbaFloat.Black, 0.0f, 0.0f, Vector4.Zero);
+        public static Light NO_POINTLIGHT = new Light(new OrthographicCamera(1.0f, 1.0f,new Vector4(0,0,0,1),new Vector4(0,-1,0,0), -Vector3.UnitZ) , RgbaFloat.Black, 0.0f, 0.0f, Vector4.Zero);
         public static Vector4 DEFAULT_POSITION = new Vector4(0,20,15,1);
         public static Vector4 DEFAULT_LOOKAT = new Vector4(0, -1, 0, 0);
+        public static Vector3 DEFAULT_UP = new Vector3(0, 0, -1);
         public static Vector4 DEFAULT_COLOR = new Vector4(1.0f,1.0f,1.0f,0.1f);
         public static float DEFAULT_WIDTH = 1.0f;
         public static float DEFAULT_HEIGHT = 1.0f;
