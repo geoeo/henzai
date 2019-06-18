@@ -14,6 +14,7 @@ namespace Henzai.Runtime
     public static class RenderCommandGenerator
     {
 
+        //TODO: Make each object reponsible for updating its buffer
         /// <summary>
         /// Render Commands for Model of Type:
         /// <see cref="VertexStructs"/> which need light/material interactions

@@ -8,6 +8,7 @@ using Henzai.Core.Extensions;
 using Henzai.Core.Materials;
 using Henzai.Geometry;
 using Henzai.Runtime;
+using Henzai.Cameras;
 
 namespace Henzai.Examples
 {
@@ -31,16 +32,17 @@ namespace Henzai.Examples
             // RgbaFloat lightColor = RgbaFloat.Orange;
             // RgbaFloat lightColor = RgbaFloat.Blue;
             RgbaFloat lightColor = RgbaFloat.LightGrey;
-            var lightLookDir = new Vector4(0,-1,0,0);
+            var lightCam = new OrthographicCamera(RenderResoultion.Horizontal,RenderResoultion.Vertical,Light.DEFAULT_POSITION, Light.DEFAULT_LOOKAT);
+            var spotLightCam = new OrthographicCamera(RenderResoultion.Horizontal,RenderResoultion.Vertical,new Vector4(0.0f,5.0f,7.0f,1.0f), Light.DEFAULT_LOOKAT);
             // RgbaFloat lightColor = new RgbaFloat(1.0f,0.36f,0.0f,0.2f);
-            _sceneRuntimeState.Light = new Light(lightColor, lightLookDir, 0.1f);
+            _sceneRuntimeState.Light = new Light(lightCam,lightColor, 0.1f);
             _sceneRuntimeState.Camera = Camera;
             _sceneRuntimeState.SpotLight 
                 = new Light(
-                    new Vector4(0.0f,5.0f,7.0f,1.0f),
+                    spotLightCam,
                     RgbaFloat.DarkRed,
                     1.0f,
-                    new Vector4(0,-1,0,0.02f),
+                    0.02f,
                     new Vector4(Math.Cos(17.5f.ToRadians()).ToFloat(),Math.Cos(12.5f.ToRadians()).ToFloat(),0.0f,1.0f));
 
             // Sun //TODO: Make this VertexPositionNormalColor

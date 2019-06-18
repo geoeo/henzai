@@ -61,7 +61,7 @@ namespace Henzai.Cameras
             _near = 0.1f;
             _far = far;
             _position = position;
-            _lookDirection = Vector4.Normalize(lookAt);;
+            _lookDirection = Vector4.Normalize(lookAt);
             _moveSpeed = moveSpeed;
 
             _windowWidth = width;

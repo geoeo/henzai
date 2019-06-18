@@ -118,7 +118,7 @@ void main()
     color_out *= (1.0 - shadow);
 
     float gamma = 2.2;
-    //fsout_Color = vec4(pow(color_out.rgb, vec3(1.0/gamma)),color_out.a);
+    fsout_Color = vec4(pow(color_out.rgb, vec3(1.0/gamma)),color_out.a);
     // fsout_Color = color_out;
     // fsout_Color = vec4(fsin_NormalWorld,1.0);
     // fsout_Color = vec4(fsin_TangentWorld,1.0);

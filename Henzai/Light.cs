@@ -8,10 +8,12 @@ namespace Henzai
     //TODO: Refactor Pointlight - make more efficient
     public sealed class Light
     {
-        public static Light NO_POINTLIGHT = new Light(Vector4.Zero, RgbaFloat.Black, 0.0f, Vector4.Zero, Vector4.Zero);
+        public static Light NO_POINTLIGHT = new Light(new OrthographicCamera(1.0f, 1.0f,new Vector4(0,0,0,1),Vector4.Zero), RgbaFloat.Black, 0.0f, 0.0f, Vector4.Zero);
         public static Vector4 DEFAULT_POSITION = new Vector4(0,20,15,1);
         public static Vector4 DEFAULT_LOOKAT = new Vector4(0, -1, 0, 0);
         public static Vector4 DEFAULT_COLOR = new Vector4(1.0f,1.0f,1.0f,0.1f);
+        public static float DEFAULT_WIDTH = 1.0f;
+        public static float DEFAULT_HEIGHT = 1.0f;
         public static Vector4 DEFAULT_ATTENTUATION = new Vector4(1.0f,0.0014f,0.000007f,0.0f);
         // W channel is 1 for point and 0 for directional
         /// <summary>
@@ -54,74 +56,75 @@ namespace Henzai
         /// </summary>s
         public ref Vector4 Parameters_DontMutate => ref _parameters;
 
-        public Light(){
-            LightCam = new OrthographicCamera(0, 0, Light.DEFAULT_POSITION, Light.DEFAULT_LOOKAT);
+        // public Light(){
+        //     LightCam = new OrthographicCamera(DEFAULT_WIDTH, DEFAULT_HEIGHT, Light.DEFAULT_POSITION, Light.DEFAULT_LOOKAT);
+        //     _color = DEFAULT_COLOR;
+        // }
+
+        public Light(Camera camera){
+            LightCam = camera;
             _color = DEFAULT_COLOR;
         }
 
-        public Light(Vector4 lightPos, Vector4 lookAt){
-            LightCam = new OrthographicCamera(0, 0, lightPos, lookAt);
-            _color = DEFAULT_COLOR;
-        }
+        // public Light(Vector4 lightPos,Vector4 lookAt, Vector4 color){
+        //     LightCam = new OrthographicCamera(DEFAULT_WIDTH, DEFAULT_HEIGHT, lightPos, lookAt);
+        //     _color = color;
+        // }
 
-        public Light(Vector4 lightPos,Vector4 lookAt, Vector4 color){
-            LightCam = new OrthographicCamera(0, 0, lightPos, lookAt);
-            _color = color;
-        }
-
-        public Light(RgbaFloat color){
-            LightCam = new OrthographicCamera(0, 0, Light.DEFAULT_POSITION, Light.DEFAULT_LOOKAT);
+        public Light(Camera camera, RgbaFloat color){
+            LightCam = camera;
             _color = color.ToVector4();
         }
 
-        public Light(RgbaFloat color, Vector4 lookDir, float intensity){
-            LightCam = new OrthographicCamera(0, 0, Light.DEFAULT_POSITION, lookDir);
+        public Light(Camera camera, RgbaFloat color, float intensity){
+            LightCam = camera;
             _color = color.ToVector4();
             _color.W = intensity;
         }
 
-        public Light(RgbaFloat color, float intensity){
-            LightCam = new OrthographicCamera(0, 0, Light.DEFAULT_POSITION, Light.DEFAULT_LOOKAT);
-            _color = color.ToVector4();
-            _color.W = intensity;
-        }
+        // public Light(RgbaFloat color, float intensity){
+        //     LightCam = new OrthographicCamera(DEFAULT_WIDTH, DEFAULT_HEIGHT, Light.DEFAULT_POSITION, Light.DEFAULT_LOOKAT);
+        //     _color = color.ToVector4();
+        //     _color.W = intensity;
+        // }
 
-        public Light(Vector4 lightPos,  RgbaFloat color, float intensity){
-            LightCam = new OrthographicCamera(0, 0, lightPos, Light.DEFAULT_LOOKAT);
-            _color = color.ToVector4();
-            _color.W = intensity;
-        }
+        // public Light(Camera camera,  RgbaFloat color, float intensity){
+        //     LightCam = camera;
+        //     _color = color.ToVector4();
+        //     _color.W = intensity;
+        // }
 
-        public Light(Vector4 lightPos, Vector4 lookAt,  RgbaFloat color, float intensity){
-            LightCam = new OrthographicCamera(0, 0, lightPos, lookAt);
-            _color = color.ToVector4();
-            _color.W = intensity;
-        }
+        // public Light(Camera camera  RgbaFloat color, float intensity){
+        //     LightCam = camera;
+        //     _color = color.ToVector4();
+        //     _color.W = intensity;
+        // }
 
-        public Light(Vector4 lightPos, Vector4 lookAt, RgbaFloat color){
-            LightCam = new OrthographicCamera(0, 0, lightPos, lookAt);
-            _color = color.ToVector4();
-        }
+        // public Light(Camera camera, RgbaFloat color){
+        //     LightCam = camera;
+        //     _color = color.ToVector4();
+        // }
 
 
-        public Light(Vector4 lightPos, RgbaFloat color, Vector4 attenuation){
-            LightCam = new OrthographicCamera(0, 0, lightPos, Light.DEFAULT_LOOKAT);
+        public Light(Camera camera, RgbaFloat color, Vector4 attenuation){
+            LightCam = camera;
             _color = color.ToVector4();
             _attenuation = attenuation;
         }
 
-        public Light(Vector4 lightPos, Vector4 lookAt, RgbaFloat color, Vector4 attenuation){
-            LightCam = new OrthographicCamera(0, 0, lightPos, lookAt);
-            _color = color.ToVector4();
-            _attenuation = attenuation;
-        }
+        // public Light(Vector4 lightPos, Vector4 lookAt, RgbaFloat color, Vector4 attenuation){
+        //     LightCam = new OrthographicCamera(DEFAULT_WIDTH, DEFAULT_HEIGHT, lightPos, lookAt);
+        //     _color = color.ToVector4();
+        //     _attenuation = attenuation;
+        // }
 
 
-        public Light(Vector4 lightPos, RgbaFloat color, float intensity, Vector4 direction, Vector4 parameters){
-            var lookAt = new Vector4(direction.X, direction.Y, direction.Z, 0);
-            LightCam = new OrthographicCamera(0, 0, lightPos, lookAt);
+        public Light(Camera camera, RgbaFloat color, float intensity, float attenuation, Vector4 parameters){
+            LightCam = camera;
             _color = color.ToVector4();
             _color.W = intensity;
+            var lookAt = camera.LookDirection;
+            var direction = new Vector4(lookAt.X, lookAt.Y, lookAt.Z, attenuation);
             _direction = direction;
             _parameters = parameters;
         }

@@ -7,6 +7,7 @@ using Henzai.Core.VertexGeometry;
 using Henzai.Core.Materials;
 using Henzai.Geometry;
 using Henzai.Runtime;
+using Henzai.Cameras;
 
 namespace Henzai.Examples
 {
@@ -28,7 +29,8 @@ namespace Henzai.Examples
 
             RgbaFloat lightColor = RgbaFloat.White;
             // RgbaFloat lightColor = RgbaFloat.LightGrey;
-            _sceneRuntimeState.Light = new Light(new Vector4(0,10,0,1),lightColor,0.1f);
+            var lightCam = new OrthographicCamera(RenderResoultion.Horizontal,RenderResoultion.Vertical,new Vector4(0,10,0,1), Light.DEFAULT_LOOKAT);
+            _sceneRuntimeState.Light = new Light(lightCam,lightColor,0.1f);
             _sceneRuntimeState.Camera = Camera;
             _sceneRuntimeState.SpotLight = Light.NO_POINTLIGHT;
 

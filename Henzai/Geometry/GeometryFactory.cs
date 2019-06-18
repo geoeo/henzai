@@ -147,6 +147,20 @@ namespace Henzai.Geometry
 
             return new Mesh<VertexPositionNormalTextureTangentBitangent>(quadVerticies,GenerateQuadIndicies_TriangleStrip_CW());
         }
+
+        public static Mesh<VertexPositionNormal> GenerateQuadPN_XZ()
+        {
+
+            VertexPositionNormal[] quadVerticies = {
+                new VertexPositionNormal(new Vector3(-1.0f,0.0f,-1.0f),Vector3.UnitY),
+                new VertexPositionNormal(new Vector3(1.0f,0.0f,-1.0f),Vector3.UnitY),
+                new VertexPositionNormal(new Vector3(-1.0f,0.0f,1.0f),Vector3.UnitY),
+                new VertexPositionNormal(new Vector3(1.0f,0.0f,1.0f),Vector3.UnitY)
+            };
+
+            return new Mesh<VertexPositionNormal>(quadVerticies,GenerateQuadIndicies_TriangleStrip_CW());
+        }
+
         public static Mesh<VertexPositionNormalTextureTangentBitangent> GenerateQuadPNTTB_XZ()
         {
 

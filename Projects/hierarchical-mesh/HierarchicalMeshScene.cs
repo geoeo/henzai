@@ -7,6 +7,7 @@ using Henzai.Core.VertexGeometry;
 using Henzai.Core.Materials;
 using Henzai.Geometry;
 using Henzai.Runtime;
+using Henzai.Cameras;
 
 namespace Henzai.Examples
 {
@@ -53,7 +54,8 @@ namespace Henzai.Examples
 
             // RgbaFloat lightColor = RgbaFloat.Orange;
             RgbaFloat lightColor = RgbaFloat.LightGrey;
-            _sceneRuntimeState.Light = new Light(lightColor,0.1f);
+            var lightCam = new OrthographicCamera(RenderResoultion.Horizontal,RenderResoultion.Vertical,Light.DEFAULT_POSITION, Light.DEFAULT_LOOKAT);
+            _sceneRuntimeState.Light = new Light(lightCam,lightColor,0.1f);
             _sceneRuntimeState.Camera = Camera;
             _sceneRuntimeState.SpotLight = Light.NO_POINTLIGHT;
 
@@ -89,12 +91,24 @@ namespace Henzai.Examples
             // sunRuntimeState.CallTextureResourceLayoutGeneration+=ResourceGenerator.GenerateTextureResourceLayoutForNormalMapping;
             // sunRuntimeState.CallTextureResourceSetGeneration+=ResourceGenerator.GenerateTextureResourceSetForNormalMapping;
 
-            _modelPNTTBDescriptorList.Add(nanoSuitRuntimeState);
             // _modelStatesList.Add(sunRuntimeState);
 
-            var sunRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormal>(_sun,"Phong","Phong", VertexRuntimeTypes.VertexPositionNormal,PrimitiveTopology.TriangleList, RenderFlags.NORMAL);
+            var sunRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormal>(_sun,"Phong","PhongNoShadow", VertexRuntimeTypes.VertexPositionNormal,PrimitiveTopology.TriangleList, RenderFlags.NORMAL);
             sunRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPN;
+
+            var plane = new Model<VertexPositionNormal, RealtimeMaterial>(String.Empty,GeometryFactory.GenerateQuadPN_XZ(),new RealtimeMaterial());
+            var newPlaneTranslation = Matrix4x4.CreateTranslation(new Vector3(2,-2,0));
+            var newPlaneScale = Matrix4x4.CreateScale(new Vector3(10,1,10));
+            var trafo = newPlaneScale*newPlaneTranslation;
+            plane.SetNewWorldTransformation(ref trafo, true);
+            var planeRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormal>(plane,"Phong","Phong", VertexRuntimeTypes.VertexPositionNormal,PrimitiveTopology.TriangleStrip, RenderFlags.NORMAL| RenderFlags.SHADOW_MAP);
+            planeRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPN;
+
+            _modelPNTTBDescriptorList.Add(nanoSuitRuntimeState);
+
+            _modelPNDescriptorList.Add(planeRuntimeState);
             _modelPNDescriptorList.Add(sunRuntimeState);
+
 
 
             foreach(var modelDescriptor in _modelPNTTBDescriptorList){
