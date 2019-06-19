@@ -29,7 +29,7 @@ namespace Henzai.Examples
 
             RgbaFloat lightColor = RgbaFloat.White;
             // RgbaFloat lightColor = RgbaFloat.LightGrey;
-            var lightCam = new OrthographicCamera(RenderResoultion.Horizontal,RenderResoultion.Vertical,new Vector4(0,10,0,1), Light.DEFAULT_LOOKAT, Light.DEFAULT_UP);
+            var lightCam = new OrthographicCamera(35, 35, new Vector4(0,10,0,1), Light.DEFAULT_LOOKAT, Light.DEFAULT_UP);
             _sceneRuntimeState.Light = new Light(lightCam,lightColor,0.1f);
             _sceneRuntimeState.Camera = Camera;
             _sceneRuntimeState.SpotLight = Light.NO_POINTLIGHT;
