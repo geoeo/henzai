@@ -30,6 +30,8 @@ namespace Henzai.Runtime
         public Framebuffer FrameBuffer => _frameBuffer;
         protected DisposeCollectorResourceFactory _factory;
         protected CommandList _commandList;
+        public SceneRuntimeDescriptor SceneRuntimeDescriptor => _sceneRuntimeDescriptor;
+        protected SceneRuntimeDescriptor _sceneRuntimeDescriptor;
       
         public SubRenderable(GraphicsDevice graphicsDevice, Resolution resolution)
         {
@@ -37,6 +39,7 @@ namespace Henzai.Runtime
             _resolution = resolution;
 
             _factory = new DisposeCollectorResourceFactory(_graphicsDevice.ResourceFactory);
+            _sceneRuntimeDescriptor = new SceneRuntimeDescriptor();
             _commandList = _factory.CreateCommandList();
             SetFramebuffer();
 

@@ -110,6 +110,21 @@ namespace Henzai
                 });
         }
 
+        //TODO: UNIFY THIS!
+        public static Sampler GenerateBiLinearSampler_Clamp(DisposeCollectorResourceFactory factory){
+            return factory.CreateSampler(new SamplerDescription
+                {
+                    AddressModeU = SamplerAddressMode.Clamp,
+                    AddressModeV = SamplerAddressMode.Clamp,
+                    AddressModeW = SamplerAddressMode.Clamp,
+                    Filter = SamplerFilter.MinLinear_MagLinear_MipPoint,
+                    LodBias = 0,
+                    MinimumLod = 0,
+                    MaximumLod = 0,
+                    MaximumAnisotropy = 0,
+                });
+        }
+
         public static ResourceSet GenerateTextureResourceSetForNormalMapping<T>(ModelRuntimeDescriptor<T> modelRuntimeState, int meshIndex, DisposeCollectorResourceFactory factory, GraphicsDevice graphicsDevice) where T : struct , VertexLocateable {
             RealtimeMaterial material = modelRuntimeState.Model.GetMaterial(meshIndex);
 
@@ -134,7 +149,7 @@ namespace Henzai
 
         public static ResourceSet GenerateResourceSetForShadowMapping(TextureView shadowMapTexView, DisposeCollectorResourceFactory factory) {
             var textureLayout = GenerateTextureResourceLayoutForShadowMapping(factory);
-            var sampler = ResourceGenerator.GenerateBiLinearSampler(factory);
+            var sampler = ResourceGenerator.GenerateBiLinearSampler_Clamp(factory);
 
             return factory.CreateResourceSet(new ResourceSetDescription(
             textureLayout,

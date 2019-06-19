@@ -54,7 +54,8 @@ namespace Henzai.Examples
 
             // RgbaFloat lightColor = RgbaFloat.Orange;
             RgbaFloat lightColor = RgbaFloat.LightGrey;
-            var lightCam = new OrthographicCamera(35, 35,new Vector4(0,10,0,1), Light.DEFAULT_LOOKAT, Light.DEFAULT_UP);
+            //TODO: Position seems to be buggy
+            var lightCam = new OrthographicCamera(50, 50, Light.DEFAULT_POSITION, Light.DEFAULT_LOOKAT, Light.DEFAULT_UP);
             _sceneRuntimeState.Light = new Light(lightCam,lightColor,0.1f);
             _sceneRuntimeState.Camera = Camera;
             _sceneRuntimeState.SpotLight = Light.NO_POINTLIGHT;
@@ -98,7 +99,7 @@ namespace Henzai.Examples
 
             var plane = new Model<VertexPositionNormal, RealtimeMaterial>(String.Empty,GeometryFactory.GenerateQuadPN_XZ(),new RealtimeMaterial());
             var newPlaneTranslation = Matrix4x4.CreateTranslation(new Vector3(2,-2,0));
-            var newPlaneScale = Matrix4x4.CreateScale(new Vector3(10,1,10));
+            var newPlaneScale = Matrix4x4.CreateScale(new Vector3(100,1,100));
             var trafo = newPlaneScale*newPlaneTranslation;
             plane.SetNewWorldTransformation(ref trafo, true);
             var planeRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormal>(plane,"Phong","Phong", VertexRuntimeTypes.VertexPositionNormal,PrimitiveTopology.TriangleStrip, RenderFlags.NORMAL| RenderFlags.SHADOW_MAP);

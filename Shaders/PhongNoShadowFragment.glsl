@@ -1,6 +1,6 @@
 #version 330 core
 
-uniform sampler2D ShadowMap;
+uniform sampler2D ShadowMapTexture;
 
 layout(std140) uniform material
 {

@@ -12,6 +12,7 @@ namespace Henzai.Effects
         /// Holds the texture that the framebuffer renders into
         ///</summary>
         public TextureView ShadowMapTexView {get; private set;}
+        public TextureView ShadowMapColorTexView {get; private set;}
 
         // These hold the scene's geometry information
         private ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] _modelPNTTBDescriptorArray;
@@ -19,35 +20,11 @@ namespace Henzai.Effects
         private ModelRuntimeDescriptor<VertexPositionTexture>[] _modelPTDescriptorArray;
         private ModelRuntimeDescriptor<VertexPositionColor>[] _modelPCDescriptorArray;
 
-        private SceneRuntimeDescriptor _sceneRuntimeDescriptor;
         private Resolution _resolution;
 
         public ShadowMap(GraphicsDevice graphicsDevice, Resolution resolution) : base(graphicsDevice, resolution){      
             _resolution = resolution;
-            _sceneRuntimeDescriptor = new SceneRuntimeDescriptor();
-        }
-
-        protected override void SetFramebuffer(){
-            var desc = TextureDescription.Texture2D((uint)Resolution.Horizontal, (uint)Resolution.Vertical, 1, 1, PixelFormat.R32_Float, TextureUsage.DepthStencil | TextureUsage.Sampled);
-            var depthTexture = _factory.CreateTexture(desc);
-            depthTexture.Name = "ShadowMapTexture";
-            ShadowMapTexView = _factory.CreateTextureView(depthTexture);
-            _frameBuffer = _factory.CreateFramebuffer(new FramebufferDescription(
-                new FramebufferAttachmentDescription(depthTexture, 0), Array.Empty<FramebufferAttachmentDescription>()));
-        }
-
-        public override void CreateResources(SceneRuntimeDescriptor mainSceneRuntimeDescriptor,                        
-                        ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] modelPNTTBDescriptorArray, 
-                        ModelRuntimeDescriptor<VertexPositionNormal>[] modelPNDescriptorArray, 
-                        ModelRuntimeDescriptor<VertexPositionTexture>[] modelPTDescriptorArray, 
-                        ModelRuntimeDescriptor<VertexPositionColor>[] modelPCDescriptorArray){
-
-            _modelPNTTBDescriptorArray = modelPNTTBDescriptorArray;
-            _modelPNDescriptorArray = modelPNDescriptorArray;
-            _modelPTDescriptorArray = modelPTDescriptorArray;
-            _modelPCDescriptorArray = modelPCDescriptorArray;
-
-            _sceneRuntimeDescriptor.Light = mainSceneRuntimeDescriptor.Light;
+            //_frameBuffer = graphicsDevice.SwapchainFramebuffer;
 
             _sceneRuntimeDescriptor.CameraProjViewBuffer = _factory.CreateBuffer(new BufferDescription(Camera.SizeInBytes, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
             _sceneRuntimeDescriptor.CameraResourceLayout
@@ -63,11 +40,46 @@ namespace Henzai.Effects
                     new BindableResource[] { _sceneRuntimeDescriptor.CameraProjViewBuffer });
         }
 
+        protected override void SetFramebuffer(){
+            var desc = TextureDescription.Texture2D((uint)Resolution.Horizontal, (uint)Resolution.Vertical, 1, 1, PixelFormat.R32_Float, TextureUsage.DepthStencil | TextureUsage.Sampled);
+            var depthTexture = _factory.CreateTexture(desc);
+            depthTexture.Name = "ShadowMapTexture";
+            ShadowMapTexView = _factory.CreateTextureView(depthTexture);
+
+            //TEST 
+            var colorDesc = TextureDescription.Texture2D((uint)Resolution.Horizontal, (uint)Resolution.Vertical,1,1, PixelFormat.R32_G32_B32_A32_Float, TextureUsage.RenderTarget | TextureUsage.Sampled);
+            var colorTex = _factory.CreateTexture(colorDesc);
+            ShadowMapColorTexView = _factory.CreateTextureView(colorTex);
+            var colorBuffer = new FramebufferAttachmentDescription(colorTex, 0);
+            var colorBuffers = new [] {colorBuffer};
+
+            _frameBuffer = _factory.CreateFramebuffer(new FramebufferDescription(
+            //     //new FramebufferAttachmentDescription(depthTexture, 0), Array.Empty<FramebufferAttachmentDescription>()));
+                 new FramebufferAttachmentDescription(depthTexture, 0), colorBuffers));
+
+
+        }
+
+        public override void CreateResources(SceneRuntimeDescriptor mainSceneRuntimeDescriptor,                        
+                        ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] modelPNTTBDescriptorArray, 
+                        ModelRuntimeDescriptor<VertexPositionNormal>[] modelPNDescriptorArray, 
+                        ModelRuntimeDescriptor<VertexPositionTexture>[] modelPTDescriptorArray, 
+                        ModelRuntimeDescriptor<VertexPositionColor>[] modelPCDescriptorArray){
+
+            _modelPNTTBDescriptorArray = modelPNTTBDescriptorArray;
+            _modelPNDescriptorArray = modelPNDescriptorArray;
+            _modelPTDescriptorArray = modelPTDescriptorArray;
+            _modelPCDescriptorArray = modelPCDescriptorArray;
+
+            _sceneRuntimeDescriptor.Light = mainSceneRuntimeDescriptor.Light;
+        }
+
         public override void BuildCommandList(){
             _commandList.Begin();
             _commandList.SetFramebuffer(_frameBuffer);
             _commandList.SetFullViewports();
             _commandList.ClearDepthStencil(1.0f);
+            _commandList.ClearColorTarget(0,RgbaFloat.Pink);
 
             RenderCommandGenerator.GenerateCommandsForScene_Inline(
                 _commandList,
