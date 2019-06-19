@@ -41,13 +41,13 @@ namespace Henzai.Effects
         }
 
         protected override void SetFramebuffer(){
-            var desc = TextureDescription.Texture2D((uint)Resolution.Horizontal, (uint)Resolution.Vertical, 1, 1, PixelFormat.R32_Float, TextureUsage.DepthStencil | TextureUsage.Sampled);
+            var desc = TextureDescription.Texture2D((uint)1024, (uint)1024, 1, 1, PixelFormat.R32_Float, TextureUsage.DepthStencil | TextureUsage.Sampled);
             var depthTexture = _factory.CreateTexture(desc);
             depthTexture.Name = "ShadowMapTexture";
             ShadowMapTexView = _factory.CreateTextureView(depthTexture);
 
             //TEST 
-            var colorDesc = TextureDescription.Texture2D((uint)Resolution.Horizontal, (uint)Resolution.Vertical,1,1, PixelFormat.R32_G32_B32_A32_Float, TextureUsage.RenderTarget | TextureUsage.Sampled);
+            var colorDesc = TextureDescription.Texture2D((uint)1024, (uint)1024,1,1, PixelFormat.R32_G32_B32_A32_Float, TextureUsage.RenderTarget | TextureUsage.Sampled);
             var colorTex = _factory.CreateTexture(colorDesc);
             ShadowMapColorTexView = _factory.CreateTextureView(colorTex);
             var colorBuffer = new FramebufferAttachmentDescription(colorTex, 0);

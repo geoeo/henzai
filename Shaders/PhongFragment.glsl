@@ -28,7 +28,7 @@ float ShadowCalculation(vec4 fragPosLightSpace, float l_dot_n)
 {
     // perform perspective divide
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
-    projCoords = projCoords + 0.5;
+    projCoords = projCoords*0.5 +0.5;
     // we are sampling textures so we have to sample the center
     // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
     float closestDepth = texture(ShadowMapTexture, vec2(projCoords.x , projCoords.y)).r; 
