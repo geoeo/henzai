@@ -12,7 +12,6 @@ namespace Henzai.Effects
         /// Holds the texture that the framebuffer renders into
         ///</summary>
         public TextureView ShadowMapTexView {get; private set;}
-        public TextureView ShadowMapColorTexView {get; private set;}
 
         // These hold the scene's geometry information
         private ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] _modelPNTTBDescriptorArray;
@@ -46,18 +45,9 @@ namespace Henzai.Effects
             depthTexture.Name = "ShadowMapTexture";
             ShadowMapTexView = _factory.CreateTextureView(depthTexture);
 
-            //TEST 
-            var colorDesc = TextureDescription.Texture2D((uint)1024, (uint)1024,1,1, PixelFormat.R32_G32_B32_A32_Float, TextureUsage.RenderTarget | TextureUsage.Sampled);
-            var colorTex = _factory.CreateTexture(colorDesc);
-            ShadowMapColorTexView = _factory.CreateTextureView(colorTex);
-            var colorBuffer = new FramebufferAttachmentDescription(colorTex, 0);
-            var colorBuffers = new [] {colorBuffer};
 
             _frameBuffer = _factory.CreateFramebuffer(new FramebufferDescription(
-            //     //new FramebufferAttachmentDescription(depthTexture, 0), Array.Empty<FramebufferAttachmentDescription>()));
-                 new FramebufferAttachmentDescription(depthTexture, 0), colorBuffers));
-
-
+                new FramebufferAttachmentDescription(depthTexture, 0), Array.Empty<FramebufferAttachmentDescription>()));
         }
 
         public override void CreateResources(SceneRuntimeDescriptor mainSceneRuntimeDescriptor,                        
@@ -79,7 +69,6 @@ namespace Henzai.Effects
             _commandList.SetFramebuffer(_frameBuffer);
             _commandList.SetFullViewports();
             _commandList.ClearDepthStencil(1.0f);
-            _commandList.ClearColorTarget(0,RgbaFloat.Pink);
 
             RenderCommandGenerator.GenerateCommandsForScene_Inline(
                 _commandList,

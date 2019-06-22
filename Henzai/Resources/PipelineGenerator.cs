@@ -41,26 +41,6 @@ namespace Henzai
             };
         }
 
-        public static GraphicsPipelineDescription GenerateShadowMapPipelineP<T>(
-            ModelRuntimeDescriptor<T> modelRuntimeState, 
-            SceneRuntimeDescriptor sceneRuntimeState, 
-            RasterizerStateDescription rasterizerState,
-            Framebuffer framebuffer) where T : struct, VertexLocateable {
-
-            return new GraphicsPipelineDescription(){
-                BlendState = BlendStateDescription.SingleOverrideBlend,
-                DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
-                RasterizerState = rasterizerState,
-                PrimitiveTopology = modelRuntimeState.PrimitiveTopology,
-                ResourceLayouts = new ResourceLayout[] {sceneRuntimeState.CameraResourceLayout},
-                ShaderSet = new ShaderSetDescription(
-                    vertexLayouts: modelRuntimeState.VertexLayouts,
-                    shaders: new Shader[] {modelRuntimeState.VertexShadowMapShader,modelRuntimeState.FragmentShadowMapShader}
-                ),
-                Outputs = framebuffer.OutputDescription
-            };
-        }
-
         public static GraphicsPipelineDescription GeneratePipelinePN<T>(
             ModelRuntimeDescriptor<T> modelRuntimeState, 
             SceneRuntimeDescriptor sceneRuntimeState, 
@@ -90,27 +70,6 @@ namespace Henzai
                 Outputs = framebuffer.OutputDescription
             };
         }
-
-        public static GraphicsPipelineDescription GenerateShadowMapPipelinePN<T>(
-            ModelRuntimeDescriptor<T> modelRuntimeState, 
-            SceneRuntimeDescriptor sceneRuntimeState, 
-            RasterizerStateDescription rasterizerState,
-            Framebuffer framebuffer) where T : struct, VertexLocateable {
-
-            return new GraphicsPipelineDescription(){
-                BlendState = BlendStateDescription.SingleOverrideBlend,
-                DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
-                RasterizerState = rasterizerState,
-                PrimitiveTopology = modelRuntimeState.PrimitiveTopology,
-                ResourceLayouts = new ResourceLayout[] {sceneRuntimeState.CameraResourceLayout},
-                ShaderSet = new ShaderSetDescription(
-                    vertexLayouts: modelRuntimeState.VertexLayouts,
-                    shaders: new Shader[] {modelRuntimeState.VertexShadowMapShader,modelRuntimeState.FragmentShadowMapShader}
-                ),
-                Outputs = framebuffer.OutputDescription
-            };
-        }
-
         public static GraphicsPipelineDescription GeneratePipelinePNTTB<T>(
             ModelRuntimeDescriptor<T> modelRuntimeState, 
             SceneRuntimeDescriptor sceneRuntimeState, 
@@ -142,27 +101,6 @@ namespace Henzai
                     Outputs = framebuffer.OutputDescription
                 };
         }
-
-        public static GraphicsPipelineDescription GenerateShadowMapPipelinePNTTB<T>(
-            ModelRuntimeDescriptor<T> modelRuntimeState, 
-            SceneRuntimeDescriptor sceneRuntimeState, 
-            RasterizerStateDescription rasterizerState,
-            Framebuffer framebuffer) where T : struct, VertexLocateable {
-
-            return new GraphicsPipelineDescription(){
-                    BlendState = BlendStateDescription.SingleOverrideBlend,
-                    DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
-                    RasterizerState = rasterizerState,
-                    PrimitiveTopology = modelRuntimeState.PrimitiveTopology,
-                    ResourceLayouts = new ResourceLayout[] {sceneRuntimeState.CameraResourceLayout},
-                    ShaderSet = new ShaderSetDescription(
-                        vertexLayouts: modelRuntimeState.VertexLayouts,
-                        shaders: new Shader[] {modelRuntimeState.VertexShadowMapShader,modelRuntimeState.FragmentShadowMapShader}
-                    ),
-                    Outputs = framebuffer.OutputDescription
-                };
-        }
-
         public static GraphicsPipelineDescription GeneratePipelinePC<T>(
             ModelRuntimeDescriptor<T> modelRuntimeState, 
             SceneRuntimeDescriptor sceneRuntimeState, 
@@ -189,27 +127,6 @@ namespace Henzai
                     Outputs = framebuffer.OutputDescription
                 };
         }
-
-        public static GraphicsPipelineDescription GenerateShadowMapPipelinePC<T>(
-            ModelRuntimeDescriptor<T> modelRuntimeState, 
-            SceneRuntimeDescriptor sceneRuntimeState, 
-            RasterizerStateDescription rasterizerState,
-            Framebuffer framebuffer) where T : struct, VertexLocateable {
-
-            return new GraphicsPipelineDescription(){
-                    BlendState = BlendStateDescription.SingleOverrideBlend,
-                    DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
-                    RasterizerState = rasterizerState,
-                    PrimitiveTopology = modelRuntimeState.PrimitiveTopology,
-                    ResourceLayouts = new ResourceLayout[] {sceneRuntimeState.CameraResourceLayout},
-                    ShaderSet = new ShaderSetDescription(
-                        vertexLayouts: modelRuntimeState.VertexLayouts,
-                        shaders: new Shader[] {modelRuntimeState.VertexShadowMapShader,modelRuntimeState.FragmentShadowMapShader}
-                    ),
-                    Outputs = framebuffer.OutputDescription
-                };
-        }
-
     
         public static GraphicsPipelineDescription GeneratePipelinePT<T>(
             ModelRuntimeDescriptor<T> modelRuntimeState, 
@@ -240,25 +157,24 @@ namespace Henzai
             };
         }
 
-        public static GraphicsPipelineDescription GenerateShadowMapPipelinePT<T>(
+        public static GraphicsPipelineDescription GenerateShadowMapPipeline<T>(
             ModelRuntimeDescriptor<T> modelRuntimeState, 
             SceneRuntimeDescriptor sceneRuntimeState, 
             RasterizerStateDescription rasterizerState,
             Framebuffer framebuffer) where T : struct, VertexLocateable {
 
             return new GraphicsPipelineDescription(){
-                    BlendState = BlendStateDescription.SingleOverrideBlend,
-                    DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
-                    RasterizerState = rasterizerState,
-                    PrimitiveTopology = modelRuntimeState.PrimitiveTopology,
-                    ResourceLayouts = new ResourceLayout[] {sceneRuntimeState.CameraResourceLayout},
-                    ShaderSet = new ShaderSetDescription(
-                        vertexLayouts: modelRuntimeState.VertexLayouts,
-                        shaders: new Shader[] {modelRuntimeState.VertexShadowMapShader,modelRuntimeState.FragmentShadowMapShader}
-                    ),
-                    Outputs = framebuffer.OutputDescription
+                BlendState = BlendStateDescription.SingleOverrideBlend,
+                DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
+                RasterizerState = rasterizerState,
+                PrimitiveTopology = modelRuntimeState.PrimitiveTopology,
+                ResourceLayouts = new ResourceLayout[] {sceneRuntimeState.CameraResourceLayout},
+                ShaderSet = new ShaderSetDescription(
+                    vertexLayouts: modelRuntimeState.VertexLayouts,
+                    shaders: new Shader[] {modelRuntimeState.VertexShadowMapShader,modelRuntimeState.FragmentShadowMapShader}
+                ),
+                Outputs = framebuffer.OutputDescription
             };
-        }
-
+        }        
     }
 }

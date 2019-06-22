@@ -6,7 +6,7 @@ struct PixelInput
     float4 Position[[position]];
 };
 
-// Passthrough for depth
+// Passthrough for depthss
 fragment float4 FS(PixelInput input[[stage_in]])
 {
 
