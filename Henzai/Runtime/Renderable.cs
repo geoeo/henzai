@@ -71,6 +71,8 @@ namespace Henzai.Runtime
         private Task[] drawTasksPre;
         private Task[] drawTasksPost;
 
+        private bool _running;
+
         protected List<ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>> _modelPNTTBDescriptorList;
         protected ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] _modelPNTTBDescriptorArray;
 
@@ -122,6 +124,7 @@ namespace Henzai.Runtime
 
             // Tick every millisecond
             _frameTimer = new FrameTimer(1.0);
+            _running = false;
         }
 
         public Renderable(string title, Resolution windowSize, GraphicsDeviceOptions graphicsDeviceOptions, RenderOptions renderOptions)
@@ -162,6 +165,7 @@ namespace Henzai.Runtime
 
             // Tick every millisecond
             _frameTimer = new FrameTimer(1.0);
+            _running = false;
         }
 
         public Renderable(GraphicsDevice graphicsDevice, Sdl2Window contextWindow)
@@ -188,6 +192,7 @@ namespace Henzai.Runtime
 
             // Tick every millisecond
             _frameTimer = new FrameTimer(1.0);
+            _running = false;
         }
 
         public void SetUp(Resolution renderResolution) {
@@ -225,9 +230,9 @@ namespace Henzai.Runtime
 
         // This does get called before OpenGL crash when I close the window
         //TODO: maybe improve window closing
-        public void Test(){
-            var i = 1;
-            i++;
+        public void Stop(){
+            _frameTimer.Stop();
+            _running = false;
         }
 
         //TODO: Investigate passing Render options
@@ -239,17 +244,16 @@ namespace Henzai.Runtime
         public void Run()
         {
             var inputTracker = new InputTracker();
-            _contextWindow.Closed += Test;
-            while (_contextWindow.Exists)
+            _contextWindow.Closed += Stop;
+            _running = true;
+            while (_running)
             {
                 _frameTimer.Start();
 
                 InputSnapshot inputSnapshot = _contextWindow.PumpEvents();
-                // seems we have to check again after pump events
-                if(!_contextWindow.Exists){
-                    _frameTimer.Stop();
+                // Somehow we have to check again after PumpEvents()
+                if(!_running)
                     break;
-                }
                 inputTracker.UpdateFrameInput(inputSnapshot);
 
                 var prevFrameTicksInSeconds = _frameTimer.prevFrameTicksInSeconds;
@@ -316,6 +320,7 @@ namespace Henzai.Runtime
 
             }
             
+            _contextWindow.Closed -= Stop;
             Dispose();
 
         }
