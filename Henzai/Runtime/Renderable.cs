@@ -223,6 +223,13 @@ namespace Henzai.Runtime
             PreRender_Descriptors?.Invoke(PNTTBRuntimeGeometry, PNRuntimeGeometry, PTRuntimeGeometry, PCRuntimeGeometry, PRuntimeGeometry);
         }
 
+        // This does get called before OpenGL crash when I close the window
+        //TODO: maybe improve window closing
+        public void Test(){
+            var i = 1;
+            i++;
+        }
+
         //TODO: Investigate passing Render options
         /// <summary>
         /// Sets up windowing and keyboard input
@@ -232,11 +239,17 @@ namespace Henzai.Runtime
         public void Run()
         {
             var inputTracker = new InputTracker();
+            _contextWindow.Closed += Test;
             while (_contextWindow.Exists)
             {
                 _frameTimer.Start();
 
                 InputSnapshot inputSnapshot = _contextWindow.PumpEvents();
+                // seems we have to check again after pump events
+                if(!_contextWindow.Exists){
+                    _frameTimer.Stop();
+                    break;
+                }
                 inputTracker.UpdateFrameInput(inputSnapshot);
 
                 var prevFrameTicksInSeconds = _frameTimer.prevFrameTicksInSeconds;
@@ -293,10 +306,12 @@ namespace Henzai.Runtime
                 if (_renderOptions.LimitFrames)
                     limitFrameRate_Blocking();
 
+
                 // Wait for submitted UI Tasks
                 _graphicsDevice.WaitForIdle();
                 _graphicsDevice.SwapBuffers();
 
+        
                 _frameTimer.Stop();
 
             }
