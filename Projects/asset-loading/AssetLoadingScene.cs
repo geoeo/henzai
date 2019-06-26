@@ -124,7 +124,7 @@ namespace Henzai.Examples
                 );
 
             _vertexShader = IO.LoadShader("Phong", ShaderStages.Vertex, GraphicsDevice);
-            _fragmentShader = IO.LoadShader("Phong", ShaderStages.Fragment, GraphicsDevice);
+            _fragmentShader = IO.LoadShader("PhongNoShadow", ShaderStages.Fragment, GraphicsDevice);
 
             GraphicsPipelineDescription pipelineDescription = new GraphicsPipelineDescription()
             {
