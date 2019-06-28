@@ -288,3 +288,4 @@ msbuild.binlog
 .idea/.idea.henzai/.idea/modules.xml
 .idea/.idea.henzai/.idea/vcs.xml
 .idea/.idea.henzai/.idea/workspace.xml
+.ionide/symbolCache.db
