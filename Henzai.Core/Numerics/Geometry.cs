@@ -113,10 +113,10 @@ namespace Henzai.Core.Numerics
             return Math.Sqrt(Vector.InMemoryDotProduct(ref omega, ref omega));
         }
 
-
         /// <summary>
         /// Computes the SO3 Matrix from a to b
-        /// https://math.stackexchange.com/questions/180418/calculate-rotation-matrix-to-align-vector-a-to-vector-b-in-3d/897677#897677
+        /// We use: http://ethaneade.com/lie.pdf at the moment
+        /// (https://math.stackexchange.com/questions/180418/calculate-rotation-matrix-to-align-vector-a-to-vector-b-in-3d/897677#897677)
         /// Problems with references from member variables make "a" be a pass-by-value
         /// </summary>
         public static Matrix4x4 RotationBetweenUnitVectors(ref Vector3 a, ref Vector3 b){
@@ -124,12 +124,18 @@ namespace Henzai.Core.Numerics
             var omega_x = SkewSymmetric(ref omega);
             var omega_x_squared = Matrix4x4.Multiply(omega_x,omega_x);
             var angle = AngleAroundOmega(ref omega);
+            //TODO: use taylor expansion
             var c = Math.Cos(angle);
-            var factor = 1.0 / (1.0 + c);
+            var s = Math.Sin(angle);
+            var A = s/angle;
+            var B = (1.0 - c)/(angle*angle);
+            //var factor = 1.0 / (1.0 + c);
+
 
             //TODO: Optimize this for less allocations
             //TODO: try this with double precision
-            return Matrix4x4.Identity + omega_x + Matrix4x4.Multiply(omega_x_squared, (float)factor);
+            //return Matrix4x4.Identity + omega_x + Matrix4x4.Multiply(omega_x_squared, (float)factor);
+            return Matrix4x4.Identity + Matrix4x4.Multiply(omega_x, (float)A) + Matrix4x4.Multiply(omega_x_squared, (float)B);
         }
 
         public static Matrix4x4 RotationBetweenUnitVectors(ref Vector4 a, ref Vector4 b)
