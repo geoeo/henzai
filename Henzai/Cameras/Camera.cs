@@ -1,9 +1,8 @@
 using System;
 using System.Numerics;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using Veldrid;
 using Henzai.Core.Extensions;
+using Henzai.Core.Numerics;
 
 namespace Henzai.Cameras
 {
@@ -62,16 +61,22 @@ namespace Henzai.Cameras
             _near = 0.1f;
             _far = far;
             _position = position;
-            _lookDirection = Vector4.Normalize(lookAt);
             _moveSpeed = moveSpeed;
+            _lookDirection = Vector4.Normalize(lookAt);
 
             _windowWidth = width;
             _windowHeight = height;
             UpdateProjectionMatrix(width, height);
 
+            //TODO: streamline vector3-4 switching
+            var lookAtNorm = Vector4.Normalize(lookAt);
+            var R = Core.Numerics.Geometry.RotationBetweenUnitVectors(DEFAULT_LOOK_DIRECTION, lookAtNorm);
+            var l = new Vector4(DEFAULT_UP.X, DEFAULT_UP.Y, DEFAULT_UP.Z, 0.0f);
+            var newUp = Vector4.Transform(l,R);
+            _upDirection = newUp.ToVec3DiscardW();
+
             var position_Vec3 = _position.ToVec3DiscardW(); 
             var posLookAt = _position + _lookDirection;
-            _upDirection = up;
             _viewMatrix = Matrix4x4.CreateLookAt(position_Vec3, posLookAt.ToVec3DiscardW(), _upDirection);
             _viewProjectionMatrix = _viewMatrix*_projectionMatrix;
         }

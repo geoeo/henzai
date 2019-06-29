@@ -132,7 +132,15 @@ namespace Henzai.Core.Numerics
             return Matrix4x4.Identity + omega_x + Matrix4x4.Multiply(omega_x_squared, (float)factor);
         }
 
+
         public static Matrix4x4 RotationBetweenUnitVectors(ref Vector4 a, ref Vector4 b)
+        {
+            var a_v3 = Vector.ToVec3(a);
+            var b_v3 = Vector.ToVec3(b);
+            return RotationBetweenUnitVectors(ref a_v3, ref b_v3);
+        }
+
+        public static Matrix4x4 RotationBetweenUnitVectors(Vector4 a, Vector4 b)
         {
             var a_v3 = Vector.ToVec3(a);
             var b_v3 = Vector.ToVec3(b);

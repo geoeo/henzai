@@ -54,8 +54,11 @@ namespace Henzai.Examples
 
             // RgbaFloat lightColor = RgbaFloat.Orange;
             RgbaFloat lightColor = RgbaFloat.LightGrey;
+            var lightPos = new Vector4(10,20,0,1);
+            var meshPos = new Vector4(0,0,0,1);
+            var lookAt = Vector4.Normalize(meshPos - lightPos);
             //TODO: Position seems to be buggy
-            var lightCam = new OrthographicCamera(50, 50, new Vector4(0,20,0,1), Light.DEFAULT_LOOKAT, Light.DEFAULT_UP);
+            var lightCam = new OrthographicCamera(50, 50,lightPos, lookAt, Light.DEFAULT_UP);
             _sceneRuntimeState.Light = new Light(lightCam,lightColor,0.1f);
             _sceneRuntimeState.Camera = Camera;
             _sceneRuntimeState.SpotLight = Light.NO_POINTLIGHT;
@@ -75,7 +78,6 @@ namespace Henzai.Examples
             materialZero.textureNormal = "WaterNorm.jpg";
             materialZero.ambient = lightColor.ToVector4();
             // _sun.meshes[0].TryGetMaterial().ambient = lightColor.ToVector4();
-            Vector4 lightPos = _sceneRuntimeState.Light.LightPos;
             Vector3 newTranslation = new Vector3(lightPos.X,lightPos.Y,lightPos.Z);
             _sun.SetNewWorldTranslation(ref newTranslation, true);
 
