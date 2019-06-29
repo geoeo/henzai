@@ -120,16 +120,16 @@ namespace Henzai.Core.Numerics
         /// </summary>
         public static Matrix4x4 RotationBetweenUnitVectors(ref Vector3 a, ref Vector3 b){
             var omega = Vector3.Cross(a, b);
+            var angle = AngleAroundOmega(ref omega);
+
             var omega_x = SkewSymmetric(ref omega);
             var omega_x_squared = Matrix4x4.Multiply(omega_x,omega_x);
-            var angle = AngleAroundOmega(ref omega);
             //TODO: use taylor expansion
             var c = Math.Cos(angle);
             var factor = 1.0 / (1.0 + c);
-
             //TODO: Optimize this for less allocations
             //TODO: try this with double precision
-            return Matrix4x4.Identity + omega_x + Matrix4x4.Multiply(omega_x_squared, (float)factor);
+            return Matrix4x4.Identity +  omega_x + Matrix4x4.Multiply(omega_x_squared, (float)factor);
         }
 
 
