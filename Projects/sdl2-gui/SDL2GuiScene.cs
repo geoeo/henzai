@@ -58,7 +58,7 @@ namespace Henzai.Examples
 
         override protected void CreateResources(){
 
-            _staticCamera = new PerspectiveCamera(RenderResoultion.Horizontal,RenderResoultion.Vertical, Camera.DEFAULT_POSITION, Camera.DEFAULT_LOOK_DIRECTION, Camera.DEFAULT_UP);
+            _staticCamera = new PerspectiveCamera(RenderResoultion.Horizontal,RenderResoultion.Vertical, Camera.DEFAULT_POSITION, Camera.DEFAULT_LOOK_DIRECTION);
 
             createOffscreenFBO();
 

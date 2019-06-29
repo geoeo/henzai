@@ -55,7 +55,7 @@ namespace Henzai.Cameras
         public float Pitch { get => _pitch; set { _pitch = value; UpdateViewMatrix(); } }
 
 
-        public Camera(float width, float height, Vector4 position, Vector4 lookAt, Vector3 up, float far = 1000f, float moveSpeed = 10f)
+        public Camera(float width, float height, Vector4 position, Vector4 lookAt, float far = 1000f, float moveSpeed = 10f)
         {
             _fov = MathF.PI/4; // Might be redundant as GPU assumes its always 90 degrees
             _near = 0.1f;
@@ -69,7 +69,7 @@ namespace Henzai.Cameras
             UpdateProjectionMatrix(width, height);
 
             //TODO: streamline vector3-4 switching
-            var lookAtNorm = Vector4.Normalize(lookAt);
+            var lookAtNorm = _lookDirection;
             var R = Core.Numerics.Geometry.RotationBetweenUnitVectors(DEFAULT_LOOK_DIRECTION, lookAtNorm);
             var l = new Vector4(DEFAULT_UP.X, DEFAULT_UP.Y, DEFAULT_UP.Z, 0.0f);
             var newUp = Vector4.Transform(l,R);

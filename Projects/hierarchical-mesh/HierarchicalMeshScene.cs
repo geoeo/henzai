@@ -56,9 +56,9 @@ namespace Henzai.Examples
             RgbaFloat lightColor = RgbaFloat.LightGrey;
             var lightPos = new Vector4(10,20,0,1);
             var meshPos = new Vector4(0,0,0,1);
-            var lookAt = Vector4.Normalize(meshPos - lightPos);
+            var lookAt = meshPos - lightPos;
             //TODO: Position seems to be buggy
-            var lightCam = new OrthographicCamera(50, 50,lightPos, lookAt, Light.DEFAULT_UP);
+            var lightCam = new OrthographicCamera(50, 50,lightPos, lookAt);
             _sceneRuntimeState.Light = new Light(lightCam,lightColor,0.1f);
             _sceneRuntimeState.Camera = Camera;
             _sceneRuntimeState.SpotLight = Light.NO_POINTLIGHT;
