@@ -87,7 +87,7 @@ namespace Henzai.Cameras
         {
             Quaternion lookRotation = Quaternion.CreateFromYawPitchRoll(_yaw, _pitch, 0f);
             var lookDir = Vector4.Transform(DEFAULT_LOOK_DIRECTION, lookRotation);
-            var up = Vector3.Transform(Vector3.UnitY, lookRotation);           
+            var up = Vector3.Transform(DEFAULT_UP, lookRotation);           
             var position_Vec3 = _position.ToVec3DiscardW(); 
             _lookDirection = Vector4.Normalize(lookDir);
             var lookAt = _position + _lookDirection;
