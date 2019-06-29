@@ -1,6 +1,5 @@
 using System;
 using System.Numerics;
-using System.Diagnostics;
 using System.Runtime.CompilerServices; 
 
 namespace Henzai.Core.Numerics
@@ -115,6 +114,7 @@ namespace Henzai.Core.Numerics
 
         /// <summary>
         /// Computes the SO3 Matrix from a to b
+        /// http://ethaneade.com/lie.pdf
         /// (https://math.stackexchange.com/questions/180418/calculate-rotation-matrix-to-align-vector-a-to-vector-b-in-3d/897677#897677)
         /// Problems with references from member variables make "a" be a pass-by-value
         /// </summary>
