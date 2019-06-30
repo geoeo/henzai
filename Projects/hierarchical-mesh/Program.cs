@@ -1,9 +1,7 @@
-﻿using System;
-using Henzai;
-using Veldrid;
+﻿using Veldrid;
 using Veldrid.Sdl2;
 using Henzai.UI;
-using Henzai.Cameras;
+
 
 namespace Henzai.Examples
 {
@@ -12,7 +10,7 @@ namespace Henzai.Examples
         static void Main(string[] args)
         {
             Program programm = new Program();
-            programm.createScene(GraphicsBackend.OpenGL);
+            programm.createScene(GraphicsBackend.Metal);
         }
 
         public override void createScene(GraphicsBackend graphicsBackend, Sdl2Window contextWindow = null){
@@ -31,7 +29,7 @@ namespace Henzai.Examples
             RenderOptions rdOptions = new RenderOptions()
             {
                 Resolution = renderResolution,
-                PreferredGraphicsBackend = GraphicsBackend.OpenGL,
+                PreferredGraphicsBackend = graphicsBackend,
                 UsePreferredGraphicsBackend = true,
                 LimitFrames = true,
                 FPSTarget = 60.0
