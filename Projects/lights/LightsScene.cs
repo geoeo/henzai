@@ -32,8 +32,10 @@ namespace Henzai.Examples
             // RgbaFloat lightColor = RgbaFloat.Orange;
             // RgbaFloat lightColor = RgbaFloat.Blue;
             RgbaFloat lightColor = RgbaFloat.LightGrey;
-            var lightCam = new OrthographicCamera(35, 35, Light.DEFAULT_POSITION, Light.DEFAULT_LOOKAT);
-            var spotLightCam = new OrthographicCamera(RenderResoultion.Horizontal,RenderResoultion.Vertical,new Vector4(0.0f,5.0f,7.0f,1.0f), Light.DEFAULT_LOOKAT);
+            var spotLightPos = new Vector4(0.0f,5.0f,7.0f,1.0f);
+            var lightLookAt = spotLightPos-Light.DEFAULT_POSITION;
+            var lightCam = new OrthographicCamera(35, 35, Light.DEFAULT_POSITION, lightLookAt);
+            var spotLightCam = new OrthographicCamera(RenderResoultion.Horizontal,RenderResoultion.Vertical,spotLightPos , Light.DEFAULT_LOOKAT);
             // RgbaFloat lightColor = new RgbaFloat(1.0f,0.36f,0.0f,0.2f);
             _sceneRuntimeState.Light = new Light(lightCam,lightColor, 0.1f);
             _sceneRuntimeState.Camera = Camera;
