@@ -38,8 +38,7 @@ float ShadowCalculation(vec4 fragPosLightSpace, float l_dot_n)
     // check whether current frag pos is in shadow
     float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;  
 
-    //return shadow;
-    return closestDepth;
+    return shadow;
 } 
 
 void main()
@@ -76,5 +75,5 @@ void main()
     //fsout_Color = vec4(fsin_NormalWorld,1.0);
     // fsout_Color = vec4(fsin_FragWorld,1.0);
     //fsout_Color = vec4(fsin_LightWorld,1.0);
-    fsout_Color = vec4(shadow,shadow,shadow,1.0);
+    //fsout_Color = vec4(shadow,shadow,shadow,1.0);
 }
