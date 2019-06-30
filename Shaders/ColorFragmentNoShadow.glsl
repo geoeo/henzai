@@ -1,9 +1,8 @@
 #version 330 core
 
 in vec4 fsin_Color;
+in vec4 fsin_LightFrag
 out vec4 fsout_Color;
-
-//TODO add shadow information i.e. lightPos etc.
 
 void main()
 {

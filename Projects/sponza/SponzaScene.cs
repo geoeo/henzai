@@ -52,7 +52,7 @@ namespace Henzai.Examples
 
 
             var sponzaRuntimeState 
-                = new ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>(sponzaPNTTB,"PhongBitangentTexture","PhongBitangentTexture", VertexRuntimeTypes.VertexPositionNormalTextureTangentBitangent,PrimitiveTopology.TriangleList, RenderFlags.NORMAL | RenderFlags.SHADOW_MAP);
+                = new ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>(sponzaPNTTB,"PhongBitangentTexture","PhongBitangentTextureNoShadow", VertexRuntimeTypes.VertexPositionNormalTextureTangentBitangent,PrimitiveTopology.TriangleList, RenderFlags.NORMAL | RenderFlags.SHADOW_MAP);
             sponzaRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPNTTB;
             sponzaRuntimeState.CallSamplerGeneration+=ResourceGenerator.GenerateTriLinearSampler;
             sponzaRuntimeState.CallTextureResourceLayoutGeneration+=ResourceGenerator.GenerateTextureResourceLayoutForNormalMapping;
@@ -96,7 +96,7 @@ namespace Henzai.Examples
             Vector3 newTranslation = new Vector3(lightPos.X,lightPos.Y,lightPos.Z);
             _sun.SetNewWorldTranslation(ref newTranslation, true);
 
-            var sunRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormal>(_sun, "Phong", "Phong", VertexRuntimeTypes.VertexPositionNormal, PrimitiveTopology.TriangleList, RenderFlags.NORMAL);
+            var sunRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormal>(_sun, "Phong", "PhongNoShadow", VertexRuntimeTypes.VertexPositionNormal, PrimitiveTopology.TriangleList, RenderFlags.NORMAL);
             sunRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPN;
 
             //TODO: Automate this

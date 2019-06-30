@@ -52,5 +52,4 @@ void main()
     fsin_BitangentWorld = normalMatrix*Bitangent;
     fsin_UV = UV;
     fsin_LightFrag = LightProjView*worldPos;
-    //fsin_LightFrag.z = 2.0*fsin_LightFrag.z -fsin_LightFrag.w;
 }
