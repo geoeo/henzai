@@ -21,6 +21,23 @@ struct Material
     float4 Coefficients;
 };
 
+float ShadowCalculation(float4 fragPosLightSpace, float l_dot_n, texture2d<float> shadowMapTexture, sampler shadowMapSampler)
+{
+    // perform perspective divide
+    float3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    projCoords = projCoords*0.5 +0.5;
+    // we are sampling textures so we have to sample the center
+    // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
+    float closestDepth = shadowMapTexture.sample(shadowMapSampler, float2(projCoords.x, 1.0 - projCoords.y)).r; 
+    // get depth of current fragment from light's perspective
+    float currentDepth = projCoords.z;
+    float bias = fmax(0.000005 * (1.0 - l_dot_n), 0.000005);  
+    // check whether current frag pos is in shadow
+    float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;  
+
+    return shadow;
+} 
+
 fragment float4 FS(PixelInput input[[stage_in]],
                    constant Material &material [[buffer(2)]],
                    texture2d<float> diffuseTexture [[texture(0)]],
@@ -54,9 +71,13 @@ fragment float4 FS(PixelInput input[[stage_in]],
     float spec = fmax(powr(isDotFront*dot(V,R),material.Coefficients.x),0.0);
     float4 specular = material.Specular*spec;
 
-    float4 color_out = material.Ambient;
+    float shadow = ShadowCalculation(input.LightFrag, l_dot_n, shadowMapTexture, shadowMapSampler);
+
+    float4 color_out = float4(0,0,0,0);
     color_out += diffuse;
     color_out += specular;
+    color_out *= (1.0 - shadow);
+    color_out += material.Ambient*diffuse;
 
     float gamma = 2.2;
     color_out.rgb = powr(color_out.rgb,float3(1.0/gamma));

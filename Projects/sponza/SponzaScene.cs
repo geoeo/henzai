@@ -31,7 +31,7 @@ namespace Henzai.Examples
             // RgbaFloat lightColor = RgbaFloat.LightGrey;
             var lightPos = new Vector4(0,100,0,1);
             var lookAt = new Vector4(0,0,0,1)- new Vector4(0,50,0,1);
-            var lightCam = new OrthographicCamera(35.0f, 35.0f, lightPos, lookAt);
+            var lightCam = new OrthographicCamera(50.0f, 50.0f, lightPos, lookAt);
             _sceneRuntimeState.Light = new Light(lightCam,lightColor,0.1f);
             _sceneRuntimeState.Camera = Camera;
             _sceneRuntimeState.SpotLight = Light.NO_POINTLIGHT;
@@ -73,8 +73,6 @@ namespace Henzai.Examples
             sponzaPNTTB.SetNewWorldTransformation(ref scale, true);
             sponzaPC.SetNewWorldTransformation(ref scale, true);
 
-            for (int i = 0; i < sponzaPNTTB.MaterialCount; i++)
-                sponzaPNTTB.GetMaterial(i).ambient = Vector4.Zero;
 
 
             var sponzaRuntimeState 

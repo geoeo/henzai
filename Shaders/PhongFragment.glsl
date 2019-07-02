@@ -61,11 +61,12 @@ void main()
 
     float shadow = ShadowCalculation(fsin_LightFrag, l_dot_n);
 
-    vec4 color_out = Ambient;
+    vec4 color_out = vec4(0,0,0,0);
     color_out += attenuation*diffuse;
     color_out += attenuation*specular;
     color_out += attenuation*lightColor;
     color_out *= (1.0 - shadow);
+    color_out += Ambient*diffuse;
 
     float gamma = 2.2;
     fsout_Color = vec4(pow(color_out.rgb, vec3(1.0/gamma)),color_out.a);

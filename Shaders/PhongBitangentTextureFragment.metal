@@ -115,12 +115,12 @@ fragment float4 FS(PixelInput input[[stage_in]],
     float shadow = ShadowCalculation(input.LightFrag, l_dot_n, shadowMapTexture, shadowMapSampler);
 
     float4 color_out = float4(0.0,0.0,0.0,0.0);
-    color_out += material.Ambient;
     color_out += attenuation*diffuse;
     color_out += attenuation*specular;
     color_out += attenuation*lightColor;
     color_out += pl_color;
     color_out *= (1.0 - shadow);
+    color_out += material.Ambient*diffuse;
 
     //color_out = float4(input.NormalWorld,1.0);
     //color_out = float4(normal_sample,1.0);

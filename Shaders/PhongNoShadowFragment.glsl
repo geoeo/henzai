@@ -41,10 +41,11 @@ void main()
     float spec = max(pow(isDotFront*dot(V,R),Coefficients.x),0.0);
     vec4 specular = Specular*spec;
 
-    vec4 color_out = Ambient;
+    vec4 color_out = vec4(0,0,0,0);
     color_out += attenuation*diffuse;
     color_out += attenuation*specular;
     color_out += attenuation*lightColor;
+    color_out += Ambient*diffuse;
 
     float gamma = 2.2;
     fsout_Color = vec4(pow(color_out.rgb, vec3(1.0/gamma)),color_out.a);
