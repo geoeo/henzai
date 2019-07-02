@@ -27,7 +27,7 @@ vertex PixelInput VS(VertexInput input[[stage_in]],constant ProjViewWorld &pjw [
     float4 positionWorld = pjw.World*float4(position, 1);
     float4 positionCS = pjw.Proj*pjw.View*positionWorld;
 
-
+    positionCS.z = positionCS.z*0.5 + 0.5;
     output.Position = positionCS;
     return output;
 }
