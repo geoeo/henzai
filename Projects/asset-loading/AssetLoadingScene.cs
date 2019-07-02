@@ -50,8 +50,11 @@ namespace Henzai.Examples
 
         // TODO: Abstract Resource Crreation for Uniforms, Vertex Layouts, Disposing
         override protected void CreateResources()
-        {
-
+        {            
+            RgbaFloat lightColor = RgbaFloat.LightGrey;
+            var lightLookAt = new Vector4(0,0,0,1);
+            var lightCam = new OrthographicCamera(35, 35, Light.DEFAULT_POSITION, lightLookAt);
+            _sceneRuntimeState.Light = new Light(lightCam,lightColor, 0.1f);
             // string filePath = Path.Combine(AppContext.BaseDirectory, "Models/sphere.obj");
             //string filePath = Path.Combine(AppContext.BaseDirectory, "Models/300_polygon_sphere_100mm.STL");
             // string filePath =  "Models/sphere_centered.obj";
@@ -124,7 +127,7 @@ namespace Henzai.Examples
                 );
 
             _vertexShader = IO.LoadShader("Phong", ShaderStages.Vertex, GraphicsDevice);
-            _fragmentShader = IO.LoadShader("PhongNoShadow", ShaderStages.Fragment, GraphicsDevice);
+            _fragmentShader = IO.LoadShader("Phong", ShaderStages.Fragment, GraphicsDevice);
 
             GraphicsPipelineDescription pipelineDescription = new GraphicsPipelineDescription()
             {

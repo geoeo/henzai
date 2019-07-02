@@ -15,5 +15,5 @@ void main()
 
     gl_Position = Proj*View*worldPos;
     // composensate for D3D projection
-    gl_Position.z = 2.0*gl_Position.z -gl_Position.w;
+    //gl_Position.z = 2.0*gl_Position.z -gl_Position.w;
 }

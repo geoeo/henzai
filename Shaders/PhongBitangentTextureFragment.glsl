@@ -31,7 +31,6 @@ in vec3 fsin_NormalWorld;
 in vec3 fsin_TangentWorld;
 in vec3 fsin_BitangentWorld;
 in vec3 fsin_FragWorld;
-in vec3 fsin_LightWorld;
 in vec3 fsin_CamPosWorld;
 in vec2 fsin_UV;
 in vec4 fsin_LightFrag;
@@ -48,9 +47,11 @@ float ShadowCalculation(vec4 fragPosLightSpace, float l_dot_n)
     float closestDepth = texture(ShadowMapTexture, projCoords.xy).r; 
     // get depth of current fragment from light's perspective
     float currentDepth = projCoords.z;
-    float bias = max(1.0 * (1.0 - l_dot_n), 0.005);  
+    //TODO: make bias factor a uniform
+    //float bias = max(0.005 * (1.0 - l_dot_n), 0.005);  // sponza
+    float bias = max(0.000005 * (1.0 - l_dot_n), 0.000005);  // lights & sponza
     // check whether current frag pos is in shadow
-    float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;  
+    float shadow = currentDepth - bias> closestDepth ? 1.0 : 0.0;  
 
     return shadow;
 }  

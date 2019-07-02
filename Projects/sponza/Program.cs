@@ -1,6 +1,4 @@
-﻿using System;
-using Henzai;
-using Veldrid;
+﻿using Veldrid;
 using Veldrid.Sdl2;
 using Henzai.UI;
 
@@ -50,10 +48,10 @@ namespace Henzai.Examples
             scene.SetUI(gui);
             gui.changeBackendAction += ChangeBackend;
 
-            scene.PreRender_Descriptors += BuildBVH;
-            scene.PreDraw_Time_Camera_Descriptors += EnableBVHCulling;
+            //scene.PreRender_Descriptors += BuildBVH;
+            //scene.PreDraw_Time_Camera_Descriptors += EnableBVHCulling;
 
-            //scene.CreateShadowMap(renderResolution);
+            scene.CreateShadowMap(renderResolution);
             scene.SetUp(renderResolution);
             scene.Run();
         }

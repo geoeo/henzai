@@ -22,6 +22,11 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
 
+    <Content Include="../../Assets/Models/chinesedragon.dae">
+      <Link>models/chinesedragon.dae</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content> 
+
       
     <Content Include="../../Assets/sponza2/textures/*.*">
       <Link>sponza/textures/%(Filename)%(Extension)</Link>
@@ -318,7 +323,7 @@
     <RemoveDir Directories="$(OutputPath)/Shaders/" />
 
     <!-- TODO: Enforce this -->
-    <RemoveDir Directories="$(OutputPath)/Models/" />
+    <RemoveDir Directories="$(OutputPath)/models/" />
 
     <RemoveDir Directories="$(OutputPath)/sponza/" />
 

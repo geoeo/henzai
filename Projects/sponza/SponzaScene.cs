@@ -29,7 +29,9 @@ namespace Henzai.Examples
 
             RgbaFloat lightColor = RgbaFloat.White;
             // RgbaFloat lightColor = RgbaFloat.LightGrey;
-            var lightCam = new OrthographicCamera(35, 35, new Vector4(0,10,0,1), Light.DEFAULT_LOOKAT);
+            var lightPos = new Vector4(0,100,0,1);
+            var lookAt = new Vector4(0,0,0,1)- new Vector4(0,50,0,1);
+            var lightCam = new OrthographicCamera(35.0f, 35.0f, lightPos, lookAt);
             _sceneRuntimeState.Light = new Light(lightCam,lightColor,0.1f);
             _sceneRuntimeState.Camera = Camera;
             _sceneRuntimeState.SpotLight = Light.NO_POINTLIGHT;
@@ -38,12 +40,36 @@ namespace Henzai.Examples
             // string filePath = Path.Combine(AppContext.BaseDirectory, "nanosuit/nanosuit.obj"); 
 
             var scale = Matrix4x4.CreateScale(0.05f,0.05f,0.05f);
+            //var scale = Matrix4x4.CreateScale(1.00f,1.00f,1.00f);
+
+
+            string filePath = "models/chinesedragon.dae";
+            // string filePath = "Models/Box.dae";
+            var model = AssimpLoader.LoadFromFileWithRealtimeMaterial<VertexPositionNormal>(AppContext.BaseDirectory, filePath, VertexPositionNormal.HenzaiType);
+            var newModelTranslation = Matrix4x4.CreateTranslation(new Vector3(0,20,0));
+            var modelRuntimeState 
+                = new ModelRuntimeDescriptor<VertexPositionNormal>(model,"Phong","Phong", VertexRuntimeTypes.VertexPositionNormal,PrimitiveTopology.TriangleList, RenderFlags.NORMAL | RenderFlags.SHADOW_MAP);
+            modelRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPN;
+            model.SetNewWorldTransformation(ref newModelTranslation, true);
+            
+            var plane = new Model<VertexPositionNormal, RealtimeMaterial>(String.Empty,GeometryFactory.GenerateQuadPN_XZ(),new RealtimeMaterial());
+            var newPlaneTranslation = Matrix4x4.CreateTranslation(new Vector3(0,10,0));
+            var newPlaneScale = Matrix4x4.CreateScale(new Vector3(30,1,30));
+            var trafo = newPlaneScale*newPlaneTranslation;
+            plane.SetNewWorldTransformation(ref trafo, true);
+            var planeRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormal>(plane,"Phong","Phong", VertexRuntimeTypes.VertexPositionNormal,PrimitiveTopology.TriangleStrip, RenderFlags.NORMAL| RenderFlags.SHADOW_MAP);
+            planeRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPN;
             
             //TODO: Write method to remove ambient terms
             var sponzaModels = AssimpLoader.LoadRealtimeModelsFromFile(AppContext.BaseDirectory,"sponza/sponza.obj");
             var sponzaPNTTB = sponzaModels.modelPNTTB;
             var sponzaPC = sponzaModels.modelPC;
 
+            for( int i = 0; i < sponzaPNTTB.MaterialCount; i++)
+                sponzaPNTTB.GetMaterial(i).ambient =new Vector4(0.3f,0.3f,0.3f,1.0f);
+            
+            for( int i = 0; i < sponzaPC.MaterialCount; i++)
+                sponzaPC.GetMaterial(i).ambient =new Vector4(0.3f,0.3f,0.3f,1.0f);
             sponzaPNTTB.SetNewWorldTransformation(ref scale, true);
             sponzaPC.SetNewWorldTransformation(ref scale, true);
 
@@ -52,7 +78,7 @@ namespace Henzai.Examples
 
 
             var sponzaRuntimeState 
-                = new ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>(sponzaPNTTB,"PhongBitangentTexture","PhongBitangentTextureNoShadow", VertexRuntimeTypes.VertexPositionNormalTextureTangentBitangent,PrimitiveTopology.TriangleList, RenderFlags.NORMAL | RenderFlags.SHADOW_MAP);
+                = new ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>(sponzaPNTTB,"PhongBitangentTexture","PhongBitangentTexture", VertexRuntimeTypes.VertexPositionNormalTextureTangentBitangent,PrimitiveTopology.TriangleList, RenderFlags.NORMAL | RenderFlags.SHADOW_MAP);
             sponzaRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPNTTB;
             sponzaRuntimeState.CallSamplerGeneration+=ResourceGenerator.GenerateTriLinearSampler;
             sponzaRuntimeState.CallTextureResourceLayoutGeneration+=ResourceGenerator.GenerateTextureResourceLayoutForNormalMapping;
@@ -92,7 +118,6 @@ namespace Henzai.Examples
             _sun = new Model<VertexPositionNormal, RealtimeMaterial>(string.Empty, GeometryFactory.GenerateSphereNormal(100,100,1), new RealtimeMaterial());
             _sun.GetMaterial(0).ambient = lightColor.ToVector4();
             // _sun.meshes[0].TryGetMaterial().ambient = lightColor.ToVector4();
-            Vector4 lightPos = _sceneRuntimeState.Light.LightPos;
             Vector3 newTranslation = new Vector3(lightPos.X,lightPos.Y,lightPos.Z);
             _sun.SetNewWorldTranslation(ref newTranslation, true);
 
@@ -106,6 +131,8 @@ namespace Henzai.Examples
             // _modelPTDescriptorList.Add(sponzaRuntimeStateTexOnly);
             // _modelStatesList.Add(sunRuntimeState);
             _modelPNDescriptorList.Add(sunRuntimeState);
+            _modelPNDescriptorList.Add(modelRuntimeState);
+            //_modelPNDescriptorList.Add(planeRuntimeState);
 
             //TODO: Abstrct this
             foreach(var modelDescriptor in _modelPNTTBDescriptorList){
@@ -154,8 +181,8 @@ namespace Henzai.Examples
                 _sceneRuntimeState.Light,
                 _sceneRuntimeState.SpotLight);
 
-            //RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPNTTBDescriptorArray,_sceneRuntimeState);
-            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPNTTBDescriptorArray,_sceneRuntimeState, PNTTBRuntimeGeometry.MeshBVHArray, PipelineTypes.Normal);
+            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPNTTBDescriptorArray,_sceneRuntimeState, PipelineTypes.Normal);
+            //RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPNTTBDescriptorArray,_sceneRuntimeState, PNTTBRuntimeGeometry.MeshBVHArray, PipelineTypes.Normal);
             RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPNDescriptorArray,_sceneRuntimeState, PipelineTypes.Normal);
             RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPTDescriptorArray,_sceneRuntimeState, PipelineTypes.Normal);
             RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPCDescriptorArray,_sceneRuntimeState, PipelineTypes.Normal);

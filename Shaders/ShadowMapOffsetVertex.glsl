@@ -17,5 +17,5 @@ void main()
     vec4 worldPos = World*position;
 
     gl_Position = Proj*View*worldPos;
-    gl_Position.z = 2.0*gl_Position.z -gl_Position.w;
+    //gl_Position.z = 2.0*gl_Position.z -gl_Position.w;
 }
