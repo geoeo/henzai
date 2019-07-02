@@ -48,8 +48,8 @@ namespace Henzai.Examples
             scene.SetUI(gui);
             gui.changeBackendAction += ChangeBackend;
 
-            //scene.PreRender_Descriptors += BuildBVH;
-            //scene.PreDraw_Time_Camera_Descriptors += EnableBVHCulling;
+            scene.PreRender_Descriptors += BuildBVH;
+            scene.PreDraw_Time_Camera_Descriptors += EnableBVHCulling;
 
             scene.CreateShadowMap(renderResolution);
             scene.SetUp(renderResolution);
