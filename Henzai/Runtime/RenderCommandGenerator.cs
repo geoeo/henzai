@@ -67,21 +67,27 @@ namespace Henzai.Runtime
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void GenerateCommandsForMesh_Inline(
                                                     CommandList commandList,
-                                                    DeviceBuffer vertexBuffer,
-                                                    DeviceBuffer indexBuffer,
-                                                    DeviceBuffer cameraProjViewBuffer,
-                                                    DeviceBuffer materialBuffer,
-                                                    ResourceSet cameraResourceSet,
-                                                    ResourceSet lightResourceSet,
-                                                    ResourceSet pointlightResourceSet,
-                                                    ResourceSet materialResourceSet,
-                                                    ResourceSet textureResourceSet,
+                                                    ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent> modelState,
+                                                    int meshIndex,
+                                                    SceneRuntimeDescriptor sceneRuntimeDescriptor,
                                                     ResourceSet[] effectResourceSets,
                                                     RealtimeMaterial material,
                                                     Mesh<VertexPositionNormalTextureTangentBitangent> mesh,
                                                     uint modelInstanceCount)
         {
             var effectIndex = 5;
+ 
+            var vertexBuffer = modelState.VertexBuffers[meshIndex];
+            var indexBuffer = modelState.IndexBuffers[meshIndex];
+            var textureResourceSet = modelState.TextureResourceSets[meshIndex];
+
+            var cameraProjViewBuffer = sceneRuntimeDescriptor.CameraProjViewBuffer;
+            var materialBuffer = sceneRuntimeDescriptor.MaterialBuffer;
+            var cameraResourceSet = sceneRuntimeDescriptor.CameraResourceSet;
+            var lightResourceSet = sceneRuntimeDescriptor.LightResourceSet;
+            var pointlightResourceSet = sceneRuntimeDescriptor.SpotLightResourceSet;
+            var materialResourceSet = sceneRuntimeDescriptor.MaterialResourceSet;
+
             commandList.SetVertexBuffer(0, vertexBuffer);
             commandList.SetIndexBuffer(indexBuffer, IndexFormat.UInt16);
             commandList.UpdateBuffer(cameraProjViewBuffer, 128, mesh.World);
@@ -116,19 +122,25 @@ namespace Henzai.Runtime
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void GenerateCommandsForMesh_Inline(
                                                     CommandList commandList,
-                                                    DeviceBuffer vertexBuffer,
-                                                    DeviceBuffer indexBuffer,
-                                                    DeviceBuffer cameraProjViewBuffer,
-                                                    DeviceBuffer materialBuffer,
-                                                    ResourceSet cameraResourceSet,
-                                                    ResourceSet lightResourceSet,
-                                                    ResourceSet materialResourceSet,
+                                                    ModelRuntimeDescriptor<VertexPositionNormal> modelState,
+                                                    int meshIndex,
+                                                    SceneRuntimeDescriptor sceneRuntimeDescriptor,
                                                     ResourceSet[] effectResourceSets,
                                                     RealtimeMaterial material,
                                                     Mesh<VertexPositionNormal> mesh,
                                                     uint modelInstanceCount)
         {
             var effectIndex = 3;
+
+            var vertexBuffer = modelState.VertexBuffers[meshIndex];
+            var indexBuffer = modelState.IndexBuffers[meshIndex];
+
+            var cameraProjViewBuffer = sceneRuntimeDescriptor.CameraProjViewBuffer;
+            var materialBuffer = sceneRuntimeDescriptor.MaterialBuffer;
+            var cameraResourceSet = sceneRuntimeDescriptor.CameraResourceSet;
+            var lightResourceSet = sceneRuntimeDescriptor.LightResourceSet;
+            var materialResourceSet = sceneRuntimeDescriptor.MaterialResourceSet;
+
             commandList.SetVertexBuffer(0, vertexBuffer);
             commandList.SetIndexBuffer(indexBuffer, IndexFormat.UInt16);
             commandList.UpdateBuffer(cameraProjViewBuffer, 128, mesh.World);
@@ -159,18 +171,24 @@ namespace Henzai.Runtime
         /// <see cref="Henzai.Geometry.VertexPositionTexture"/> 
         ///</summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void GenerateCommandsForMesh_Inline<T>(
+        private static void GenerateCommandsForMesh_Inline(
                                                     CommandList commandList,
-                                                    DeviceBuffer vertexBuffer,
-                                                    DeviceBuffer indexBuffer,
-                                                    DeviceBuffer cameraProjViewBuffer,
-                                                    ResourceSet cameraResourceSet,
-                                                    ResourceSet textureResourceSet,
+                                                    ModelRuntimeDescriptor<VertexPositionTexture> modelState,
+                                                    int meshIndex,
+                                                    SceneRuntimeDescriptor sceneRuntimeDescriptor,
                                                     ResourceSet[] effectResourceSets,
                                                     Mesh<VertexPositionTexture> mesh,
-                                                    uint modelInstanceCount) where T : struct, VertexLocateable
+                                                    uint modelInstanceCount)
         {
             var effectIndex = 2;
+
+            var vertexBuffer = modelState.VertexBuffers[meshIndex];
+            var indexBuffer = modelState.IndexBuffers[meshIndex];
+            var textureResourceSet = modelState.TextureResourceSets[meshIndex];
+
+            var cameraProjViewBuffer = sceneRuntimeDescriptor.CameraProjViewBuffer;
+            var cameraResourceSet = sceneRuntimeDescriptor.CameraResourceSet;
+
             commandList.SetVertexBuffer(0, vertexBuffer);
             commandList.SetIndexBuffer(indexBuffer, IndexFormat.UInt16);
             commandList.UpdateBuffer(cameraProjViewBuffer, 128, mesh.World);
@@ -194,19 +212,26 @@ namespace Henzai.Runtime
         /// <summary>
         /// Render Commands for Mesh of Type:
         /// <see cref="Henzai.Geometry.VertexPositionColor"/> 
+        /// Also used in ShadowMap PrePass
         ///</summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void GenerateCommandsForMesh_Inline<T>(
                                                     CommandList commandList,
-                                                    DeviceBuffer vertexBuffer,
-                                                    DeviceBuffer indexBuffer,
-                                                    DeviceBuffer cameraProjViewBuffer,
-                                                    ResourceSet cameraResourceSet,
+                                                    ModelRuntimeDescriptor<T> modelState,
+                                                    int meshIndex,
+                                                    SceneRuntimeDescriptor sceneRuntimeDescriptor,
                                                     ResourceSet[] effectResourceSets,
                                                     Mesh<T> mesh,
                                                     uint modelInstanceCount) where T : struct, VertexLocateable
         {
             var effectIndex = 1;
+
+            var vertexBuffer = modelState.VertexBuffers[meshIndex];
+            var indexBuffer = modelState.IndexBuffers[meshIndex];
+
+            var cameraProjViewBuffer = sceneRuntimeDescriptor.CameraProjViewBuffer;
+            var cameraResourceSet = sceneRuntimeDescriptor.CameraResourceSet;
+
             commandList.SetVertexBuffer(0, vertexBuffer);
             commandList.SetIndexBuffer(indexBuffer, IndexFormat.UInt16);
             commandList.UpdateBuffer(cameraProjViewBuffer, 128, mesh.World);
@@ -234,16 +259,22 @@ namespace Henzai.Runtime
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void GenerateCommandsForMesh_Inline(
                                                     CommandList commandList,
-                                                    DeviceBuffer vertexBuffer,
-                                                    DeviceBuffer indexBuffer,
-                                                    DeviceBuffer cameraProjViewBuffer,
-                                                    ResourceSet cameraResourceSet,
-                                                    ResourceSet textureResourceSet,
+                                                    ModelRuntimeDescriptor<VertexPosition> modelState,
+                                                    int meshIndex,
+                                                    SceneRuntimeDescriptor sceneRuntimeDescriptor,
                                                     ResourceSet[] effectResourceSets,
                                                     Mesh<VertexPosition> mesh,
                                                     uint modelInstanceCount)
         {
             var effectIndex = 2;
+
+            var vertexBuffer = modelState.VertexBuffers[meshIndex];
+            var indexBuffer = modelState.IndexBuffers[meshIndex];
+            var textureResourceSet = modelState.TextureResourceSets[meshIndex];
+
+            var cameraProjViewBuffer = sceneRuntimeDescriptor.CameraProjViewBuffer;
+            var cameraResourceSet = sceneRuntimeDescriptor.CameraResourceSet;
+
             commandList.SetVertexBuffer(0, vertexBuffer);
             commandList.SetIndexBuffer(indexBuffer, IndexFormat.UInt16);
             commandList.UpdateBuffer(cameraProjViewBuffer, 128, mesh.World);
@@ -275,11 +306,9 @@ namespace Henzai.Runtime
                 var mesh = model.GetMesh(i);
                 RenderCommandGenerator.GenerateCommandsForMesh_Inline(
                     commandList,
-                    cubeMapRuntimeDescriptor.VertexBuffers[i],
-                    cubeMapRuntimeDescriptor.IndexBuffers[i],
-                    sceneRuntimeDescriptor.CameraProjViewBuffer,
-                    sceneRuntimeDescriptor.CameraResourceSet,
-                    cubeMapRuntimeDescriptor.TextureResourceSets[i],
+                    cubeMapRuntimeDescriptor,
+                    i,
+                    sceneRuntimeDescriptor,
                     cubeMapRuntimeDescriptor.EffectResourceSets,
                     mesh,
                     cubeMapRuntimeDescriptor.TotalInstanceCount
@@ -320,13 +349,9 @@ namespace Henzai.Runtime
                     var material = model.GetMaterial(i);
                     RenderCommandGenerator.GenerateCommandsForMesh_Inline(
                         commandList,
-                        modelState.VertexBuffers[i],
-                        modelState.IndexBuffers[i],
-                        sceneRuntimeDescriptor.CameraProjViewBuffer,
-                        sceneRuntimeDescriptor.MaterialBuffer,
-                        sceneRuntimeDescriptor.CameraResourceSet,
-                        sceneRuntimeDescriptor.LightResourceSet,
-                        sceneRuntimeDescriptor.MaterialResourceSet,
+                        modelState,
+                        i,
+                        sceneRuntimeDescriptor,
                         modelState.EffectResourceSets,
                         material,
                         mesh,
@@ -369,10 +394,9 @@ namespace Henzai.Runtime
 
                     RenderCommandGenerator.GenerateCommandsForMesh_Inline(
                         commandList,
-                        modelState.VertexBuffers[i],
-                        modelState.IndexBuffers[i],
-                        sceneRuntimeDescriptor.CameraProjViewBuffer,
-                        sceneRuntimeDescriptor.CameraResourceSet,
+                        modelState,
+                        i,
+                        sceneRuntimeDescriptor,
                         effectSets,
                         mesh,
                         modelState.TotalInstanceCount
@@ -382,9 +406,9 @@ namespace Henzai.Runtime
         }
 
         public static void GenerateRenderCommandsForModelDescriptor(CommandList commandList,
-                                                                       ModelRuntimeDescriptor<VertexPositionTexture>[] descriptorArray,
-                                                                       SceneRuntimeDescriptor sceneRuntimeDescriptor,
-                                                                       PipelineTypes piplelineType)
+                                                                    ModelRuntimeDescriptor<VertexPositionTexture>[] descriptorArray,
+                                                                    SceneRuntimeDescriptor sceneRuntimeDescriptor,
+                                                                    PipelineTypes piplelineType)
         {
             for (int j = 0; j < descriptorArray.Length; j++)
             {
@@ -412,13 +436,11 @@ namespace Henzai.Runtime
                     if (!model.GetMeshBVH(i).AABBIsValid)
                         continue;
                     var mesh = model.GetMesh(i);
-                    RenderCommandGenerator.GenerateCommandsForMesh_Inline<VertexPositionTexture>(
+                    RenderCommandGenerator.GenerateCommandsForMesh_Inline(
                         commandList,
-                        modelState.VertexBuffers[i],
-                        modelState.IndexBuffers[i],
-                        sceneRuntimeDescriptor.CameraProjViewBuffer,
-                        sceneRuntimeDescriptor.CameraResourceSet,
-                        modelState.TextureResourceSets[i],
+                        modelState,
+                        i,
+                        sceneRuntimeDescriptor,
                         effectSets,
                         mesh,
                         modelState.TotalInstanceCount
@@ -461,15 +483,9 @@ namespace Henzai.Runtime
                     var material = model.GetMaterial(i);
                     RenderCommandGenerator.GenerateCommandsForMesh_Inline(
                         commandList,
-                        modelState.VertexBuffers[i],
-                        modelState.IndexBuffers[i],
-                        sceneRuntimeDescriptor.CameraProjViewBuffer,
-                        sceneRuntimeDescriptor.MaterialBuffer,
-                        sceneRuntimeDescriptor.CameraResourceSet,
-                        sceneRuntimeDescriptor.LightResourceSet,
-                        sceneRuntimeDescriptor.SpotLightResourceSet,
-                        sceneRuntimeDescriptor.MaterialResourceSet,
-                        modelState.TextureResourceSets[i],
+                        modelState,
+                        i,
+                        sceneRuntimeDescriptor,
                         effectSets,
                         material,
                         mesh,
@@ -479,6 +495,7 @@ namespace Henzai.Runtime
             }
         }
 
+        //TODO: Data driven -> should refactor so that all GenerateRenderCommandsForModelDescriptor use this structure
         public static void GenerateRenderCommandsForModelDescriptor(CommandList commandList,
                                                                     ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] descriptorArray,
                                                                     SceneRuntimeDescriptor sceneRuntimeDescriptor,
@@ -515,15 +532,9 @@ namespace Henzai.Runtime
                 var material = model.GetMaterial(meshIndex);
                 RenderCommandGenerator.GenerateCommandsForMesh_Inline(
                     commandList,
-                    modelState.VertexBuffers[meshIndex],
-                    modelState.IndexBuffers[meshIndex],
-                    sceneRuntimeDescriptor.CameraProjViewBuffer,
-                    sceneRuntimeDescriptor.MaterialBuffer,
-                    sceneRuntimeDescriptor.CameraResourceSet,
-                    sceneRuntimeDescriptor.LightResourceSet,
-                    sceneRuntimeDescriptor.SpotLightResourceSet,
-                    sceneRuntimeDescriptor.MaterialResourceSet,
-                    modelState.TextureResourceSets[meshIndex],
+                    modelState,
+                    meshIndex,
+                    sceneRuntimeDescriptor,
                     effectSets,
                     material,
                     mesh,
