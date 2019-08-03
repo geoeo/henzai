@@ -75,10 +75,10 @@ namespace Henzai.Effects
                 _sceneRuntimeDescriptor.CameraProjViewBuffer,
                 _sceneRuntimeDescriptor.Light.LightCam);
 
-            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionNormalTextureTangentBitangent>(_commandList,_modelPNTTBDescriptorArray,_sceneRuntimeDescriptor, PipelineTypes.ShadowMap);
-            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionNormal>(_commandList,_modelPNDescriptorArray,_sceneRuntimeDescriptor, PipelineTypes.ShadowMap);
-            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionTexture>(_commandList,_modelPTDescriptorArray,_sceneRuntimeDescriptor, PipelineTypes.ShadowMap);
-            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionColor>(_commandList,_modelPCDescriptorArray,_sceneRuntimeDescriptor, PipelineTypes.ShadowMap);
+            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionNormalTextureTangentBitangent>(_commandList,_modelPNTTBDescriptorArray,_sceneRuntimeDescriptor, PipelineTypes.ShadowMap, VertexRuntimeTypes.VertexPositionNormalTextureTangentBitangent);
+            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionNormal>(_commandList,_modelPNDescriptorArray,_sceneRuntimeDescriptor, PipelineTypes.ShadowMap, VertexRuntimeTypes.VertexPositionNormal);
+            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionTexture>(_commandList,_modelPTDescriptorArray,_sceneRuntimeDescriptor, PipelineTypes.ShadowMap, VertexRuntimeTypes.VertexPositionTexture);
+            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionColor>(_commandList,_modelPCDescriptorArray,_sceneRuntimeDescriptor, PipelineTypes.ShadowMap, VertexRuntimeTypes.VertexPositionColor);
 
             _commandList.End();
         }

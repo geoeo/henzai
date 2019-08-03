@@ -165,8 +165,8 @@ namespace Henzai.Examples
                 _sceneRuntimeState.Light,
                 _sceneRuntimeState.SpotLight);
 
-            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPNTTBDescriptorArray,_sceneRuntimeState, PipelineTypes.Normal);
-            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPNDescriptorArray,_sceneRuntimeState, PipelineTypes.Normal);
+            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionNormalTextureTangentBitangent>(_commandList,_modelPNTTBDescriptorArray,_sceneRuntimeState, PipelineTypes.Normal, VertexRuntimeTypes.VertexPositionNormalTextureTangentBitangent);
+            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionNormal>(_commandList,_modelPNDescriptorArray,_sceneRuntimeState, PipelineTypes.Normal, VertexRuntimeTypes.VertexPositionNormal);
             
             _commandList.End();
         }

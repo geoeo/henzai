@@ -181,9 +181,9 @@ namespace Henzai.Examples
 
             //RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPNTTBDescriptorArray,_sceneRuntimeState, PipelineTypes.Normal);
             RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPNTTBDescriptorArray,_sceneRuntimeState, PNTTBRuntimeGeometry.MeshBVHArray, PipelineTypes.Normal);
-            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPNDescriptorArray,_sceneRuntimeState, PipelineTypes.Normal);
-            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPTDescriptorArray,_sceneRuntimeState, PipelineTypes.Normal);
-            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPCDescriptorArray,_sceneRuntimeState, PipelineTypes.Normal);
+            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionNormal>(_commandList,_modelPNDescriptorArray,_sceneRuntimeState, PipelineTypes.Normal, VertexRuntimeTypes.VertexPositionNormal);
+            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionTexture>(_commandList,_modelPTDescriptorArray,_sceneRuntimeState, PipelineTypes.Normal, VertexRuntimeTypes.VertexPositionTexture);
+            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionColor>(_commandList,_modelPCDescriptorArray,_sceneRuntimeState, PipelineTypes.Normal, VertexRuntimeTypes.VertexPositionColor);
             RenderCommandGenerator.GenerateRenderCommandsForCubeMapModelDescriptor(_commandList,_skyBoxRuntimeState,_sceneRuntimeState);
             
             _commandList.End();

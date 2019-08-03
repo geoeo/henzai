@@ -1,9 +1,8 @@
+using System;
 using System.Runtime.CompilerServices;
 using Veldrid;
 using Henzai.Core.Extensions;
-using Henzai.Geometry;
 using Henzai.Cameras;
-using Henzai.Core;
 using Henzai.Core.Materials;
 using Henzai.Core.VertexGeometry;
 using Henzai.Core.Acceleration;
@@ -65,7 +64,7 @@ namespace Henzai.Runtime
         /// <see cref="Henzai.Geometry.VertexPositionNormalTextureTangentBitangent"/> 
         ///</summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void GenerateCommandsForMesh_Inline(
+        private static void GenerateCommandsForPNTTB_Inline(
                                                     CommandList commandList,
                                                     ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent> modelState,
                                                     int meshIndex,
@@ -120,7 +119,7 @@ namespace Henzai.Runtime
         /// <see cref="Henzai.Geometry.VertexPositionNormal"/> 
         ///</summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void GenerateCommandsForMesh_Inline(
+        private static void GenerateCommandsForPN_Inline(
                                                     CommandList commandList,
                                                     ModelRuntimeDescriptor<VertexPositionNormal> modelState,
                                                     int meshIndex,
@@ -171,7 +170,7 @@ namespace Henzai.Runtime
         /// <see cref="Henzai.Geometry.VertexPositionTexture"/> 
         ///</summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void GenerateCommandsForMesh_Inline(
+        private static void GenerateCommandsForPT_Inline(
                                                     CommandList commandList,
                                                     ModelRuntimeDescriptor<VertexPositionTexture> modelState,
                                                     int meshIndex,
@@ -257,7 +256,7 @@ namespace Henzai.Runtime
         /// <see cref="Henzai.Geometry.VertexPosition"/> 
         ///</summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void GenerateCommandsForMesh_Inline(
+        private static void GenerateCommandsForP_Inline(
                                                     CommandList commandList,
                                                     ModelRuntimeDescriptor<VertexPosition> modelState,
                                                     int meshIndex,
@@ -304,7 +303,7 @@ namespace Henzai.Runtime
             for (int i = 0; i < model.MeshCount; i++)
             {
                 var mesh = model.GetMesh(i);
-                RenderCommandGenerator.GenerateCommandsForMesh_Inline(
+                RenderCommandGenerator.GenerateCommandsForP_Inline(
                     commandList,
                     cubeMapRuntimeDescriptor,
                     i,
@@ -317,53 +316,11 @@ namespace Henzai.Runtime
 
         }
 
-        public static void GenerateRenderCommandsForModelDescriptor(CommandList commandList,
-                                                                    ModelRuntimeDescriptor<VertexPositionNormal>[] descriptorArray,
-                                                                    SceneRuntimeDescriptor sceneRuntimeDescriptor,
-                                                                    PipelineTypes piplelineType)
-        {
-            for (int j = 0; j < descriptorArray.Length; j++)
-            {
-                var modelState = descriptorArray[j];
-                var model = modelState.Model;
-                var renderFlags = modelState.RenderFlags;
-                switch(piplelineType){
-                    case PipelineTypes.Normal:
-                    if((renderFlags & RenderFlags.NORMAL) == RenderFlags.NONE)
-                            continue;
-                        commandList.SetPipeline(modelState.Pipeline);
-                        break;
-                    case PipelineTypes.ShadowMap:
-                        if((renderFlags & RenderFlags.SHADOW_MAP) == RenderFlags.NONE)
-                            continue;
-                        commandList.SetPipeline(modelState.ShadowMapPipeline);
-                        break;
-                }
-                for (int i = 0; i < modelState.InstanceBuffers.Length; i++)
-                    commandList.SetVertexBuffer(i.ToUnsigned() + 1, modelState.InstanceBuffers[i]);
-                for (int i = 0; i < model.MeshCount; i++)
-                {
-                    if (!model.GetMeshBVH(i).AABBIsValid)
-                        continue;
-                    var mesh = model.GetMesh(i);
-                    var material = model.GetMaterial(i);
-                    RenderCommandGenerator.GenerateCommandsForMesh_Inline(
-                        commandList,
-                        modelState,
-                        i,
-                        sceneRuntimeDescriptor,
-                        modelState.EffectResourceSets,
-                        material,
-                        mesh,
-                        modelState.TotalInstanceCount
-                    );
-                }
-            }
-        }
         public static void GenerateRenderCommandsForModelDescriptor<T>(CommandList commandList,
                                                                        ModelRuntimeDescriptor<T>[] descriptorArray,
                                                                        SceneRuntimeDescriptor sceneRuntimeDescriptor,
-                                                                       PipelineTypes piplelineType) where T : struct, VertexLocateable
+                                                                       PipelineTypes piplelineType,
+                                                                       VertexRuntimeTypes vertexRuntimeType) where T : struct, VertexLocateable
         {
             for (int j = 0; j < descriptorArray.Length; j++)
             {
@@ -384,95 +341,6 @@ namespace Henzai.Runtime
                         break;
                 }
                 var model = modelState.Model;
-                for (int i = 0; i < modelState.InstanceBuffers.Length; i++)
-                    commandList.SetVertexBuffer(i.ToUnsigned() + 1, modelState.InstanceBuffers[i]);
-                for (int i = 0; i < model.MeshCount; i++)
-                {
-                    if (!model.GetMeshBVH(i).AABBIsValid)
-                        continue;
-                    var mesh = model.GetMesh(i);
-
-                    RenderCommandGenerator.GenerateCommandsForMesh_Inline(
-                        commandList,
-                        modelState,
-                        i,
-                        sceneRuntimeDescriptor,
-                        effectSets,
-                        mesh,
-                        modelState.TotalInstanceCount
-                    );
-                }
-            }
-        }
-
-        public static void GenerateRenderCommandsForModelDescriptor(CommandList commandList,
-                                                                    ModelRuntimeDescriptor<VertexPositionTexture>[] descriptorArray,
-                                                                    SceneRuntimeDescriptor sceneRuntimeDescriptor,
-                                                                    PipelineTypes piplelineType)
-        {
-            for (int j = 0; j < descriptorArray.Length; j++)
-            {
-                var modelState = descriptorArray[j];
-                var effectSets = sceneRuntimeDescriptor.NO_RESOURCE_SET;
-                var renderFlags = modelState.RenderFlags;
-                switch(piplelineType){
-                    case PipelineTypes.Normal:
-                        if((renderFlags & RenderFlags.NORMAL) == RenderFlags.NONE)
-                            continue;
-                        commandList.SetPipeline(modelState.Pipeline);
-                        effectSets = modelState.EffectResourceSets;
-                        break;
-                    case PipelineTypes.ShadowMap:
-                        if((renderFlags & RenderFlags.SHADOW_MAP) == RenderFlags.NONE)
-                            continue;
-                        commandList.SetPipeline(modelState.ShadowMapPipeline);
-                        break;
-                }
-                var model = modelState.Model;
-                for (int i = 0; i < modelState.InstanceBuffers.Length; i++)
-                    commandList.SetVertexBuffer(i.ToUnsigned() + 1, modelState.InstanceBuffers[i]);
-                for (int i = 0; i < model.MeshCount; i++)
-                {
-                    if (!model.GetMeshBVH(i).AABBIsValid)
-                        continue;
-                    var mesh = model.GetMesh(i);
-                    RenderCommandGenerator.GenerateCommandsForMesh_Inline(
-                        commandList,
-                        modelState,
-                        i,
-                        sceneRuntimeDescriptor,
-                        effectSets,
-                        mesh,
-                        modelState.TotalInstanceCount
-                    );
-                }
-            }
-        }
-
-        public static void GenerateRenderCommandsForModelDescriptor(CommandList commandList,
-                                                                    ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] descriptorArray,
-                                                                    SceneRuntimeDescriptor sceneRuntimeDescriptor,
-                                                                    PipelineTypes piplelineType)
-        {
-            for (int j = 0; j < descriptorArray.Length; j++)
-            {
-                var modelState = descriptorArray[j];
-                var renderFlags = modelState.RenderFlags;
-                var effectSets = sceneRuntimeDescriptor.NO_RESOURCE_SET;
-                var model = modelState.Model;
-                switch(piplelineType){
-                    case PipelineTypes.Normal:
-                        if((renderFlags & RenderFlags.NORMAL) == RenderFlags.NONE)
-                            continue;
-                        commandList.SetPipeline(modelState.Pipeline);
-                        effectSets = modelState.EffectResourceSets;
-                        break;
-                    case PipelineTypes.ShadowMap:
-                        if((renderFlags & RenderFlags.SHADOW_MAP) == RenderFlags.NONE)
-                            continue;
-                        commandList.SetPipeline(modelState.ShadowMapPipeline);
-                        break;
-                }
                 for (int i = 0; i < modelState.InstanceBuffers.Length; i++)
                     commandList.SetVertexBuffer(i.ToUnsigned() + 1, modelState.InstanceBuffers[i]);
                 for (int i = 0; i < model.MeshCount; i++)
@@ -481,17 +349,78 @@ namespace Henzai.Runtime
                         continue;
                     var mesh = model.GetMesh(i);
                     var material = model.GetMaterial(i);
-                    RenderCommandGenerator.GenerateCommandsForMesh_Inline(
-                        commandList,
-                        modelState,
-                        i,
-                        sceneRuntimeDescriptor,
-                        effectSets,
-                        material,
-                        mesh,
-                        modelState.TotalInstanceCount
-                    );
+
+                    if(piplelineType == PipelineTypes.ShadowMap || vertexRuntimeType == VertexRuntimeTypes.VertexPositionColor)
+                        RenderCommandGenerator.GenerateCommandsForMesh_Inline(
+                            commandList,
+                            modelState,
+                            i,
+                            sceneRuntimeDescriptor,
+                            effectSets,
+                            mesh,
+                            modelState.TotalInstanceCount
+                        );
+
+                    
+                    else {
+                        switch (vertexRuntimeType){
+                            case VertexRuntimeTypes.VertexPosition:
+                                RenderCommandGenerator.GenerateCommandsForP_Inline(
+                                commandList,
+                                modelState as ModelRuntimeDescriptor<VertexPosition>,
+                                i,
+                                sceneRuntimeDescriptor,
+                                effectSets,
+                                mesh as Mesh<VertexPosition>,
+                                modelState.TotalInstanceCount
+                            );
+                            break;
+                            case VertexRuntimeTypes.VertexPositionTexture:
+                                RenderCommandGenerator.GenerateCommandsForPT_Inline(
+                                    commandList,
+                                    modelState as ModelRuntimeDescriptor<VertexPositionTexture>,
+                                    i,
+                                    sceneRuntimeDescriptor,
+                                    effectSets,
+                                    mesh as Mesh<VertexPositionTexture>,
+                                    modelState.TotalInstanceCount
+                                );
+                            break;
+                            case VertexRuntimeTypes.VertexPositionNormal:
+                                RenderCommandGenerator.GenerateCommandsForPN_Inline(
+                                    commandList,
+                                    modelState as ModelRuntimeDescriptor<VertexPositionNormal>,
+                                    i,
+                                    sceneRuntimeDescriptor,
+                                    effectSets,
+                                    material,
+                                    mesh as Mesh<VertexPositionNormal>,
+                                    modelState.TotalInstanceCount
+                                );
+                            break;
+                            case VertexRuntimeTypes.VertexPositionNormalTextureTangentBitangent:
+                                RenderCommandGenerator.GenerateCommandsForPNTTB_Inline(
+                                    commandList,
+                                    modelState as ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>,
+                                    i,
+                                    sceneRuntimeDescriptor,
+                                    effectSets,
+                                    material,
+                                    mesh as Mesh<VertexPositionNormalTextureTangentBitangent>,
+                                    modelState.TotalInstanceCount
+                                );
+                            break;
+                            default:
+                                var errorStr = "Type: " + typeof(T).Name + " not implemented";
+                                throw new System.NotImplementedException(errorStr);
+
+                        }
+ 
+                        
+                    }
+
                 }
+
             }
         }
 
@@ -530,7 +459,8 @@ namespace Henzai.Runtime
                     commandList.SetVertexBuffer(i.ToUnsigned() + 1, modelState.InstanceBuffers[i]);
                 var mesh = model.GetMesh(j);
                 var material = model.GetMaterial(meshIndex);
-                RenderCommandGenerator.GenerateCommandsForMesh_Inline(
+
+                RenderCommandGenerator.GenerateCommandsForPNTTB_Inline(
                     commandList,
                     modelState,
                     meshIndex,
