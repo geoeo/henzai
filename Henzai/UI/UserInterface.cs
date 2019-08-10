@@ -136,7 +136,7 @@ namespace Henzai.UI
             _commandList.End();
         }
         
-        override protected void SetFramebuffer(){
+        override protected void GenerateFramebuffer(){
             _frameBuffer = _graphicsDevice.SwapchainFramebuffer;
         }
 

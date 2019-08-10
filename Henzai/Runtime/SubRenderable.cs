@@ -41,7 +41,7 @@ namespace Henzai.Runtime
             _factory = new DisposeCollectorResourceFactory(_graphicsDevice.ResourceFactory);
             _sceneRuntimeDescriptor = new SceneRuntimeDescriptor();
             _commandList = _factory.CreateCommandList();
-            SetFramebuffer();
+            GenerateFramebuffer();
 
         }
 
@@ -70,7 +70,7 @@ namespace Henzai.Runtime
         /// <summary>
         /// Sets the framebuffer for this scene
         /// </summary>
-        abstract protected void SetFramebuffer();
+        abstract protected void GenerateFramebuffer();
 
         /// <summary>
         /// Disposes of all elements in crated by the ResourceFactory

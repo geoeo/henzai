@@ -39,12 +39,11 @@ namespace Henzai.Effects
                     new BindableResource[] { _sceneRuntimeDescriptor.CameraProjViewBuffer });
         }
 
-        protected override void SetFramebuffer(){
+        protected override void GenerateFramebuffer(){
             var desc = TextureDescription.Texture2D((uint)1024, (uint)1024, 1, 1, PixelFormat.R32_Float, TextureUsage.DepthStencil | TextureUsage.Sampled);
             var depthTexture = _factory.CreateTexture(desc);
             depthTexture.Name = "ShadowMapTexture";
             ShadowMapTexView = _factory.CreateTextureView(depthTexture);
-
 
             _frameBuffer = _factory.CreateFramebuffer(new FramebufferDescription(
                 new FramebufferAttachmentDescription(depthTexture, 0), Array.Empty<FramebufferAttachmentDescription>()));
