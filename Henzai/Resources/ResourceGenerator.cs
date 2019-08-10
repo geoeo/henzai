@@ -184,7 +184,7 @@ namespace Henzai
             Image<Rgba32> top = Image.Load(Path.Combine(AppContext.BaseDirectory, modelRuntimeState.Model.BaseDir, material.cubeMapTop));
             Image<Rgba32> bottom = Image.Load(Path.Combine(AppContext.BaseDirectory, modelRuntimeState.Model.BaseDir, material.cubeMapBottom));
 
-            TextureView diffuseTextureView = ResourceGenerator.CreateCubeMapTextureView(front,
+            TextureView diffuseTextureView = ResourceGenerator.CreateCubeMapTextureViewFromImages(front,
                                                                                         back,
                                                                                         left,
                                                                                         right,
@@ -201,7 +201,7 @@ namespace Henzai
 
         }
 
-        private static unsafe TextureView CreateCubeMapTextureView(
+        private static unsafe TextureView CreateCubeMapTextureViewFromImages(
                                                                 Image<Rgba32> front,
                                                                 Image<Rgba32> back,
                                                                 Image<Rgba32> left,
@@ -225,7 +225,7 @@ namespace Henzai
                 textureCube = factory.CreateTexture(TextureDescription.Texture2D(
                     width,
                     height,
-                    1,
+                    6,
                     1,
                     PixelFormat.R8_G8_B8_A8_UNorm,
                     TextureUsage.Sampled | TextureUsage.Cubemap));
@@ -241,6 +241,27 @@ namespace Henzai
                 textureView = factory.CreateTextureView(new TextureViewDescription(textureCube));
             }
 
+            return textureView;
+        }
+
+        public static TextureView CreateEmptyCubeMapTextureView(
+                                                                int width,
+                                                                int height,
+                                                                DisposeCollectorResourceFactory factory,
+                                                                GraphicsDevice graphicsDevice
+                                                                ){
+            Texture textureCube;
+            TextureView textureView;
+
+            textureCube = factory.CreateTexture(TextureDescription.Texture2D(
+                (uint)width,
+                (uint)height,
+                6,
+                1,
+                PixelFormat.R8_G8_B8_A8_UNorm,
+                TextureUsage.Sampled | TextureUsage.Cubemap));
+
+            textureView = factory.CreateTextureView(new TextureViewDescription(textureCube));
             return textureView;
         }
 

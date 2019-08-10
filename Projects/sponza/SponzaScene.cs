@@ -99,12 +99,6 @@ namespace Henzai.Examples
 
             var skyBox = new Model<VertexPosition, RealtimeMaterial>("cloudtop", GeometryFactory.GenerateCube(true), new RealtimeMaterial());
             var skyBoxMaterial = skyBox.GetMaterial(0);
-            //skyBoxMaterial.cubeMapFront = "cloudtop_ft.png";
-            //skyBoxMaterial.cubeMapBack = "cloudtop_bk.png";
-            //skyBoxMaterial.cubeMapLeft = "cloudtop_lf.png";
-            //skyBoxMaterial.cubeMapRight = "cloudtop_rt.png";
-            //skyBoxMaterial.cubeMapTop = "cloudtop_up.png";
-            //skyBoxMaterial.cubeMapBottom = "cloudtop_dn.png";
             skyBoxMaterial.AssignCubemapPaths("cloudtop_ft.png", "cloudtop_bk.png", "cloudtop_lf.png", "cloudtop_rt.png", "cloudtop_up.png", "cloudtop_dn.png");
 
             _skyBoxRuntimeState = new ModelRuntimeDescriptor<VertexPosition>(skyBox, "Skybox", "Skybox", VertexRuntimeTypes.VertexPosition, PrimitiveTopology.TriangleList, RenderFlags.NORMAL);
