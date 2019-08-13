@@ -336,6 +336,7 @@ namespace Henzai
                 new VertexElementDescription("Position",VertexElementSemantic.Position,VertexElementFormat.Float3)
             );
         }
+
         /// <summary>
         /// Generates a <see cref="Veldrid.VertexLayoutDescription"/> for offsetting a 3D Position
         /// </summary>
@@ -344,6 +345,21 @@ namespace Henzai
                 stride:12, // Size of Vector 3
                 instanceStepRate:1,
                 elements: new VertexElementDescription[] {  new VertexElementDescription("Offset",VertexElementSemantic.Position,VertexElementFormat.Float3)}
+            );
+        }
+
+        /// <summary>
+        /// Generates a <see cref="Veldrid.VertexLayoutDescription"/> for offsetting a 3D Position
+        /// </summary>
+        public static VertexLayoutDescription GenerateVertexInstanceLayoutForViewMatrixOffset(){
+            return new VertexLayoutDescription(
+                stride:64, // Size of 4* Vector 4
+                instanceStepRate:1,
+                elements: new VertexElementDescription[] {  
+                    new VertexElementDescription("ViewCol1",VertexElementSemantic.Position,VertexElementFormat.Float4),
+                    new VertexElementDescription("ViewCol2",VertexElementSemantic.Position,VertexElementFormat.Float4),
+                    new VertexElementDescription("ViewCol3",VertexElementSemantic.Position,VertexElementFormat.Float4),
+                    new VertexElementDescription("ViewCol4",VertexElementSemantic.Position,VertexElementFormat.Float4)}
             );
         }
     }

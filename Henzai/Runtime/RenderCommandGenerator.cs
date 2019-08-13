@@ -342,6 +342,7 @@ namespace Henzai.Runtime
                 }
                 var model = modelState.Model;
                 for (int i = 0; i < modelState.InstanceBuffers.Length; i++)
+                    // We assume one other vertex buffer has been bound or will be bound.
                     commandList.SetVertexBuffer(i.ToUnsigned() + 1, modelState.InstanceBuffers[i]);
                 for (int i = 0; i < model.MeshCount; i++)
                 {
