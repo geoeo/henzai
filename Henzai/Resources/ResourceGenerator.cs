@@ -356,10 +356,10 @@ namespace Henzai
                 stride:64, // Size of 4* Vector 4
                 instanceStepRate:1,
                 elements: new VertexElementDescription[] {  
-                    new VertexElementDescription("ViewCol1",VertexElementSemantic.Position,VertexElementFormat.Float4),
-                    new VertexElementDescription("ViewCol2",VertexElementSemantic.Position,VertexElementFormat.Float4),
-                    new VertexElementDescription("ViewCol3",VertexElementSemantic.Position,VertexElementFormat.Float4),
-                    new VertexElementDescription("ViewCol4",VertexElementSemantic.Position,VertexElementFormat.Float4)}
+                    new VertexElementDescription("ViewCol1",VertexElementSemantic.TextureCoordinate,VertexElementFormat.Float4),
+                    new VertexElementDescription("ViewCol2",VertexElementSemantic.TextureCoordinate,VertexElementFormat.Float4),
+                    new VertexElementDescription("ViewCol3",VertexElementSemantic.TextureCoordinate,VertexElementFormat.Float4),
+                    new VertexElementDescription("ViewCol4",VertexElementSemantic.TextureCoordinate,VertexElementFormat.Float4)}
             );
         }
     }

@@ -13,7 +13,6 @@ namespace Henzai.Runtime
         public InstancingTypes Types {get; set;}
         //public static readonly InstancingData NO_DATA = null;
         public Vector3[] Positions {get;set;}
-        public Matrix4x4[] Matrices {get;set;}
-
+        public Matrix4x4[] ViewMatrices {get;set;}
     }
 }

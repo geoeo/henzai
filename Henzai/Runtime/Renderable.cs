@@ -366,12 +366,20 @@ namespace Henzai.Runtime
                 modelDescriptor.VertexBufferList.Add(vertexBuffer);
                 modelDescriptor.IndexBufferList.Add(indexBuffer);
 
-                //TODO: @Urgent: Make this more generic for more complex instancing behaviour
-                if (instancingData.Types != InstancingTypes.NoData)
-                {
-                    var instancingBuffer = _factory.CreateBuffer(new BufferDescription(instancingData.Positions.Length.ToUnsigned() * 12, BufferUsage.VertexBuffer));
-                    modelDescriptor.InstanceBufferList.Add(instancingBuffer);
-                    _graphicsDevice.UpdateBuffer(instancingBuffer, 0, instancingData.Positions);
+                //TODO: @Refactor: The buffer length factor is technically defined in resource generator already
+                switch(instancingData.Types){
+                    case InstancingTypes.NoData:
+                        break;
+                    case InstancingTypes.Positions:
+                        var instancingPositionBuffer = _factory.CreateBuffer(new BufferDescription(instancingData.Positions.Length.ToUnsigned() * 12, BufferUsage.VertexBuffer));
+                        modelDescriptor.InstanceBufferList.Add(instancingPositionBuffer);
+                        _graphicsDevice.UpdateBuffer(instancingPositionBuffer, 0, instancingData.Positions);
+                        break;
+                    case InstancingTypes.ViewMatricies:
+                        var instancingViewMatBuffer = _factory.CreateBuffer(new BufferDescription(instancingData.ViewMatrices.Length.ToUnsigned() * 64, BufferUsage.VertexBuffer));
+                        modelDescriptor.InstanceBufferList.Add(instancingViewMatBuffer);
+                        _graphicsDevice.UpdateBuffer(instancingViewMatBuffer, 0, instancingData.ViewMatrices);
+                        break;
                 }
 
                 _graphicsDevice.UpdateBuffer<T>(vertexBuffer, 0, ref mesh.Vertices[0], (vertexSizeInBytes * mesh.VertexCount).ToUnsigned());
