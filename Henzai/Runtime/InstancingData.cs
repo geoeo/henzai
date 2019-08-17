@@ -1,13 +1,17 @@
-using System;
 using System.Numerics;
 
-namespace Henzai
+namespace Henzai.Runtime
 {
     // TODO: Make this more configurable. -> Add some kind of flag to identify the instancing type
     //@Investigate: Is can also be represented as a UNION type?
     public sealed class InstancingData
     {
-        public static readonly InstancingData NO_DATA = null;
+        private static readonly InstancingData no_data = new InstancingData();
+        public static InstancingData NO_DATA => no_data;
+        static InstancingData() {    
+        }
+        public InstancingTypes Types {get; set;}
+        //public static readonly InstancingData NO_DATA = null;
         public Vector3[] Positions {get;set;}
         public Matrix4x4[] Matrices {get;set;}
 

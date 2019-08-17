@@ -108,7 +108,7 @@ namespace Henzai.Examples
             // var offsets = new Vector3[] {new Vector3(0.0f,0.0f,0.0f)};
             var offsets = GeometryUtils.CreateTilingList_XZ(-20,20,-10,10,0,GeometryFactory.QUAD_WIDTH,GeometryFactory.QUAD_HEIGHT);
             // var offsets = GeometryUtils.CreateTilingList_XZ(-1,1,0,0,0,GeometryFactory.QUAD_WIDTH,GeometryFactory.QUAD_HEIGHT);
-            var instancingData = new InstancingData {Positions = offsets};
+            var instancingData = new InstancingData {Types = InstancingTypes.Positions, Positions = offsets};
             var floor = new Model<VertexPositionNormalTextureTangentBitangent, RealtimeMaterial>("paving/",GeometryFactory.GenerateQuadPNTTB_XZ(), new RealtimeMaterial());
             var floorMeshZero = floor.GetMesh(0);
             var flootMaterialZero = floor.GetMaterial(0);

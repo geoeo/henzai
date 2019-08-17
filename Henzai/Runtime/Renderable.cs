@@ -367,7 +367,7 @@ namespace Henzai.Runtime
                 modelDescriptor.IndexBufferList.Add(indexBuffer);
 
                 //TODO: @Urgent: Make this more generic for more complex instancing behaviour
-                if (instancingData != null)
+                if (instancingData.Types != InstancingTypes.NoData)
                 {
                     var instancingBuffer = _factory.CreateBuffer(new BufferDescription(instancingData.Positions.Length.ToUnsigned() * 12, BufferUsage.VertexBuffer));
                     modelDescriptor.InstanceBufferList.Add(instancingBuffer);
