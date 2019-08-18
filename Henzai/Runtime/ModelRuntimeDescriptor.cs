@@ -52,13 +52,13 @@ namespace Henzai.Runtime
         public Sampler TextureSampler {get;set;}
         public Shader VertexShader {get; private set;}
         public List<VertexLayoutDescription> VertexLayoutList {get;private set;}
-        public List<VertexLayoutDescription> VertexShadowMapLayoutList {get;private set;}
+        public List<VertexLayoutDescription> VertexPreEffectsLayoutList {get;private set;}
         public VertexLayoutDescription[] VertexLayouts {get;private set;}
-        public VertexLayoutDescription[] VertexShadowMapLayouts {get;private set;}
+        public VertexLayoutDescription[] VertexPreEffectsLayouts {get;private set;}
         private string _vertexShaderName;
         public Shader FragmentShader {get; private set;}
         private string _fragmentShaderName;
-        public Shader VertexShadowMapShader {get; private set;}
+        public Shader VertexPreEffectsShader {get; private set;}
         public Shader FragmentShadowMapShader {get; private set;}
         /// <summary>
         /// Defines a Higher Level Render State.
@@ -66,7 +66,7 @@ namespace Henzai.Runtime
         /// See: <see cref="Veldrid.Pipeline"/>
         /// </summary>
         public Pipeline Pipeline {get; set;}
-        public Pipeline ShadowMapPipeline {get; set;}
+        public Pipeline PreEffectsPipeline {get; set;}
         /// <summary>
         //TODO: Remove this
         /// Contains Geometry and Material Properties
@@ -109,7 +109,7 @@ namespace Henzai.Runtime
             InstanceShadowMapBufferList = new List<DeviceBuffer>();
             TextureResourceSetsList = new List<ResourceSet>();
             VertexLayoutList = new List<VertexLayoutDescription>();
-            VertexShadowMapLayoutList = new List<VertexLayoutDescription>();
+            VertexPreEffectsLayoutList = new List<VertexLayoutDescription>();
         }
 
         /// <summary>
@@ -129,7 +129,7 @@ namespace Henzai.Runtime
         /// </summary>
         public void FormatResourcesForPipelineGeneration(){
             VertexLayouts = VertexLayoutList.ToArray();
-            VertexShadowMapLayouts = VertexShadowMapLayoutList.ToArray();
+            VertexPreEffectsLayouts = VertexPreEffectsLayoutList.ToArray();
         }
 
         public void LoadShaders(GraphicsDevice graphicsDevice){
@@ -139,21 +139,21 @@ namespace Henzai.Runtime
             //TODO: make shader settable at runtime
             var shadowMapShaderName = "ShadowMap";
             
-            VertexShadowMapShader = IO.LoadShader("ShadowMap", ShaderStages.Vertex, graphicsDevice);
+            VertexPreEffectsShader = IO.LoadShader("ShadowMap", ShaderStages.Vertex, graphicsDevice);
             FragmentShadowMapShader = IO.LoadShader(shadowMapShaderName, ShaderStages.Fragment, graphicsDevice);
         }
 
         //PRE: InvokeVertexLayoutGeneration always called before InvokeVertexInstanceLayoutGeneration in Renderable
         public void InvokeVertexLayoutGeneration(){
             VertexLayoutList.Add(CallVertexLayoutGeneration.Invoke());
-            VertexShadowMapLayoutList.Add(CallVertexLayoutGeneration.Invoke());
+            VertexPreEffectsLayoutList.Add(CallVertexLayoutGeneration.Invoke());
         }
 
         public void InvokeVertexInstanceLayoutGeneration(){
             if(CallVertexInstanceLayoutGeneration != null)
                 VertexLayoutList.Add(CallVertexInstanceLayoutGeneration.Invoke());
             if(CallVertexShadowMapInstanceLayoutGeneration != null)
-                VertexShadowMapLayoutList.Add(CallVertexShadowMapInstanceLayoutGeneration.Invoke());
+                VertexPreEffectsLayoutList.Add(CallVertexShadowMapInstanceLayoutGeneration.Invoke());
         }
 
         public Sampler InvokeSamplerGeneration(DisposeCollectorResourceFactory factory){

@@ -423,7 +423,8 @@ namespace Henzai.Runtime
                 var shadowMapResourceLayout = ResourceGenerator.GenerateTextureResourceLayoutForShadowMapping(_factory);
                 effectLayoutList.Add(sceneRuntimeDescriptor.LightProvViewResourceLayout);
                 effectLayoutList.Add(shadowMapResourceLayout);
-                modelDescriptor.EffectResourceSets[PreEffects.SHADOW_MAP] = sceneRuntimeDescriptor.LightProvViewResourceSet;
+                //TODO: Put this in the scene renderable
+                modelDescriptor.EffectResourceSets[PreEffects.SHADOW_MAP] = sceneRuntimeDescriptor.LightProjViewResourceSet;
                 modelDescriptor.EffectResourceSets[PreEffects.SHADOW_MAP+1] = ResourceGenerator.GenerateResourceSetForShadowMapping(shadowMapRenderable.ShadowMapTexView,_factory);
             }
 
@@ -438,23 +439,23 @@ namespace Henzai.Runtime
                 // Only cube maps for now
                 case VertexRuntimeTypes.VertexPosition:
                     modelDescriptor.Pipeline = _factory.CreateGraphicsPipeline(PipelineGenerator.GeneratePipelineP(modelDescriptor, sceneRuntimeDescriptor,rasterizerStateCullFront, _graphicsDevice.SwapchainFramebuffer,effectLayoutArray));
-                    modelDescriptor.ShadowMapPipeline =  shadowMapEnabled ? _factory.CreateGraphicsPipeline(PipelineGenerator.GenerateShadowMapPipeline(modelDescriptor, _childrenPre[PreEffects.SHADOW_MAP].SceneRuntimeDescriptor,rasterizerStateCullFront, _childrenPre[PreEffects.SHADOW_MAP].FrameBuffer)) : null;
+                    modelDescriptor.PreEffectsPipeline =  shadowMapEnabled ? _factory.CreateGraphicsPipeline(PipelineGenerator.GenerateShadowMapPipeline(modelDescriptor, _childrenPre[PreEffects.SHADOW_MAP].SceneRuntimeDescriptor,rasterizerStateCullFront, _childrenPre[PreEffects.SHADOW_MAP].FrameBuffer)) : null;
                     break;
                 case VertexRuntimeTypes.VertexPositionNormal:
                     modelDescriptor.Pipeline = _factory.CreateGraphicsPipeline(PipelineGenerator.GeneratePipelinePN(modelDescriptor, sceneRuntimeDescriptor,rasterizerStateCullBack, _graphicsDevice.SwapchainFramebuffer,effectLayoutArray));
-                    modelDescriptor.ShadowMapPipeline = shadowMapEnabled ? _factory.CreateGraphicsPipeline(PipelineGenerator.GenerateShadowMapPipeline(modelDescriptor, _childrenPre[PreEffects.SHADOW_MAP].SceneRuntimeDescriptor ,rasterizerStateCullFront, _childrenPre[PreEffects.SHADOW_MAP].FrameBuffer)) : null;
+                    modelDescriptor.PreEffectsPipeline = shadowMapEnabled ? _factory.CreateGraphicsPipeline(PipelineGenerator.GenerateShadowMapPipeline(modelDescriptor, _childrenPre[PreEffects.SHADOW_MAP].SceneRuntimeDescriptor ,rasterizerStateCullFront, _childrenPre[PreEffects.SHADOW_MAP].FrameBuffer)) : null;
                     break;
                 case VertexRuntimeTypes.VertexPositionNormalTextureTangentBitangent:
                     modelDescriptor.Pipeline = _factory.CreateGraphicsPipeline(PipelineGenerator.GeneratePipelinePNTTB(modelDescriptor, sceneRuntimeDescriptor,rasterizerStateCullBack, _graphicsDevice.SwapchainFramebuffer,effectLayoutArray));
-                    modelDescriptor.ShadowMapPipeline = shadowMapEnabled ? _factory.CreateGraphicsPipeline(PipelineGenerator.GenerateShadowMapPipeline(modelDescriptor, _childrenPre[PreEffects.SHADOW_MAP].SceneRuntimeDescriptor , rasterizerStateCullFront,_childrenPre[PreEffects.SHADOW_MAP].FrameBuffer)) : null;
+                    modelDescriptor.PreEffectsPipeline = shadowMapEnabled ? _factory.CreateGraphicsPipeline(PipelineGenerator.GenerateShadowMapPipeline(modelDescriptor, _childrenPre[PreEffects.SHADOW_MAP].SceneRuntimeDescriptor , rasterizerStateCullFront,_childrenPre[PreEffects.SHADOW_MAP].FrameBuffer)) : null;
                     break;
                 case VertexRuntimeTypes.VertexPositionColor:
                     modelDescriptor.Pipeline = _factory.CreateGraphicsPipeline(PipelineGenerator.GeneratePipelinePC(modelDescriptor, sceneRuntimeDescriptor,rasterizerStateCullBack, _graphicsDevice.SwapchainFramebuffer,effectLayoutArray));
-                    modelDescriptor.ShadowMapPipeline = shadowMapEnabled ? _factory.CreateGraphicsPipeline(PipelineGenerator.GenerateShadowMapPipeline(modelDescriptor, _childrenPre[PreEffects.SHADOW_MAP].SceneRuntimeDescriptor, rasterizerStateCullFront,_childrenPre[PreEffects.SHADOW_MAP].FrameBuffer)) : null;
+                    modelDescriptor.PreEffectsPipeline = shadowMapEnabled ? _factory.CreateGraphicsPipeline(PipelineGenerator.GenerateShadowMapPipeline(modelDescriptor, _childrenPre[PreEffects.SHADOW_MAP].SceneRuntimeDescriptor, rasterizerStateCullFront,_childrenPre[PreEffects.SHADOW_MAP].FrameBuffer)) : null;
                     break;
                 case VertexRuntimeTypes.VertexPositionTexture:
                     modelDescriptor.Pipeline = _factory.CreateGraphicsPipeline(PipelineGenerator.GeneratePipelinePT(modelDescriptor, sceneRuntimeDescriptor,rasterizerStateCullBack, _graphicsDevice.SwapchainFramebuffer,effectLayoutArray));
-                    modelDescriptor.ShadowMapPipeline = shadowMapEnabled ? _factory.CreateGraphicsPipeline(PipelineGenerator.GenerateShadowMapPipeline(modelDescriptor, _childrenPre[PreEffects.SHADOW_MAP].SceneRuntimeDescriptor,rasterizerStateCullFront, _childrenPre[PreEffects.SHADOW_MAP].FrameBuffer)) : null;
+                    modelDescriptor.PreEffectsPipeline = shadowMapEnabled ? _factory.CreateGraphicsPipeline(PipelineGenerator.GenerateShadowMapPipeline(modelDescriptor, _childrenPre[PreEffects.SHADOW_MAP].SceneRuntimeDescriptor,rasterizerStateCullFront, _childrenPre[PreEffects.SHADOW_MAP].FrameBuffer)) : null;
                     break;
                 default:
                     throw new NotImplementedException($"{modelDescriptor.VertexRuntimeType.ToString("g")} not implemented");
@@ -528,7 +529,7 @@ namespace Henzai.Runtime
                     "lightProjView",
                     ResourceKind.UniformBuffer,
                     ShaderStages.Vertex);
-            _sceneRuntimeState.LightProvViewResourceSet
+            _sceneRuntimeState.LightProjViewResourceSet
                 = ResourceGenerator.GenrateResourceSet(
                     _factory,
                     _sceneRuntimeState.LightProvViewResourceLayout,

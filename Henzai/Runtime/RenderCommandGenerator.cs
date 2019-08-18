@@ -340,7 +340,7 @@ namespace Henzai.Runtime
                     case PipelineTypes.ShadowMap:
                         if((renderFlags & RenderFlags.SHADOW_MAP) == RenderFlags.NONE)
                             continue;
-                        commandList.SetPipeline(modelState.ShadowMapPipeline);
+                        commandList.SetPipeline(modelState.PreEffectsPipeline);
                         for (int i = 0; i < modelState.InstanceShadowMapBuffers.Length; i++)
                         // We assume one other vertex buffer has been bound or will be bound.
                             commandList.SetVertexBuffer(i.ToUnsigned() + 1, modelState.InstanceShadowMapBuffers[i]);
@@ -457,7 +457,7 @@ namespace Henzai.Runtime
                     case PipelineTypes.ShadowMap:
                         if((renderFlags & RenderFlags.SHADOW_MAP) == RenderFlags.NONE)
                             continue;
-                        commandList.SetPipeline(modelState.ShadowMapPipeline);
+                        commandList.SetPipeline(modelState.PreEffectsPipeline);
                         break;
                 }
                 for (int i = 0; i < modelState.InstanceBuffers.Length; i++)

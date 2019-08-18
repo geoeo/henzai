@@ -163,6 +163,8 @@ namespace Henzai
             RasterizerStateDescription rasterizerState,
             Framebuffer framebuffer) where T : struct, VertexLocateable {
 
+            //TODO: Build resource layout outside and pass as parameter
+
             return new GraphicsPipelineDescription(){
                 BlendState = BlendStateDescription.SingleOverrideBlend,
                 DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
@@ -170,8 +172,8 @@ namespace Henzai
                 PrimitiveTopology = modelRuntimeState.PrimitiveTopology,
                 ResourceLayouts = new ResourceLayout[] {sceneRuntimeState.CameraResourceLayout},
                 ShaderSet = new ShaderSetDescription(
-                    vertexLayouts: modelRuntimeState.VertexShadowMapLayouts,
-                    shaders: new Shader[] {modelRuntimeState.VertexShadowMapShader,modelRuntimeState.FragmentShadowMapShader}
+                    vertexLayouts: modelRuntimeState.VertexPreEffectsLayouts,
+                    shaders: new Shader[] {modelRuntimeState.VertexPreEffectsShader,modelRuntimeState.FragmentShadowMapShader}
                 ),
                 Outputs = framebuffer.OutputDescription
             };

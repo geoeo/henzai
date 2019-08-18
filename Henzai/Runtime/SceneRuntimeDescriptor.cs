@@ -91,7 +91,7 @@ namespace Henzai.Runtime
        /// <see cref="Veldrid.ResourceSet"/>
        /// <see cref="Veldrid.BindableResource"/>
        /// </summary>
-       public ResourceSet LightProvViewResourceSet {get;set;}
+       public ResourceSet LightProjViewResourceSet {get;set;}
        /// <summary>
        /// Encapsulates Lighting Layout.
        /// </summary>
