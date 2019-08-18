@@ -109,6 +109,7 @@ namespace Henzai.Examples
             var offsets = GeometryUtils.CreateTilingList_XZ(-20,20,-10,10,0,GeometryFactory.QUAD_WIDTH,GeometryFactory.QUAD_HEIGHT);
             // var offsets = GeometryUtils.CreateTilingList_XZ(-1,1,0,0,0,GeometryFactory.QUAD_WIDTH,GeometryFactory.QUAD_HEIGHT);
             var instancingData = new InstancingData {Types = InstancingTypes.Positions, Positions = offsets};
+
             var floor = new Model<VertexPositionNormalTextureTangentBitangent, RealtimeMaterial>("paving/",GeometryFactory.GenerateQuadPNTTB_XZ(), new RealtimeMaterial());
             var floorMeshZero = floor.GetMesh(0);
             var flootMaterialZero = floor.GetMaterial(0);
@@ -120,8 +121,25 @@ namespace Henzai.Examples
             var floorRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>(floor, "PositionOffsetPhongBitangentTexture", "PhongBitangentTexture", VertexRuntimeTypes.VertexPositionNormalTextureTangentBitangent, PrimitiveTopology.TriangleStrip, RenderFlags.NORMAL | RenderFlags.SHADOW_MAP);
             floorRuntimeState.TotalInstanceCount = offsets.Length.ToUnsigned();
 
+            //TODO: Test ViewMatrix Instancing
+            // Matrix4x4 test = Camera.ViewMatrix;
+            // Matrix4x4 test2 = Camera.ViewMatrix;
+            // test.Translation = new Vector3(0,1,-10);
+            // test2.Translation = new Vector3(0,0,-10);
+            // var viewMatrices = new Matrix4x4[] {test2, test};
+
+
+            // var viewInstancingData = new InstancingData{
+            //     Types = InstancingTypes.ViewMatricies, 
+            //     ViewMatrices = viewMatrices
+            //     };
+            // var floorRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>(floor, "ViewMatInstancePhongBitangentTexture", "PhongBitangentTexture", VertexRuntimeTypes.VertexPositionNormalTextureTangentBitangent, PrimitiveTopology.TriangleStrip, RenderFlags.NORMAL | RenderFlags.SHADOW_MAP);
+            //floorRuntimeState.TotalInstanceCount = viewMatrices.Length.ToUnsigned();
+
             floorRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPNTTB;
+            floorRuntimeState.CallVertexShadowMapInstanceLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPNTTB;
             floorRuntimeState.CallVertexInstanceLayoutGeneration+=ResourceGenerator.GenerateVertexInstanceLayoutForPositionOffset;
+            //floorRuntimeState.CallVertexInstanceLayoutGeneration+=ResourceGenerator.GenerateVertexInstanceLayoutForViewMatrixOffset; //viewMatInstance
             floorRuntimeState.CallTextureResourceLayoutGeneration+=ResourceGenerator.GenerateTextureResourceLayoutForNormalMapping;
             floorRuntimeState.CallTextureResourceSetGeneration+=ResourceGenerator.GenerateTextureResourceSetForNormalMapping;
             floorRuntimeState.CallSamplerGeneration+=ResourceGenerator.GenerateTriLinearSampler;

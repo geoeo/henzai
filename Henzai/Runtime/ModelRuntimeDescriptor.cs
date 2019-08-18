@@ -9,6 +9,7 @@ using Henzai.Core.Reflection;
 namespace Henzai.Runtime
 {
     //TODO: Move all the lists/arrays into a contiuous array and only store start and length
+    //TODO: Refactor ShadowMap datastruts into more generic effects pipeline
     public sealed class ModelRuntimeDescriptor<T> where T : struct, VertexLocateable
     {
         public int Length {get; private set;}
@@ -49,7 +50,9 @@ namespace Henzai.Runtime
         public Sampler TextureSampler {get;set;}
         public Shader VertexShader {get; private set;}
         public List<VertexLayoutDescription> VertexLayoutList {get;private set;}
+        public List<VertexLayoutDescription> VertexShadowMapLayoutList {get;private set;}
         public VertexLayoutDescription[] VertexLayouts {get;private set;}
+        public VertexLayoutDescription[] VertexShadowMapLayouts {get;private set;}
         private string _vertexShaderName;
         public Shader FragmentShader {get; private set;}
         private string _fragmentShaderName;
@@ -74,6 +77,7 @@ namespace Henzai.Runtime
         public uint TotalInstanceCount{get;set;}
         public event Func<VertexLayoutDescription> CallVertexLayoutGeneration;
         public event Func<VertexLayoutDescription> CallVertexInstanceLayoutGeneration;
+        public event Func<VertexLayoutDescription> CallVertexShadowMapInstanceLayoutGeneration;
         public event Func<DisposeCollectorResourceFactory,Sampler> CallSamplerGeneration;
         public event Func<DisposeCollectorResourceFactory,ResourceLayout> CallTextureResourceLayoutGeneration;
         // TODO: Investigate Texture Cache for already loaded textures
@@ -102,6 +106,7 @@ namespace Henzai.Runtime
             InstanceBufferList = new List<DeviceBuffer>();
             TextureResourceSetsList = new List<ResourceSet>();
             VertexLayoutList = new List<VertexLayoutDescription>();
+            VertexShadowMapLayoutList = new List<VertexLayoutDescription>();
         }
 
         /// <summary>
@@ -120,6 +125,7 @@ namespace Henzai.Runtime
         /// </summary>
         public void FormatResourcesForPipelineGeneration(){
             VertexLayouts = VertexLayoutList.ToArray();
+            VertexShadowMapLayouts = VertexShadowMapLayoutList.ToArray();
         }
 
         public void LoadShaders(GraphicsDevice graphicsDevice){
@@ -133,13 +139,17 @@ namespace Henzai.Runtime
             FragmentShadowMapShader = IO.LoadShader(shadowMapShaderName, ShaderStages.Fragment, graphicsDevice);
         }
 
+        //PRE: InvokeVertexLayoutGeneration always called before InvokeVertexInstanceLayoutGeneration in Renderable
         public void InvokeVertexLayoutGeneration(){
             VertexLayoutList.Add(CallVertexLayoutGeneration.Invoke());
+            VertexShadowMapLayoutList.Add(CallVertexLayoutGeneration.Invoke());
         }
 
         public void InvokeVertexInstanceLayoutGeneration(){
             if(CallVertexInstanceLayoutGeneration != null)
                 VertexLayoutList.Add(CallVertexInstanceLayoutGeneration.Invoke());
+            if(CallVertexShadowMapInstanceLayoutGeneration != null)
+                VertexShadowMapLayoutList.Add(CallVertexShadowMapInstanceLayoutGeneration.Invoke());
         }
 
         public Sampler InvokeSamplerGeneration(DisposeCollectorResourceFactory factory){

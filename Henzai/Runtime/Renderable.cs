@@ -211,6 +211,9 @@ namespace Henzai.Runtime
             _allChildren.AddRange(_childrenPre);
             _allChildren.AddRange(_childrenPost);
 
+            // var shadowMapEnabled = _childrenPre.Count > 0;
+            // var effectCount = 2*Convert.ToInt32(shadowMapEnabled); // 1 for Vertex Stage 1 for Fragment
+
             CreateUniforms();
             CreateResources();
             FormatResourcesForRuntime();
@@ -367,6 +370,7 @@ namespace Henzai.Runtime
                 modelDescriptor.IndexBufferList.Add(indexBuffer);
 
                 //TODO: @Refactor: The buffer length factor is technically defined in resource generator already
+                //TODO: Make cases composable
                 switch(instancingData.Types){
                     case InstancingTypes.NoData:
                         break;
@@ -390,12 +394,7 @@ namespace Henzai.Runtime
                     modelDescriptor.TextureResourceSetsList.Add(resourceSet);                
             }
 
-            modelDescriptor.InvokeVertexLayoutGeneration();
-            modelDescriptor.InvokeVertexInstanceLayoutGeneration();
-
-            modelDescriptor.FormatResourcesForPipelineGeneration();
-
-            //TODO: Clean this up
+            //TODO: Clean this up -  Mixed dependencies to ModelRuntimeDescriptor
             var shadowMapEnabled = _childrenPre.Count > 0;
             var effectCount = 2*Convert.ToInt32(shadowMapEnabled); // 1 for Vertex Stage 1 for Fragment
             var rasterizerStateCullBack = new RasterizerStateDescription(
@@ -425,7 +424,12 @@ namespace Henzai.Runtime
                 modelDescriptor.EffectResourceSets[PreEffects.SHADOW_MAP+1] = ResourceGenerator.GenerateResourceSetForShadowMapping(shadowMapRenderable.ShadowMapTexView,_factory);
             }
 
+            modelDescriptor.InvokeVertexLayoutGeneration();
+            //TODO: @Omnishadows: Make InstaceLayoutGeneration trigger due to render state OR make this also invokable on a per-scene basis
+            modelDescriptor.InvokeVertexInstanceLayoutGeneration();
+            modelDescriptor.FormatResourcesForPipelineGeneration();
             var effectLayoutArray = effectLayoutList.ToArray();
+
             switch (modelDescriptor.VertexRuntimeType)
             {
                 // Only cube maps for now

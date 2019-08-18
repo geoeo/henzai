@@ -170,7 +170,7 @@ namespace Henzai
                 PrimitiveTopology = modelRuntimeState.PrimitiveTopology,
                 ResourceLayouts = new ResourceLayout[] {sceneRuntimeState.CameraResourceLayout},
                 ShaderSet = new ShaderSetDescription(
-                    vertexLayouts: modelRuntimeState.VertexLayouts,
+                    vertexLayouts: modelRuntimeState.VertexShadowMapLayouts,
                     shaders: new Shader[] {modelRuntimeState.VertexShadowMapShader,modelRuntimeState.FragmentShadowMapShader}
                 ),
                 Outputs = framebuffer.OutputDescription
