@@ -25,6 +25,7 @@ namespace Henzai.Runtime
         /// Used During Resource Creation
         /// </summary>
         public List<DeviceBuffer> InstanceBufferList {get; private set;}
+        public List<DeviceBuffer> InstanceShadowMapBufferList {get; private set;}
         /// <summary>
         /// Used During Resource Creation
         /// </summary>
@@ -41,6 +42,7 @@ namespace Henzai.Runtime
         /// Used During Rendering
         /// </summary>
         public DeviceBuffer[] InstanceBuffers {get; private set;}
+        public DeviceBuffer[] InstanceShadowMapBuffers {get; private set;}
         /// <summary>
         /// Used During Rendering
         /// </summary>
@@ -104,6 +106,7 @@ namespace Henzai.Runtime
             VertexBufferList = new List<DeviceBuffer>();
             IndexBufferList = new List<DeviceBuffer>();
             InstanceBufferList = new List<DeviceBuffer>();
+            InstanceShadowMapBufferList = new List<DeviceBuffer>();
             TextureResourceSetsList = new List<ResourceSet>();
             VertexLayoutList = new List<VertexLayoutDescription>();
             VertexShadowMapLayoutList = new List<VertexLayoutDescription>();
@@ -117,6 +120,7 @@ namespace Henzai.Runtime
             VertexBuffers = VertexBufferList.ToArray();
             IndexBuffers = IndexBufferList.ToArray();
             InstanceBuffers = InstanceBufferList.ToArray();
+            InstanceShadowMapBuffers = InstanceShadowMapBufferList.ToArray();
             TextureResourceSets = TextureResourceSetsList.ToArray();
         }
         /// <summary>

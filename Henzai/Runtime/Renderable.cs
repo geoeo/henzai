@@ -370,6 +370,7 @@ namespace Henzai.Runtime
                 modelDescriptor.IndexBufferList.Add(indexBuffer);
 
                 //TODO: @Refactor: The buffer length factor is technically defined in resource generator already
+                //TODO: @Urgent: Decouple InstanceShadowMap buffer from the instance data type!
                 //TODO: Make cases composable
                 switch(instancingData.Types){
                     case InstancingTypes.NoData:
@@ -377,11 +378,13 @@ namespace Henzai.Runtime
                     case InstancingTypes.Positions:
                         var instancingPositionBuffer = _factory.CreateBuffer(new BufferDescription(instancingData.Positions.Length.ToUnsigned() * 12, BufferUsage.VertexBuffer));
                         modelDescriptor.InstanceBufferList.Add(instancingPositionBuffer);
+                        modelDescriptor.InstanceShadowMapBufferList.Add(instancingPositionBuffer); // decouple
                         _graphicsDevice.UpdateBuffer(instancingPositionBuffer, 0, instancingData.Positions);
                         break;
                     case InstancingTypes.ViewMatricies:
                         var instancingViewMatBuffer = _factory.CreateBuffer(new BufferDescription(instancingData.ViewMatrices.Length.ToUnsigned() * 64, BufferUsage.VertexBuffer));
                         modelDescriptor.InstanceBufferList.Add(instancingViewMatBuffer);
+                        modelDescriptor.InstanceShadowMapBufferList.Add(instancingViewMatBuffer); // decouple
                         _graphicsDevice.UpdateBuffer(instancingViewMatBuffer, 0, instancingData.ViewMatrices);
                         break;
                 }

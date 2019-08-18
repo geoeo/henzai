@@ -333,17 +333,21 @@ namespace Henzai.Runtime
                             continue;
                         commandList.SetPipeline(modelState.Pipeline);
                         effectSets = modelState.EffectResourceSets;
+                        for (int i = 0; i < modelState.InstanceBuffers.Length; i++)
+                        // We assume one other vertex buffer has been bound or will be bound.
+                            commandList.SetVertexBuffer(i.ToUnsigned() + 1, modelState.InstanceBuffers[i]);
                         break;
                     case PipelineTypes.ShadowMap:
                         if((renderFlags & RenderFlags.SHADOW_MAP) == RenderFlags.NONE)
                             continue;
                         commandList.SetPipeline(modelState.ShadowMapPipeline);
+                        for (int i = 0; i < modelState.InstanceShadowMapBuffers.Length; i++)
+                        // We assume one other vertex buffer has been bound or will be bound.
+                            commandList.SetVertexBuffer(i.ToUnsigned() + 1, modelState.InstanceShadowMapBuffers[i]);
                         break;
                 }
                 var model = modelState.Model;
-                for (int i = 0; i < modelState.InstanceBuffers.Length; i++)
-                    // We assume one other vertex buffer has been bound or will be bound.
-                    commandList.SetVertexBuffer(i.ToUnsigned() + 1, modelState.InstanceBuffers[i]);
+
                 for (int i = 0; i < model.MeshCount; i++)
                 {
                     if (!model.GetMeshBVH(i).AABBIsValid)
