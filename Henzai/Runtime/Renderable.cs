@@ -343,9 +343,9 @@ namespace Henzai.Runtime
         /// </summary>
         /// <param name="modelDescriptor">Model descriptor.</param>
         /// <param name="sceneRuntimeDescriptor">Scene runtime descriptor.</param>
-        /// <param name="instancingData">Instancing data.</param>
+        /// <param name="instancingData">Instance data enumerable.</param>
         /// <typeparam name="T">The type of Vertex sent to the GPU</typeparam>
-        protected void FillRuntimeDescriptor<T>(ModelRuntimeDescriptor<T> modelDescriptor, SceneRuntimeDescriptor sceneRuntimeDescriptor, InstancingData instancingData) where T : struct, VertexRuntime, VertexLocateable
+        protected void FillRuntimeDescriptor<T>(ModelRuntimeDescriptor<T> modelDescriptor, SceneRuntimeDescriptor sceneRuntimeDescriptor, IEnumerable<InstanceData> instancingData) where T : struct, VertexRuntime, VertexLocateable
         {
             var model = modelDescriptor.Model;
 
@@ -372,21 +372,23 @@ namespace Henzai.Runtime
                 //TODO: @Refactor: The buffer length factor is technically defined in resource generator already
                 //TODO: @Urgent: Decouple InstanceShadowMap buffer from the instance data type!
                 //TODO: Make cases composable
-                switch(instancingData.Types){
-                    case InstancingTypes.NoData:
-                        break;
-                    case InstancingTypes.Positions:
-                        var instancingPositionBuffer = _factory.CreateBuffer(new BufferDescription(instancingData.Positions.Length.ToUnsigned() * 12, BufferUsage.VertexBuffer));
-                        modelDescriptor.InstanceBufferList.Add(instancingPositionBuffer);
-                        modelDescriptor.InstanceShadowMapBufferList.Add(instancingPositionBuffer); // decouple
-                        _graphicsDevice.UpdateBuffer(instancingPositionBuffer, 0, instancingData.Positions);
-                        break;
-                    case InstancingTypes.ViewMatricies:
-                        var instancingViewMatBuffer = _factory.CreateBuffer(new BufferDescription(instancingData.ViewMatrices.Length.ToUnsigned() * 64, BufferUsage.VertexBuffer));
-                        modelDescriptor.InstanceBufferList.Add(instancingViewMatBuffer);
-                        modelDescriptor.InstanceShadowMapBufferList.Add(instancingViewMatBuffer); // decouple
-                        _graphicsDevice.UpdateBuffer(instancingViewMatBuffer, 0, instancingData.ViewMatrices);
-                        break;
+                foreach(var instanceData in instancingData){
+                    switch(instanceData.Types){
+                        case InstancingTypes.NoData:
+                            break;
+                        case InstancingTypes.Positions:
+                            var instancingPositionBuffer = _factory.CreateBuffer(new BufferDescription(instanceData.Positions.Length.ToUnsigned() * 12, BufferUsage.VertexBuffer));
+                            modelDescriptor.InstanceBufferList.Add(instancingPositionBuffer);
+                            modelDescriptor.InstanceShadowMapBufferList.Add(instancingPositionBuffer); // decouple
+                            _graphicsDevice.UpdateBuffer(instancingPositionBuffer, 0, instanceData.Positions);
+                            break;
+                        case InstancingTypes.ViewMatricies:
+                            var instancingViewMatBuffer = _factory.CreateBuffer(new BufferDescription(instanceData.ViewMatrices.Length.ToUnsigned() * 64, BufferUsage.VertexBuffer));
+                            modelDescriptor.InstanceBufferList.Add(instancingViewMatBuffer);
+                            modelDescriptor.InstanceShadowMapBufferList.Add(instancingViewMatBuffer); // decouple
+                            _graphicsDevice.UpdateBuffer(instancingViewMatBuffer, 0, instanceData.ViewMatrices);
+                            break;
+                    }
                 }
 
                 _graphicsDevice.UpdateBuffer<T>(vertexBuffer, 0, ref mesh.Vertices[0], (vertexSizeInBytes * mesh.VertexCount).ToUnsigned());
@@ -397,7 +399,7 @@ namespace Henzai.Runtime
                     modelDescriptor.TextureResourceSetsList.Add(resourceSet);                
             }
 
-            //TODO: Clean this up -  Mixed dependencies to ModelRuntimeDescriptor
+            //TODO: Clean this up -  Mixed dependencies to ModelRuntimeDescriptor - make enabling shadowmaps a per model thing
             var shadowMapEnabled = _childrenPre.Count > 0;
             var effectCount = 2*Convert.ToInt32(shadowMapEnabled); // 1 for Vertex Stage 1 for Fragment
             var rasterizerStateCullBack = new RasterizerStateDescription(

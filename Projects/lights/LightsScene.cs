@@ -108,7 +108,7 @@ namespace Henzai.Examples
             // var offsets = new Vector3[] {new Vector3(0.0f,0.0f,0.0f)};
             var offsets = GeometryUtils.CreateTilingList_XZ(-20,20,-10,10,0,GeometryFactory.QUAD_WIDTH,GeometryFactory.QUAD_HEIGHT);
             // var offsets = GeometryUtils.CreateTilingList_XZ(-1,1,0,0,0,GeometryFactory.QUAD_WIDTH,GeometryFactory.QUAD_HEIGHT);
-            var instancingData = new InstancingData {Types = InstancingTypes.Positions, Positions = offsets};
+            var instancingData = new InstanceData {Types = InstancingTypes.Positions, Positions = offsets};
 
             var floor = new Model<VertexPositionNormalTextureTangentBitangent, RealtimeMaterial>("paving/",GeometryFactory.GenerateQuadPNTTB_XZ(), new RealtimeMaterial());
             var floorMeshZero = floor.GetMesh(0);
@@ -145,8 +145,12 @@ namespace Henzai.Examples
             floorRuntimeState.CallSamplerGeneration+=ResourceGenerator.GenerateTriLinearSampler;
             _modelPNTTBDescriptorList.Add(floorRuntimeState);
 
+
+            InstanceData[] instancingDataPN = {InstanceData.NO_DATA};
+            InstanceData[] instancingDataPNTTB = {instancingData};
+
             foreach(var modelDescriptor in _modelPNDescriptorList){
-                FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,InstancingData.NO_DATA); 
+                FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,instancingDataPN); 
                 PNRuntimeGeometry.AddModel(modelDescriptor);
             }
 
@@ -155,7 +159,7 @@ namespace Henzai.Examples
             // }
 
             foreach(var modelDescriptor in _modelPNTTBDescriptorList){
-                FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,instancingData); 
+                FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,instancingDataPNTTB); 
                 PNTTBRuntimeGeometry.AddModel(modelDescriptor);
             }
 

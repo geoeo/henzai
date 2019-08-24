@@ -113,14 +113,15 @@ namespace Henzai.Examples
             _modelPNDescriptorList.Add(sunRuntimeState);
 
 
+            InstanceData[] instancingData = {InstanceData.NO_DATA};
 
             foreach(var modelDescriptor in _modelPNTTBDescriptorList){
-                FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,InstancingData.NO_DATA); 
+                FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,instancingData); 
                 PNTTBRuntimeGeometry.AddModel(modelDescriptor);
             }
 
             foreach(var modelDescriptor in _modelPNDescriptorList){
-                FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,InstancingData.NO_DATA); 
+                FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,instancingData); 
                 PNRuntimeGeometry.AddModel(modelDescriptor);
             }
 

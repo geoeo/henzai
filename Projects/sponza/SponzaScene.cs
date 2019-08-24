@@ -126,29 +126,31 @@ namespace Henzai.Examples
             _modelPNDescriptorList.Add(modelRuntimeState);
             //_modelPNDescriptorList.Add(planeRuntimeState);
 
+            InstanceData[] instancingData = {InstanceData.NO_DATA};
+
             //TODO: Abstrct this
             foreach(var modelDescriptor in _modelPNTTBDescriptorList){
-                FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,InstancingData.NO_DATA); 
+                FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,instancingData); 
                 PNTTBRuntimeGeometry.AddModel(modelDescriptor);
             }
 
             foreach(var modelDescriptor in _modelPNDescriptorList){
-                FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,InstancingData.NO_DATA); 
+                FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,instancingData); 
                 PNRuntimeGeometry.AddModel(modelDescriptor);
             }
 
             foreach(var modelDescriptor in _modelPTDescriptorList){
-                FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,InstancingData.NO_DATA); 
+                FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,instancingData); 
                 PTRuntimeGeometry.AddModel(modelDescriptor);
             }
 
             foreach(var modelDescriptor in _modelPCDescriptorList){
-                FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,InstancingData.NO_DATA); 
+                FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,instancingData); 
                 PCRuntimeGeometry.AddModel(modelDescriptor);
             }
 
             foreach(var modelDescriptor in _modelPDescriptorList){
-                FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,InstancingData.NO_DATA); 
+                FillRuntimeDescriptor(modelDescriptor,_sceneRuntimeState,instancingData); 
                 PRuntimeGeometry.AddModel(modelDescriptor);
             }
 
