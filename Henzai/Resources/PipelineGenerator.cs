@@ -157,6 +157,7 @@ namespace Henzai
             };
         }
 
+        //TODO: Make this generic for all pre effects -> probably have to set shaders in a smart way
         public static GraphicsPipelineDescription GenerateShadowMapPipeline<T>(
             ModelRuntimeDescriptor<T> modelRuntimeState, 
             SceneRuntimeDescriptor sceneRuntimeState, 
