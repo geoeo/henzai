@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using Veldrid;
 using Henzai.Core.Extensions;
 using Henzai.Cameras;
+using Henzai.Effects;
 using Henzai.Core.Materials;
 using Henzai.Core.VertexGeometry;
 using Henzai.Core.Acceleration;
@@ -326,11 +327,9 @@ namespace Henzai.Runtime
             {
                 var modelState = descriptorArray[j];
                 var effectSets = sceneRuntimeDescriptor.NO_RESOURCE_SET;
-                var renderFlags = modelState.RenderFlag;
+                var preEffectFlags = modelState.PreEffectsFlag;
                 switch(piplelineType){
                     case PipelineTypes.Normal:
-                        if((renderFlags & RenderFlags.NORMAL) == RenderFlags.NONE)
-                            continue;
                         commandList.SetPipeline(modelState.Pipeline);
                         effectSets = modelState.EffectResourceSets;
                         for (int i = 0; i < modelState.InstanceBuffers.Length; i++)
@@ -338,7 +337,7 @@ namespace Henzai.Runtime
                             commandList.SetVertexBuffer(i.ToUnsigned() + 1, modelState.InstanceBuffers[i]);
                         break;
                     case PipelineTypes.ShadowMap:
-                        if((renderFlags & RenderFlags.SHADOW_MAP) == RenderFlags.NONE)
+                        if((preEffectFlags & PreEffectFlags.SHADOW_MAP) == PreEffectFlags.EMPTY)
                             continue;
                         commandList.SetPipeline(modelState.PreEffectsPipeline);
                         for (int i = 0; i < modelState.InstanceShadowMapBuffers.Length; i++)
@@ -446,16 +445,14 @@ namespace Henzai.Runtime
                 var modelState = descriptorArray[modelStateIndex];
                 var model = modelState.Model;
                 var effectSets = sceneRuntimeDescriptor.NO_RESOURCE_SET;
-                var renderFlags = modelState.RenderFlag;
+                var preEffectFlags = modelState.PreEffectsFlag;
                 switch(piplelineType){
                     case PipelineTypes.Normal:
-                        if((renderFlags & RenderFlags.NORMAL) == RenderFlags.NONE)
-                            continue;
                         commandList.SetPipeline(modelState.Pipeline);
                         effectSets = modelState.EffectResourceSets;
                         break;
                     case PipelineTypes.ShadowMap:
-                        if((renderFlags & RenderFlags.SHADOW_MAP) == RenderFlags.NONE)
+                        if((preEffectFlags & PreEffectFlags.SHADOW_MAP) == PreEffectFlags.EMPTY)
                             continue;
                         commandList.SetPipeline(modelState.PreEffectsPipeline);
                         break;

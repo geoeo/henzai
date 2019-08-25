@@ -83,7 +83,7 @@ namespace Henzai.Examples
             _sun.SetNewWorldTranslation(ref newTranslation, true);
 
             var nanoSuitRuntimeState 
-                = new ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>(_nanosuit,"PhongBitangentTexture","PhongBitangentTexture", VertexRuntimeTypes.VertexPositionNormalTextureTangentBitangent,PrimitiveTopology.TriangleList, RenderFlags.NORMAL | RenderFlags.SHADOW_MAP, PreEffectFlags.EMPTY, InstancingFlags.EMPTY);
+                = new ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>(_nanosuit,"PhongBitangentTexture","PhongBitangentTexture", VertexRuntimeTypes.VertexPositionNormalTextureTangentBitangent,PrimitiveTopology.TriangleList, PreEffectFlags.SHADOW_MAP , PreEffectFlags.EMPTY, InstancingFlags.EMPTY);
             nanoSuitRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPNTTB;
             nanoSuitRuntimeState.CallSamplerGeneration+=ResourceGenerator.GenerateTriLinearSampler;
             nanoSuitRuntimeState.CallTextureResourceLayoutGeneration+=ResourceGenerator.GenerateTextureResourceLayoutForNormalMapping;
@@ -97,7 +97,7 @@ namespace Henzai.Examples
 
             // _modelStatesList.Add(sunRuntimeState);
 
-            var sunRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormal>(_sun,"Phong","PhongNoShadow", VertexRuntimeTypes.VertexPositionNormal,PrimitiveTopology.TriangleList, RenderFlags.NORMAL, PreEffectFlags.EMPTY, InstancingFlags.EMPTY);
+            var sunRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormal>(_sun,"Phong","PhongNoShadow", VertexRuntimeTypes.VertexPositionNormal,PrimitiveTopology.TriangleList, PreEffectFlags.EMPTY, PreEffectFlags.EMPTY, InstancingFlags.EMPTY);
             sunRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPN;
 
             var plane = new Model<VertexPositionNormal, RealtimeMaterial>(String.Empty,GeometryFactory.GenerateQuadPN_XZ(),new RealtimeMaterial());
@@ -105,7 +105,7 @@ namespace Henzai.Examples
             var newPlaneScale = Matrix4x4.CreateScale(new Vector3(100,1,100));
             var trafo = newPlaneScale*newPlaneTranslation;
             plane.SetNewWorldTransformation(ref trafo, true);
-            var planeRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormal>(plane,"Phong","Phong", VertexRuntimeTypes.VertexPositionNormal,PrimitiveTopology.TriangleStrip, RenderFlags.NORMAL| RenderFlags.SHADOW_MAP, PreEffectFlags.EMPTY, InstancingFlags.EMPTY);
+            var planeRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormal>(plane,"Phong","Phong", VertexRuntimeTypes.VertexPositionNormal,PrimitiveTopology.TriangleStrip, PreEffectFlags.SHADOW_MAP, PreEffectFlags.EMPTY, InstancingFlags.EMPTY);
             planeRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPN;
 
             _modelPNTTBDescriptorList.Add(nanoSuitRuntimeState);

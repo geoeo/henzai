@@ -49,7 +49,7 @@ namespace Henzai.Examples
             var model = AssimpLoader.LoadFromFileWithRealtimeMaterial<VertexPositionNormal>(AppContext.BaseDirectory, filePath, VertexPositionNormal.HenzaiType);
             var newModelTranslation = Matrix4x4.CreateTranslation(new Vector3(0,20,0));
             var modelRuntimeState 
-                = new ModelRuntimeDescriptor<VertexPositionNormal>(model,"Phong","Phong", VertexRuntimeTypes.VertexPositionNormal,PrimitiveTopology.TriangleList, RenderFlags.NORMAL | RenderFlags.SHADOW_MAP, PreEffectFlags.EMPTY, InstancingFlags.EMPTY);
+                = new ModelRuntimeDescriptor<VertexPositionNormal>(model,"Phong","Phong", VertexRuntimeTypes.VertexPositionNormal,PrimitiveTopology.TriangleList, PreEffectFlags.SHADOW_MAP, PreEffectFlags.EMPTY, InstancingFlags.EMPTY);
             modelRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPN;
             model.SetNewWorldTransformation(ref newModelTranslation, true);
             
@@ -58,7 +58,7 @@ namespace Henzai.Examples
             var newPlaneScale = Matrix4x4.CreateScale(new Vector3(30,1,30));
             var trafo = newPlaneScale*newPlaneTranslation;
             plane.SetNewWorldTransformation(ref trafo, true);
-            var planeRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormal>(plane,"Phong","Phong", VertexRuntimeTypes.VertexPositionNormal,PrimitiveTopology.TriangleStrip, RenderFlags.NORMAL| RenderFlags.SHADOW_MAP, PreEffectFlags.EMPTY, InstancingFlags.EMPTY);
+            var planeRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormal>(plane,"Phong","Phong", VertexRuntimeTypes.VertexPositionNormal,PrimitiveTopology.TriangleStrip,  PreEffectFlags.SHADOW_MAP, PreEffectFlags.EMPTY, InstancingFlags.EMPTY);
             planeRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPN;
             
             //TODO: Write method to remove ambient terms
@@ -77,7 +77,7 @@ namespace Henzai.Examples
 
 
             var sponzaRuntimeState 
-                = new ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>(sponzaPNTTB,"PhongBitangentTexture","PhongBitangentTexture", VertexRuntimeTypes.VertexPositionNormalTextureTangentBitangent,PrimitiveTopology.TriangleList, RenderFlags.NORMAL | RenderFlags.SHADOW_MAP, PreEffectFlags.EMPTY, InstancingFlags.EMPTY);
+                = new ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>(sponzaPNTTB,"PhongBitangentTexture","PhongBitangentTexture", VertexRuntimeTypes.VertexPositionNormalTextureTangentBitangent,PrimitiveTopology.TriangleList,  PreEffectFlags.SHADOW_MAP, PreEffectFlags.EMPTY, InstancingFlags.EMPTY);
             sponzaRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPNTTB;
             sponzaRuntimeState.CallSamplerGeneration+=ResourceGenerator.GenerateTriLinearSampler;
             sponzaRuntimeState.CallTextureResourceLayoutGeneration+=ResourceGenerator.GenerateTextureResourceLayoutForNormalMapping;
@@ -89,7 +89,7 @@ namespace Henzai.Examples
             // sponzaRuntimeStateTexOnly.CallTextureResourceLayoutGeneration+=ResourceGenerator.GenerateTextureResourceLayoutForDiffuseMapping;
             // sponzaRuntimeStateTexOnly.CallTextureResourceSetGeneration+=ResourceGenerator.GenerateTextureResourceSetForDiffuseMapping;
 
-            var sponzaRuntimeStateColorOnly = new ModelRuntimeDescriptor<VertexPositionColor>(sponzaPC,"Color","Color", VertexRuntimeTypes.VertexPositionColor,PrimitiveTopology.TriangleList, RenderFlags.NORMAL | RenderFlags.SHADOW_MAP, PreEffectFlags.EMPTY, InstancingFlags.EMPTY);
+            var sponzaRuntimeStateColorOnly = new ModelRuntimeDescriptor<VertexPositionColor>(sponzaPC,"Color","Color", VertexRuntimeTypes.VertexPositionColor,PrimitiveTopology.TriangleList,  PreEffectFlags.SHADOW_MAP, PreEffectFlags.EMPTY, InstancingFlags.EMPTY);
             sponzaRuntimeStateColorOnly.CallVertexLayoutGeneration+= ResourceGenerator.GenerateVertexLayoutForPC;
 
             // var sunRuntimeState = new ModelRuntimeState<VertexPositionNormalTextureTangentBitangent>(sun,"PhongBitangentTexture","PhongBitangentTexture");
@@ -102,7 +102,7 @@ namespace Henzai.Examples
             var skyBoxMaterial = skyBox.GetMaterial(0);
             skyBoxMaterial.AssignCubemapPaths("cloudtop_ft.png", "cloudtop_bk.png", "cloudtop_lf.png", "cloudtop_rt.png", "cloudtop_up.png", "cloudtop_dn.png");
 
-            _skyBoxRuntimeState = new ModelRuntimeDescriptor<VertexPosition>(skyBox, "Skybox", "Skybox", VertexRuntimeTypes.VertexPosition, PrimitiveTopology.TriangleList, RenderFlags.NORMAL, PreEffectFlags.EMPTY, InstancingFlags.EMPTY);
+            _skyBoxRuntimeState = new ModelRuntimeDescriptor<VertexPosition>(skyBox, "Skybox", "Skybox", VertexRuntimeTypes.VertexPosition, PrimitiveTopology.TriangleList,  PreEffectFlags.SHADOW_MAP, PreEffectFlags.EMPTY, InstancingFlags.EMPTY);
             _skyBoxRuntimeState.CallVertexLayoutGeneration += ResourceGenerator.GenerateVertexLayoutForP;
             _skyBoxRuntimeState.CallSamplerGeneration += ResourceGenerator.GenerateBiLinearSampler;
             _skyBoxRuntimeState.CallTextureResourceLayoutGeneration += ResourceGenerator.GenerateTextureResourceLayoutForCubeMapping;
@@ -114,7 +114,7 @@ namespace Henzai.Examples
             Vector3 newTranslation = new Vector3(lightPos.X,lightPos.Y,lightPos.Z);
             _sun.SetNewWorldTranslation(ref newTranslation, true);
 
-            var sunRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormal>(_sun, "Phong", "PhongNoShadow", VertexRuntimeTypes.VertexPositionNormal, PrimitiveTopology.TriangleList, RenderFlags.NORMAL, PreEffectFlags.EMPTY, InstancingFlags.EMPTY);
+            var sunRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormal>(_sun, "Phong", "PhongNoShadow", VertexRuntimeTypes.VertexPositionNormal, PrimitiveTopology.TriangleList, PreEffectFlags.EMPTY, PreEffectFlags.EMPTY, InstancingFlags.EMPTY);
             sunRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPN;
 
             //TODO: Automate this

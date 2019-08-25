@@ -59,8 +59,8 @@ namespace Henzai.Runtime
         private string _vertexShaderName;
         public Shader FragmentShader {get; private set;}
         private string _fragmentShaderName;
-        public Shader VertexPreEffectsShader {get; private set;}
-        public Shader FragmentShadowMapShader {get; private set;}
+        public Shader[] VertexPreEffectShaders {get; private set;}
+        public Shader[] FragmentPreEffectShaders {get; private set;}
         /// <summary>
         /// Defines a Higher Level Render State.
         /// Buffers, Layouts, Shaders, Ratsterizer.
@@ -74,7 +74,7 @@ namespace Henzai.Runtime
         /// See: <see cref="Henzai.Geometry.Model{T}"/>
         /// </summary>
         public Model<T,RealtimeMaterial> Model {get;set;}
-        public uint RenderFlag {get;set;}
+        public uint PreEffectsFlag {get;set;}
         public uint PreEffectsInstancingFlag {get;set;}
         public uint InstancingFlag {get;set;}
         public VertexRuntimeTypes VertexRuntimeType {get; private set;}
@@ -88,7 +88,7 @@ namespace Henzai.Runtime
         // TODO: @Performance: Investigate Texture Cache for already loaded textures
         public event Func<ModelRuntimeDescriptor<T>,int,DisposeCollectorResourceFactory,GraphicsDevice,ResourceSet> CallTextureResourceSetGeneration;
 
-        public ModelRuntimeDescriptor(Model<T, RealtimeMaterial> modelIn, string vShaderName, string fShaderName, VertexRuntimeTypes vertexRuntimeType, PrimitiveTopology primitiveTopology, uint renderFlag, uint preEffectsInstancingFlag, uint instancingFlag){
+        public ModelRuntimeDescriptor(Model<T, RealtimeMaterial> modelIn, string vShaderName, string fShaderName, VertexRuntimeTypes vertexRuntimeType, PrimitiveTopology primitiveTopology, uint preEffectsFlag, uint preEffectsInstancingFlag, uint instancingFlag){
 
             if(!Verifier.VerifyVertexStruct<T>(vertexRuntimeType))
                 throw new ArgumentException($"Type Mismatch ModelRuntimeDescriptor");
@@ -104,7 +104,7 @@ namespace Henzai.Runtime
             VertexRuntimeType = vertexRuntimeType;
             PrimitiveTopology = primitiveTopology;
 
-            RenderFlag = renderFlag;
+            PreEffectsFlag = preEffectsFlag;
             PreEffectsInstancingFlag = preEffectsInstancingFlag;
             InstancingFlag = instancingFlag;
 
@@ -116,6 +116,9 @@ namespace Henzai.Runtime
             VertexInstanceLayoutGenerationList = new EventHandlerList();
             VertexPreEffectsInstanceLayoutGenerationList = new EventHandlerList();
 
+            var preEffectCount = PreEffectFlags.TOTAL_COUNT;
+            VertexPreEffectShaders = new Shader[preEffectCount];
+            FragmentPreEffectShaders = new Shader[preEffectCount];
 
             // Reserve first spot for base vertex geometry
             VertexLayouts = new VertexLayoutDescription[InstancingFlags.GetSizeOfPreEffectFlag(InstancingFlag)+1];
@@ -138,11 +141,13 @@ namespace Henzai.Runtime
             VertexShader = IO.LoadShader(_vertexShaderName,ShaderStages.Vertex, graphicsDevice);
             FragmentShader = IO.LoadShader(_fragmentShaderName,ShaderStages.Fragment, graphicsDevice);
 
-            //TODO: make shader settable at runtime
-            var shadowMapShaderName = "ShadowMap";
-            
-            VertexPreEffectsShader = IO.LoadShader("ShadowMap", ShaderStages.Vertex, graphicsDevice);
-            FragmentShadowMapShader = IO.LoadShader(shadowMapShaderName, ShaderStages.Fragment, graphicsDevice);
+            var preEffects = PreEffectFlags.GetAllEffectFor(PreEffectsFlag);
+            foreach(var flag in preEffects){
+                var arrayIndex = PreEffectFlags.GetArrayIndexForFlag(flag);
+                var name = PreEffectFlags.ShaderNames[arrayIndex];
+                VertexPreEffectShaders[arrayIndex] = IO.LoadShader(name, ShaderStages.Vertex, graphicsDevice);
+                FragmentPreEffectShaders[arrayIndex] = IO.LoadShader(name, ShaderStages.Fragment, graphicsDevice);
+            }
         }
 
         //TODO: @Investigate: What if multiple delegates are bound to the same event?         

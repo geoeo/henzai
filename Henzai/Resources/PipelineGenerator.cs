@@ -1,5 +1,6 @@
 using Veldrid;
 using Henzai.Runtime;
+using Henzai.Effects;
 using Henzai.Core.VertexGeometry;
 
 
@@ -158,13 +159,15 @@ namespace Henzai
         }
 
         //TODO: Make this generic for all pre effects -> probably have to set shaders in a smart way
-        public static GraphicsPipelineDescription GenerateShadowMapPipeline<T>(
+        public static GraphicsPipelineDescription GeneratePreEffectPipeline<T>(
             ModelRuntimeDescriptor<T> modelRuntimeState, 
             SceneRuntimeDescriptor sceneRuntimeState, 
             RasterizerStateDescription rasterizerState,
+            uint preEffectFlag,
             Framebuffer framebuffer) where T : struct, VertexLocateable {
 
             //TODO: Build resource layout outside and pass as parameter
+            var shaderArrayIndex = PreEffectFlags.GetArrayIndexForFlag(preEffectFlag);
 
             return new GraphicsPipelineDescription(){
                 BlendState = BlendStateDescription.SingleOverrideBlend,
@@ -174,7 +177,7 @@ namespace Henzai
                 ResourceLayouts = new ResourceLayout[] {sceneRuntimeState.CameraResourceLayout},
                 ShaderSet = new ShaderSetDescription(
                     vertexLayouts: modelRuntimeState.VertexPreEffectsLayouts,
-                    shaders: new Shader[] {modelRuntimeState.VertexPreEffectsShader,modelRuntimeState.FragmentShadowMapShader}
+                    shaders: new Shader[] {modelRuntimeState.VertexPreEffectShaders[shaderArrayIndex],modelRuntimeState.FragmentPreEffectShaders[shaderArrayIndex]}
                 ),
                 Outputs = framebuffer.OutputDescription
             };
