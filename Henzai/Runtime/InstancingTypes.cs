@@ -1,5 +1,3 @@
-using System.Numerics;
-
 namespace Henzai.Runtime
 {
     public enum InstancingTypes : ushort
@@ -9,4 +7,7 @@ namespace Henzai.Runtime
         ViewMatricies
 
     }
+
+
+
 }

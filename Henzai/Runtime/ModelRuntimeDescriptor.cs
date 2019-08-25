@@ -84,10 +84,7 @@ namespace Henzai.Runtime
         public event Func<VertexLayoutDescription> CallVertexLayoutGeneration;
         //TODO: Use EventHandlerList to bind multiple events. Make events private and use public add methods
         private EventHandlerList VertexPreEffectsInstanceLayoutGenerationList;
-        private EventHandlerList CallVertexInstanceLayoutGenerationList;
-        //////////// Depreciated - to be removed
-        public event Func<VertexLayoutDescription> CallVertexInstanceLayoutGeneration;
-        ////////////// Depriciated END
+        private EventHandlerList VertexInstanceLayoutGenerationList;
         public event Func<DisposeCollectorResourceFactory,Sampler> CallSamplerGeneration;
         public event Func<DisposeCollectorResourceFactory,ResourceLayout> CallTextureResourceLayoutGeneration;
         // TODO: @Performance: Investigate Texture Cache for already loaded textures
@@ -118,11 +115,12 @@ namespace Henzai.Runtime
             InstanceShadowMapBufferList = new List<DeviceBuffer>();
             TextureResourceSetsList = new List<ResourceSet>();
             VertexLayoutList = new List<VertexLayoutDescription>();
+            VertexInstanceLayoutGenerationList = new EventHandlerList();
             VertexPreEffectsInstanceLayoutGenerationList = new EventHandlerList();
 
 
             // Reserve first spot for base vertex geometry
-            VertexPreEffectsLayouts = new VertexLayoutDescription[PreEffects.GetSizeOfPreEffectFlag(PreEffectsInstancingFlag)+1];
+            VertexPreEffectsLayouts = new VertexLayoutDescription[PreEffectFlags.GetSizeOfPreEffectFlag(PreEffectsInstancingFlag)+1];
         }
 
         /// <summary>
@@ -157,7 +155,8 @@ namespace Henzai.Runtime
             FragmentShadowMapShader = IO.LoadShader(shadowMapShaderName, ShaderStages.Fragment, graphicsDevice);
         }
 
-        //TODO: @Investigat: What if multiple delegates are bound to the same event?
+        //TODO: @Investigate: What if multiple delegates are bound to the same event?
+        //TODO: @Refactor: Right now PreEffects uses an array out of the box, while vertex still uses a list then gets converted -> Unify             
         public void InvokeVertexLayoutGeneration(){
 
             // Base vertex geometry
@@ -165,16 +164,19 @@ namespace Henzai.Runtime
             VertexPreEffectsLayouts[0]= CallVertexLayoutGeneration.Invoke();
 
             // Instancing data
-            if(CallVertexInstanceLayoutGeneration != null)
-                VertexLayoutList.Add(CallVertexInstanceLayoutGeneration.Invoke());
-
-            var shadowMapInstanceVertexLayoutDescriptionOption = (VertexPreEffectsInstanceLayoutGenerationList[PreEffects.ShadowMapKey] as Func<VertexLayoutDescription>);     
-            var omniShadowMapInstanceVertexLayoutDescriptionOption = (VertexPreEffectsInstanceLayoutGenerationList[PreEffects.OmniShadowMapKey] as Func<VertexLayoutDescription>);   
+            foreach(var key in InstancingKeys.GetKeys()){
+                var vertexInstanceDeletegate = (VertexInstanceLayoutGenerationList[key] as Func<VertexLayoutDescription>);
+                if(vertexInstanceDeletegate != null)
+                    VertexLayoutList.Add(vertexInstanceDeletegate.Invoke());
+            }
+        
+            var shadowMapInstanceVertexLayoutDescriptionOption = (VertexPreEffectsInstanceLayoutGenerationList[PreEffectKeys.ShadowMapKey] as Func<VertexLayoutDescription>);     
+            var omniShadowMapInstanceVertexLayoutDescriptionOption = (VertexPreEffectsInstanceLayoutGenerationList[PreEffectKeys.OmniShadowMapKey] as Func<VertexLayoutDescription>);   
 
             if(shadowMapInstanceVertexLayoutDescriptionOption != null)
-                VertexPreEffectsLayouts[PreEffects.GetArrayIndexForFlag(PreEffects.SHADOW_MAP)+1] = shadowMapInstanceVertexLayoutDescriptionOption.Invoke();
+                VertexPreEffectsLayouts[PreEffectFlags.GetArrayIndexForFlag(PreEffectFlags.SHADOW_MAP)+1] = shadowMapInstanceVertexLayoutDescriptionOption.Invoke();
             if(omniShadowMapInstanceVertexLayoutDescriptionOption != null)
-                VertexPreEffectsLayouts[PreEffects.GetArrayIndexForFlag(PreEffects.OMNI_SHADOW_MAPS)+1] = omniShadowMapInstanceVertexLayoutDescriptionOption.Invoke();
+                VertexPreEffectsLayouts[PreEffectFlags.GetArrayIndexForFlag(PreEffectFlags.OMNI_SHADOW_MAPS)+1] = omniShadowMapInstanceVertexLayoutDescriptionOption.Invoke();
  
         }
 
@@ -192,20 +194,31 @@ namespace Henzai.Runtime
 
         public void AddPreEffectsVertexInstanceDelegate(uint id, Func<VertexLayoutDescription> vertexLayoutDelegate){
 
-            if((id & PreEffectsInstancingFlag)== PreEffects.NO_EFFECTS)
-                throw new System.ArgumentException($"PreEffects id: {id} does not match the stored PreEffectsFlag");
+            if((id & PreEffectsInstancingFlag)== PreEffectFlags.NO_EFFECTS)
+                throw new System.ArgumentException($"PreEffects id: {id} does not match the stored PreEffectsTypes");
 
-            if((id & PreEffects.SHADOW_MAP) == PreEffects.SHADOW_MAP)
-                VertexPreEffectsInstanceLayoutGenerationList.AddHandler(PreEffects.ShadowMapKey, vertexLayoutDelegate);
+            else if((id & PreEffectFlags.SHADOW_MAP) == PreEffectFlags.SHADOW_MAP)
+                VertexPreEffectsInstanceLayoutGenerationList.AddHandler(PreEffectKeys.ShadowMapKey, vertexLayoutDelegate);
             
-            if((id & PreEffects.OMNI_SHADOW_MAPS) == PreEffects.OMNI_SHADOW_MAPS)
-                VertexPreEffectsInstanceLayoutGenerationList.AddHandler(PreEffects.OmniShadowMapKey, vertexLayoutDelegate);
+            else if((id & PreEffectFlags.OMNI_SHADOW_MAPS) == PreEffectFlags.OMNI_SHADOW_MAPS)
+                VertexPreEffectsInstanceLayoutGenerationList.AddHandler(PreEffectKeys.OmniShadowMapKey, vertexLayoutDelegate);
         
         }
 
-        public void addVertexInstanceDelegate(int id, Func<VertexLayoutDescription> vertexLayoutDelegate){
-            //TODO
-            //switch on instancing data
+        public void AddVertexInstanceDelegate(InstancingTypes instancingTypes, Func<VertexLayoutDescription> vertexLayoutDelegate){
+
+            switch(instancingTypes){
+                case InstancingTypes.Positions:
+                    VertexInstanceLayoutGenerationList.AddHandler(InstancingKeys.PositionKey, vertexLayoutDelegate);
+                break;
+                case InstancingTypes.ViewMatricies:
+                    VertexInstanceLayoutGenerationList.AddHandler(InstancingKeys.ViewMatricesKey, vertexLayoutDelegate);
+                break;
+                case InstancingTypes.NoData:
+                    Debug.WriteLine("No need to set delegate for NO_DATA. Maybe you are using the wrong flag?");
+                break;
+        
+            }                
         }
 
     }

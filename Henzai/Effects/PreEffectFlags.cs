@@ -1,12 +1,7 @@
 namespace Henzai.Effects 
 {
 
-    //TODO: Make TOTAL_PRE_EFFECTS calculate automatically
-
-
-
-
-    public static class PreEffects {
+    public static class PreEffectFlags {
 
         public const uint NO_EFFECTS = 0x0;
         public const uint SHADOW_MAP = 0x1;
@@ -37,10 +32,5 @@ namespace Henzai.Effects
             }
             return index;
         }
-
-
-        //Keys for ModelRuntimeDescriptor EventHandlerLists - put this in separate class
-        public static readonly object ShadowMapKey = new object();
-        public static readonly object OmniShadowMapKey = new object();
     }
 }
