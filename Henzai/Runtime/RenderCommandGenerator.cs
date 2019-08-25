@@ -326,7 +326,7 @@ namespace Henzai.Runtime
             {
                 var modelState = descriptorArray[j];
                 var effectSets = sceneRuntimeDescriptor.NO_RESOURCE_SET;
-                var renderFlags = modelState.RenderFlags;
+                var renderFlags = modelState.RenderFlag;
                 switch(piplelineType){
                     case PipelineTypes.Normal:
                         if((renderFlags & RenderFlags.NORMAL) == RenderFlags.NONE)
@@ -446,7 +446,7 @@ namespace Henzai.Runtime
                 var modelState = descriptorArray[modelStateIndex];
                 var model = modelState.Model;
                 var effectSets = sceneRuntimeDescriptor.NO_RESOURCE_SET;
-                var renderFlags = modelState.RenderFlags;
+                var renderFlags = modelState.RenderFlag;
                 switch(piplelineType){
                     case PipelineTypes.Normal:
                         if((renderFlags & RenderFlags.NORMAL) == RenderFlags.NONE)

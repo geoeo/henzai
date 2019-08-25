@@ -2,7 +2,7 @@ namespace Henzai.Runtime
 {
     public enum InstancingTypes : ushort
     {
-        NoData,
+        Empty,
         Positions,
         ViewMatricies
 

@@ -374,7 +374,7 @@ namespace Henzai.Runtime
                 //TODO: Make cases composable
                 foreach(var instanceData in instancingData){
                     switch(instanceData.Types){
-                        case InstancingTypes.NoData:
+                        case InstancingTypes.Empty:
                             break;
                         case InstancingTypes.Positions:
                             var instancingPositionBuffer = _factory.CreateBuffer(new BufferDescription(instanceData.Positions.Length.ToUnsigned() * 12, BufferUsage.VertexBuffer));
@@ -434,7 +434,6 @@ namespace Henzai.Runtime
 
             //TODO: @Omnishadows: Make InstaceLayoutGeneration trigger due to render state OR make this also invokable on a per-scene basis
             modelDescriptor.InvokeVertexLayoutGeneration();
-            modelDescriptor.FormatResourcesForPipelineGeneration();
             var effectLayoutArray = effectLayoutList.ToArray();
 
             switch (modelDescriptor.VertexRuntimeType)

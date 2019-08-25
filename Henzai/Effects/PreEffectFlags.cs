@@ -3,7 +3,7 @@ namespace Henzai.Effects
 
     public static class PreEffectFlags {
 
-        public const uint NO_EFFECTS = 0x0;
+        public const uint EMPTY = 0x0;
         public const uint SHADOW_MAP = 0x1;
         public const uint OMNI_SHADOW_MAPS = 0x2;
 

@@ -1,9 +1,8 @@
 namespace Henzai.Runtime 
 {
-    //TODO: @Refactor: Might not be necessary -> Delete?
     public static class InstancingFlags {
 
-        public const uint NO_DATA = 0x0;
+        public const uint EMPTY = 0x0;
         public const uint POSITION = 0x1;
         public const uint VIEW_MATRICES = 0x2;
 
