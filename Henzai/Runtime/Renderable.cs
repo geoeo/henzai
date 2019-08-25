@@ -430,9 +430,9 @@ namespace Henzai.Runtime
                 modelDescriptor.EffectResourceSets[PreEffects.GetArrayIndexForFlag(PreEffects.SHADOW_MAP)+1] = ResourceGenerator.GenerateResourceSetForShadowMapping(shadowMapRenderable.ShadowMapTexView,_factory);
             }
 
-            modelDescriptor.InvokeVertexLayoutGeneration();
+
             //TODO: @Omnishadows: Make InstaceLayoutGeneration trigger due to render state OR make this also invokable on a per-scene basis
-            modelDescriptor.InvokeVertexInstanceLayoutGeneration();
+            modelDescriptor.InvokeVertexLayoutGeneration();
             modelDescriptor.FormatResourcesForPipelineGeneration();
             var effectLayoutArray = effectLayoutList.ToArray();
 

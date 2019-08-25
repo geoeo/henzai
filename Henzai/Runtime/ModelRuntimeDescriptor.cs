@@ -136,13 +136,14 @@ namespace Henzai.Runtime
             InstanceShadowMapBuffers = InstanceShadowMapBufferList.ToArray();
             TextureResourceSets = TextureResourceSetsList.ToArray();
         }
+        
+        //TODO: Remove this by using a flag same as PreEffectsInstancing..
         /// <summary>
         /// Formats Lists to Arrays for the Pipeline Generation
         /// These items are used during the CreateResources() stage
         /// </summary>
         public void FormatResourcesForPipelineGeneration(){
             VertexLayouts = VertexLayoutList.ToArray();
-            //VertexPreEffectsLayouts = VertexPreEffectsLayoutList.ToArray();
         }
 
         public void LoadShaders(GraphicsDevice graphicsDevice){
@@ -156,15 +157,14 @@ namespace Henzai.Runtime
             FragmentShadowMapShader = IO.LoadShader(shadowMapShaderName, ShaderStages.Fragment, graphicsDevice);
         }
 
-        //PRE: InvokeVertexLayoutGeneration always called before InvokeVertexInstanceLayoutGeneration in Renderable
+        //TODO: @Investigat: What if multiple delegates are bound to the same event?
         public void InvokeVertexLayoutGeneration(){
-            //TODO: streamline this as well
+
+            // Base vertex geometry
             VertexLayoutList.Add(CallVertexLayoutGeneration.Invoke());
             VertexPreEffectsLayouts[0]= CallVertexLayoutGeneration.Invoke();
-        }
 
-        //TODO: @Investigat: What if multiple delegates are bound to the same event?
-        public void InvokeVertexInstanceLayoutGeneration(){
+            // Instancing data
             if(CallVertexInstanceLayoutGeneration != null)
                 VertexLayoutList.Add(CallVertexInstanceLayoutGeneration.Invoke());
 
@@ -190,7 +190,6 @@ namespace Henzai.Runtime
             return CallTextureResourceSetGeneration!=null?CallTextureResourceSetGeneration(this,meshIndex,factory,graphicsDevice):null;
         }
 
-        //TODO: streamline eventlists
         public void AddPreEffectsVertexInstanceDelegate(uint id, Func<VertexLayoutDescription> vertexLayoutDelegate){
 
             if((id & PreEffectsInstancingFlag)== PreEffects.NO_EFFECTS)
