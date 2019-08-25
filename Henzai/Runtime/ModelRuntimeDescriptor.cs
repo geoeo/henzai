@@ -155,8 +155,7 @@ namespace Henzai.Runtime
             FragmentShadowMapShader = IO.LoadShader(shadowMapShaderName, ShaderStages.Fragment, graphicsDevice);
         }
 
-        //TODO: @Investigate: What if multiple delegates are bound to the same event?
-        //TODO: @Refactor: Right now PreEffects uses an array out of the box, while vertex still uses a list then gets converted -> Unify             
+        //TODO: @Investigate: What if multiple delegates are bound to the same event?         
         public void InvokeVertexLayoutGeneration(){
 
             // Base vertex geometry
@@ -165,18 +164,19 @@ namespace Henzai.Runtime
 
             // Instancing data
             foreach(var key in InstancingKeys.GetKeys()){
-                var vertexInstanceDeletegate = (VertexInstanceLayoutGenerationList[key] as Func<VertexLayoutDescription>);
+                var vertexInstanceDeletegate = VertexInstanceLayoutGenerationList[key] as Func<VertexLayoutDescription>;
                 if(vertexInstanceDeletegate != null)
                     VertexLayoutList.Add(vertexInstanceDeletegate.Invoke());
             }
-        
-            var shadowMapInstanceVertexLayoutDescriptionOption = (VertexPreEffectsInstanceLayoutGenerationList[PreEffectKeys.ShadowMapKey] as Func<VertexLayoutDescription>);     
-            var omniShadowMapInstanceVertexLayoutDescriptionOption = (VertexPreEffectsInstanceLayoutGenerationList[PreEffectKeys.OmniShadowMapKey] as Func<VertexLayoutDescription>);   
 
-            if(shadowMapInstanceVertexLayoutDescriptionOption != null)
-                VertexPreEffectsLayouts[PreEffectFlags.GetArrayIndexForFlag(PreEffectFlags.SHADOW_MAP)+1] = shadowMapInstanceVertexLayoutDescriptionOption.Invoke();
-            if(omniShadowMapInstanceVertexLayoutDescriptionOption != null)
-                VertexPreEffectsLayouts[PreEffectFlags.GetArrayIndexForFlag(PreEffectFlags.OMNI_SHADOW_MAPS)+1] = omniShadowMapInstanceVertexLayoutDescriptionOption.Invoke();
+            foreach(var flagKeyTuple in PreEffectKeys.GetFlagKeyTuples()){
+                var flag = flagKeyTuple.Item1;
+                var key = flagKeyTuple.Item2;
+                var vertexInstanceDeletegate = (VertexPreEffectsInstanceLayoutGenerationList[key] as Func<VertexLayoutDescription>);
+                if(vertexInstanceDeletegate != null)
+                    VertexPreEffectsLayouts[PreEffectFlags.GetArrayIndexForFlag(flag)+1] = vertexInstanceDeletegate.Invoke();
+                    
+            }
  
         }
 
