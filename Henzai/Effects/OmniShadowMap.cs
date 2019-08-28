@@ -71,10 +71,10 @@ namespace Henzai.Effects
                 _sceneRuntimeDescriptor.CameraProjViewBuffer,
                 _sceneRuntimeDescriptor.Light.LightCam);
 
-            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionNormalTextureTangentBitangent>(_commandList,_modelPNTTBDescriptorArray,_sceneRuntimeDescriptor, PipelineTypes.ShadowMap, VertexRuntimeTypes.VertexPositionNormalTextureTangentBitangent);
-            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionNormal>(_commandList,_modelPNDescriptorArray,_sceneRuntimeDescriptor, PipelineTypes.ShadowMap, VertexRuntimeTypes.VertexPositionNormal);
-            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionTexture>(_commandList,_modelPTDescriptorArray,_sceneRuntimeDescriptor, PipelineTypes.ShadowMap, VertexRuntimeTypes.VertexPositionTexture);
-            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionColor>(_commandList,_modelPCDescriptorArray,_sceneRuntimeDescriptor, PipelineTypes.ShadowMap, VertexRuntimeTypes.VertexPositionColor);
+            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionNormalTextureTangentBitangent>(_commandList,_modelPNTTBDescriptorArray,_sceneRuntimeDescriptor, RenderFlags.SHADOW_MAP, VertexRuntimeTypes.VertexPositionNormalTextureTangentBitangent);
+            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionNormal>(_commandList,_modelPNDescriptorArray,_sceneRuntimeDescriptor, RenderFlags.SHADOW_MAP, VertexRuntimeTypes.VertexPositionNormal);
+            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionTexture>(_commandList,_modelPTDescriptorArray,_sceneRuntimeDescriptor, RenderFlags.SHADOW_MAP, VertexRuntimeTypes.VertexPositionTexture);
+            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionColor>(_commandList,_modelPCDescriptorArray,_sceneRuntimeDescriptor, RenderFlags.SHADOW_MAP, VertexRuntimeTypes.VertexPositionColor);
 
             _commandList.End();
         }

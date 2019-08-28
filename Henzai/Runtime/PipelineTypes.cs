@@ -1,8 +1,8 @@
 namespace Henzai.Runtime
 {
-    public enum PipelineTypes : ushort
-    {
-        Normal,
-        ShadowMap
-    };
+    // public enum PipelineTypes : ushort
+    // {
+    //     Normal,
+    //     ShadowMap
+    // };
 }

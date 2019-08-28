@@ -320,7 +320,7 @@ namespace Henzai.Runtime
         public static void GenerateRenderCommandsForModelDescriptor<T>(CommandList commandList,
                                                                        ModelRuntimeDescriptor<T>[] descriptorArray,
                                                                        SceneRuntimeDescriptor sceneRuntimeDescriptor,
-                                                                       PipelineTypes piplelineType,
+                                                                       uint renderFlag,
                                                                        VertexRuntimeTypes vertexRuntimeType) where T : struct, VertexLocateable
         {
             for (int j = 0; j < descriptorArray.Length; j++)
@@ -328,22 +328,21 @@ namespace Henzai.Runtime
                 var modelState = descriptorArray[j];
                 var effectSets = sceneRuntimeDescriptor.NO_RESOURCE_SET;
                 var preEffectFlags = modelState.PreEffectsFlag;
-                switch(piplelineType){
-                    case PipelineTypes.Normal:
-                        commandList.SetPipeline(modelState.Pipeline);
-                        effectSets = modelState.EffectResourceSets;
-                        for (int i = 0; i < modelState.InstanceBuffers.Length; i++)
-                        // We assume one other vertex buffer has been bound or will be bound.
-                            commandList.SetVertexBuffer(i.ToUnsigned() + 1, modelState.InstanceBuffers[i]);
-                        break;
-                    case PipelineTypes.ShadowMap:
-                        if((preEffectFlags & RenderFlags.SHADOW_MAP) == RenderFlags.NONE)
-                            continue;
+                if((renderFlag & RenderFlags.NORMAL)  == RenderFlags.NORMAL){
+                    commandList.SetPipeline(modelState.Pipeline);
+                    effectSets = modelState.EffectResourceSets;
+                    for (int i = 0; i < modelState.InstanceBuffers.Length; i++)
+                    // We assume one other vertex buffer has been bound or will be bound.
+                    commandList.SetVertexBuffer(i.ToUnsigned() + 1, modelState.InstanceBuffers[i]);
+                }
+                else if((renderFlag & RenderFlags.SHADOW_MAP)  == RenderFlags.SHADOW_MAP){
+                    if((preEffectFlags & RenderFlags.SHADOW_MAP) == RenderFlags.SHADOW_MAP){
                         commandList.SetPipeline(modelState.PreEffectsPipeline);
-                        for (int i = 0; i < modelState.InstanceShadowMapBuffers.Length; i++)
                         // We assume one other vertex buffer has been bound or will be bound.
+                        for (int i = 0; i < modelState.InstanceShadowMapBuffers.Length; i++)
                             commandList.SetVertexBuffer(i.ToUnsigned() + 1, modelState.InstanceShadowMapBuffers[i]);
-                        break;
+                    }
+
                 }
                 var model = modelState.Model;
 
@@ -354,7 +353,7 @@ namespace Henzai.Runtime
                     var mesh = model.GetMesh(i);
                     var material = model.GetMaterial(i);
 
-                    if(piplelineType == PipelineTypes.ShadowMap || vertexRuntimeType == VertexRuntimeTypes.VertexPositionColor)
+                    if((renderFlag & RenderFlags.SHADOW_MAP)  == RenderFlags.SHADOW_MAP || vertexRuntimeType == VertexRuntimeTypes.VertexPositionColor)
                         RenderCommandGenerator.GenerateCommandsForMesh_Inline(
                             commandList,
                             modelState,
@@ -433,7 +432,7 @@ namespace Henzai.Runtime
                                                                     ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] descriptorArray,
                                                                     SceneRuntimeDescriptor sceneRuntimeDescriptor,
                                                                     MeshBVH<VertexPositionNormalTextureTangentBitangent>[] meshBVHArray,
-                                                                    PipelineTypes piplelineType)
+                                                                    uint renderFlag)
         {
             var meshCount = meshBVHArray.Length;
             for(int j = 0; j < meshCount; j++){
@@ -446,16 +445,12 @@ namespace Henzai.Runtime
                 var model = modelState.Model;
                 var effectSets = sceneRuntimeDescriptor.NO_RESOURCE_SET;
                 var preEffectFlags = modelState.PreEffectsFlag;
-                switch(piplelineType){
-                    case PipelineTypes.Normal:
-                        commandList.SetPipeline(modelState.Pipeline);
-                        effectSets = modelState.EffectResourceSets;
-                        break;
-                    case PipelineTypes.ShadowMap:
-                        if((preEffectFlags & RenderFlags.SHADOW_MAP) == RenderFlags.NONE)
-                            continue;
+                if((renderFlag & RenderFlags.NORMAL)  == RenderFlags.NORMAL){
+                    commandList.SetPipeline(modelState.Pipeline);
+                    effectSets = modelState.EffectResourceSets;
+                } else if((renderFlag & RenderFlags.SHADOW_MAP)  == RenderFlags.SHADOW_MAP){
+                    if((preEffectFlags & RenderFlags.SHADOW_MAP) == RenderFlags.SHADOW_MAP)
                         commandList.SetPipeline(modelState.PreEffectsPipeline);
-                        break;
                 }
                 for (int i = 0; i < modelState.InstanceBuffers.Length; i++)
                     commandList.SetVertexBuffer(i.ToUnsigned() + 1, modelState.InstanceBuffers[i]);
