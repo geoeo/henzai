@@ -1,6 +1,6 @@
 using System;
 
-namespace Henzai.Effects 
+namespace Henzai.Runtime 
 {
 
     public static class PreEffectKeys {
@@ -8,8 +8,8 @@ namespace Henzai.Effects
         public static readonly object OmniShadowMapKey = new object();
 
         public static Tuple<uint,object>[] GetFlagKeyTuples() => new Tuple<uint,object>[]{
-            Tuple.Create(PreEffectFlags.SHADOW_MAP, ShadowMapKey), 
-            Tuple.Create(PreEffectFlags.OMNI_SHADOW_MAPS, OmniShadowMapKey)
+            Tuple.Create(RenderFlags.SHADOW_MAP, ShadowMapKey), 
+            Tuple.Create(RenderFlags.OMNI_SHADOW_MAPS, OmniShadowMapKey)
             };
     }
 }

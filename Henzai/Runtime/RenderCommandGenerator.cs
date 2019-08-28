@@ -337,7 +337,7 @@ namespace Henzai.Runtime
                             commandList.SetVertexBuffer(i.ToUnsigned() + 1, modelState.InstanceBuffers[i]);
                         break;
                     case PipelineTypes.ShadowMap:
-                        if((preEffectFlags & PreEffectFlags.SHADOW_MAP) == PreEffectFlags.EMPTY)
+                        if((preEffectFlags & RenderFlags.SHADOW_MAP) == RenderFlags.NONE)
                             continue;
                         commandList.SetPipeline(modelState.PreEffectsPipeline);
                         for (int i = 0; i < modelState.InstanceShadowMapBuffers.Length; i++)
@@ -452,7 +452,7 @@ namespace Henzai.Runtime
                         effectSets = modelState.EffectResourceSets;
                         break;
                     case PipelineTypes.ShadowMap:
-                        if((preEffectFlags & PreEffectFlags.SHADOW_MAP) == PreEffectFlags.EMPTY)
+                        if((preEffectFlags & RenderFlags.SHADOW_MAP) == RenderFlags.NONE)
                             continue;
                         commandList.SetPipeline(modelState.PreEffectsPipeline);
                         break;

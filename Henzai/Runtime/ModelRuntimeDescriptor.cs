@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using Veldrid;
-using Henzai.Effects;
 using Henzai.Core;
 using Henzai.Core.Materials;
 using Henzai.Core.VertexGeometry;
@@ -88,6 +87,7 @@ namespace Henzai.Runtime
         // TODO: @Performance: Investigate Texture Cache for already loaded textures
         public event Func<ModelRuntimeDescriptor<T>,int,DisposeCollectorResourceFactory,GraphicsDevice,ResourceSet> CallTextureResourceSetGeneration;
 
+        //TODO: @Refactor: Unify all Flags + Render state. At the moment we assume every geometry is ALWAYS rendering in RenderState.Normal
         public ModelRuntimeDescriptor(Model<T, RealtimeMaterial> modelIn, string vShaderName, string fShaderName, VertexRuntimeTypes vertexRuntimeType, PrimitiveTopology primitiveTopology, uint preEffectsFlag, uint preEffectsInstancingFlag, uint instancingFlag){
 
             if(!Verifier.VerifyVertexStruct<T>(vertexRuntimeType))
@@ -116,13 +116,13 @@ namespace Henzai.Runtime
             VertexInstanceLayoutGenerationList = new EventHandlerList();
             VertexPreEffectsInstanceLayoutGenerationList = new EventHandlerList();
 
-            var preEffectCount = PreEffectFlags.TOTAL_COUNT;
+            var preEffectCount = RenderFlags.PRE_EFFCTS_TOTAL_COUNT;
             VertexPreEffectShaders = new Shader[preEffectCount];
             FragmentPreEffectShaders = new Shader[preEffectCount];
 
             // Reserve first spot for base vertex geometry
             VertexLayouts = new VertexLayoutDescription[InstancingFlags.GetSizeOfPreEffectFlag(InstancingFlag)+1];
-            VertexPreEffectsLayouts = new VertexLayoutDescription[PreEffectFlags.GetSizeOfPreEffectFlag(PreEffectsInstancingFlag)+1];
+            VertexPreEffectsLayouts = new VertexLayoutDescription[RenderFlags.GetSizeOfPreEffectFlag(PreEffectsInstancingFlag)+1];
         }
 
         /// <summary>
@@ -141,10 +141,10 @@ namespace Henzai.Runtime
             VertexShader = IO.LoadShader(_vertexShaderName,ShaderStages.Vertex, graphicsDevice);
             FragmentShader = IO.LoadShader(_fragmentShaderName,ShaderStages.Fragment, graphicsDevice);
 
-            var preEffects = PreEffectFlags.GetAllEffectFor(PreEffectsFlag);
+            var preEffects = RenderFlags.GetAllPreEffectFor(PreEffectsFlag);
             foreach(var flag in preEffects){
-                var arrayIndex = PreEffectFlags.GetArrayIndexForFlag(flag);
-                var name = PreEffectFlags.ShaderNames[arrayIndex];
+                var arrayIndex = RenderFlags.GetArrayIndexForPreEffectFlag(flag);
+                var name = ShaderNames.PreEffectShaderNames[arrayIndex];
                 VertexPreEffectShaders[arrayIndex] = IO.LoadShader(name, ShaderStages.Vertex, graphicsDevice);
                 FragmentPreEffectShaders[arrayIndex] = IO.LoadShader(name, ShaderStages.Fragment, graphicsDevice);
             }
@@ -163,7 +163,7 @@ namespace Henzai.Runtime
                 var key = flagKeyTuple.Item2;
                 var vertexInstanceDeletegate = (VertexInstanceLayoutGenerationList[key] as Func<VertexLayoutDescription>);
                 if(vertexInstanceDeletegate != null)
-                    VertexLayouts[PreEffectFlags.GetArrayIndexForFlag(flag)+1] = vertexInstanceDeletegate.Invoke();      
+                    VertexLayouts[RenderFlags.GetArrayIndexForPreEffectFlag(flag)+1] = vertexInstanceDeletegate.Invoke();      
             }
 
             foreach(var flagKeyTuple in PreEffectKeys.GetFlagKeyTuples()){
@@ -171,7 +171,7 @@ namespace Henzai.Runtime
                 var key = flagKeyTuple.Item2;
                 var vertexInstanceDeletegate = (VertexPreEffectsInstanceLayoutGenerationList[key] as Func<VertexLayoutDescription>);
                 if(vertexInstanceDeletegate != null)
-                    VertexPreEffectsLayouts[PreEffectFlags.GetArrayIndexForFlag(flag)+1] = vertexInstanceDeletegate.Invoke();        
+                    VertexPreEffectsLayouts[RenderFlags.GetArrayIndexForPreEffectFlag(flag)+1] = vertexInstanceDeletegate.Invoke();        
             }
  
         }
@@ -190,13 +190,13 @@ namespace Henzai.Runtime
 
         public void AddPreEffectsVertexInstanceDelegate(uint id, Func<VertexLayoutDescription> vertexLayoutDelegate){
 
-            if((id & PreEffectsInstancingFlag)== PreEffectFlags.EMPTY)
+            if((id & PreEffectsInstancingFlag)== RenderFlags.NONE)
                 throw new System.ArgumentException($"PreEffects id: {id} does not match the stored PreEffectsTypes");
 
-            else if((id & PreEffectFlags.SHADOW_MAP) == PreEffectFlags.SHADOW_MAP)
+            else if((id & RenderFlags.SHADOW_MAP) == RenderFlags.SHADOW_MAP)
                 VertexPreEffectsInstanceLayoutGenerationList.AddHandler(PreEffectKeys.ShadowMapKey, vertexLayoutDelegate);
             
-            else if((id & PreEffectFlags.OMNI_SHADOW_MAPS) == PreEffectFlags.OMNI_SHADOW_MAPS)
+            else if((id & RenderFlags.OMNI_SHADOW_MAPS) == RenderFlags.OMNI_SHADOW_MAPS)
                 VertexPreEffectsInstanceLayoutGenerationList.AddHandler(PreEffectKeys.OmniShadowMapKey, vertexLayoutDelegate);
         
         }
