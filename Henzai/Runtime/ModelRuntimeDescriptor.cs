@@ -73,6 +73,7 @@ namespace Henzai.Runtime
         /// See: <see cref="Henzai.Geometry.Model{T}"/>
         /// </summary>
         public Model<T,RealtimeMaterial> Model {get;set;}
+        public uint RenderFlag {get;set;}
         public uint PreEffectsFlag {get;set;}
         public uint PreEffectsInstancingFlag {get;set;}
         public uint InstancingFlag {get;set;}
@@ -88,7 +89,7 @@ namespace Henzai.Runtime
         public event Func<ModelRuntimeDescriptor<T>,int,DisposeCollectorResourceFactory,GraphicsDevice,ResourceSet> CallTextureResourceSetGeneration;
 
         //TODO: @Refactor: Unify all Flags + Render state. At the moment we assume every geometry is ALWAYS rendering in RenderState.Normal
-        public ModelRuntimeDescriptor(Model<T, RealtimeMaterial> modelIn, string vShaderName, string fShaderName, VertexRuntimeTypes vertexRuntimeType, PrimitiveTopology primitiveTopology, uint preEffectsFlag, uint preEffectsInstancingFlag, uint instancingFlag){
+        public ModelRuntimeDescriptor(Model<T, RealtimeMaterial> modelIn, string vShaderName, string fShaderName, VertexRuntimeTypes vertexRuntimeType, PrimitiveTopology primitiveTopology, uint renderFlag, uint preEffectsInstancingFlag, uint instancingFlag){
 
             if(!Verifier.VerifyVertexStruct<T>(vertexRuntimeType))
                 throw new ArgumentException($"Type Mismatch ModelRuntimeDescriptor");
@@ -104,7 +105,8 @@ namespace Henzai.Runtime
             VertexRuntimeType = vertexRuntimeType;
             PrimitiveTopology = primitiveTopology;
 
-            PreEffectsFlag = preEffectsFlag;
+            RenderFlag = renderFlag;
+            PreEffectsFlag = RenderFlags.PRE_EFFECTS_MASK & renderFlag;
             PreEffectsInstancingFlag = preEffectsInstancingFlag;
             InstancingFlag = instancingFlag;
 

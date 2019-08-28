@@ -327,16 +327,18 @@ namespace Henzai.Runtime
             {
                 var modelState = descriptorArray[j];
                 var effectSets = sceneRuntimeDescriptor.NO_RESOURCE_SET;
-                var preEffectFlags = modelState.PreEffectsFlag;
+                var modelRenderFlag = modelState.RenderFlag;
                 if((renderFlag & RenderFlags.NORMAL)  == RenderFlags.NORMAL){
-                    commandList.SetPipeline(modelState.Pipeline);
-                    effectSets = modelState.EffectResourceSets;
-                    for (int i = 0; i < modelState.InstanceBuffers.Length; i++)
-                    // We assume one other vertex buffer has been bound or will be bound.
-                    commandList.SetVertexBuffer(i.ToUnsigned() + 1, modelState.InstanceBuffers[i]);
+                    if((modelRenderFlag & RenderFlags.NORMAL) == RenderFlags.NORMAL){
+                        commandList.SetPipeline(modelState.Pipeline);
+                        effectSets = modelState.EffectResourceSets;
+                        // We assume one other vertex buffer has been bound or will be bound.
+                        for (int i = 0; i < modelState.InstanceBuffers.Length; i++)
+                            commandList.SetVertexBuffer(i.ToUnsigned() + 1, modelState.InstanceBuffers[i]);
+                    }
                 }
                 else if((renderFlag & RenderFlags.SHADOW_MAP)  == RenderFlags.SHADOW_MAP){
-                    if((preEffectFlags & RenderFlags.SHADOW_MAP) == RenderFlags.SHADOW_MAP){
+                    if((modelRenderFlag & RenderFlags.SHADOW_MAP) == RenderFlags.SHADOW_MAP){
                         commandList.SetPipeline(modelState.PreEffectsPipeline);
                         // We assume one other vertex buffer has been bound or will be bound.
                         for (int i = 0; i < modelState.InstanceShadowMapBuffers.Length; i++)
@@ -444,12 +446,14 @@ namespace Henzai.Runtime
                 var modelState = descriptorArray[modelStateIndex];
                 var model = modelState.Model;
                 var effectSets = sceneRuntimeDescriptor.NO_RESOURCE_SET;
-                var preEffectFlags = modelState.PreEffectsFlag;
+                var modelRenderFlag = modelState.RenderFlag;
                 if((renderFlag & RenderFlags.NORMAL)  == RenderFlags.NORMAL){
-                    commandList.SetPipeline(modelState.Pipeline);
-                    effectSets = modelState.EffectResourceSets;
+                    if((modelRenderFlag & RenderFlags.NORMAL) == RenderFlags.NORMAL){
+                        commandList.SetPipeline(modelState.Pipeline);
+                        effectSets = modelState.EffectResourceSets;
+                    }
                 } else if((renderFlag & RenderFlags.SHADOW_MAP)  == RenderFlags.SHADOW_MAP){
-                    if((preEffectFlags & RenderFlags.SHADOW_MAP) == RenderFlags.SHADOW_MAP)
+                    if((modelRenderFlag & RenderFlags.SHADOW_MAP) == RenderFlags.SHADOW_MAP)
                         commandList.SetPipeline(modelState.PreEffectsPipeline);
                 }
                 for (int i = 0; i < modelState.InstanceBuffers.Length; i++)
