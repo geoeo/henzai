@@ -27,12 +27,12 @@
     <PackageReference Include="NativeLibraryLoader" Version="1.0.12" />
     <!-- <Reference Include="../../veldrid_fork/bin/Debug/Veldrid/netstandard2.0/*.dll"/> -->
     <!-- <ProjectReference Include="../../veldrid_fork/src/Veldrid/Veldrid.csproj" /> -->
-    <!-- <PackageReference Include="Veldrid" Version="4.6.1" /> -->
-    <PackageReference Include="Veldrid.ImageSharp" Version="4.6.1" />
-    <PackageReference Include="Veldrid.Sdl2" Version="4.6.1" />
+    <PackageReference Include="Veldrid" Version="4.7.0" />
+    <PackageReference Include="Veldrid.ImageSharp" Version="4.7.0" />
+    <PackageReference Include="Veldrid.Sdl2" Version="4.7.0" />
     <PackageReference Include="Veldrid.ImGui" Version="5.69.0" />
-    <PackageReference Include="Veldrid.StartupUtilities" Version="4.6.1" />
-    <ProjectReference Include="../../veldrid/src/Veldrid/Veldrid.csproj" />
+    <PackageReference Include="Veldrid.StartupUtilities" Version="4.7.0" />
+    <!-- <ProjectReference Include="../../veldrid/src/Veldrid/Veldrid.csproj" /> -->
     <!--<ProjectReference Include="../../veldrid/src/Veldrid.ImageSharp/Veldrid.ImageSharp.csproj"/>
     <ProjectReference Include="../../veldrid/src/Veldrid.Sdl2/Veldrid.Sdl2.csproj" />
     <ProjectReference Include="../../veldrid/src/Veldrid.ImGui/Veldrid.ImGui.csproj"/>
