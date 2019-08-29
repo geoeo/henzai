@@ -23,7 +23,6 @@ namespace Henzai.Runtime
                 size++;
 
             return size;
-
         }
 
         public static int GetArrayIndexForPreEffectFlag(uint flag){

@@ -3,7 +3,6 @@ using System.Runtime.CompilerServices;
 using Veldrid;
 using Henzai.Core.Extensions;
 using Henzai.Cameras;
-using Henzai.Effects;
 using Henzai.Core.Materials;
 using Henzai.Core.VertexGeometry;
 using Henzai.Core.Acceleration;
@@ -328,6 +327,7 @@ namespace Henzai.Runtime
                 var modelState = descriptorArray[j];
                 var effectSets = sceneRuntimeDescriptor.NO_RESOURCE_SET;
                 var modelRenderFlag = modelState.RenderFlag;
+                //TODO:@Refactor, @Performance: Somehow remove this double/triple if
                 if((renderFlag & RenderFlags.NORMAL)  == RenderFlags.NORMAL){
                     if((modelRenderFlag & RenderFlags.NORMAL) == RenderFlags.NORMAL){
                         commandList.SetPipeline(modelState.Pipeline);
@@ -340,9 +340,12 @@ namespace Henzai.Runtime
                 else if((renderFlag & RenderFlags.SHADOW_MAP)  == RenderFlags.SHADOW_MAP){
                     if((modelRenderFlag & RenderFlags.SHADOW_MAP) == RenderFlags.SHADOW_MAP){
                         commandList.SetPipeline(modelState.PreEffectsPipeline);
-                        // We assume one other vertex buffer has been bound or will be bound.
-                        for (int i = 0; i < modelState.InstanceShadowMapBuffers.Length; i++)
-                            commandList.SetVertexBuffer(i.ToUnsigned() + 1, modelState.InstanceShadowMapBuffers[i]);
+                        if((modelState.PreEffectsInstancingFlag & RenderFlags.SHADOW_MAP) == RenderFlags.SHADOW_MAP){
+                            var preEffectsInstanceBuffer = modelState.PreEffectsInstanceBuffers[RenderFlags.SHADOW_MAP];
+                            // We assume one other vertex buffer has been bound or will be bound.
+                            for (int i = 0; i < preEffectsInstanceBuffer.Length; i++)
+                                    commandList.SetVertexBuffer(i.ToUnsigned() + 1, preEffectsInstanceBuffer[i]);
+                        }
                     }
 
                 }
@@ -451,13 +454,21 @@ namespace Henzai.Runtime
                     if((modelRenderFlag & RenderFlags.NORMAL) == RenderFlags.NORMAL){
                         commandList.SetPipeline(modelState.Pipeline);
                         effectSets = modelState.EffectResourceSets;
+                        for (int i = 0; i < modelState.InstanceBuffers.Length; i++)
+                            commandList.SetVertexBuffer(i.ToUnsigned() + 1, modelState.InstanceBuffers[i]);
                     }
                 } else if((renderFlag & RenderFlags.SHADOW_MAP)  == RenderFlags.SHADOW_MAP){
-                    if((modelRenderFlag & RenderFlags.SHADOW_MAP) == RenderFlags.SHADOW_MAP)
-                        commandList.SetPipeline(modelState.PreEffectsPipeline);
+                    if((modelRenderFlag & RenderFlags.SHADOW_MAP) == RenderFlags.SHADOW_MAP){
+                        commandList.SetPipeline(modelState.PreEffectsPipeline);                
+                        if((modelState.PreEffectsInstancingFlag & RenderFlags.SHADOW_MAP) == RenderFlags.SHADOW_MAP){
+                            var preEffectsInstanceBuffer = modelState.PreEffectsInstanceBuffers[RenderFlags.SHADOW_MAP];
+                            // We assume one other vertex buffer has been bound or will be bound.
+                            for (int i = 0; i < preEffectsInstanceBuffer.Length; i++)
+                                    commandList.SetVertexBuffer(i.ToUnsigned() + 1, preEffectsInstanceBuffer[i]);
+                        }
+                    }
                 }
-                for (int i = 0; i < modelState.InstanceBuffers.Length; i++)
-                    commandList.SetVertexBuffer(i.ToUnsigned() + 1, modelState.InstanceBuffers[i]);
+
                 var mesh = model.GetMesh(j);
                 var material = model.GetMaterial(meshIndex);
 

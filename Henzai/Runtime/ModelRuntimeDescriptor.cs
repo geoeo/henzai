@@ -27,7 +27,7 @@ namespace Henzai.Runtime
         /// Used During Resource Creation
         /// </summary>
         public List<DeviceBuffer> InstanceBufferList {get; private set;}
-        public List<DeviceBuffer> InstanceShadowMapBufferList {get; private set;}
+        public List<DeviceBuffer>[] PreEffectsInstanceBufferLists {get; private set;}
         /// <summary>
         /// Used During Resource Creation
         /// </summary>
@@ -44,7 +44,7 @@ namespace Henzai.Runtime
         /// Used During Rendering
         /// </summary>
         public DeviceBuffer[] InstanceBuffers {get; private set;}
-        public DeviceBuffer[] InstanceShadowMapBuffers {get; private set;}
+        public DeviceBuffer[][] PreEffectsInstanceBuffers {get; private set;}
         /// <summary>
         /// Used During Rendering
         /// </summary>
@@ -105,6 +105,9 @@ namespace Henzai.Runtime
             VertexRuntimeType = vertexRuntimeType;
             PrimitiveTopology = primitiveTopology;
 
+            var preEffectCount = RenderFlags.PRE_EFFCTS_TOTAL_COUNT;
+            var preEffectsInstancing = RenderFlags.GetAllPreEffectFor(preEffectsInstancingFlag);
+
             RenderFlag = renderFlag;
             PreEffectsFlag = RenderFlags.PRE_EFFECTS_MASK & renderFlag;
             PreEffectsInstancingFlag = preEffectsInstancingFlag;
@@ -113,12 +116,14 @@ namespace Henzai.Runtime
             VertexBufferList = new List<DeviceBuffer>();
             IndexBufferList = new List<DeviceBuffer>();
             InstanceBufferList = new List<DeviceBuffer>();
-            InstanceShadowMapBufferList = new List<DeviceBuffer>();
+            PreEffectsInstanceBufferLists = new List<DeviceBuffer>[preEffectCount];
+            foreach(var preEffect in preEffectsInstancing)
+                PreEffectsInstanceBufferLists[preEffect] = new List<DeviceBuffer>();
+            PreEffectsInstanceBuffers = new DeviceBuffer[preEffectCount][];
             TextureResourceSetsList = new List<ResourceSet>();
             VertexInstanceLayoutGenerationList = new EventHandlerList();
             VertexPreEffectsInstanceLayoutGenerationList = new EventHandlerList();
 
-            var preEffectCount = RenderFlags.PRE_EFFCTS_TOTAL_COUNT;
             VertexPreEffectShaders = new Shader[preEffectCount];
             FragmentPreEffectShaders = new Shader[preEffectCount];
 
@@ -135,8 +140,11 @@ namespace Henzai.Runtime
             VertexBuffers = VertexBufferList.ToArray();
             IndexBuffers = IndexBufferList.ToArray();
             InstanceBuffers = InstanceBufferList.ToArray();
-            InstanceShadowMapBuffers = InstanceShadowMapBufferList.ToArray();
             TextureResourceSets = TextureResourceSetsList.ToArray();
+            var allInstancePreEffects = RenderFlags.GetAllPreEffectFor(PreEffectsInstancingFlag);
+            foreach(var instancePreEffect in allInstancePreEffects)
+                PreEffectsInstanceBuffers[instancePreEffect] = PreEffectsInstanceBufferLists[instancePreEffect].ToArray();
+            
         }
         
         public void LoadShaders(GraphicsDevice graphicsDevice){

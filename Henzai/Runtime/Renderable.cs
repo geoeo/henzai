@@ -368,10 +368,10 @@ namespace Henzai.Runtime
 
                 modelDescriptor.VertexBufferList.Add(vertexBuffer);
                 modelDescriptor.IndexBufferList.Add(indexBuffer);
+                var allInstancePreEffects = RenderFlags.GetAllPreEffectFor(modelDescriptor.PreEffectsInstancingFlag);
 
                 //TODO: @Refactor: The buffer length factor is technically defined in resource generator already
-                //TODO: @Urgent: Decouple InstanceShadowMap buffer from the instance data type!
-                //TODO: Make cases composable
+                //TODO:Decouple InstanceShadowMap buffer from the instance data type!
                 foreach(var instanceData in instancingData){
                     switch(instanceData.Types){
                         case InstancingTypes.Empty:
@@ -379,13 +379,15 @@ namespace Henzai.Runtime
                         case InstancingTypes.Positions:
                             var instancingPositionBuffer = _factory.CreateBuffer(new BufferDescription(instanceData.Positions.Length.ToUnsigned() * 12, BufferUsage.VertexBuffer));
                             modelDescriptor.InstanceBufferList.Add(instancingPositionBuffer);
-                            modelDescriptor.InstanceShadowMapBufferList.Add(instancingPositionBuffer); // decouple
+                            foreach(var preEffect in allInstancePreEffects)
+                                modelDescriptor.PreEffectsInstanceBufferLists[preEffect].Add(instancingPositionBuffer); // decouple
                             _graphicsDevice.UpdateBuffer(instancingPositionBuffer, 0, instanceData.Positions);
                             break;
                         case InstancingTypes.ViewMatricies:
                             var instancingViewMatBuffer = _factory.CreateBuffer(new BufferDescription(instanceData.ViewMatrices.Length.ToUnsigned() * 64, BufferUsage.VertexBuffer));
                             modelDescriptor.InstanceBufferList.Add(instancingViewMatBuffer);
-                            modelDescriptor.InstanceShadowMapBufferList.Add(instancingViewMatBuffer); // decouple
+                            foreach(var preEffect in allInstancePreEffects)
+                                modelDescriptor.PreEffectsInstanceBufferLists[preEffect].Add(instancingViewMatBuffer); // decouple
                             _graphicsDevice.UpdateBuffer(instancingViewMatBuffer, 0, instanceData.ViewMatrices);
                             break;
                     }
