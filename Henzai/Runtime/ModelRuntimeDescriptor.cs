@@ -26,8 +26,7 @@ namespace Henzai.Runtime
         /// <summary>
         /// Used During Resource Creation
         /// </summary>
-        public List<DeviceBuffer> InstanceBufferList {get; private set;}
-        public List<DeviceBuffer>[] PreEffectsInstanceBufferLists {get; private set;}
+        public List<DeviceBuffer>[] InstanceBufferLists {get; private set;}
         /// <summary>
         /// Used During Resource Creation
         /// </summary>
@@ -43,8 +42,7 @@ namespace Henzai.Runtime
         /// <summary>
         /// Used During Rendering
         /// </summary>
-        public DeviceBuffer[] InstanceBuffers {get; private set;}
-        public DeviceBuffer[][] PreEffectsInstanceBuffers {get; private set;}
+        public DeviceBuffer[][] InstanceBuffers {get; private set;}
         /// <summary>
         /// Used During Rendering
         /// </summary>
@@ -65,8 +63,7 @@ namespace Henzai.Runtime
         /// Buffers, Layouts, Shaders, Ratsterizer.
         /// See: <see cref="Veldrid.Pipeline"/>
         /// </summary>
-        public Pipeline Pipeline {get; set;}
-        public Pipeline PreEffectsPipeline {get; set;}
+        public Pipeline[] Pipelines {get; set;}
         /// <summary>
         //TODO: Remove this
         /// Contains Geometry and Material Properties
@@ -105,7 +102,6 @@ namespace Henzai.Runtime
             VertexRuntimeType = vertexRuntimeType;
             PrimitiveTopology = primitiveTopology;
 
-            var preEffectCount = RenderFlags.PRE_EFFCTS_TOTAL_COUNT;
             var preEffectsInstancing = RenderFlags.GetAllPreEffectFor(preEffectsInstancingFlag);
 
             RenderFlag = renderFlag;
@@ -115,17 +111,18 @@ namespace Henzai.Runtime
 
             VertexBufferList = new List<DeviceBuffer>();
             IndexBufferList = new List<DeviceBuffer>();
-            InstanceBufferList = new List<DeviceBuffer>();
-            PreEffectsInstanceBufferLists = new List<DeviceBuffer>[preEffectCount];
+            Pipelines = new Pipeline[RenderFlags.EFFCTS_TOTAL_COUNT];
+            InstanceBufferLists = new List<DeviceBuffer>[RenderFlags.EFFCTS_TOTAL_COUNT];
+            InstanceBufferLists[RenderFlags.NORMAL_ARRAY_INDEX] = new List<DeviceBuffer>();
             foreach(var preEffect in preEffectsInstancing)
-                PreEffectsInstanceBufferLists[preEffect] = new List<DeviceBuffer>();
-            PreEffectsInstanceBuffers = new DeviceBuffer[preEffectCount][];
+                InstanceBufferLists[RenderFlags.GetArrayIndexForFlag(preEffect)] = new List<DeviceBuffer>();
+            InstanceBuffers = new DeviceBuffer[RenderFlags.EFFCTS_TOTAL_COUNT][];
             TextureResourceSetsList = new List<ResourceSet>();
             VertexInstanceLayoutGenerationList = new EventHandlerList();
             VertexPreEffectsInstanceLayoutGenerationList = new EventHandlerList();
 
-            VertexPreEffectShaders = new Shader[preEffectCount];
-            FragmentPreEffectShaders = new Shader[preEffectCount];
+            VertexPreEffectShaders = new Shader[RenderFlags.PRE_EFFCTS_TOTAL_COUNT];
+            FragmentPreEffectShaders = new Shader[RenderFlags.PRE_EFFCTS_TOTAL_COUNT];
 
             // Reserve first spot for base vertex geometry
             VertexLayouts = new VertexLayoutDescription[InstancingFlags.GetSizeOfPreEffectFlag(InstancingFlag)+1];
@@ -139,11 +136,13 @@ namespace Henzai.Runtime
         public void FormatResourcesForRuntime(){
             VertexBuffers = VertexBufferList.ToArray();
             IndexBuffers = IndexBufferList.ToArray();
-            InstanceBuffers = InstanceBufferList.ToArray();
             TextureResourceSets = TextureResourceSetsList.ToArray();
-            var allInstancePreEffects = RenderFlags.GetAllPreEffectFor(PreEffectsInstancingFlag);
-            foreach(var instancePreEffect in allInstancePreEffects)
-                PreEffectsInstanceBuffers[instancePreEffect] = PreEffectsInstanceBufferLists[instancePreEffect].ToArray();
+            foreach(var flag in RenderFlags.ALL_RENDER_FLAGS){
+                var index = RenderFlags.GetArrayIndexForFlag(flag);
+                var instanceBufferList = InstanceBufferLists[index];
+                InstanceBuffers[index] = instanceBufferList == null ? new DeviceBuffer[0] : InstanceBufferLists[index].ToArray();
+            }
+
             
         }
         
@@ -153,7 +152,7 @@ namespace Henzai.Runtime
 
             var preEffects = RenderFlags.GetAllPreEffectFor(PreEffectsFlag);
             foreach(var flag in preEffects){
-                var arrayIndex = RenderFlags.GetArrayIndexForPreEffectFlag(flag);
+                var arrayIndex = RenderFlags.GetPreEffectArrayIndexForFlag(flag);
                 var name = ShaderNames.PreEffectShaderNames[arrayIndex];
                 VertexPreEffectShaders[arrayIndex] = IO.LoadShader(name, ShaderStages.Vertex, graphicsDevice);
                 FragmentPreEffectShaders[arrayIndex] = IO.LoadShader(name, ShaderStages.Fragment, graphicsDevice);
@@ -173,7 +172,7 @@ namespace Henzai.Runtime
                 var key = flagKeyTuple.Item2;
                 var vertexInstanceDeletegate = (VertexInstanceLayoutGenerationList[key] as Func<VertexLayoutDescription>);
                 if(vertexInstanceDeletegate != null)
-                    VertexLayouts[RenderFlags.GetArrayIndexForPreEffectFlag(flag)+1] = vertexInstanceDeletegate.Invoke();      
+                    VertexLayouts[RenderFlags.GetPreEffectArrayIndexForFlag(flag)+1] = vertexInstanceDeletegate.Invoke();      
             }
 
             foreach(var flagKeyTuple in PreEffectKeys.GetFlagKeyTuples()){
@@ -181,7 +180,7 @@ namespace Henzai.Runtime
                 var key = flagKeyTuple.Item2;
                 var vertexInstanceDeletegate = (VertexPreEffectsInstanceLayoutGenerationList[key] as Func<VertexLayoutDescription>);
                 if(vertexInstanceDeletegate != null)
-                    VertexPreEffectsLayouts[RenderFlags.GetArrayIndexForPreEffectFlag(flag)+1] = vertexInstanceDeletegate.Invoke();        
+                    VertexPreEffectsLayouts[RenderFlags.GetPreEffectArrayIndexForFlag(flag)+1] = vertexInstanceDeletegate.Invoke();        
             }
  
         }

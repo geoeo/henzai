@@ -299,7 +299,7 @@ namespace Henzai.Runtime
                                                                     SceneRuntimeDescriptor sceneRuntimeDescriptor)
         {
             var model = cubeMapRuntimeDescriptor.Model;
-            commandList.SetPipeline(cubeMapRuntimeDescriptor.Pipeline);
+            commandList.SetPipeline(cubeMapRuntimeDescriptor.Pipelines[RenderFlags.NORMAL_ARRAY_INDEX]);
             for (int i = 0; i < model.MeshCount; i++)
             {
                 var mesh = model.GetMesh(i);
@@ -327,28 +327,19 @@ namespace Henzai.Runtime
                 var modelState = descriptorArray[j];
                 var effectSets = sceneRuntimeDescriptor.NO_RESOURCE_SET;
                 var modelRenderFlag = modelState.RenderFlag;
-                //TODO:@Refactor, @Performance: Somehow remove this double/triple if
-                if((renderFlag & RenderFlags.NORMAL)  == RenderFlags.NORMAL){
-                    if((modelRenderFlag & RenderFlags.NORMAL) == RenderFlags.NORMAL){
-                        commandList.SetPipeline(modelState.Pipeline);
-                        effectSets = modelState.EffectResourceSets;
-                        // We assume one other vertex buffer has been bound or will be bound.
-                        for (int i = 0; i < modelState.InstanceBuffers.Length; i++)
-                            commandList.SetVertexBuffer(i.ToUnsigned() + 1, modelState.InstanceBuffers[i]);
-                    }
-                }
-                else if((renderFlag & RenderFlags.SHADOW_MAP)  == RenderFlags.SHADOW_MAP){
-                    if((modelRenderFlag & RenderFlags.SHADOW_MAP) == RenderFlags.SHADOW_MAP){
-                        commandList.SetPipeline(modelState.PreEffectsPipeline);
-                        if((modelState.PreEffectsInstancingFlag & RenderFlags.SHADOW_MAP) == RenderFlags.SHADOW_MAP){
-                            var preEffectsInstanceBuffer = modelState.PreEffectsInstanceBuffers[RenderFlags.SHADOW_MAP];
-                            // We assume one other vertex buffer has been bound or will be bound.
-                            for (int i = 0; i < preEffectsInstanceBuffer.Length; i++)
-                                    commandList.SetVertexBuffer(i.ToUnsigned() + 1, preEffectsInstanceBuffer[i]);
-                        }
-                    }
+                var currentRenderState = modelRenderFlag & renderFlag;
+                if(currentRenderState == RenderFlags.NONE)
+                    continue;
+                var renderStateArrayIndex = RenderFlags.GetArrayIndexForFlag(currentRenderState);
+                commandList.SetPipeline(modelState.Pipelines[renderStateArrayIndex]);
+                var effectsInstanceBuffer = modelState.InstanceBuffers[renderStateArrayIndex];
+                // We assume one other vertex buffer has been bound or will be bound.
+                for (int i = 0; i < effectsInstanceBuffer.Length; i++)
+                    commandList.SetVertexBuffer(i.ToUnsigned() + 1, effectsInstanceBuffer[i]);
 
-                }
+                if((currentRenderState & RenderFlags.NORMAL) == RenderFlags.NORMAL)
+                    effectSets = modelState.EffectResourceSets;
+
                 var model = modelState.Model;
 
                 for (int i = 0; i < model.MeshCount; i++)
@@ -358,6 +349,7 @@ namespace Henzai.Runtime
                     var mesh = model.GetMesh(i);
                     var material = model.GetMaterial(i);
 
+                    //TODO: @Investiagte this
                     if((renderFlag & RenderFlags.SHADOW_MAP)  == RenderFlags.SHADOW_MAP || vertexRuntimeType == VertexRuntimeTypes.VertexPositionColor)
                         RenderCommandGenerator.GenerateCommandsForMesh_Inline(
                             commandList,
@@ -450,24 +442,18 @@ namespace Henzai.Runtime
                 var model = modelState.Model;
                 var effectSets = sceneRuntimeDescriptor.NO_RESOURCE_SET;
                 var modelRenderFlag = modelState.RenderFlag;
-                if((renderFlag & RenderFlags.NORMAL)  == RenderFlags.NORMAL){
-                    if((modelRenderFlag & RenderFlags.NORMAL) == RenderFlags.NORMAL){
-                        commandList.SetPipeline(modelState.Pipeline);
-                        effectSets = modelState.EffectResourceSets;
-                        for (int i = 0; i < modelState.InstanceBuffers.Length; i++)
-                            commandList.SetVertexBuffer(i.ToUnsigned() + 1, modelState.InstanceBuffers[i]);
-                    }
-                } else if((renderFlag & RenderFlags.SHADOW_MAP)  == RenderFlags.SHADOW_MAP){
-                    if((modelRenderFlag & RenderFlags.SHADOW_MAP) == RenderFlags.SHADOW_MAP){
-                        commandList.SetPipeline(modelState.PreEffectsPipeline);                
-                        if((modelState.PreEffectsInstancingFlag & RenderFlags.SHADOW_MAP) == RenderFlags.SHADOW_MAP){
-                            var preEffectsInstanceBuffer = modelState.PreEffectsInstanceBuffers[RenderFlags.SHADOW_MAP];
-                            // We assume one other vertex buffer has been bound or will be bound.
-                            for (int i = 0; i < preEffectsInstanceBuffer.Length; i++)
-                                    commandList.SetVertexBuffer(i.ToUnsigned() + 1, preEffectsInstanceBuffer[i]);
-                        }
-                    }
-                }
+                var currentRenderState = modelRenderFlag & renderFlag;
+                if(currentRenderState == RenderFlags.NONE)
+                    continue;
+                var renderStateArrayIndex = RenderFlags.GetArrayIndexForFlag(currentRenderState);
+                commandList.SetPipeline(modelState.Pipelines[renderStateArrayIndex]);
+                var effectsInstanceBuffer = modelState.InstanceBuffers[renderStateArrayIndex];
+                // We assume one other vertex buffer has been bound or will be bound.
+                for (int i = 0; i < effectsInstanceBuffer.Length; i++)
+                    commandList.SetVertexBuffer(i.ToUnsigned() + 1, effectsInstanceBuffer[i]);
+
+                if((currentRenderState & RenderFlags.NORMAL) == RenderFlags.NORMAL)
+                    effectSets = modelState.EffectResourceSets;
 
                 var mesh = model.GetMesh(j);
                 var material = model.GetMaterial(meshIndex);

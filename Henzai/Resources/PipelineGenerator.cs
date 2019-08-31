@@ -167,7 +167,7 @@ namespace Henzai
             Framebuffer framebuffer) where T : struct, VertexLocateable {
 
             //TODO: Build resource layout outside and pass as parameter
-            var shaderArrayIndex = RenderFlags.GetArrayIndexForPreEffectFlag(preEffectFlag);
+            var shaderArrayIndex = RenderFlags.GetPreEffectArrayIndexForFlag(preEffectFlag);
 
             return new GraphicsPipelineDescription(){
                 BlendState = BlendStateDescription.SingleOverrideBlend,
