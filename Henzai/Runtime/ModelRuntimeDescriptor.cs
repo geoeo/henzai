@@ -48,7 +48,7 @@ namespace Henzai.Runtime
         /// </summary>
         public ResourceSet[] TextureResourceSets {get; private set;}
         public ResourceLayout TextureResourceLayout {get; set;}
-        public ResourceSet[] EffectResourceSets {get;set;}
+        public ResourceSet[][] EffectResourceSets {get;set;}
         public Sampler TextureSampler {get;set;}
         public Shader VertexShader {get; private set;}
         public VertexLayoutDescription[] VertexLayouts {get;private set;}
@@ -127,6 +127,11 @@ namespace Henzai.Runtime
             // Reserve first spot for base vertex geometry
             VertexLayouts = new VertexLayoutDescription[InstancingFlags.GetSizeOfPreEffectFlag(InstancingFlag)+1];
             VertexPreEffectsLayouts = new VertexLayoutDescription[RenderFlags.GetSizeOfPreEffectFlag(PreEffectsInstancingFlag)+1];
+
+            EffectResourceSets = new ResourceSet[RenderFlags.EFFCTS_TOTAL_COUNT][];
+            for(int i = 0; i < RenderFlags.EFFCTS_TOTAL_COUNT;i++)
+                EffectResourceSets[i] = new ResourceSet[0];
+            
         }
 
         /// <summary>

@@ -420,18 +420,19 @@ namespace Henzai.Runtime
                     scissorTestEnabled: false
                 );
 
-            var effectLayoutList = new List<ResourceLayout>();
-            modelDescriptor.EffectResourceSets = new ResourceSet[effectCount];
-
             //TODO: @Omnishadows streamline this
+            var effectLayoutList = new List<ResourceLayout>();
+            modelDescriptor.EffectResourceSets[RenderFlags.NORMAL_ARRAY_INDEX] = new ResourceSet[effectCount];
+
+
             if(shadowMapEnabled){
                 var shadowMapRenderable =  _childrenPre[RenderFlags.GetPreEffectArrayIndexForFlag(RenderFlags.SHADOW_MAP)] as ShadowMap;
                 var shadowMapResourceLayout = ResourceGenerator.GenerateTextureResourceLayoutForShadowMapping(_factory);
                 effectLayoutList.Add(sceneRuntimeDescriptor.LightProvViewResourceLayout);
                 effectLayoutList.Add(shadowMapResourceLayout);
                 //TODO: Put this in the scene renderable
-                modelDescriptor.EffectResourceSets[RenderFlags.GetPreEffectArrayIndexForFlag(RenderFlags.SHADOW_MAP)] = sceneRuntimeDescriptor.LightProjViewResourceSet;
-                modelDescriptor.EffectResourceSets[RenderFlags.GetPreEffectArrayIndexForFlag(RenderFlags.SHADOW_MAP)+1] = ResourceGenerator.GenerateResourceSetForShadowMapping(shadowMapRenderable.ShadowMapTexView,_factory);
+                modelDescriptor.EffectResourceSets[RenderFlags.NORMAL_ARRAY_INDEX][RenderFlags.GetPreEffectArrayIndexForFlag(RenderFlags.SHADOW_MAP)] = sceneRuntimeDescriptor.LightProjViewResourceSet;
+                modelDescriptor.EffectResourceSets[RenderFlags.NORMAL_ARRAY_INDEX][RenderFlags.GetPreEffectArrayIndexForFlag(RenderFlags.SHADOW_MAP)+1] = ResourceGenerator.GenerateResourceSetForShadowMapping(shadowMapRenderable.ShadowMapTexView,_factory);
             }
 
 

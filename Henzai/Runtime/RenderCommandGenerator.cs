@@ -308,7 +308,7 @@ namespace Henzai.Runtime
                     cubeMapRuntimeDescriptor,
                     i,
                     sceneRuntimeDescriptor,
-                    cubeMapRuntimeDescriptor.EffectResourceSets,
+                    cubeMapRuntimeDescriptor.EffectResourceSets[RenderFlags.NORMAL_ARRAY_INDEX],
                     mesh,
                     cubeMapRuntimeDescriptor.TotalInstanceCount
                 );
@@ -325,7 +325,6 @@ namespace Henzai.Runtime
             for (int j = 0; j < descriptorArray.Length; j++)
             {
                 var modelState = descriptorArray[j];
-                var effectSets = sceneRuntimeDescriptor.NO_RESOURCE_SET;
                 var modelRenderFlag = modelState.RenderFlag;
                 var currentRenderState = modelRenderFlag & renderFlag;
                 if(currentRenderState == RenderFlags.NONE)
@@ -337,8 +336,7 @@ namespace Henzai.Runtime
                 for (int i = 0; i < effectsInstanceBuffer.Length; i++)
                     commandList.SetVertexBuffer(i.ToUnsigned() + 1, effectsInstanceBuffer[i]);
 
-                if((currentRenderState & RenderFlags.NORMAL) == RenderFlags.NORMAL)
-                    effectSets = modelState.EffectResourceSets;
+                var effectSets = modelState.EffectResourceSets[renderStateArrayIndex];
 
                 var model = modelState.Model;
 
@@ -440,7 +438,6 @@ namespace Henzai.Runtime
                 var meshIndex = meshBVH.MeshRuntimeIndex;
                 var modelState = descriptorArray[modelStateIndex];
                 var model = modelState.Model;
-                var effectSets = sceneRuntimeDescriptor.NO_RESOURCE_SET;
                 var modelRenderFlag = modelState.RenderFlag;
                 var currentRenderState = modelRenderFlag & renderFlag;
                 if(currentRenderState == RenderFlags.NONE)
@@ -452,8 +449,7 @@ namespace Henzai.Runtime
                 for (int i = 0; i < effectsInstanceBuffer.Length; i++)
                     commandList.SetVertexBuffer(i.ToUnsigned() + 1, effectsInstanceBuffer[i]);
 
-                if((currentRenderState & RenderFlags.NORMAL) == RenderFlags.NORMAL)
-                    effectSets = modelState.EffectResourceSets;
+                var effectSets = modelState.EffectResourceSets[renderStateArrayIndex];
 
                 var mesh = model.GetMesh(j);
                 var material = model.GetMaterial(meshIndex);
