@@ -125,6 +125,7 @@ namespace Henzai.Runtime
             FragmentPreEffectShaders = new Shader[RenderFlags.PRE_EFFCTS_TOTAL_COUNT];
 
             // Reserve first spot for base vertex geometry
+            //TODO: Make on list
             VertexLayouts = new VertexLayoutDescription[InstancingFlags.GetSizeOfPreEffectFlag(InstancingFlag)+1];
             VertexPreEffectsLayouts = new VertexLayoutDescription[RenderFlags.GetSizeOfPreEffectFlag(PreEffectsInstancingFlag)+1];
 

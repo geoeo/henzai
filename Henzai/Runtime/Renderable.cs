@@ -434,35 +434,38 @@ namespace Henzai.Runtime
                 modelDescriptor.EffectResourceSets[RenderFlags.NORMAL_ARRAY_INDEX][RenderFlags.GetPreEffectArrayIndexForFlag(RenderFlags.SHADOW_MAP)] = sceneRuntimeDescriptor.LightProjViewResourceSet;
                 modelDescriptor.EffectResourceSets[RenderFlags.NORMAL_ARRAY_INDEX][RenderFlags.GetPreEffectArrayIndexForFlag(RenderFlags.SHADOW_MAP)+1] = ResourceGenerator.GenerateResourceSetForShadowMapping(shadowMapRenderable.ShadowMapTexView,_factory);
             }
+            
 
 
             //TODO: @Omnishadows: Make InstaceLayoutGeneration trigger due to render state OR make this also invokable on a per-scene basis
             modelDescriptor.InvokeVertexLayoutGeneration();
             var effectLayoutArray = effectLayoutList.ToArray();
-
+            //TODO: make this static in RenderFlags
+            var normalIndex = RenderFlags.GetArrayIndexForFlag(RenderFlags.NORMAL);
+            var shadowMapIndex = RenderFlags.GetArrayIndexForFlag(RenderFlags.SHADOW_MAP);
             switch (modelDescriptor.VertexRuntimeType)
             {
                 // Only cube maps for now
                 case VertexRuntimeTypes.VertexPosition:
                 //TODO: Use proper constants from RenderFlags.cs
-                    modelDescriptor.Pipelines[0] = _factory.CreateGraphicsPipeline(PipelineGenerator.GeneratePipelineP(modelDescriptor, sceneRuntimeDescriptor,rasterizerStateCullFront, _graphicsDevice.SwapchainFramebuffer,effectLayoutArray));
-                    modelDescriptor.Pipelines[1] =  shadowMapEnabled ? _factory.CreateGraphicsPipeline(PipelineGenerator.GeneratePreEffectPipeline(modelDescriptor, _childrenPre[RenderFlags.GetPreEffectArrayIndexForFlag(RenderFlags.SHADOW_MAP)].SceneRuntimeDescriptor,rasterizerStateCullFront,RenderFlags.SHADOW_MAP, _childrenPre[RenderFlags.GetPreEffectArrayIndexForFlag(RenderFlags.SHADOW_MAP)].FrameBuffer)) : null;
+                    modelDescriptor.Pipelines[normalIndex] = _factory.CreateGraphicsPipeline(PipelineGenerator.GeneratePipelineP(modelDescriptor, sceneRuntimeDescriptor,rasterizerStateCullFront, _graphicsDevice.SwapchainFramebuffer,effectLayoutArray));
+                    modelDescriptor.Pipelines[shadowMapIndex] =  shadowMapEnabled ? _factory.CreateGraphicsPipeline(PipelineGenerator.GeneratePreEffectPipeline(modelDescriptor, _childrenPre[RenderFlags.GetPreEffectArrayIndexForFlag(RenderFlags.SHADOW_MAP)].SceneRuntimeDescriptor,rasterizerStateCullFront,RenderFlags.SHADOW_MAP, _childrenPre[RenderFlags.GetPreEffectArrayIndexForFlag(RenderFlags.SHADOW_MAP)].FrameBuffer)) : null;
                     break;
                 case VertexRuntimeTypes.VertexPositionNormal:
-                    modelDescriptor.Pipelines[0] = _factory.CreateGraphicsPipeline(PipelineGenerator.GeneratePipelinePN(modelDescriptor, sceneRuntimeDescriptor,rasterizerStateCullBack, _graphicsDevice.SwapchainFramebuffer,effectLayoutArray));
-                    modelDescriptor.Pipelines[1] = shadowMapEnabled ? _factory.CreateGraphicsPipeline(PipelineGenerator.GeneratePreEffectPipeline(modelDescriptor, _childrenPre[RenderFlags.GetPreEffectArrayIndexForFlag(RenderFlags.SHADOW_MAP)].SceneRuntimeDescriptor ,rasterizerStateCullFront,RenderFlags.SHADOW_MAP, _childrenPre[RenderFlags.GetPreEffectArrayIndexForFlag(RenderFlags.SHADOW_MAP)].FrameBuffer)) : null;
+                    modelDescriptor.Pipelines[normalIndex] = _factory.CreateGraphicsPipeline(PipelineGenerator.GeneratePipelinePN(modelDescriptor, sceneRuntimeDescriptor,rasterizerStateCullBack, _graphicsDevice.SwapchainFramebuffer,effectLayoutArray));
+                    modelDescriptor.Pipelines[shadowMapIndex] = shadowMapEnabled ? _factory.CreateGraphicsPipeline(PipelineGenerator.GeneratePreEffectPipeline(modelDescriptor, _childrenPre[RenderFlags.GetPreEffectArrayIndexForFlag(RenderFlags.SHADOW_MAP)].SceneRuntimeDescriptor ,rasterizerStateCullFront,RenderFlags.SHADOW_MAP, _childrenPre[RenderFlags.GetPreEffectArrayIndexForFlag(RenderFlags.SHADOW_MAP)].FrameBuffer)) : null;
                     break;
                 case VertexRuntimeTypes.VertexPositionNormalTextureTangentBitangent:
-                    modelDescriptor.Pipelines[0] = _factory.CreateGraphicsPipeline(PipelineGenerator.GeneratePipelinePNTTB(modelDescriptor, sceneRuntimeDescriptor,rasterizerStateCullBack, _graphicsDevice.SwapchainFramebuffer,effectLayoutArray));
-                    modelDescriptor.Pipelines[1] = shadowMapEnabled ? _factory.CreateGraphicsPipeline(PipelineGenerator.GeneratePreEffectPipeline(modelDescriptor, _childrenPre[RenderFlags.GetPreEffectArrayIndexForFlag(RenderFlags.SHADOW_MAP)].SceneRuntimeDescriptor , rasterizerStateCullFront,RenderFlags.SHADOW_MAP,_childrenPre[RenderFlags.GetPreEffectArrayIndexForFlag(RenderFlags.SHADOW_MAP)].FrameBuffer)) : null;
+                    modelDescriptor.Pipelines[normalIndex] = _factory.CreateGraphicsPipeline(PipelineGenerator.GeneratePipelinePNTTB(modelDescriptor, sceneRuntimeDescriptor,rasterizerStateCullBack, _graphicsDevice.SwapchainFramebuffer,effectLayoutArray));
+                    modelDescriptor.Pipelines[shadowMapIndex] = shadowMapEnabled ? _factory.CreateGraphicsPipeline(PipelineGenerator.GeneratePreEffectPipeline(modelDescriptor, _childrenPre[RenderFlags.GetPreEffectArrayIndexForFlag(RenderFlags.SHADOW_MAP)].SceneRuntimeDescriptor , rasterizerStateCullFront,RenderFlags.SHADOW_MAP,_childrenPre[RenderFlags.GetPreEffectArrayIndexForFlag(RenderFlags.SHADOW_MAP)].FrameBuffer)) : null;
                     break;
                 case VertexRuntimeTypes.VertexPositionColor:
-                    modelDescriptor.Pipelines[0] = _factory.CreateGraphicsPipeline(PipelineGenerator.GeneratePipelinePC(modelDescriptor, sceneRuntimeDescriptor,rasterizerStateCullBack, _graphicsDevice.SwapchainFramebuffer,effectLayoutArray));
-                    modelDescriptor.Pipelines[1] = shadowMapEnabled ? _factory.CreateGraphicsPipeline(PipelineGenerator.GeneratePreEffectPipeline(modelDescriptor, _childrenPre[RenderFlags.GetPreEffectArrayIndexForFlag(RenderFlags.SHADOW_MAP)].SceneRuntimeDescriptor, rasterizerStateCullFront,RenderFlags.SHADOW_MAP,_childrenPre[RenderFlags.GetPreEffectArrayIndexForFlag(RenderFlags.SHADOW_MAP)].FrameBuffer)) : null;
+                    modelDescriptor.Pipelines[normalIndex] = _factory.CreateGraphicsPipeline(PipelineGenerator.GeneratePipelinePC(modelDescriptor, sceneRuntimeDescriptor,rasterizerStateCullBack, _graphicsDevice.SwapchainFramebuffer,effectLayoutArray));
+                    modelDescriptor.Pipelines[shadowMapIndex] = shadowMapEnabled ? _factory.CreateGraphicsPipeline(PipelineGenerator.GeneratePreEffectPipeline(modelDescriptor, _childrenPre[RenderFlags.GetPreEffectArrayIndexForFlag(RenderFlags.SHADOW_MAP)].SceneRuntimeDescriptor, rasterizerStateCullFront,RenderFlags.SHADOW_MAP,_childrenPre[RenderFlags.GetPreEffectArrayIndexForFlag(RenderFlags.SHADOW_MAP)].FrameBuffer)) : null;
                     break;
                 case VertexRuntimeTypes.VertexPositionTexture:
-                    modelDescriptor.Pipelines[0] = _factory.CreateGraphicsPipeline(PipelineGenerator.GeneratePipelinePT(modelDescriptor, sceneRuntimeDescriptor,rasterizerStateCullBack, _graphicsDevice.SwapchainFramebuffer,effectLayoutArray));
-                    modelDescriptor.Pipelines[1] = shadowMapEnabled ? _factory.CreateGraphicsPipeline(PipelineGenerator.GeneratePreEffectPipeline(modelDescriptor, _childrenPre[RenderFlags.GetPreEffectArrayIndexForFlag(RenderFlags.SHADOW_MAP)].SceneRuntimeDescriptor,rasterizerStateCullFront,RenderFlags.SHADOW_MAP, _childrenPre[RenderFlags.GetPreEffectArrayIndexForFlag(RenderFlags.SHADOW_MAP)].FrameBuffer)) : null;
+                    modelDescriptor.Pipelines[normalIndex] = _factory.CreateGraphicsPipeline(PipelineGenerator.GeneratePipelinePT(modelDescriptor, sceneRuntimeDescriptor,rasterizerStateCullBack, _graphicsDevice.SwapchainFramebuffer,effectLayoutArray));
+                    modelDescriptor.Pipelines[shadowMapIndex] = shadowMapEnabled ? _factory.CreateGraphicsPipeline(PipelineGenerator.GeneratePreEffectPipeline(modelDescriptor, _childrenPre[RenderFlags.GetPreEffectArrayIndexForFlag(RenderFlags.SHADOW_MAP)].SceneRuntimeDescriptor,rasterizerStateCullFront,RenderFlags.SHADOW_MAP, _childrenPre[RenderFlags.GetPreEffectArrayIndexForFlag(RenderFlags.SHADOW_MAP)].FrameBuffer)) : null;
                     break;
                 default:
                     throw new NotImplementedException($"{modelDescriptor.VertexRuntimeType.ToString("g")} not implemented");
