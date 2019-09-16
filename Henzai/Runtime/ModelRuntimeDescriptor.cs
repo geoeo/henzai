@@ -7,6 +7,7 @@ using Henzai.Core;
 using Henzai.Core.Materials;
 using Henzai.Core.VertexGeometry;
 using Henzai.Core.Reflection;
+using Henzai.Runtime.EventHandlerKeys;
 
 namespace Henzai.Runtime
 {
@@ -85,7 +86,6 @@ namespace Henzai.Runtime
         // TODO: @Performance: Investigate Texture Cache for already loaded textures
         public event Func<ModelRuntimeDescriptor<T>,int,DisposeCollectorResourceFactory,GraphicsDevice,ResourceSet> CallTextureResourceSetGeneration;
 
-        //TODO: @Refactor: Unify all Flags + Render state. At the moment we assume every geometry is ALWAYS rendering in RenderState.Normal
         public ModelRuntimeDescriptor(Model<T, RealtimeMaterial> modelIn, string vShaderName, string fShaderName, VertexRuntimeTypes vertexRuntimeType, PrimitiveTopology primitiveTopology, uint renderFlag, uint preEffectsInstancingFlag, uint instancingFlag){
 
             if(!Verifier.VerifyVertexStruct<T>(vertexRuntimeType))
@@ -173,7 +173,7 @@ namespace Henzai.Runtime
             VertexPreEffectsLayouts[0]= CallVertexLayoutGeneration.Invoke();
 
             // Instancing data
-            foreach(var flagKeyTuple in InstancingKeys.GetFlagKeyTuples()){
+            foreach(var flagKeyTuple in InstancingEventHandlerKeys.GetFlagKeyTuples()){
                 var flag = flagKeyTuple.Item1;
                 var key = flagKeyTuple.Item2;
                 var vertexInstanceDeletegate = (VertexInstanceLayoutGenerationList[key] as Func<VertexLayoutDescription>);
@@ -181,7 +181,7 @@ namespace Henzai.Runtime
                     VertexLayouts[RenderFlags.GetPreEffectArrayIndexForFlag(flag)+1] = vertexInstanceDeletegate.Invoke();      
             }
 
-            foreach(var flagKeyTuple in PreEffectKeys.GetFlagKeyTuples()){
+            foreach(var flagKeyTuple in PreEffectEventHandlerKeys.GetFlagKeyTuples()){
                 var flag = flagKeyTuple.Item1;
                 var key = flagKeyTuple.Item2;
                 var vertexInstanceDeletegate = (VertexPreEffectsInstanceLayoutGenerationList[key] as Func<VertexLayoutDescription>);
@@ -209,10 +209,10 @@ namespace Henzai.Runtime
                 throw new System.ArgumentException($"PreEffects id: {id} does not match the stored PreEffectsTypes");
 
             else if((id & RenderFlags.SHADOW_MAP) == RenderFlags.SHADOW_MAP)
-                VertexPreEffectsInstanceLayoutGenerationList.AddHandler(PreEffectKeys.ShadowMapKey, vertexLayoutDelegate);
+                VertexPreEffectsInstanceLayoutGenerationList.AddHandler(PreEffectEventHandlerKeys.ShadowMapKey, vertexLayoutDelegate);
             
             else if((id & RenderFlags.OMNI_SHADOW_MAPS) == RenderFlags.OMNI_SHADOW_MAPS)
-                VertexPreEffectsInstanceLayoutGenerationList.AddHandler(PreEffectKeys.OmniShadowMapKey, vertexLayoutDelegate);
+                VertexPreEffectsInstanceLayoutGenerationList.AddHandler(PreEffectEventHandlerKeys.OmniShadowMapKey, vertexLayoutDelegate);
         
         }
 
@@ -220,10 +220,10 @@ namespace Henzai.Runtime
 
             switch(instancingTypes){
                 case InstancingTypes.Positions:
-                    VertexInstanceLayoutGenerationList.AddHandler(InstancingKeys.PositionKey, vertexLayoutDelegate);
+                    VertexInstanceLayoutGenerationList.AddHandler(InstancingEventHandlerKeys.PositionKey, vertexLayoutDelegate);
                 break;
                 case InstancingTypes.ViewMatricies:
-                    VertexInstanceLayoutGenerationList.AddHandler(InstancingKeys.ViewMatricesKey, vertexLayoutDelegate);
+                    VertexInstanceLayoutGenerationList.AddHandler(InstancingEventHandlerKeys.ViewMatricesKey, vertexLayoutDelegate);
                 break;
                 case InstancingTypes.Empty:
                     Debug.WriteLine("No need to set delegate for NO_DATA. Maybe you are using the wrong flag?");
