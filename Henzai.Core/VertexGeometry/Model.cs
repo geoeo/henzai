@@ -31,7 +31,7 @@ namespace Henzai.Core
         /// <summary>
         /// Should be get only! But this is not possible to enforce with refs
         /// </summary>
-        public ref Matrix4x4 GetWorld_DontMutate => ref _world;
+        public ref readonly Matrix4x4 GetWorld => ref _world;
         public string BaseDir { get; private set; }
 
         public Model(string directory, Mesh<T>[] meshes, U[] materials)

@@ -171,7 +171,7 @@ namespace Henzai.Examples
                 _commandList.SetIndexBuffer(_indexBuffers[i], IndexFormat.UInt16);
                 _commandList.UpdateBuffer(_cameraProjViewBuffer, 0, Camera.ViewMatrix);
                 _commandList.UpdateBuffer(_cameraProjViewBuffer, 64, Camera.ProjectionMatrix);
-                _commandList.UpdateBuffer(_cameraProjViewBuffer, 128, _model.GetWorld_DontMutate);
+                _commandList.UpdateBuffer(_cameraProjViewBuffer, 128, _model.GetWorld);
                 _commandList.SetGraphicsResourceSet(0, _cameraResourceSet); // Always after SetPipeline
                 _commandList.UpdateBuffer(_lightBuffer, 0, Light.DEFAULT_POSITION);
                 _commandList.UpdateBuffer(_lightBuffer, 16, Light.DEFAULT_COLOR);

@@ -29,11 +29,11 @@ namespace Henzai.Examples
             var radian_fast = (Math.PI.ToFloat()/180.0f)*delta*100.0f;
 
             // Rotate  nanosuit around itself
-            var newWorld = _nanosuit.GetWorld_DontMutate*Matrix4x4.CreateRotationY(radian_fast);
+            var newWorld = _nanosuit.GetWorld*Matrix4x4.CreateRotationY(radian_fast);
 
             // Rotate around Sun without rotation around oneself
-            Vector3 pos  = _nanosuit.GetWorld_DontMutate.Translation;
-            Vector3 sunPos = _sun.GetWorld_DontMutate.Translation;
+            Vector3 pos  = _nanosuit.GetWorld.Translation;
+            Vector3 sunPos = _sun.GetWorld.Translation;
             Quaternion rotationAroundY = Quaternion.CreateFromAxisAngle(Vector3.UnitY,radian_slow);
             pos -= sunPos;
             pos = Vector3.Transform(pos, rotationAroundY);

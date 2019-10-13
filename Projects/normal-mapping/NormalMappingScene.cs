@@ -45,7 +45,7 @@ namespace Henzai.Examples
         }
 
         private void RotateSphereModel(float delta, Camera camera){
-            var newWorld = _model.GetWorld_DontMutate*Matrix4x4.CreateRotationY(Math.PI.ToFloat()/1000.0f);
+            var newWorld = _model.GetWorld*Matrix4x4.CreateRotationY(Math.PI.ToFloat()/1000.0f);
             _model.SetNewWorldTransformation(ref newWorld,true);
         }
 
@@ -204,7 +204,7 @@ namespace Henzai.Examples
                 _commandList.SetIndexBuffer(_indexBuffers[i],IndexFormat.UInt16);
                 _commandList.UpdateBuffer(_cameraProjViewBuffer,0,Camera.ViewMatrix);
                 _commandList.UpdateBuffer(_cameraProjViewBuffer,64,Camera.ProjectionMatrix);
-                _commandList.UpdateBuffer(_cameraProjViewBuffer,128,_model.GetWorld_DontMutate);
+                _commandList.UpdateBuffer(_cameraProjViewBuffer,128,_model.GetWorld);
                 _commandList.SetGraphicsResourceSet(0,_cameraResourceSet); // Always after SetPipeline
                 _commandList.UpdateBuffer(_lightBuffer,0,LIGHT_POS);
                 _commandList.SetGraphicsResourceSet(1,_lightResourceSet);

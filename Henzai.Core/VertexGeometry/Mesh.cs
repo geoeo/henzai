@@ -19,7 +19,7 @@ namespace Henzai.Core.VertexGeometry
         public ushort[] Indices => _indices;
         public int VertexCount => _vertices.Length;
         public int IndexCount => _indices.Length;
-        public ref Matrix4x4 World => ref _world;
+        public ref readonly Matrix4x4 World => ref _world;
         public Mesh(T[] vertices)
         {
             Debug.Assert(vertices != null);
