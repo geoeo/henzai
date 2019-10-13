@@ -21,12 +21,12 @@ namespace Henzai.Core.VertexGeometry
         }
 
         public VertexPositionNormal(ref Vector4 position, ref VertexPositionNormal v){
-            Position = Numerics.Vector.ToVec3(ref position);
+            Position = Numerics.Vector.ToVec3(position);
             Normal = v.Normal;
         }
 
         public VertexPositionNormal(Vector4 position, VertexPositionNormal v){
-            Position = Numerics.Vector.ToVec3(ref position);
+            Position = Numerics.Vector.ToVec3(position);
             Normal = v.Normal;
         }
 

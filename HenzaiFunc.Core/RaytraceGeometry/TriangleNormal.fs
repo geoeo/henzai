@@ -40,7 +40,7 @@ type TriangleNormal<'T when 'T : struct and 'T :> VertexLocateable>(v0 : Vector3
             let normalXAbs = MathF.Abs(normal.X)
             let normalYAbs = MathF.Abs(normal.Y)
             let normalZAbs = MathF.Abs(normal.Z)
-            let nDotV0 = Vector.InMemoryDotProduct(ref normal, ref v0)
+            let nDotV0 = Vector.InMemoryDotProduct(&normal, &v0)
             if normalXAbs > normalYAbs && normalXAbs > normalZAbs then
                 Matrix4x4
                     (0.0f, 0.0f, 1.0f, 0.0f, e2.Z / normal.X, -e1.Z / normal.X,
@@ -80,7 +80,7 @@ type TriangleNormal<'T when 'T : struct and 'T :> VertexLocateable>(v0 : Vector3
             override this.TMin() = 0.001f
 
             override this.NormalForSurfacePoint p =
-                let p3 = Vector.ToVec3(ref p)
+                let p3 = Vector.ToVec3(&p)
                 let area1 = triangleArea v1 v2 p3
                 let area2 = triangleArea v2 v0 p3
                 let u = area1 / fullArea

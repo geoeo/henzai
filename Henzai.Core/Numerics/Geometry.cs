@@ -45,8 +45,8 @@ namespace Henzai.Core.Numerics
             var nbNorm = Vector3.Normalize(Vector3.Cross(n, a));
             var ntNorm = Vector3.Normalize(Vector3.Cross(n, nbNorm));
 
-            Vector.CopyIntoVector4(ref nbInOut, ref nbNorm );
-            Vector.CopyIntoVector4(ref ntInOut, ref ntNorm);
+            Vector.CopyIntoVector4(ref nbInOut, nbNorm );
+            Vector.CopyIntoVector4(ref ntInOut, ntNorm);
 
         }
 
@@ -104,12 +104,12 @@ namespace Henzai.Core.Numerics
         /// </summary>
 
         public static double AngleAroundOmega(ref Vector3 omega){
-            return Math.Sqrt(Vector.InMemoryDotProduct(ref omega, ref omega));
+            return Math.Sqrt(Vector.InMemoryDotProduct(omega, omega));
         }
 
         public static double AngleAroundOmega(ref Vector4 omega)
         {
-            return Math.Sqrt(Vector.InMemoryDotProduct(ref omega, ref omega));
+            return Math.Sqrt(Vector.InMemoryDotProduct(omega, omega));
         }
 
         /// <summary>

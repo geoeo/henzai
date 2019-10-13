@@ -12,7 +12,7 @@ type Plane(plane : System.Numerics.Plane, center : Point option, width : float32
 
         //TODO: Make center Vector4 aswell?
         new(plane : System.Numerics.Plane, center : Vector3, width : float32, height : float32) =
-            Plane(plane, Some (Vector.ToHomogeneous(ref center, 1.0f)), Some width, Some height)
+            Plane(plane, Some (Vector.ToHomogeneous(&center, 1.0f)), Some width, Some height)
            
         let normal = Vector4.Normalize(Vector4(plane.Normal, 0.0f))
 
@@ -62,14 +62,14 @@ type Plane(plane : System.Numerics.Plane, center : Point option, width : float32
                 let mutable p7Rot = Vector4.Transform(p7, R_canoical_orientation)
                 let mutable p8Rot = Vector4.Transform(p8, R_canoical_orientation)
 
-                let p1ObjSpace = center.Value + Henzai.Core.Numerics.Vector.RoundVec4(ref p1Rot, -1)
-                let p2ObjSpace = center.Value + Henzai.Core.Numerics.Vector.RoundVec4(ref p2Rot, -1)
-                let p3ObjSpace = center.Value + Henzai.Core.Numerics.Vector.RoundVec4(ref p3Rot, -1)
-                let p4ObjSpace = center.Value + Henzai.Core.Numerics.Vector.RoundVec4(ref p4Rot, -1)
-                let p5ObjSpace = center.Value + Henzai.Core.Numerics.Vector.RoundVec4(ref p5Rot, -1)
-                let p6ObjSpace = center.Value + Henzai.Core.Numerics.Vector.RoundVec4(ref p6Rot, -1)
-                let p7ObjSpace = center.Value + Henzai.Core.Numerics.Vector.RoundVec4(ref p7Rot, -1)
-                let p8ObjSpace = center.Value + Henzai.Core.Numerics.Vector.RoundVec4(ref p8Rot, -1)
+                let p1ObjSpace = center.Value + Henzai.Core.Numerics.Vector.RoundVec4(&p1Rot, -1)
+                let p2ObjSpace = center.Value + Henzai.Core.Numerics.Vector.RoundVec4(&p2Rot, -1)
+                let p3ObjSpace = center.Value + Henzai.Core.Numerics.Vector.RoundVec4(&p3Rot, -1)
+                let p4ObjSpace = center.Value + Henzai.Core.Numerics.Vector.RoundVec4(&p4Rot, -1)
+                let p5ObjSpace = center.Value + Henzai.Core.Numerics.Vector.RoundVec4(&p5Rot, -1)
+                let p6ObjSpace = center.Value + Henzai.Core.Numerics.Vector.RoundVec4(&p6Rot, -1)
+                let p7ObjSpace = center.Value + Henzai.Core.Numerics.Vector.RoundVec4(&p7Rot, -1)
+                let p8ObjSpace = center.Value + Henzai.Core.Numerics.Vector.RoundVec4(&p8Rot, -1)
 
                 let xMin = MathF.Min(p1ObjSpace.X, MathF.Min(p2ObjSpace.X, MathF.Min(p3ObjSpace.X, MathF.Min(p4ObjSpace.X, MathF.Min(p5ObjSpace.X, MathF.Min(p6ObjSpace.X, MathF.Min(p7ObjSpace.X, p8ObjSpace.X)))))))
                 let yMin = MathF.Min(p1ObjSpace.Y, MathF.Min(p2ObjSpace.Y, MathF.Min(p3ObjSpace.Y, MathF.Min(p4ObjSpace.Y, MathF.Min(p5ObjSpace.Y, MathF.Min(p6ObjSpace.Y, MathF.Min(p7ObjSpace.Y, p8ObjSpace.Y)))))))
@@ -93,7 +93,7 @@ type Plane(plane : System.Numerics.Plane, center : Point option, width : float32
             else
                 let v = point - kern
                 let mutable v_canonical_1 = Vector4.Transform(v, R_orientation_canoical)
-                let v_canonical = Henzai.Core.Numerics.Vector.RoundVec4(ref v_canonical_1, 3)
+                let v_canonical = Henzai.Core.Numerics.Vector.RoundVec4(&v_canonical_1, 3)
                 let newP = kern + v_canonical
                 let newB = kern + b_canonical
                 newP.X <= newB.X + widthOff && 

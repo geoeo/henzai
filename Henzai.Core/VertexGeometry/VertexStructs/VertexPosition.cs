@@ -19,11 +19,11 @@ namespace Henzai.Core.VertexGeometry
         }
 
         public VertexPosition(ref Vector4 position){
-            Position = Numerics.Vector.ToVec3(ref position);
+            Position = Numerics.Vector.ToVec3(position);
         }
 
         public VertexPosition(Vector4 position){
-            Position = Numerics.Vector.ToVec3(ref position);
+            Position = Numerics.Vector.ToVec3(position);
         }
 
         public byte GetSizeInBytes(){

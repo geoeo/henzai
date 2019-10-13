@@ -12,7 +12,7 @@ type Sphere(center : Point, radius : Radius) =
     inherit RaytracingGeometry() with
 
         new(sphereCenter : Vector3, radius : Radius) = 
-            Sphere(Vector.ToHomogeneous(ref sphereCenter, 1.0f), radius)
+            Sphere(Vector.ToHomogeneous(&sphereCenter, 1.0f), radius)
 
         //TODO: refactor candidate
         // http://mathworld.wolfram.com/Sphere.html
@@ -24,7 +24,8 @@ type Sphere(center : Point, radius : Radius) =
         //TODO: refactor candidate
         static member BoundingSphere (aabb : AABB) =
             let center = AABBProc.Center(aabb)
-            let radius = if AABBProc.Inside(aabb, center) then Vector.Distance(ref center, ref aabb.PMax) else 0.0f    
+            let max = aabb.PMax
+            let radius = if AABBProc.Inside(aabb, center) then Vector.Distance(&center, &max) else 0.0f    
             Sphere(center, radius)
 
         let aabb = 

@@ -21,12 +21,12 @@ namespace Henzai.Core.VertexGeometry
         }
 
         public VertexPositionColor(ref Vector4 position, ref VertexPositionColor v){
-            Position = Numerics.Vector.ToVec3(ref position);
+            Position = Numerics.Vector.ToVec3(position);
             color = v.color;
         }
 
         public VertexPositionColor(Vector4 position, VertexPositionColor v){
-            Position = Numerics.Vector.ToVec3(ref position);
+            Position = Numerics.Vector.ToVec3(position);
             color = v.color;
         }
 

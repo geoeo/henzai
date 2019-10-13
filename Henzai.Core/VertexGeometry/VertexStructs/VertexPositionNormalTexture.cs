@@ -24,13 +24,13 @@ namespace Henzai.Core.VertexGeometry
         }
 
         public VertexPositionNormalTexture(ref Vector4 position, ref VertexPositionNormalTexture v){
-            Position = Numerics.Vector.ToVec3(ref position);
+            Position = Numerics.Vector.ToVec3(position);
             Normal = v.Normal;
             TextureCoordinates = v.TextureCoordinates;
         }
 
         public VertexPositionNormalTexture(Vector4 position, VertexPositionNormalTexture v){
-            Position = Numerics.Vector.ToVec3(ref position);
+            Position = Numerics.Vector.ToVec3(position);
             Normal = v.Normal;
             TextureCoordinates = v.TextureCoordinates;
         }

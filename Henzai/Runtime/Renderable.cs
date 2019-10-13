@@ -416,6 +416,7 @@ namespace Henzai.Runtime
                     cullMode: FaceCullMode.Front,
                     fillMode: PolygonFillMode.Solid,
                     frontFace: FrontFace.Clockwise,
+                    
                     depthClipEnabled: true,
                     scissorTestEnabled: false
                 );
@@ -423,7 +424,6 @@ namespace Henzai.Runtime
             //TODO: @Omnishadows streamline this
             var effectLayoutList = new List<ResourceLayout>();
             modelDescriptor.EffectResourceSets[RenderFlags.NORMAL_ARRAY_INDEX] = new ResourceSet[effectCount];
-
 
             if(shadowMapEnabled){
                 var shadowMapRenderable =  _childrenPre[RenderFlags.GetPreEffectArrayIndexForFlag(RenderFlags.SHADOW_MAP)] as ShadowMap;

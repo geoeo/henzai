@@ -7,7 +7,7 @@ namespace Henzai.Core.Numerics {
     //TODO change all relevant "ref"s to "in"
     public static class Vector {
 
-        public static Vector3 Normalize(ref Vector3 vec){
+        public static Vector3 Normalize(in Vector3 vec){
             if (Math.Round(vec.Length(), 5) == 1.0f)
                 return vec;
             else
@@ -15,7 +15,7 @@ namespace Henzai.Core.Numerics {
                 return Vector3.Normalize(vec);
         }
 
-        public static Vector4 Normalize(ref Vector4 vec)
+        public static Vector4 Normalize(in Vector4 vec)
         {
             if (Math.Round(vec.Length(), 5) == 1.0f)
                 return vec;
@@ -25,14 +25,14 @@ namespace Henzai.Core.Numerics {
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector3 RoundVec3(ref Vector3 vec3, int digits){
+        public static Vector3 RoundVec3(in Vector3 vec3, int digits){
             if (digits == -1)
                 return new Vector3(vec3.X, vec3.Y, vec3.Z);
             return new Vector3(MathF.Round(vec3.X, digits), MathF.Round(vec3.Y, digits), MathF.Round(vec3.Z, digits));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector4 RoundVec4(ref Vector4 vec4, int digits)
+        public static Vector4 RoundVec4(in Vector4 vec4, int digits)
         {
             if (digits == -1)
                 return new Vector4(vec4.X, vec4.Y, vec4.Z, vec4.W);
@@ -40,12 +40,12 @@ namespace Henzai.Core.Numerics {
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector2 ToVec2(ref Vector4 vec4){
+        public static Vector2 ToVec2(in Vector4 vec4){
             return new Vector2(vec4.X, vec4.Y);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector3 ToVec3(ref Vector4 vec4){
+        public static Vector3 ToVec3(in Vector4 vec4){
             return new Vector3(vec4.X, vec4.Y, vec4.Z);
         }
 
@@ -55,7 +55,7 @@ namespace Henzai.Core.Numerics {
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector4 ToHomogeneous(ref Vector3 vec3, float c){
+        public static Vector4 ToHomogeneous(in Vector3 vec3, float c){
             return new Vector4(vec3.X, vec3.Y, vec3.Z, c);
         }
 
@@ -65,34 +65,34 @@ namespace Henzai.Core.Numerics {
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float InMemoryDotProduct(ref Vector4 a, ref Vector4 b){
+        public static float InMemoryDotProduct(in Vector4 a, in Vector4 b){
             return a.X*b.X+a.Y*b.Y+a.Z*b.Z+a.W*b.W;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float InMemoryDotProduct3(ref Vector4 a, ref Vector4 b)
+        public static float InMemoryDotProduct3(in Vector4 a, in Vector4 b)
         {
             return a.X * b.X + a.Y * b.Y + a.Z * b.Z;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float InMemoryDotProduct(ref Vector3 a, ref Vector3 b){
+        public static float InMemoryDotProduct(in Vector3 a, in Vector3 b){
             return a.X*b.X+a.Y*b.Y+a.Z*b.Z;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float Distance(ref Vector3 from, ref Vector3 to){
+        public static float Distance(in Vector3 from, in Vector3 to){
             return (to - from).Length();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float Distance(ref Vector4 from, ref Vector4 to)
+        public static float Distance(in Vector4 from, in Vector4 to)
         {
             return (to - from).Length();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float DistanceSquared(ref Vector3 from, ref Vector3 to){
+        public static float DistanceSquared(in Vector3 from, in Vector3 to){
             return (to - from).LengthSquared();
         }
 
@@ -114,7 +114,7 @@ namespace Henzai.Core.Numerics {
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyIntoVector4(ref Vector4 target, ref Vector3 data)
+        public static void CopyIntoVector4(ref Vector4 target, in Vector3 data)
         {
             target.X = data.X;
             target.Y = data.Y;

@@ -13,13 +13,13 @@ namespace Henzai.Core.Raytracing
         public Ray(Vector4 origin, Vector4 direction)
         {
             Origin = origin;
-            Direction = Numerics.Vector.Normalize(ref direction);
+            Direction = Numerics.Vector.Normalize(direction);
         }
 
         public Ray(Vector3 origin, Vector3 direction)
         {
             Origin = new Vector4(origin, 1.0f);
-            Direction = new Vector4(Numerics.Vector.Normalize(ref direction), 0.0f);
+            Direction = new Vector4(Numerics.Vector.Normalize(direction), 0.0f);
         }
     }
 }

@@ -70,10 +70,10 @@ let PlaneXYZAABBTest() =
     let aabb = (p :> AxisAlignedBoundable).GetBounds
 
     let mutable vObj = Henzai.Core.Numerics.Vector.ToVec3(Vector4.Transform(Vector4(0.0f, 0.0f, 1.0f, 0.0f),p.Get_R_canoical_orientation))
-    let vObjRounded = Henzai.Core.Numerics.Vector.RoundVec3(ref vObj, 2)
+    let vObjRounded = Henzai.Core.Numerics.Vector.RoundVec3(&vObj, 2)
 
     let mutable vCanon = Henzai.Core.Numerics.Vector.ToVec3(Vector4.Transform(n, p.Get_R_orientation_canoical))
-    let vCanonRounded = Henzai.Core.Numerics.Vector.RoundVec3(ref vCanon, 2)
+    let vCanonRounded = Henzai.Core.Numerics.Vector.RoundVec3(&vCanon, 2)
 
     Assert.True(false)
 
@@ -86,10 +86,10 @@ let PlaneXYZTest() =
     let aabb = (p :> AxisAlignedBoundable).GetBounds
 
     let mutable vObj = Henzai.Core.Numerics.Vector.ToVec3(Vector4.Transform(Vector4(0.0f, 0.0f, 1.0f, 0.0f),p.Get_R_canoical_orientation))
-    let vObjRounded = Henzai.Core.Numerics.Vector.RoundVec3(ref vObj, 2)
+    let vObjRounded = Henzai.Core.Numerics.Vector.RoundVec3(&vObj, 2)
 
     let mutable vCanon = Henzai.Core.Numerics.Vector.ToVec3(Vector4.Transform(n, p.Get_R_orientation_canoical))
-    let vCanonRounded = Henzai.Core.Numerics.Vector.RoundVec3(ref vCanon, 2)
+    let vCanonRounded = Henzai.Core.Numerics.Vector.RoundVec3(&vCanon, 2)
 
     Assert.Equal(Vector3(-0.02f, -0.02f, 1.02f), vCanonRounded)
     Assert.Equal(Vector3(-0.58f, -0.58f, 0.6f), vObjRounded)

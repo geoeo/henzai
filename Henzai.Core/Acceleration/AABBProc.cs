@@ -128,7 +128,7 @@ namespace Henzai.Core.Acceleration
             var h = (Diagonal(aabb)) / 2.0f;
             var planeNormalAbs = Vector4.Abs(plane);
             var e = h.X * planeNormalAbs.X + h.Y * planeNormalAbs.Y + h.Z * planeNormalAbs.Z;
-            var s = Numerics.Vector.InMemoryDotProduct3(ref c, ref plane) + d;
+            var s = Numerics.Vector.InMemoryDotProduct3(c, plane) + d;
             var eps = 0.0f;
 
             var isInside = s - e > eps;
