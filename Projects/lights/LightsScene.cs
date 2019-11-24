@@ -59,7 +59,7 @@ namespace Henzai.Examples
             _sun.SetNewWorldTranslation(ref newTranslation, true);
 
             //TODO: This geometry will cause problems for shadow mapping. Has to be ignored in the shadowmap generation process.
-            var sunRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormal>(_sun,"Phong","PhongNoShadow", VertexRuntimeTypes.VertexPositionNormal,PrimitiveTopology.TriangleList, RenderFlags.NORMAL, RenderFlags.NONE, InstancingFlags.EMPTY);
+            var sunRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormal>(_sun,"Phong","PhongNoShadow", VertexRuntimeTypes.VertexPositionNormal,PrimitiveTopology.TriangleList, RenderFlags.NORMAL, new InstancingRenderDescription(RenderFlags.NONE, InstancingDataFlags.EMPTY));
             sunRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPN;
             _modelPNDescriptorList.Add(sunRuntimeState);
 
@@ -74,7 +74,7 @@ namespace Henzai.Examples
             Vector3 newTranslationSpot = new Vector3(lightPosSpot.X,lightPosSpot.Y,lightPosSpot.Z);
             spotlight.SetNewWorldTranslation(ref newTranslationSpot, true);
 
-            var spotLightRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormal>(spotlight,"Phong","PhongNoShadow", VertexRuntimeTypes.VertexPositionNormal,PrimitiveTopology.TriangleList, RenderFlags.NORMAL | RenderFlags.SHADOW_MAP, RenderFlags.NONE, InstancingFlags.EMPTY);
+            var spotLightRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormal>(spotlight,"Phong","PhongNoShadow", VertexRuntimeTypes.VertexPositionNormal,PrimitiveTopology.TriangleList, RenderFlags.NORMAL | RenderFlags.SHADOW_MAP, new InstancingRenderDescription(RenderFlags.NONE, InstancingDataFlags.EMPTY));
             spotLightRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPN;
             _modelPNDescriptorList.Add(spotLightRuntimeState);
 
@@ -110,7 +110,7 @@ namespace Henzai.Examples
             // var offsets = new Vector3[] {new Vector3(0.0f,0.0f,0.0f)};
             var offsets = GeometryUtils.CreateTilingList_XZ(-20,20,-10,10,0,GeometryFactory.QUAD_WIDTH,GeometryFactory.QUAD_HEIGHT);
             // var offsets = GeometryUtils.CreateTilingList_XZ(-1,1,0,0,0,GeometryFactory.QUAD_WIDTH,GeometryFactory.QUAD_HEIGHT);
-            var instancingData = new InstanceData {Flag = InstancingFlags.POSITION, Positions = offsets};
+            var instancingData = new InstanceData {Flag = InstancingDataFlags.POSITION, Positions = offsets};
 
             var floor = new Model<VertexPositionNormalTextureTangentBitangent, RealtimeMaterial>("paving/",GeometryFactory.GenerateQuadPNTTB_XZ(), new RealtimeMaterial());
             var floorMeshZero = floor.GetMesh(0);
@@ -120,7 +120,7 @@ namespace Henzai.Examples
             flootMaterialZero.ambient=new Vector4(0.3f,0.3f,0.3f,1.0f);
             var floorTranslation = new Vector3(0.0f,-2.0f,0.0f);
             floor.SetNewWorldTranslation(ref floorTranslation,true);
-            var floorRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>(floor, "PositionOffsetPhongBitangentTexture", "PhongBitangentTexture", VertexRuntimeTypes.VertexPositionNormalTextureTangentBitangent, PrimitiveTopology.TriangleStrip, RenderFlags.NORMAL | RenderFlags.SHADOW_MAP, RenderFlags.SHADOW_MAP, InstancingFlags.POSITION);
+            var floorRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>(floor, "PositionOffsetPhongBitangentTexture", "PhongBitangentTexture", VertexRuntimeTypes.VertexPositionNormalTextureTangentBitangent, PrimitiveTopology.TriangleStrip, RenderFlags.NORMAL | RenderFlags.SHADOW_MAP, new InstancingRenderDescription(RenderFlags.SHADOW_MAP, InstancingDataFlags.POSITION));
             floorRuntimeState.TotalInstanceCount = offsets.Length.ToUnsigned();
 
             //TODO: Test ViewMatrix Instancing
@@ -139,7 +139,7 @@ namespace Henzai.Examples
             //floorRuntimeState.TotalInstanceCount = viewMatrices.Length.ToUnsigned();
 
             floorRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPNTTB;
-            floorRuntimeState.AddVertexInstanceDelegate(InstancingFlags.POSITION, ResourceGenerator.GenerateVertexInstanceLayoutForPositionOffset);
+            floorRuntimeState.AddVertexInstanceDelegate(InstancingDataFlags.POSITION, ResourceGenerator.GenerateVertexInstanceLayoutForPositionOffset);
             floorRuntimeState.AddPreEffectsVertexInstanceDelegate(RenderFlags.SHADOW_MAP, ResourceGenerator.GenerateVertexLayoutForPNTTB);
             //floorRuntimeState.CallVertexInstanceLayoutGeneration+=ResourceGenerator.GenerateVertexInstanceLayoutForViewMatrixOffset; //viewMatInstance
             floorRuntimeState.CallTextureResourceLayoutGeneration+=ResourceGenerator.GenerateTextureResourceLayoutForNormalMapping;

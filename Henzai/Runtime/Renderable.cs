@@ -374,16 +374,16 @@ namespace Henzai.Runtime
                 //TODO:Decouple InstanceShadowMap buffer from the instance data type!
                 foreach(var instanceData in instancingData){
                     switch(instanceData.Flag){
-                        case InstancingFlags.EMPTY:
+                        case InstancingDataFlags.EMPTY:
                             break;
-                        case InstancingFlags.POSITION:
+                        case InstancingDataFlags.POSITION:
                             var instancingPositionBuffer = _factory.CreateBuffer(new BufferDescription(instanceData.Positions.Length.ToUnsigned() * 12, BufferUsage.VertexBuffer));
                             modelDescriptor.InstanceBufferLists[RenderFlags.NORMAL_ARRAY_INDEX].Add(instancingPositionBuffer);
                             foreach(var preEffect in allInstancePreEffects)
                                 modelDescriptor.InstanceBufferLists[RenderFlags.GetArrayIndexForFlag(preEffect)].Add(instancingPositionBuffer); // decouple
                             _graphicsDevice.UpdateBuffer(instancingPositionBuffer, 0, instanceData.Positions);
                             break;
-                        case InstancingFlags.VIEW_MATRICES:
+                        case InstancingDataFlags.VIEW_MATRICES:
                             var instancingViewMatBuffer = _factory.CreateBuffer(new BufferDescription(instanceData.ViewMatrices.Length.ToUnsigned() * 64, BufferUsage.VertexBuffer));
                             modelDescriptor.InstanceBufferLists[RenderFlags.NORMAL_ARRAY_INDEX].Add(instancingViewMatBuffer);
                             foreach(var preEffect in allInstancePreEffects)

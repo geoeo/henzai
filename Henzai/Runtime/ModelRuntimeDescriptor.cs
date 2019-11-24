@@ -74,7 +74,7 @@ namespace Henzai.Runtime
         public uint RenderFlag {get;set;}
         public uint PreEffectsFlag {get;set;}
         public uint PreEffectsInstancingFlag {get;set;}
-        public uint InstancingFlag {get;set;}
+        public uint InstancingDataFlag {get;set;}
         public VertexRuntimeTypes VertexRuntimeType {get; private set;}
         public PrimitiveTopology PrimitiveTopology {get; private set;}
         public uint TotalInstanceCount{get;set;}
@@ -87,7 +87,8 @@ namespace Henzai.Runtime
         public event Func<ModelRuntimeDescriptor<T>,int,DisposeCollectorResourceFactory,GraphicsDevice,ResourceSet> CallTextureResourceSetGeneration;
 
         //TODO: Refactor renderFlag preEffectsInstancingFlag and instancingFlag into an class/struct
-        public ModelRuntimeDescriptor(Model<T, RealtimeMaterial> modelIn, string vShaderName, string fShaderName, VertexRuntimeTypes vertexRuntimeType, PrimitiveTopology primitiveTopology, uint renderFlag, uint preEffectsInstancingFlag, uint instancingFlag){
+        // public ModelRuntimeDescriptor(Model<T, RealtimeMaterial> modelIn, string vShaderName, string fShaderName, VertexRuntimeTypes vertexRuntimeType, PrimitiveTopology primitiveTopology, uint renderFlag, uint preEffectsInstancingFlag, uint instancingFlag){
+        public ModelRuntimeDescriptor(Model<T, RealtimeMaterial> modelIn, string vShaderName, string fShaderName, VertexRuntimeTypes vertexRuntimeType, PrimitiveTopology primitiveTopology, uint renderFlag, InstancingRenderDescription instancingRenderDescription){
 
             if(!Verifier.VerifyVertexStruct<T>(vertexRuntimeType))
                 throw new ArgumentException($"Type Mismatch ModelRuntimeDescriptor");
@@ -103,12 +104,12 @@ namespace Henzai.Runtime
             VertexRuntimeType = vertexRuntimeType;
             PrimitiveTopology = primitiveTopology;
 
-            var preEffectsInstancing = RenderFlags.GetAllPreEffectFor(preEffectsInstancingFlag);
-
             RenderFlag = renderFlag;
             PreEffectsFlag = RenderFlags.PRE_EFFECTS_MASK & renderFlag;
-            PreEffectsInstancingFlag = preEffectsInstancingFlag;
-            InstancingFlag = instancingFlag;
+            PreEffectsInstancingFlag = instancingRenderDescription.PreEffectsFlag;
+            InstancingDataFlag = instancingRenderDescription.DataFlag;
+
+            var preEffectsInstancing = RenderFlags.GetAllPreEffectFor(PreEffectsInstancingFlag);
 
             VertexBufferList = new List<DeviceBuffer>();
             IndexBufferList = new List<DeviceBuffer>();
@@ -127,7 +128,7 @@ namespace Henzai.Runtime
 
             // Reserve first spot for base vertex geometry
             //TODO: Make on list
-            VertexLayouts = new VertexLayoutDescription[InstancingFlags.GetSizeOfPreEffectFlag(InstancingFlag)+1];
+            VertexLayouts = new VertexLayoutDescription[InstancingDataFlags.GetSizeOfPreEffectFlag(InstancingDataFlag)+1];
             VertexPreEffectsLayouts = new VertexLayoutDescription[RenderFlags.GetSizeOfPreEffectFlag(PreEffectsInstancingFlag)+1];
 
             EffectResourceSets = new ResourceSet[RenderFlags.EFFCTS_TOTAL_COUNT][];
@@ -173,7 +174,7 @@ namespace Henzai.Runtime
 
             // Instancing data i.e. position, view matrices 
             var instancingEventKeys = InstancingEventHandlerKeys.GetKeys();
-            var flagIndex = InstancingFlags.GetArrayIndexForFlag(InstancingFlag);
+            var flagIndex = InstancingDataFlags.GetArrayIndexForFlag(InstancingDataFlag);
             if(flagIndex >= 0) {
                 var instancingEventKey = instancingEventKeys[flagIndex];
                 var instancingVertexInstanceDeletegate = (VertexInstanceLayoutGenerationList[instancingEventKey] as Func<VertexLayoutDescription>);
@@ -209,7 +210,7 @@ namespace Henzai.Runtime
         }
 
         public void AddVertexInstanceDelegate(uint instancingFlag, Func<VertexLayoutDescription> vertexLayoutDelegate){
-            var flagIndex = InstancingFlags.GetArrayIndexForFlag(PreEffectsInstancingFlag);
+            var flagIndex = InstancingDataFlags.GetArrayIndexForFlag(PreEffectsInstancingFlag);
             VertexInstanceLayoutGenerationList.AddHandler(InstancingEventHandlerKeys.GetKeys()[flagIndex], vertexLayoutDelegate);              
         }
 

@@ -1,6 +1,6 @@
 namespace Henzai.Runtime 
 {
-    public static class InstancingFlags {
+    public static class InstancingDataFlags {
 
         public const uint EMPTY = 0x0;
         public const uint POSITION = 0x1;
