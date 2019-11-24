@@ -110,7 +110,7 @@ namespace Henzai.Examples
             // var offsets = new Vector3[] {new Vector3(0.0f,0.0f,0.0f)};
             var offsets = GeometryUtils.CreateTilingList_XZ(-20,20,-10,10,0,GeometryFactory.QUAD_WIDTH,GeometryFactory.QUAD_HEIGHT);
             // var offsets = GeometryUtils.CreateTilingList_XZ(-1,1,0,0,0,GeometryFactory.QUAD_WIDTH,GeometryFactory.QUAD_HEIGHT);
-            var instancingData = new InstanceData {Types = InstancingTypes.Positions, Positions = offsets};
+            var instancingData = new InstanceData {Flag = InstancingFlags.POSITION, Positions = offsets};
 
             var floor = new Model<VertexPositionNormalTextureTangentBitangent, RealtimeMaterial>("paving/",GeometryFactory.GenerateQuadPNTTB_XZ(), new RealtimeMaterial());
             var floorMeshZero = floor.GetMesh(0);
@@ -139,7 +139,7 @@ namespace Henzai.Examples
             //floorRuntimeState.TotalInstanceCount = viewMatrices.Length.ToUnsigned();
 
             floorRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPNTTB;
-            floorRuntimeState.AddVertexInstanceDelegate(InstancingTypes.Positions, ResourceGenerator.GenerateVertexInstanceLayoutForPositionOffset);
+            floorRuntimeState.AddVertexInstanceDelegate(InstancingFlags.POSITION, ResourceGenerator.GenerateVertexInstanceLayoutForPositionOffset);
             floorRuntimeState.AddPreEffectsVertexInstanceDelegate(RenderFlags.SHADOW_MAP, ResourceGenerator.GenerateVertexLayoutForPNTTB);
             //floorRuntimeState.CallVertexInstanceLayoutGeneration+=ResourceGenerator.GenerateVertexInstanceLayoutForViewMatrixOffset; //viewMatInstance
             floorRuntimeState.CallTextureResourceLayoutGeneration+=ResourceGenerator.GenerateTextureResourceLayoutForNormalMapping;

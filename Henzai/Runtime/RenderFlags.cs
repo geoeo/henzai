@@ -50,6 +50,9 @@ namespace Henzai.Runtime
             var preEffectsOnly = flag & PRE_EFFECTS_MASK;
             var index = -1;
             switch (preEffectsOnly){
+                case NONE:
+                    index = -1;
+                    break;
                 case SHADOW_MAP:
                     index = 0;
                     break;

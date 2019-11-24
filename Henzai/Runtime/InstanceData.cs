@@ -8,7 +8,7 @@ namespace Henzai.Runtime
     {
         private static readonly InstanceData no_data = new InstanceData();
         public static InstanceData NO_DATA => no_data;
-        public InstancingTypes Types {get; set;}
+        public uint Flag {get; set;}
         public Vector3[] Positions {get;set;}
         public Matrix4x4[] ViewMatrices {get;set;}
     }

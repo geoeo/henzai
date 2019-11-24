@@ -373,23 +373,25 @@ namespace Henzai.Runtime
                 //TODO: @Refactor: The buffer length factor is technically defined in resource generator already
                 //TODO:Decouple InstanceShadowMap buffer from the instance data type!
                 foreach(var instanceData in instancingData){
-                    switch(instanceData.Types){
-                        case InstancingTypes.Empty:
+                    switch(instanceData.Flag){
+                        case InstancingFlags.EMPTY:
                             break;
-                        case InstancingTypes.Positions:
+                        case InstancingFlags.POSITION:
                             var instancingPositionBuffer = _factory.CreateBuffer(new BufferDescription(instanceData.Positions.Length.ToUnsigned() * 12, BufferUsage.VertexBuffer));
                             modelDescriptor.InstanceBufferLists[RenderFlags.NORMAL_ARRAY_INDEX].Add(instancingPositionBuffer);
                             foreach(var preEffect in allInstancePreEffects)
                                 modelDescriptor.InstanceBufferLists[RenderFlags.GetArrayIndexForFlag(preEffect)].Add(instancingPositionBuffer); // decouple
                             _graphicsDevice.UpdateBuffer(instancingPositionBuffer, 0, instanceData.Positions);
                             break;
-                        case InstancingTypes.ViewMatricies:
+                        case InstancingFlags.VIEW_MATRICES:
                             var instancingViewMatBuffer = _factory.CreateBuffer(new BufferDescription(instanceData.ViewMatrices.Length.ToUnsigned() * 64, BufferUsage.VertexBuffer));
                             modelDescriptor.InstanceBufferLists[RenderFlags.NORMAL_ARRAY_INDEX].Add(instancingViewMatBuffer);
                             foreach(var preEffect in allInstancePreEffects)
                                 modelDescriptor.InstanceBufferLists[RenderFlags.GetArrayIndexForFlag(preEffect)].Add(instancingViewMatBuffer); // decouple
                             _graphicsDevice.UpdateBuffer(instancingViewMatBuffer, 0, instanceData.ViewMatrices);
                             break;
+                        default:
+                            throw new NotImplementedException($"{instanceData.Flag.ToString("g")} not implemented");
                     }
             
                 }

@@ -86,6 +86,7 @@ namespace Henzai.Runtime
         // TODO: @Performance: Investigate Texture Cache for already loaded textures
         public event Func<ModelRuntimeDescriptor<T>,int,DisposeCollectorResourceFactory,GraphicsDevice,ResourceSet> CallTextureResourceSetGeneration;
 
+        //TODO: Refactor renderFlag preEffectsInstancingFlag and instancingFlag into an class/struct
         public ModelRuntimeDescriptor(Model<T, RealtimeMaterial> modelIn, string vShaderName, string fShaderName, VertexRuntimeTypes vertexRuntimeType, PrimitiveTopology primitiveTopology, uint renderFlag, uint preEffectsInstancingFlag, uint instancingFlag){
 
             if(!Verifier.VerifyVertexStruct<T>(vertexRuntimeType))
@@ -148,8 +149,6 @@ namespace Henzai.Runtime
                 var instanceBufferList = InstanceBufferLists[index];
                 InstanceBuffers[index] = instanceBufferList == null ? new DeviceBuffer[0] : InstanceBufferLists[index].ToArray();
             }
-
-            
         }
         
         public void LoadShaders(GraphicsDevice graphicsDevice){
@@ -172,21 +171,22 @@ namespace Henzai.Runtime
             VertexLayouts[0] = CallVertexLayoutGeneration.Invoke();
             VertexPreEffectsLayouts[0]= CallVertexLayoutGeneration.Invoke();
 
-            // Instancing data
-            foreach(var flagKeyTuple in InstancingEventHandlerKeys.GetFlagKeyTuples()){
-                var flag = flagKeyTuple.Item1;
-                var key = flagKeyTuple.Item2;
-                var vertexInstanceDeletegate = (VertexInstanceLayoutGenerationList[key] as Func<VertexLayoutDescription>);
-                if(vertexInstanceDeletegate != null)
-                    VertexLayouts[RenderFlags.GetPreEffectArrayIndexForFlag(flag)+1] = vertexInstanceDeletegate.Invoke();      
+            // Instancing data i.e. position, view matrices 
+            var instancingEventKeys = InstancingEventHandlerKeys.GetKeys();
+            var flagIndex = InstancingFlags.GetArrayIndexForFlag(InstancingFlag);
+            if(flagIndex >= 0) {
+                var instancingEventKey = instancingEventKeys[flagIndex];
+                var instancingVertexInstanceDeletegate = (VertexInstanceLayoutGenerationList[instancingEventKey] as Func<VertexLayoutDescription>);
+                VertexLayouts[flagIndex+1] = instancingVertexInstanceDeletegate.Invoke();    
             }
 
-            foreach(var flagKeyTuple in PreEffectEventHandlerKeys.GetFlagKeyTuples()){
-                var flag = flagKeyTuple.Item1;
-                var key = flagKeyTuple.Item2;
-                var vertexInstanceDeletegate = (VertexPreEffectsInstanceLayoutGenerationList[key] as Func<VertexLayoutDescription>);
-                if(vertexInstanceDeletegate != null)
-                    VertexPreEffectsLayouts[RenderFlags.GetPreEffectArrayIndexForFlag(flag)+1] = vertexInstanceDeletegate.Invoke();        
+            // Instancing effects data 
+            var preEffectsEventKeys = PreEffectEventHandlerKeys.GetKeys();
+            var preEffectsflagIndex = RenderFlags.GetPreEffectArrayIndexForFlag(PreEffectsInstancingFlag);
+            if(preEffectsflagIndex >= 0) {
+                var preEffectsEventKey = preEffectsEventKeys[preEffectsflagIndex];
+                var vertexInstanceDeletegate = (VertexPreEffectsInstanceLayoutGenerationList[preEffectsEventKey] as Func<VertexLayoutDescription>);
+                VertexPreEffectsLayouts[preEffectsflagIndex+1] = vertexInstanceDeletegate.Invoke();    
             }
  
         }
@@ -204,32 +204,13 @@ namespace Henzai.Runtime
         }
 
         public void AddPreEffectsVertexInstanceDelegate(uint id, Func<VertexLayoutDescription> vertexLayoutDelegate){
-
-            if((id & PreEffectsInstancingFlag)== RenderFlags.NONE)
-                throw new System.ArgumentException($"PreEffects id: {id} does not match the stored PreEffectsTypes");
-
-            else if((id & RenderFlags.SHADOW_MAP) == RenderFlags.SHADOW_MAP)
-                VertexPreEffectsInstanceLayoutGenerationList.AddHandler(PreEffectEventHandlerKeys.ShadowMapKey, vertexLayoutDelegate);
-            
-            else if((id & RenderFlags.OMNI_SHADOW_MAPS) == RenderFlags.OMNI_SHADOW_MAPS)
-                VertexPreEffectsInstanceLayoutGenerationList.AddHandler(PreEffectEventHandlerKeys.OmniShadowMapKey, vertexLayoutDelegate);
-        
+            var flagIndex = RenderFlags.GetPreEffectArrayIndexForFlag(PreEffectsInstancingFlag);
+            VertexPreEffectsInstanceLayoutGenerationList.AddHandler(PreEffectEventHandlerKeys.GetKeys()[flagIndex], vertexLayoutDelegate);          
         }
 
-        public void AddVertexInstanceDelegate(InstancingTypes instancingTypes, Func<VertexLayoutDescription> vertexLayoutDelegate){
-
-            switch(instancingTypes){
-                case InstancingTypes.Positions:
-                    VertexInstanceLayoutGenerationList.AddHandler(InstancingEventHandlerKeys.PositionKey, vertexLayoutDelegate);
-                break;
-                case InstancingTypes.ViewMatricies:
-                    VertexInstanceLayoutGenerationList.AddHandler(InstancingEventHandlerKeys.ViewMatricesKey, vertexLayoutDelegate);
-                break;
-                case InstancingTypes.Empty:
-                    Debug.WriteLine("No need to set delegate for NO_DATA. Maybe you are using the wrong flag?");
-                break;
-        
-            }                
+        public void AddVertexInstanceDelegate(uint instancingFlag, Func<VertexLayoutDescription> vertexLayoutDelegate){
+            var flagIndex = InstancingFlags.GetArrayIndexForFlag(PreEffectsInstancingFlag);
+            VertexInstanceLayoutGenerationList.AddHandler(InstancingEventHandlerKeys.GetKeys()[flagIndex], vertexLayoutDelegate);              
         }
 
     }

@@ -20,6 +20,9 @@ namespace Henzai.Runtime
         public static int GetArrayIndexForFlag(uint flag){
             var index = -1;
             switch (flag){
+                case EMPTY:
+                    index = -1;
+                    break;
                 case POSITION:
                     index = 0;
                     break;
