@@ -71,7 +71,7 @@ namespace Henzai.Runtime
         /// See: <see cref="Henzai.Geometry.Model{T}"/>
         /// </summary>
         public Model<T,RealtimeMaterial> Model {get;set;}
-        public uint RenderFlag {get;set;}
+        public RenderDescription RenderDescription {get;set;}
         public uint PreEffectsFlag {get;set;}
         public uint PreEffectsInstancingFlag {get;set;}
         public uint InstancingDataFlag {get;set;}
@@ -88,7 +88,7 @@ namespace Henzai.Runtime
 
         //TODO: Refactor renderFlag preEffectsInstancingFlag and instancingFlag into an class/struct
         // public ModelRuntimeDescriptor(Model<T, RealtimeMaterial> modelIn, string vShaderName, string fShaderName, VertexRuntimeTypes vertexRuntimeType, PrimitiveTopology primitiveTopology, uint renderFlag, uint preEffectsInstancingFlag, uint instancingFlag){
-        public ModelRuntimeDescriptor(Model<T, RealtimeMaterial> modelIn, string vShaderName, string fShaderName, VertexRuntimeTypes vertexRuntimeType, PrimitiveTopology primitiveTopology, uint renderFlag, InstancingRenderDescription instancingRenderDescription){
+        public ModelRuntimeDescriptor(Model<T, RealtimeMaterial> modelIn, string vShaderName, string fShaderName, VertexRuntimeTypes vertexRuntimeType, PrimitiveTopology primitiveTopology, RenderDescription renderDescription, InstancingRenderDescription instancingRenderDescription){
 
             if(!Verifier.VerifyVertexStruct<T>(vertexRuntimeType))
                 throw new ArgumentException($"Type Mismatch ModelRuntimeDescriptor");
@@ -104,10 +104,10 @@ namespace Henzai.Runtime
             VertexRuntimeType = vertexRuntimeType;
             PrimitiveTopology = primitiveTopology;
 
-            RenderFlag = renderFlag;
-            PreEffectsFlag = RenderFlags.PRE_EFFECTS_MASK & renderFlag;
+            RenderDescription = renderDescription;
+            PreEffectsFlag = RenderFlags.PRE_EFFECTS_MASK & renderDescription.RenderModeFlag;
             PreEffectsInstancingFlag = instancingRenderDescription.PreEffectsFlag;
-            InstancingDataFlag = instancingRenderDescription.DataFlag;
+            InstancingDataFlag = instancingRenderDescription.RenderModeFlag;
 
             var preEffectsInstancing = RenderFlags.GetAllPreEffectFor(PreEffectsInstancingFlag);
 

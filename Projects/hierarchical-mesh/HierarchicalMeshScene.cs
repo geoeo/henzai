@@ -83,7 +83,7 @@ namespace Henzai.Examples
             _sun.SetNewWorldTranslation(ref newTranslation, true);
 
             var nanoSuitRuntimeState 
-                = new ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>(_nanosuit,"PhongBitangentTexture","PhongBitangentTexture", VertexRuntimeTypes.VertexPositionNormalTextureTangentBitangent,PrimitiveTopology.TriangleList,RenderFlags.NORMAL | RenderFlags.SHADOW_MAP , new InstancingRenderDescription(RenderFlags.NONE, InstancingDataFlags.EMPTY));
+                = new ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>(_nanosuit,"PhongBitangentTexture","PhongBitangentTexture", VertexRuntimeTypes.VertexPositionNormalTextureTangentBitangent,PrimitiveTopology.TriangleList,new RenderDescription(RenderFlags.NORMAL | RenderFlags.SHADOW_MAP) , new InstancingRenderDescription(RenderFlags.NONE, InstancingDataFlags.EMPTY));
             nanoSuitRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPNTTB;
             nanoSuitRuntimeState.CallSamplerGeneration+=ResourceGenerator.GenerateTriLinearSampler;
             nanoSuitRuntimeState.CallTextureResourceLayoutGeneration+=ResourceGenerator.GenerateTextureResourceLayoutForNormalMapping;
@@ -97,7 +97,7 @@ namespace Henzai.Examples
 
             // _modelStatesList.Add(sunRuntimeState);
 
-            var sunRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormal>(_sun,"Phong","PhongNoShadow", VertexRuntimeTypes.VertexPositionNormal,PrimitiveTopology.TriangleList, RenderFlags.NORMAL, new InstancingRenderDescription(RenderFlags.NONE, InstancingDataFlags.EMPTY));
+            var sunRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormal>(_sun,"Phong","PhongNoShadow", VertexRuntimeTypes.VertexPositionNormal,PrimitiveTopology.TriangleList, new RenderDescription(RenderFlags.NORMAL), new InstancingRenderDescription(RenderFlags.NONE, InstancingDataFlags.EMPTY));
             sunRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPN;
 
             var plane = new Model<VertexPositionNormal, RealtimeMaterial>(String.Empty,GeometryFactory.GenerateQuadPN_XZ(),new RealtimeMaterial());
@@ -105,7 +105,7 @@ namespace Henzai.Examples
             var newPlaneScale = Matrix4x4.CreateScale(new Vector3(100,1,100));
             var trafo = newPlaneScale*newPlaneTranslation;
             plane.SetNewWorldTransformation(ref trafo, true);
-            var planeRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormal>(plane,"Phong","Phong", VertexRuntimeTypes.VertexPositionNormal,PrimitiveTopology.TriangleStrip, RenderFlags.NORMAL |RenderFlags.SHADOW_MAP, new InstancingRenderDescription(RenderFlags.NONE, InstancingDataFlags.EMPTY));
+            var planeRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormal>(plane,"Phong","Phong", VertexRuntimeTypes.VertexPositionNormal,PrimitiveTopology.TriangleStrip, new RenderDescription(RenderFlags.NORMAL |RenderFlags.SHADOW_MAP), new InstancingRenderDescription(RenderFlags.NONE, InstancingDataFlags.EMPTY));
             planeRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPN;
 
             _modelPNTTBDescriptorList.Add(nanoSuitRuntimeState);
@@ -146,8 +146,8 @@ namespace Henzai.Examples
                 _sceneRuntimeState.Light,
                 _sceneRuntimeState.SpotLight);
 
-            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionNormalTextureTangentBitangent>(_commandList,_modelPNTTBDescriptorArray,_sceneRuntimeState, RenderFlags.NORMAL, VertexRuntimeTypes.VertexPositionNormalTextureTangentBitangent);
-            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionNormal>(_commandList,_modelPNDescriptorArray,_sceneRuntimeState, RenderFlags.NORMAL, VertexRuntimeTypes.VertexPositionNormal);
+            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionNormalTextureTangentBitangent>(_commandList,_modelPNTTBDescriptorArray,_sceneRuntimeState, new RenderDescription(RenderFlags.NORMAL), VertexRuntimeTypes.VertexPositionNormalTextureTangentBitangent);
+            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionNormal>(_commandList,_modelPNDescriptorArray,_sceneRuntimeState, new RenderDescription(RenderFlags.NORMAL), VertexRuntimeTypes.VertexPositionNormal);
             
             _commandList.End();
         }

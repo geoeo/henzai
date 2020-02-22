@@ -319,14 +319,14 @@ namespace Henzai.Runtime
         public static void GenerateRenderCommandsForModelDescriptor<T>(CommandList commandList,
                                                                        ModelRuntimeDescriptor<T>[] descriptorArray,
                                                                        SceneRuntimeDescriptor sceneRuntimeDescriptor,
-                                                                       uint renderFlag,
+                                                                       RenderDescription renderDescription,
                                                                        VertexRuntimeTypes vertexRuntimeType) where T : struct, VertexLocateable
         {
             for (int j = 0; j < descriptorArray.Length; j++)
             {
                 var modelState = descriptorArray[j];
-                var modelRenderFlag = modelState.RenderFlag;
-                var currentRenderState = modelRenderFlag & renderFlag;
+                var modelRenderFlag = modelState.RenderDescription.RenderModeFlag;
+                var currentRenderState = modelRenderFlag & renderDescription.RenderModeFlag;
                 if(currentRenderState == RenderFlags.NONE)
                     continue;
                 var renderStateArrayIndex = RenderFlags.GetArrayIndexForFlag(currentRenderState);
@@ -348,7 +348,7 @@ namespace Henzai.Runtime
                     var material = model.GetMaterial(i);
 
                     //TODO: @Investiagte this
-                    if((renderFlag & RenderFlags.SHADOW_MAP)  == RenderFlags.SHADOW_MAP || vertexRuntimeType == VertexRuntimeTypes.VertexPositionColor)
+                    if((renderDescription.RenderModeFlag & RenderFlags.SHADOW_MAP)  == RenderFlags.SHADOW_MAP || vertexRuntimeType == VertexRuntimeTypes.VertexPositionColor)
                         RenderCommandGenerator.GenerateCommandsForMesh_Inline(
                             commandList,
                             modelState,
@@ -427,7 +427,7 @@ namespace Henzai.Runtime
                                                                     ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] descriptorArray,
                                                                     SceneRuntimeDescriptor sceneRuntimeDescriptor,
                                                                     MeshBVH<VertexPositionNormalTextureTangentBitangent>[] meshBVHArray,
-                                                                    uint renderFlag)
+                                                                    RenderDescription renderDescription)
         {
             var meshCount = meshBVHArray.Length;
             for(int j = 0; j < meshCount; j++){
@@ -438,8 +438,8 @@ namespace Henzai.Runtime
                 var meshIndex = meshBVH.MeshRuntimeIndex;
                 var modelState = descriptorArray[modelStateIndex];
                 var model = modelState.Model;
-                var modelRenderFlag = modelState.RenderFlag;
-                var currentRenderState = modelRenderFlag & renderFlag;
+                var modelRenderFlag = modelState.RenderDescription.RenderModeFlag;
+                var currentRenderState = modelRenderFlag & renderDescription.RenderModeFlag;
                 if(currentRenderState == RenderFlags.NONE)
                     continue;
                 var renderStateArrayIndex = RenderFlags.GetArrayIndexForFlag(currentRenderState);

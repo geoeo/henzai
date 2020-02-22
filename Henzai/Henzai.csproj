@@ -49,7 +49,7 @@
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)/Shaders/imgui-frag.glsl">
       <LogicalName>imgui-frag.glsl</LogicalName>
     </EmbeddedResource>
-
+    
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)/Shaders/imgui-vertex.metallib">
       <LogicalName>imgui-vertex.metallib</LogicalName>
     </EmbeddedResource>
