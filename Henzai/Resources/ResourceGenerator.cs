@@ -10,6 +10,7 @@ using Veldrid.ImageSharp;
 using Henzai.Runtime;
 using Henzai.Core.VertexGeometry;
 using Henzai.Core.Materials;
+using Henzai.Core.Extensions;
 
 namespace Henzai
 {
@@ -361,6 +362,27 @@ namespace Henzai
                     new VertexElementDescription("ViewCol3",VertexElementSemantic.TextureCoordinate,VertexElementFormat.Float4),
                     new VertexElementDescription("ViewCol4",VertexElementSemantic.TextureCoordinate,VertexElementFormat.Float4)}
             );
+        }
+
+        //TODO: use read only sizes instad of hardcoded numbers
+        public static DeviceBuffer AllocateInstanceDataBuffer(InstanceData instanceData, GraphicsDevice graphicsDevice, ResourceFactory resourceFactory) {
+            DeviceBuffer deviceBuffer = null;
+            switch(instanceData.Flag){
+                case InstancingDataFlags.EMPTY:
+                    break;
+                case InstancingDataFlags.POSITION:
+                    deviceBuffer =  resourceFactory.CreateBuffer(new BufferDescription(instanceData.Positions.Length.ToUnsigned() * 12, BufferUsage.VertexBuffer));
+                    graphicsDevice.UpdateBuffer(deviceBuffer, 0, instanceData.Positions);
+                    break;
+                case InstancingDataFlags.VIEW_MATRICES:
+                    deviceBuffer = resourceFactory.CreateBuffer(new BufferDescription(instanceData.ViewMatrices.Length.ToUnsigned() * 64, BufferUsage.VertexBuffer));
+                    graphicsDevice.UpdateBuffer(deviceBuffer, 0, instanceData.ViewMatrices);
+                    break;
+                default:
+                    throw new NotImplementedException($"{instanceData.Flag.ToString("g")} not implemented");
+            }
+
+            return deviceBuffer;
         }
     }
 }

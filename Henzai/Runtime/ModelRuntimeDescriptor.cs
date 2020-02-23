@@ -87,7 +87,6 @@ namespace Henzai.Runtime
         public event Func<ModelRuntimeDescriptor<T>,int,DisposeCollectorResourceFactory,GraphicsDevice,ResourceSet> CallTextureResourceSetGeneration;
 
         //TODO: Refactor renderFlag preEffectsInstancingFlag and instancingFlag into an class/struct
-        // public ModelRuntimeDescriptor(Model<T, RealtimeMaterial> modelIn, string vShaderName, string fShaderName, VertexRuntimeTypes vertexRuntimeType, PrimitiveTopology primitiveTopology, uint renderFlag, uint preEffectsInstancingFlag, uint instancingFlag){
         public ModelRuntimeDescriptor(Model<T, RealtimeMaterial> modelIn, string vShaderName, string fShaderName, VertexRuntimeTypes vertexRuntimeType, PrimitiveTopology primitiveTopology, RenderDescription renderDescription, InstancingRenderDescription instancingRenderDescription){
 
             if(!Verifier.VerifyVertexStruct<T>(vertexRuntimeType))
