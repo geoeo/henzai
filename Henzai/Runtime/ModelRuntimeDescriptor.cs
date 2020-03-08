@@ -8,6 +8,7 @@ using Henzai.Core.Materials;
 using Henzai.Core.VertexGeometry;
 using Henzai.Core.Reflection;
 using Henzai.Runtime.EventHandlerKeys;
+using Henzai.Effects;
 
 namespace Henzai.Runtime
 {
@@ -85,6 +86,8 @@ namespace Henzai.Runtime
         public event Func<DisposeCollectorResourceFactory,ResourceLayout> CallTextureResourceLayoutGeneration;
         // TODO: @Performance: Investigate Texture Cache for already loaded textures
         public event Func<ModelRuntimeDescriptor<T>,int,DisposeCollectorResourceFactory,GraphicsDevice,ResourceSet> CallTextureResourceSetGeneration;
+
+        public bool ShadowMapEnabled => (PreEffectsFlag & RenderFlags.SHADOW_MAP) == RenderFlags.SHADOW_MAP;
 
         //TODO: Refactor renderFlag preEffectsInstancingFlag and instancingFlag into an class/struct
         public ModelRuntimeDescriptor(Model<T, RealtimeMaterial> modelIn, string vShaderName, string fShaderName, VertexRuntimeTypes vertexRuntimeType, PrimitiveTopology primitiveTopology, RenderDescription renderDescription, InstancingRenderDescription instancingRenderDescription){
@@ -212,6 +215,30 @@ namespace Henzai.Runtime
             var flagIndex = InstancingDataFlags.GetArrayIndexForFlag(PreEffectsInstancingFlag);
             VertexInstanceLayoutGenerationList.AddHandler(InstancingEventHandlerKeys.GetKeys()[flagIndex], vertexLayoutDelegate);              
         }
+
+
+        public ResourceLayout[] FillEffectsResourceSet(DisposeCollectorResourceFactory factory, SceneRuntimeDescriptor sceneRuntimeDescriptor, List<SubRenderable> childrenPre){
+            var effectLayoutList = new List<ResourceLayout>();
+
+            if(ShadowMapEnabled){
+                var effectCount = 2; // 1 for Vertex Stage 1 for Fragment
+
+                EffectResourceSets[RenderFlags.NORMAL_ARRAY_INDEX] = new ResourceSet[effectCount];
+                var shadowMapRenderable =  childrenPre[RenderFlags.GetPreEffectArrayIndexForFlag(RenderFlags.SHADOW_MAP)] as ShadowMap;
+                
+                var shadowMapResourceLayout = ResourceGenerator.GenerateTextureResourceLayoutForShadowMapping(factory);
+                effectLayoutList.Add(sceneRuntimeDescriptor.LightProvViewResourceLayout);
+                effectLayoutList.Add(shadowMapResourceLayout);
+                EffectResourceSets[RenderFlags.NORMAL_ARRAY_INDEX][RenderFlags.GetPreEffectArrayIndexForFlag(RenderFlags.SHADOW_MAP)] = sceneRuntimeDescriptor.LightProjViewResourceSet;
+                EffectResourceSets[RenderFlags.NORMAL_ARRAY_INDEX][RenderFlags.GetPreEffectArrayIndexForFlag(RenderFlags.SHADOW_MAP)+1] = ResourceGenerator.GenerateResourceSetForShadowMapping(shadowMapRenderable.ShadowMapTexView,factory);
+            }
+
+            return effectLayoutList.ToArray();
+        }
+        
+
+        
+
 
     }
 }
