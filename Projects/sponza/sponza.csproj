@@ -35,8 +35,14 @@
 
 
 
-    <Content Include="../../Dependencies/libassimp.dylib">
+    <!-- <Content Include="../../Dependencies/libassimp.dylib">
       <Link>libassimp.dylib</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup> -->
+
+    <Content Include="../../Dependencies/Assimp64.dll">
+      <Link>Assimp64.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
