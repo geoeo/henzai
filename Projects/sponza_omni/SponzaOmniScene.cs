@@ -102,7 +102,7 @@ namespace Henzai.Examples
             var skyBoxMaterial = skyBox.GetMaterial(0);
             skyBoxMaterial.AssignCubemapPaths("cloudtop_ft.png", "cloudtop_bk.png", "cloudtop_lf.png", "cloudtop_rt.png", "cloudtop_up.png", "cloudtop_dn.png");
 
-            _skyBoxRuntimeState = new ModelRuntimeDescriptor<VertexPosition>(skyBox, "Skybox", "Skybox", VertexRuntimeTypes.VertexPosition, PrimitiveTopology.TriangleList, new RenderDescription(RenderFlags.NORMAL | RenderFlags.SHADOW_MAP), new InstancingRenderDescription(RenderFlags.NONE, InstancingDataFlags.EMPTY));
+            _skyBoxRuntimeState = new ModelRuntimeDescriptor<VertexPosition>(skyBox, "Skybox", "Skybox", VertexRuntimeTypes.VertexPosition, PrimitiveTopology.TriangleList, new RenderDescription(RenderFlags.NORMAL), new InstancingRenderDescription(RenderFlags.NONE, InstancingDataFlags.EMPTY));
             _skyBoxRuntimeState.CallVertexLayoutGeneration += ResourceGenerator.GenerateVertexLayoutForP;
             _skyBoxRuntimeState.CallSamplerGeneration += ResourceGenerator.GenerateBiLinearSampler;
             _skyBoxRuntimeState.CallTextureResourceLayoutGeneration += ResourceGenerator.GenerateTextureResourceLayoutForCubeMapping;

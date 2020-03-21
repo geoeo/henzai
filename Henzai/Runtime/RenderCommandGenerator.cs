@@ -18,7 +18,6 @@ namespace Henzai.Runtime
         /// Render Commands for Model of Type:
         /// <see cref="VertexStructs"/> which need light/material interactions
         ///</summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void GenerateCommandsForScene_Inline(
                                                     CommandList commandList,
                                                     DeviceBuffer cameraProjViewBuffer,
@@ -49,7 +48,6 @@ namespace Henzai.Runtime
         /// Render Commands for Model of Type:
         /// <see cref="VertexStructs"/> which only need to be displayed in 3D
         ///</summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void GenerateCommandsForScene_Inline(
                                                     CommandList commandList,
                                                     DeviceBuffer cameraProjViewBuffer,
@@ -63,7 +61,6 @@ namespace Henzai.Runtime
         /// Render Commands for Mesh of Type:
         /// <see cref="Henzai.Geometry.VertexPositionNormalTextureTangentBitangent"/> 
         ///</summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void GenerateCommandsForPNTTB_Inline(
                                                     CommandList commandList,
                                                     ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent> modelState,
@@ -118,7 +115,6 @@ namespace Henzai.Runtime
         /// Render Commands for Mesh of Type:
         /// <see cref="Henzai.Geometry.VertexPositionNormal"/> 
         ///</summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void GenerateCommandsForPN_Inline(
                                                     CommandList commandList,
                                                     ModelRuntimeDescriptor<VertexPositionNormal> modelState,
@@ -169,7 +165,6 @@ namespace Henzai.Runtime
         /// Render Commands for Mesh of Type:
         /// <see cref="Henzai.Geometry.VertexPositionTexture"/> 
         ///</summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void GenerateCommandsForPT_Inline(
                                                     CommandList commandList,
                                                     ModelRuntimeDescriptor<VertexPositionTexture> modelState,
@@ -213,7 +208,6 @@ namespace Henzai.Runtime
         /// <see cref="Henzai.Geometry.VertexPositionColor"/> 
         /// Also used in ShadowMap PrePass
         ///</summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void GenerateCommandsForMesh_Inline<T>(
                                                     CommandList commandList,
                                                     ModelRuntimeDescriptor<T> modelState,
@@ -255,7 +249,6 @@ namespace Henzai.Runtime
         /// Render Commands for Mesh of Type:
         /// <see cref="Henzai.Geometry.VertexPosition"/> 
         ///</summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void GenerateCommandsForP_Inline(
                                                     CommandList commandList,
                                                     ModelRuntimeDescriptor<VertexPosition> modelState,
