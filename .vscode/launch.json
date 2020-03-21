@@ -113,6 +113,18 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
+            "name": ".NET Core Launch (sponza omni)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build sponza omni",
+            "program": "${workspaceFolder}/Projects/sponza_omni/bin/Debug/netcoreapp2.2/sponza_omni.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Projects/sponza_omni",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
             "name": ".NET Core Launch (raytracer)",
             "type": "coreclr",
             "request": "launch",

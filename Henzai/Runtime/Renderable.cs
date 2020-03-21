@@ -584,6 +584,11 @@ namespace Henzai.Runtime
             _childrenPre.Add(shadowMap);
         }
 
+        public void CreateOmniShadowMap(Resolution resolution){
+            var omniShadowMap = new OmniShadowMap(_graphicsDevice, resolution);
+            _childrenPre.Add(omniShadowMap);
+        }
+
         /// <summary>
         /// Disposes of all elements in _sceneResources
         /// </summary>

@@ -124,6 +124,16 @@
             "problemMatcher": "$msCompile"
         },
         {
+            "label": "build sponza omni",
+            "command": "dotnet build Projects/sponza_omni/sponza_omni.csproj",
+            "type": "shell",
+            "group": "build",
+            "presentation": {
+                "reveal": "silent"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
             "label": "build raytracer",
             "command": "dotnet build Raytracer/raytracer.fsproj",
             "type": "shell",
@@ -221,6 +231,20 @@
             "type": "shell",
             "group": "build",
             "command": "dotnet run --project Projects/sponza/ -c Release",
+            "problemMatcher":"$msCompile"
+        },
+        {
+            "label": "run sponza omni",
+            "type": "shell",
+            "group": "build",
+            "command": "dotnet run --project Projects/sponza_omni/",
+            "problemMatcher":"$msCompile"
+        },
+        {
+            "label": "run sponza omni (Release)",
+            "type": "shell",
+            "group": "build",
+            "command": "dotnet run --project Projects/sponza_omni/ -c Release",
             "problemMatcher":"$msCompile"
         },
         {
