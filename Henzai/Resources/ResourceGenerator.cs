@@ -50,6 +50,15 @@ namespace Henzai
 
         }
 
+                public static ResourceLayout GenerateTextureResourceLayoutForOmniShadowMapping(DisposeCollectorResourceFactory factory){
+            return factory.CreateResourceLayout(
+                    new ResourceLayoutDescription(
+                        new ResourceLayoutElementDescription("OmniShadowCubeTexture", ResourceKind.TextureReadOnly, ShaderStages.Fragment),
+                        new ResourceLayoutElementDescription("OmniShadowCubeSampler", ResourceKind.Sampler, ShaderStages.Fragment)
+                        ));
+
+        }
+
         public static ResourceLayout GenerateTextureResourceLayoutForDiffuseMapping(DisposeCollectorResourceFactory factory){
             return factory.CreateResourceLayout(
                     new ResourceLayoutDescription(
@@ -185,7 +194,7 @@ namespace Henzai
             Image<Rgba32> top = Image.Load(Path.Combine(AppContext.BaseDirectory, modelRuntimeState.Model.BaseDir, material.cubeMapTop));
             Image<Rgba32> bottom = Image.Load(Path.Combine(AppContext.BaseDirectory, modelRuntimeState.Model.BaseDir, material.cubeMapBottom));
 
-            TextureView diffuseTextureView = ResourceGenerator.CreateCubeMapTextureViewFromImages(front,
+            TextureView cubeMapTextureView = ResourceGenerator.CreateCubeMapTextureViewFromImages(front,
                                                                                         back,
                                                                                         left,
                                                                                         right,
@@ -194,9 +203,11 @@ namespace Henzai
                                                                                         factory,
                                                                                         graphicsDevice);
 
+
+
             return factory.CreateResourceSet(new ResourceSetDescription(
             modelRuntimeState.TextureResourceLayout,
-            diffuseTextureView,
+            cubeMapTextureView,
             modelRuntimeState.TextureSampler
             ));
 

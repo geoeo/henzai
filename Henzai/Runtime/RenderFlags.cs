@@ -7,7 +7,7 @@ namespace Henzai.Runtime
         // 4 bits reserved for pre effects
         public const uint PRE_EFFECTS_MASK = 0x00F;
         // 4 bits reserved for normal render mode
-        public const uint NORMAL = 0x0A0;
+        public const uint NORMAL = 0x0F0;
         // 4 bits reserved for post render effects
         public const uint POST_EFFECTS_MASK = 0xF00;
         public const uint SHADOW_MAP = 0x001;
@@ -57,7 +57,7 @@ namespace Henzai.Runtime
                     index = 0;
                     break;
                 case OMNI_SHADOW_MAPS:
-                    index = 1;
+                    index = 2;
                     break;
                 default:
                     throw new System.ArgumentException($"Invalid flag: {flag} for PreEffects array index");

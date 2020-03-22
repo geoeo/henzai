@@ -3,7 +3,7 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DebugSymbols>true</DebugSymbols>
+
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
@@ -11,7 +11,8 @@
     <WarningLevel>4</WarningLevel>
     <Nullable>enable</Nullable>
     <LangVersion>8.0</LangVersion>
-        <DebugType>Portable</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>Portable</DebugType>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
