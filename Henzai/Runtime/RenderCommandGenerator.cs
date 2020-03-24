@@ -24,6 +24,42 @@ namespace Henzai.Runtime
                                                     DeviceBuffer lightBuffer,
                                                     DeviceBuffer pointLightBuffer,
                                                     DeviceBuffer lightProjViewBuffer,
+                                                    DeviceBuffer omniLightProjViewBuffer,
+                                                    Camera camera,
+                                                    Light light,
+                                                    Light pointLight,
+                                                    Light[] omniLights)
+        {
+            var lightPos = light.LightPos;
+            var pointLightPos = pointLight.LightPos;
+            commandList.UpdateBuffer(cameraProjViewBuffer, 0, camera.ViewMatrix);
+            commandList.UpdateBuffer(cameraProjViewBuffer, 64, camera.ProjectionMatrix);
+            //TODO: Maybe this is not necessary every frame
+            commandList.UpdateBuffer(lightBuffer, 0, ref lightPos);
+            commandList.UpdateBuffer(lightBuffer, 16, ref light.Color_DontMutate);
+            commandList.UpdateBuffer(lightBuffer, 32, ref light.Attentuation_DontMutate);
+            commandList.UpdateBuffer(pointLightBuffer, 0, ref pointLightPos);
+            commandList.UpdateBuffer(pointLightBuffer, 16, ref pointLight.Color_DontMutate);
+            commandList.UpdateBuffer(pointLightBuffer, 32, ref pointLight.Direction_DontMutate);
+            commandList.UpdateBuffer(pointLightBuffer, 48, ref pointLight.Parameters_DontMutate);
+            //TODO: Make this conditional on effects
+            commandList.UpdateBuffer(lightProjViewBuffer, 0, light.LightCam.ViewProjectionMatirx);
+            for(var i = 0u; i < omniLights.Length;i++){
+                var omniLight = omniLights[i].LightViewProj;
+                commandList.UpdateBuffer(omniLightProjViewBuffer, i*64, omniLight);
+            }
+
+
+
+        }
+
+        
+        public static void GenerateCommandsForScene_Inline(
+                                                    CommandList commandList,
+                                                    DeviceBuffer cameraProjViewBuffer,
+                                                    DeviceBuffer lightBuffer,
+                                                    DeviceBuffer pointLightBuffer,
+                                                    DeviceBuffer lightProjViewBuffer,
                                                     Camera camera,
                                                     Light light,
                                                     Light pointLight)
@@ -40,8 +76,6 @@ namespace Henzai.Runtime
             commandList.UpdateBuffer(pointLightBuffer, 16, ref pointLight.Color_DontMutate);
             commandList.UpdateBuffer(pointLightBuffer, 32, ref pointLight.Direction_DontMutate);
             commandList.UpdateBuffer(pointLightBuffer, 48, ref pointLight.Parameters_DontMutate);
-            //TODO: Make this conditional on effects
-            commandList.UpdateBuffer(lightProjViewBuffer, 0, light.LightCam.ViewProjectionMatirx);
         }
 
         /// <summary>

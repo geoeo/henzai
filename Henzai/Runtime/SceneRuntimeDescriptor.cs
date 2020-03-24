@@ -34,6 +34,7 @@ namespace Henzai.Runtime
        /// Buffer Encapsulates CPU Memory for a VP Matrix
        /// </summary>
        public DeviceBuffer LightProjViewBuffer {get; set;}
+       public DeviceBuffer OmniLightProjViewBuffer {get; set;}
        /// <summary>
        /// Encapsulates GPU Memory Layout. See:
        /// <see cref="Veldrid.ResourceLayout"/>
@@ -60,6 +61,7 @@ namespace Henzai.Runtime
        /// <see cref="Veldrid.ResourceLayout"/>
        /// </summary>
        public ResourceLayout LightProvViewResourceLayout {get; set;}
+       public ResourceLayout OmniLightProvViewResourceLayout {get; set;}
 
        /// <summary>
        /// Encapsulates GPU Memory Layout and Resource. See:
@@ -91,10 +93,12 @@ namespace Henzai.Runtime
        /// <see cref="Veldrid.BindableResource"/>
        /// </summary>
        public ResourceSet LightProjViewResourceSet {get;set;}
+       public ResourceSet OmniLightProjViewResourceSet {get;set;}
        /// <summary>
        /// Encapsulates Lighting Layout.
        /// </summary>
        public Light Light {get; set;}
+       public Light[] OmniLight {get; set;}
        public Light SpotLight {get;set;}
        public Camera Camera {get;set;}
    } 
