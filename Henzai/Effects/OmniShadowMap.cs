@@ -36,6 +36,7 @@ namespace Henzai.Effects
                     _factory,
                     _sceneRuntimeDescriptor.CameraResourceLayout,
                     new BindableResource[] { _sceneRuntimeDescriptor.CameraProjViewBuffer });
+
         }
 
         protected override void GenerateFramebuffer(){
@@ -58,6 +59,17 @@ namespace Henzai.Effects
             _modelPCDescriptorArray = modelPCDescriptorArray;
 
             _sceneRuntimeDescriptor.Light = mainSceneRuntimeDescriptor.Light;
+
+            //TODO: Omni Shadows: set correct Cameras!
+            var lightCam = mainSceneRuntimeDescriptor.Light.LightCam;
+            _sceneRuntimeDescriptor.OmniLight = new Light[]{ 
+                new Light(lightCam),
+                new Light(lightCam),
+                new Light(lightCam),
+                new Light(lightCam),
+                new Light(lightCam),
+                new Light(lightCam),
+                };
         }
 
         public override void BuildCommandList(){
@@ -68,8 +80,8 @@ namespace Henzai.Effects
 
             RenderCommandGenerator.GenerateCommandsForScene_Inline(
                 _commandList,
-                _sceneRuntimeDescriptor.CameraProjViewBuffer,
-                _sceneRuntimeDescriptor.Light.LightCam);
+                _sceneRuntimeDescriptor.OmniLightProjViewBuffer,
+                _sceneRuntimeDescriptor.OmniLight);
 
             RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionNormalTextureTangentBitangent>(_commandList,_modelPNTTBDescriptorArray,_sceneRuntimeDescriptor, new RenderDescription(RenderFlags.SHADOW_MAP), VertexRuntimeTypes.VertexPositionNormalTextureTangentBitangent);
             RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionNormal>(_commandList,_modelPNDescriptorArray,_sceneRuntimeDescriptor, new RenderDescription(RenderFlags.SHADOW_MAP), VertexRuntimeTypes.VertexPositionNormal);

@@ -36,15 +36,6 @@ namespace Henzai.Examples
             _sceneRuntimeState.Light = new Light(lightCam,lightColor,0.1f);
             _sceneRuntimeState.Camera = Camera;
             _sceneRuntimeState.SpotLight = Light.NO_POINTLIGHT;
-            //TODO: Omni Shadows: set correct Cameras
-            _sceneRuntimeState.OmniLight = new Light[]{ 
-                new Light(lightCam,lightColor,0.1f),
-                new Light(lightCam,lightColor,0.1f),
-                new Light(lightCam,lightColor,0.1f),
-                new Light(lightCam,lightColor,0.1f),
-                new Light(lightCam,lightColor,0.1f),
-                new Light(lightCam,lightColor,0.1f),
-                };
 
             // string filePath = Path.Combine(AppContext.BaseDirectory, "armor/armor.dae"); 
             // string filePath = Path.Combine(AppContext.BaseDirectory, "nanosuit/nanosuit.obj"); 
@@ -181,11 +172,9 @@ namespace Henzai.Examples
                 _sceneRuntimeState.LightBuffer,
                 _sceneRuntimeState.SpotLightBuffer,
                 _sceneRuntimeState.LightProjViewBuffer,
-                _sceneRuntimeState.OmniLightProjViewBuffer,
                 _sceneRuntimeState.Camera,
                 _sceneRuntimeState.Light,
-                _sceneRuntimeState.SpotLight,
-                _sceneRuntimeState.OmniLight);
+                _sceneRuntimeState.SpotLight);
 
             //RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPNTTBDescriptorArray,_sceneRuntimeState, PipelineTypes.Normal);
             RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPNTTBDescriptorArray,_sceneRuntimeState, PNTTBRuntimeGeometry.MeshBVHArray, new RenderDescription(RenderFlags.NORMAL));
