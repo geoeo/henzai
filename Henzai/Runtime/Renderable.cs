@@ -15,6 +15,7 @@ using Henzai.Effects;
 using Henzai.Core.Materials;
 using Henzai.Core.VertexGeometry;
 using Henzai.Core.Extensions;
+using Henzai.Core.Numerics;
 
 
 namespace Henzai.Runtime
@@ -467,7 +468,7 @@ namespace Henzai.Runtime
                     new BindableResource[] { _sceneRuntimeState.LightBuffer });
 
             // Uniform 3 - PointLight
-            _sceneRuntimeState.SpotLightBuffer = _factory.CreateBuffer(new BufferDescription(4 * 4 * 4, BufferUsage.UniformBuffer));
+            _sceneRuntimeState.SpotLightBuffer = _factory.CreateBuffer(new BufferDescription(Core.Numerics.Utils.SinglePrecision4x4InBytes, BufferUsage.UniformBuffer));
             _sceneRuntimeState.SpotLightResourceLayout
                 = ResourceGenerator.GenerateResourceLayout(
                     _factory,
@@ -496,7 +497,7 @@ namespace Henzai.Runtime
 
             //TODO: Make this conditional on effects
             // Uniform 5 - LightProjView (ShadowMapping)
-            _sceneRuntimeState.LightProjViewBuffer = _factory.CreateBuffer(new BufferDescription(4*16, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
+            _sceneRuntimeState.LightProjViewBuffer = _factory.CreateBuffer(new BufferDescription(Core.Numerics.Utils.SinglePrecision4x4InBytes, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
             _sceneRuntimeState.LightProvViewResourceLayout
                 = ResourceGenerator.GenerateResourceLayout(
                     _factory,
@@ -511,7 +512,7 @@ namespace Henzai.Runtime
 
             //TODO: Make this conditional on effects
             //Uniform 6 - OmniLightProjView (OmniShadowMapping)
-            _sceneRuntimeState.OmniLightProjViewBuffer = _factory.CreateBuffer(new BufferDescription(6*4*16, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
+            _sceneRuntimeState.OmniLightProjViewBuffer = _factory.CreateBuffer(new BufferDescription(6*Core.Numerics.Utils.SinglePrecision4x4InBytes, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
             _sceneRuntimeState.OmniLightProvViewResourceLayout
                 = ResourceGenerator.GenerateResourceLayout(
                     _factory,

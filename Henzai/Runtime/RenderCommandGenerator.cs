@@ -40,6 +40,7 @@ namespace Henzai.Runtime
             commandList.UpdateBuffer(pointLightBuffer, 16, ref pointLight.Color_DontMutate);
             commandList.UpdateBuffer(pointLightBuffer, 32, ref pointLight.Direction_DontMutate);
             commandList.UpdateBuffer(pointLightBuffer, 48, ref pointLight.Parameters_DontMutate);
+            commandList.UpdateBuffer(lightProjViewBuffer, 0, light.LightCam.ViewProjectionMatirx);
         }
 
         /// <summary>

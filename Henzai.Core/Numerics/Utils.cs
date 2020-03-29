@@ -31,5 +31,8 @@ namespace Henzai.Core.Numerics{
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int BoolToInt(bool b) => b ? 1 : 0;
 
+        public static uint SinglePrecision4x4InBytes => 64;
+
+
     }
 }

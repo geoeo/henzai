@@ -221,7 +221,6 @@ namespace Henzai.Runtime
         public ResourceLayout[] FillEffectsResourceSet(DisposeCollectorResourceFactory factory, SceneRuntimeDescriptor sceneRuntimeDescriptor, List<SubRenderable> childrenPre){
             var effectLayoutList = new List<ResourceLayout>();
 
-            //var effectCount = RenderFlags.GetSizeOfPreEffectFlag(PreEffectsFlag)*2; // 1 for Vertex Stage 1 for Fragment
             var effectCount = RenderFlags.GetSizeOfPreEffectFlag(PreEffectsFlag)*2; // 1 for Vertex Stage 1 for Fragment
             EffectResourceSets[RenderFlags.NORMAL_ARRAY_INDEX] = new ResourceSet[effectCount];
             if(ShadowMapEnabled){
@@ -236,8 +235,6 @@ namespace Henzai.Runtime
 
             if(OmniShadowMapEnabled) {
                 var omniShadowMapRenderable =  childrenPre[RenderFlags.GetPreEffectArrayIndexForFlag(RenderFlags.OMNI_SHADOW_MAPS)] as OmniShadowMap;
-
-
                 var shadowMapResourceLayout = ResourceGenerator.GenerateTextureResourceLayoutForOmniShadowMapping(factory);
                 //TODO: this has to be an array
                 //effectLayoutList.Add(sceneRuntimeDescriptor.LightProvViewResourceLayout);
