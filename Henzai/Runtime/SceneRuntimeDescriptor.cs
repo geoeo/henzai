@@ -1,5 +1,6 @@
 using System;
 using System.Numerics;
+using System.Diagnostics;
 using Henzai.Cameras;
 using Veldrid;
 
@@ -98,7 +99,16 @@ namespace Henzai.Runtime
        /// Encapsulates Lighting Layout.
        /// </summary>
        public Light Light {get; set;}
-       public Light[] OmniLight {get; set;}
+       public Light[] _omniLights;
+       public Light[] OmniLights {
+           get{
+               return this._omniLights;
+            } 
+            set {
+                Debug.Assert(value.Length == 6);
+                _omniLights = value;
+            }
+       }
        public Light SpotLight {get;set;}
        public Camera Camera {get;set;}
    } 

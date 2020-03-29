@@ -59,17 +59,8 @@ namespace Henzai.Effects
             _modelPCDescriptorArray = modelPCDescriptorArray;
 
             _sceneRuntimeDescriptor.Light = mainSceneRuntimeDescriptor.Light;
-
-            //TODO: Omni Shadows: set correct Cameras!
-            var lightCam = mainSceneRuntimeDescriptor.Light.LightCam;
-            _sceneRuntimeDescriptor.OmniLight = new Light[]{ 
-                new Light(lightCam),
-                new Light(lightCam),
-                new Light(lightCam),
-                new Light(lightCam),
-                new Light(lightCam),
-                new Light(lightCam),
-                };
+            _sceneRuntimeDescriptor.OmniLights = mainSceneRuntimeDescriptor.OmniLights;
+        
         }
 
         public override void BuildCommandList(){
@@ -81,7 +72,7 @@ namespace Henzai.Effects
             RenderCommandGenerator.GenerateCommandsForScene_Inline(
                 _commandList,
                 _sceneRuntimeDescriptor.OmniLightProjViewBuffer,
-                _sceneRuntimeDescriptor.OmniLight);
+                _sceneRuntimeDescriptor.OmniLights);
 
             RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionNormalTextureTangentBitangent>(_commandList,_modelPNTTBDescriptorArray,_sceneRuntimeDescriptor, new RenderDescription(RenderFlags.SHADOW_MAP), VertexRuntimeTypes.VertexPositionNormalTextureTangentBitangent);
             RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionNormal>(_commandList,_modelPNDescriptorArray,_sceneRuntimeDescriptor, new RenderDescription(RenderFlags.SHADOW_MAP), VertexRuntimeTypes.VertexPositionNormal);

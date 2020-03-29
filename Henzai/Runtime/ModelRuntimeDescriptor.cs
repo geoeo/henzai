@@ -221,6 +221,7 @@ namespace Henzai.Runtime
         public ResourceLayout[] FillEffectsResourceSet(DisposeCollectorResourceFactory factory, SceneRuntimeDescriptor sceneRuntimeDescriptor, List<SubRenderable> childrenPre){
             var effectLayoutList = new List<ResourceLayout>();
 
+            //var effectCount = RenderFlags.GetSizeOfPreEffectFlag(PreEffectsFlag)*2; // 1 for Vertex Stage 1 for Fragment
             var effectCount = RenderFlags.GetSizeOfPreEffectFlag(PreEffectsFlag)*2; // 1 for Vertex Stage 1 for Fragment
             EffectResourceSets[RenderFlags.NORMAL_ARRAY_INDEX] = new ResourceSet[effectCount];
             if(ShadowMapEnabled){

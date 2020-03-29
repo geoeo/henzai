@@ -243,12 +243,12 @@ namespace Henzai
                     TextureUsage.Sampled | TextureUsage.Cubemap));
 
                 uint faceSize = (uint)(front.Width * front.Height * Unsafe.SizeOf<Rgba32>());
-                graphicsDevice.UpdateTexture(textureCube, (IntPtr)rightPin, faceSize, 0, 0, 0, width, height, 1, 0, 0); // +X
-                graphicsDevice.UpdateTexture(textureCube, (IntPtr)leftPin, faceSize, 0, 0, 0, width, height, 1, 0, 1); // -X
-                graphicsDevice.UpdateTexture(textureCube, (IntPtr)topPin, faceSize, 0, 0, 0, width, height, 1, 0, 2); // +Y
-                graphicsDevice.UpdateTexture(textureCube, (IntPtr)bottomPin, faceSize, 0, 0, 0, width, height, 1, 0, 3); // -Y
-                graphicsDevice.UpdateTexture(textureCube, (IntPtr)backPin, faceSize, 0, 0, 0, width, height, 1, 0, 4); // +Z
-                graphicsDevice.UpdateTexture(textureCube, (IntPtr)frontPin, faceSize, 0, 0, 0, width, height, 1, 0, 5); // -Z
+                graphicsDevice.UpdateTexture(textureCube, (IntPtr)rightPin, faceSize, 0, 0, 0, width, height, 1, 0, (uint)CubeMap.FaceIndices.Right); // +X
+                graphicsDevice.UpdateTexture(textureCube, (IntPtr)leftPin, faceSize, 0, 0, 0, width, height, 1, 0, (uint)CubeMap.FaceIndices.Left); // -X
+                graphicsDevice.UpdateTexture(textureCube, (IntPtr)topPin, faceSize, 0, 0, 0, width, height, 1, 0, (uint)CubeMap.FaceIndices.Top); // +Y
+                graphicsDevice.UpdateTexture(textureCube, (IntPtr)bottomPin, faceSize, 0, 0, 0, width, height, 1, 0, (uint)CubeMap.FaceIndices.Bottom); // -Y
+                graphicsDevice.UpdateTexture(textureCube, (IntPtr)backPin, faceSize, 0, 0, 0, width, height, 1, 0, (uint)CubeMap.FaceIndices.Back); // +Z
+                graphicsDevice.UpdateTexture(textureCube, (IntPtr)frontPin, faceSize, 0, 0, 0, width, height, 1, 0, (uint)CubeMap.FaceIndices.Front); // -Z
 
                 textureView = factory.CreateTextureView(new TextureViewDescription(textureCube));
             }

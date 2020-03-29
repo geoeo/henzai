@@ -22,7 +22,6 @@ namespace Henzai
         /// </summary>
         public static uint SizeInBytes => 48;
         public Camera LightCam {get; private set;}
-        //private Vector4 _lightPos; 
 
         // W channel used for intensity
         private Vector4 _color;
@@ -57,20 +56,10 @@ namespace Henzai
         /// </summary>s
         public ref Vector4 Parameters_DontMutate => ref _parameters;
 
-        // public Light(){
-        //     LightCam = new OrthographicCamera(DEFAULT_WIDTH, DEFAULT_HEIGHT, Light.DEFAULT_POSITION, Light.DEFAULT_LOOKAT);
-        //     _color = DEFAULT_COLOR;
-        // }
-
         public Light(Camera camera){
             LightCam = camera;
             _color = DEFAULT_COLOR;
         }
-
-        // public Light(Vector4 lightPos,Vector4 lookAt, Vector4 color){
-        //     LightCam = new OrthographicCamera(DEFAULT_WIDTH, DEFAULT_HEIGHT, lightPos, lookAt);
-        //     _color = color;
-        // }
 
         public Light(Camera camera, RgbaFloat color){
             LightCam = camera;
@@ -83,41 +72,12 @@ namespace Henzai
             _color.W = intensity;
         }
 
-        // public Light(RgbaFloat color, float intensity){
-        //     LightCam = new OrthographicCamera(DEFAULT_WIDTH, DEFAULT_HEIGHT, Light.DEFAULT_POSITION, Light.DEFAULT_LOOKAT);
-        //     _color = color.ToVector4();
-        //     _color.W = intensity;
-        // }
-
-        // public Light(Camera camera,  RgbaFloat color, float intensity){
-        //     LightCam = camera;
-        //     _color = color.ToVector4();
-        //     _color.W = intensity;
-        // }
-
-        // public Light(Camera camera  RgbaFloat color, float intensity){
-        //     LightCam = camera;
-        //     _color = color.ToVector4();
-        //     _color.W = intensity;
-        // }
-
-        // public Light(Camera camera, RgbaFloat color){
-        //     LightCam = camera;
-        //     _color = color.ToVector4();
-        // }
-
 
         public Light(Camera camera, RgbaFloat color, Vector4 attenuation){
             LightCam = camera;
             _color = color.ToVector4();
             _attenuation = attenuation;
         }
-
-        // public Light(Vector4 lightPos, Vector4 lookAt, RgbaFloat color, Vector4 attenuation){
-        //     LightCam = new OrthographicCamera(DEFAULT_WIDTH, DEFAULT_HEIGHT, lightPos, lookAt);
-        //     _color = color.ToVector4();
-        //     _attenuation = attenuation;
-        // }
 
 
         public Light(Camera camera, RgbaFloat color, float intensity, float attenuation, Vector4 parameters){
@@ -128,6 +88,16 @@ namespace Henzai
             var direction = new Vector4(lookAt.X, lookAt.Y, lookAt.Z, attenuation);
             _direction = direction;
             _parameters = parameters;
+        }
+
+        public static Light[] GenerateOmniLights(Camera[] cameras,  RgbaFloat color, float intensity){
+            var omniLights = new Light[6];
+            for(var i = 0; i < 6; i++){
+                var camera = cameras[i];
+                 omniLights[i] = new Light(camera, color, intensity);           
+            }
+
+            return omniLights;
         }
 
     }

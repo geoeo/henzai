@@ -37,6 +37,9 @@ namespace Henzai.Examples
             _sceneRuntimeState.Camera = Camera;
             _sceneRuntimeState.SpotLight = Light.NO_POINTLIGHT;
 
+            var omniCameras =  CubeMap.GenerateOmniCameras(lightPos,_renderResolution.Horizontal,_renderResolution.Vertical);
+            _sceneRuntimeState.OmniLights = Light.GenerateOmniLights(omniCameras,lightColor,0.1f);
+
             // string filePath = Path.Combine(AppContext.BaseDirectory, "armor/armor.dae"); 
             // string filePath = Path.Combine(AppContext.BaseDirectory, "nanosuit/nanosuit.obj"); 
 

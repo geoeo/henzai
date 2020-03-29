@@ -51,7 +51,7 @@ namespace Henzai.Runtime
         protected SceneRuntimeDescriptor _sceneRuntimeState;
         public SceneRuntimeDescriptor SceneRuntimeDescriptor => _sceneRuntimeState;
         protected CommandList _commandList;
-        private Resolution _renderResolution;
+        protected Resolution _renderResolution;
         public Resolution RenderResoultion => _renderResolution;
         public event Action<Camera> PreRender_Camera;
         public event Action<GeometryDescriptor<VertexPositionNormalTextureTangentBitangent>, GeometryDescriptor<VertexPositionNormal>, GeometryDescriptor<VertexPositionTexture>, GeometryDescriptor<VertexPositionColor>, GeometryDescriptor<VertexPosition>> PreRender_Descriptors;
@@ -496,7 +496,7 @@ namespace Henzai.Runtime
 
             //TODO: Make this conditional on effects
             // Uniform 5 - LightProjView (ShadowMapping)
-            _sceneRuntimeState.LightProjViewBuffer = _factory.CreateBuffer(new BufferDescription(Camera.SizeInBytes, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
+            _sceneRuntimeState.LightProjViewBuffer = _factory.CreateBuffer(new BufferDescription(4*16, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
             _sceneRuntimeState.LightProvViewResourceLayout
                 = ResourceGenerator.GenerateResourceLayout(
                     _factory,
@@ -511,7 +511,7 @@ namespace Henzai.Runtime
 
             //TODO: Make this conditional on effects
             //Uniform 6 - OmniLightProjView (OmniShadowMapping)
-            _sceneRuntimeState.OmniLightProjViewBuffer = _factory.CreateBuffer(new BufferDescription(6*Camera.SizeInBytes, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
+            _sceneRuntimeState.OmniLightProjViewBuffer = _factory.CreateBuffer(new BufferDescription(6*4*16, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
             _sceneRuntimeState.OmniLightProvViewResourceLayout
                 = ResourceGenerator.GenerateResourceLayout(
                     _factory,
