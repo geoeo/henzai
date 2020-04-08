@@ -495,7 +495,7 @@ namespace Henzai.Runtime
                     _sceneRuntimeState.MaterialResourceLayout,
                     new BindableResource[] { _sceneRuntimeState.MaterialBuffer });
 
-            //TODO: Make this conditional on effects
+            // TODO: Make this conditional on effects
             // Uniform 5 - LightProjView (ShadowMapping)
             _sceneRuntimeState.LightProjViewBuffer = _factory.CreateBuffer(new BufferDescription(Core.Numerics.Utils.SinglePrecision4x4InBytes, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
             _sceneRuntimeState.LightProvViewResourceLayout
@@ -509,21 +509,7 @@ namespace Henzai.Runtime
                     _factory,
                     _sceneRuntimeState.LightProvViewResourceLayout,
                     new BindableResource[] { _sceneRuntimeState.LightProjViewBuffer });            
-
-            //TODO: Make this conditional on effects
-            //Uniform 6 - OmniLightProjView (OmniShadowMapping)
-            _sceneRuntimeState.OmniLightProjViewBuffer = _factory.CreateBuffer(new BufferDescription(6*Core.Numerics.Utils.SinglePrecision4x4InBytes, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
-            _sceneRuntimeState.OmniLightProvViewResourceLayout
-                = ResourceGenerator.GenerateResourceLayout(
-                    _factory,
-                    "omnilightProjView",
-                    ResourceKind.UniformBuffer,
-                    ShaderStages.Vertex);
-            _sceneRuntimeState.OmniLightProjViewResourceSet
-                = ResourceGenerator.GenrateResourceSet(
-                    _factory,
-                    _sceneRuntimeState.LightProvViewResourceLayout,
-                    new BindableResource[] { _sceneRuntimeState.OmniLightProjViewBuffer });       
+   
         }
 
         //TODO: Maybe replace this by non virtual as it seems to always be the same

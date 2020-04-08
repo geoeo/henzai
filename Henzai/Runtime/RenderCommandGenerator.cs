@@ -60,8 +60,24 @@ namespace Henzai.Runtime
         public static void GenerateCommandsForScene_Inline(
                                                     CommandList commandList,
                                                     DeviceBuffer cubeMapBuffer,
-                                                    Light[] omniLight)
+                                                    DeviceBuffer lightBuffer,
+                                                    DeviceBuffer cameraProjViewBuffer,
+                                                    Light[] omniLight,
+                                                    Camera camera)
         {
+            
+            // The light position should be identical to all lights.
+            // The color and attenuation just passed for compelteness.
+            var light = omniLight[0];
+            var lightPos = light.LightPos;
+            commandList.UpdateBuffer(lightBuffer, 0, ref lightPos);
+            commandList.UpdateBuffer(lightBuffer, 16, ref light.Color_DontMutate);
+            commandList.UpdateBuffer(lightBuffer, 32, ref light.Attentuation_DontMutate);
+
+            // Not really needed, but written for compelteness. We are only interested in the World Matrix for omni directional shadow mapping.
+            commandList.UpdateBuffer(cameraProjViewBuffer, 0, camera.ViewMatrix);
+            commandList.UpdateBuffer(cameraProjViewBuffer, 64, camera.ProjectionMatrix);
+
             for(var i = 0u; i < omniLight.Length;i++){
                 var viewProjectionMatrix = omniLight[i].LightViewProj;
                 commandList.UpdateBuffer(cubeMapBuffer, i*64, viewProjectionMatrix);

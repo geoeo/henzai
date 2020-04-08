@@ -37,6 +37,19 @@ namespace Henzai.Effects
                     _sceneRuntimeDescriptor.CameraResourceLayout,
                     new BindableResource[] { _sceneRuntimeDescriptor.CameraProjViewBuffer });
 
+             _sceneRuntimeDescriptor.OmniLightProjViewBuffer = _factory.CreateBuffer(new BufferDescription(6*Core.Numerics.Utils.SinglePrecision4x4InBytes, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
+            _sceneRuntimeDescriptor.OmniLightProvViewResourceLayout
+                = ResourceGenerator.GenerateResourceLayout(
+                    _factory,
+                    "omniLightProjView",
+                    ResourceKind.UniformBuffer,
+                    ShaderStages.Geometry);
+            _sceneRuntimeDescriptor.OmniLightProjViewResourceSet
+                = ResourceGenerator.GenrateResourceSet(
+                    _factory,
+                    _sceneRuntimeDescriptor.OmniLightProvViewResourceLayout,
+                    new BindableResource[] { _sceneRuntimeDescriptor.OmniLightProjViewBuffer });
+
         }
 
         protected override void GenerateFramebuffer(){
@@ -69,10 +82,14 @@ namespace Henzai.Effects
             _commandList.SetFullViewports();
             _commandList.ClearDepthStencil(1.0f);
 
+
             RenderCommandGenerator.GenerateCommandsForScene_Inline(
                 _commandList,
                 _sceneRuntimeDescriptor.OmniLightProjViewBuffer,
-                _sceneRuntimeDescriptor.OmniLights);
+                _sceneRuntimeDescriptor.LightBuffer,
+                _sceneRuntimeDescriptor.CameraProjViewBuffer,
+                _sceneRuntimeDescriptor.OmniLights,
+                _sceneRuntimeDescriptor.Camera);
 
             RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionNormalTextureTangentBitangent>(_commandList,_modelPNTTBDescriptorArray,_sceneRuntimeDescriptor, new RenderDescription(RenderFlags.SHADOW_MAP), VertexRuntimeTypes.VertexPositionNormalTextureTangentBitangent);
             RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionNormal>(_commandList,_modelPNDescriptorArray,_sceneRuntimeDescriptor, new RenderDescription(RenderFlags.SHADOW_MAP), VertexRuntimeTypes.VertexPositionNormal);

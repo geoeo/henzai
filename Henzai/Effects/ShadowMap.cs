@@ -23,7 +23,7 @@ namespace Henzai.Effects
 
         public ShadowMap(GraphicsDevice graphicsDevice, Resolution resolution) : base(graphicsDevice, resolution){      
             _resolution = resolution;
-            //_frameBuffer = graphicsDevice.SwapchainFramebuffer;
+
 
             _sceneRuntimeDescriptor.CameraProjViewBuffer = _factory.CreateBuffer(new BufferDescription(Camera.SizeInBytes, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
             _sceneRuntimeDescriptor.CameraResourceLayout
