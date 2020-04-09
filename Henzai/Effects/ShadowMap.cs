@@ -19,11 +19,7 @@ namespace Henzai.Effects
         private ModelRuntimeDescriptor<VertexPositionTexture>[] _modelPTDescriptorArray;
         private ModelRuntimeDescriptor<VertexPositionColor>[] _modelPCDescriptorArray;
 
-        private Resolution _resolution;
-
         public ShadowMap(GraphicsDevice graphicsDevice, Resolution resolution) : base(graphicsDevice, resolution){      
-            _resolution = resolution;
-
 
             _sceneRuntimeDescriptor.CameraProjViewBuffer = _factory.CreateBuffer(new BufferDescription(Camera.SizeInBytes, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
             _sceneRuntimeDescriptor.CameraResourceLayout
