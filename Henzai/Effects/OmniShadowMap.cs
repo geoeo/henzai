@@ -19,10 +19,7 @@ namespace Henzai.Effects
         private ModelRuntimeDescriptor<VertexPositionTexture>[] _modelPTDescriptorArray;
         private ModelRuntimeDescriptor<VertexPositionColor>[] _modelPCDescriptorArray;
 
-        private Resolution _resolution;
-
         public OmniShadowMap(GraphicsDevice graphicsDevice, Resolution resolution) : base(graphicsDevice, resolution){      
-            _resolution = resolution;
 
             _sceneRuntimeDescriptor.CameraProjViewBuffer = _factory.CreateBuffer(new BufferDescription(Camera.SizeInBytes, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
             _sceneRuntimeDescriptor.CameraResourceLayout
@@ -41,7 +38,7 @@ namespace Henzai.Effects
             _sceneRuntimeDescriptor.OmniLightProvViewResourceLayout
                 = ResourceGenerator.GenerateResourceLayout(
                     _factory,
-                    "omniLightProjView",
+                    "shadowMatrices",
                     ResourceKind.UniformBuffer,
                     ShaderStages.Geometry);
             _sceneRuntimeDescriptor.OmniLightProjViewResourceSet
@@ -49,6 +46,32 @@ namespace Henzai.Effects
                     _factory,
                     _sceneRuntimeDescriptor.OmniLightProvViewResourceLayout,
                     new BindableResource[] { _sceneRuntimeDescriptor.OmniLightProjViewBuffer });
+
+            _sceneRuntimeDescriptor.LightBuffer = _factory.CreateBuffer(new BufferDescription(Light.SizeInBytes, BufferUsage.UniformBuffer));
+            _sceneRuntimeDescriptor.LightResourceLayout
+                = ResourceGenerator.GenerateResourceLayout(
+                    _factory,
+                    "light",
+                    ResourceKind.UniformBuffer,
+                    ShaderStages.Fragment);
+            _sceneRuntimeDescriptor.LightResourceSet
+                = ResourceGenerator.GenrateResourceSet(
+                    _factory,
+                    _sceneRuntimeDescriptor.LightResourceLayout,
+                    new BindableResource[] { _sceneRuntimeDescriptor.LightBuffer });
+
+            _sceneRuntimeDescriptor.CameraInfoBuffer = _factory.CreateBuffer(new BufferDescription(2*8, BufferUsage.UniformBuffer));
+            _sceneRuntimeDescriptor.CameraInfoResourceLayout
+                = ResourceGenerator.GenerateResourceLayout(
+                    _factory,
+                    "cameraInfo",
+                    ResourceKind.UniformBuffer,
+                    ShaderStages.Fragment);
+            _sceneRuntimeDescriptor.CameraInfoResourceSet
+                = ResourceGenerator.GenrateResourceSet(
+                    _factory,
+                    _sceneRuntimeDescriptor.CameraInfoResourceLayout,
+                    new BindableResource[] { _sceneRuntimeDescriptor.CameraInfoBuffer });
 
         }
 
@@ -88,6 +111,7 @@ namespace Henzai.Effects
                 _sceneRuntimeDescriptor.OmniLightProjViewBuffer,
                 _sceneRuntimeDescriptor.LightBuffer,
                 _sceneRuntimeDescriptor.CameraProjViewBuffer,
+                _sceneRuntimeDescriptor.CameraInfoBuffer,
                 _sceneRuntimeDescriptor.OmniLights,
                 _sceneRuntimeDescriptor.Camera);
 

@@ -57,7 +57,7 @@ namespace Henzai.Runtime
                     index = 0;
                     break;
                 case OMNI_SHADOW_MAPS:
-                    index = 2;
+                    index = 1;
                     break;
                 default:
                     throw new System.ArgumentException($"Invalid flag: {flag} for PreEffects array index");

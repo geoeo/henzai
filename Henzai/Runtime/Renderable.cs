@@ -583,11 +583,13 @@ namespace Henzai.Runtime
         //TODO: Make this generical for whole pre effects pipeline
         public void CreateShadowMap(Resolution resolution){
             var shadowMap = new ShadowMap(_graphicsDevice, resolution);
+            // TODO: add to correct index - this only correct by chance
             _childrenPre.Add(shadowMap);
         }
 
         public void CreateOmniShadowMap(Resolution resolution){
             var omniShadowMap = new OmniShadowMap(_graphicsDevice, resolution);
+            // TODO: add to correct index
             _childrenPre.Add(omniShadowMap);
         }
 

@@ -22,7 +22,7 @@ namespace Henzai.Runtime
     /// </summary>
     public abstract class SubRenderable : IDisposable
     {
-        private Resolution _resolution;
+        protected Resolution _resolution;
         public Resolution Resolution => _resolution;
         protected GraphicsDevice _graphicsDevice;
         public GraphicsDevice GraphicsDevice => _graphicsDevice;

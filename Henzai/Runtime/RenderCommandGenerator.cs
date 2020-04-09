@@ -62,6 +62,7 @@ namespace Henzai.Runtime
                                                     DeviceBuffer cubeMapBuffer,
                                                     DeviceBuffer lightBuffer,
                                                     DeviceBuffer cameraProjViewBuffer,
+                                                    DeviceBuffer cameraInfoBuffer,
                                                     Light[] omniLight,
                                                     Camera camera)
         {
@@ -77,6 +78,9 @@ namespace Henzai.Runtime
             // Not really needed, but written for compelteness. We are only interested in the World Matrix for omni directional shadow mapping.
             commandList.UpdateBuffer(cameraProjViewBuffer, 0, camera.ViewMatrix);
             commandList.UpdateBuffer(cameraProjViewBuffer, 64, camera.ProjectionMatrix);
+
+            commandList.UpdateBuffer(cameraInfoBuffer, 0, camera.NearDistance);
+            commandList.UpdateBuffer(cameraInfoBuffer, 4, camera.FarDistance);
 
             for(var i = 0u; i < omniLight.Length;i++){
                 var viewProjectionMatrix = omniLight[i].LightViewProj;

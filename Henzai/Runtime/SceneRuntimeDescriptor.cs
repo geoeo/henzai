@@ -24,6 +24,7 @@ namespace Henzai.Runtime
        /// Buffer Encapsulates CPU Memory for Light Information
        /// </summary>
        public DeviceBuffer LightBuffer {get; set;}
+       public DeviceBuffer CameraInfoBuffer {get; set;}
        /// <summary>
        /// Buffer Encapsulates CPU Memory for Point Light Information
        /// </summary>
@@ -42,6 +43,7 @@ namespace Henzai.Runtime
        /// <see cref="Veldrid.ResourceLayout"/>
        /// </summary>
        public ResourceLayout CameraResourceLayout {get; set;}
+       public ResourceLayout CameraInfoResourceLayout {get; set;}
        public ResourceLayout WorldMatLayout {get; set;}
 
        /// <summary>
@@ -72,6 +74,7 @@ namespace Henzai.Runtime
        /// <see cref="Veldrid.BindableResource"/>
        /// </summary>
        public ResourceSet CameraResourceSet {get;set;}
+       public ResourceSet CameraInfoResourceSet {get;set;}
        public ResourceSet WorldMatResourceSet {get;set;}
        /// <summary>
        /// Encapsulates GPU Memory Layout and Resource. See:
