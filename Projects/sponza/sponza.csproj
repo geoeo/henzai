@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -59,6 +59,7 @@
       <Link>Shaders/Metal/%(Filename)%(Extension)</Link>
     </METAL>
   </ItemGroup>
+
 
   <ItemGroup>
     <Content Update="..\..\Assets\Skyboxes\cloudtop\cloudtop_bk.png">

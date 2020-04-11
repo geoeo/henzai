@@ -63,8 +63,7 @@ namespace Henzai.Runtime
                                                     DeviceBuffer lightBuffer,
                                                     DeviceBuffer cameraProjViewBuffer,
                                                     DeviceBuffer cameraInfoBuffer,
-                                                    Light[] omniLight,
-                                                    Camera camera)
+                                                    Light[] omniLight)
         {
             
             // The light position should be identical to all lights.
@@ -75,9 +74,10 @@ namespace Henzai.Runtime
             commandList.UpdateBuffer(lightBuffer, 16, ref light.Color_DontMutate);
             commandList.UpdateBuffer(lightBuffer, 32, ref light.Attentuation_DontMutate);
 
+            var camera =  omniLight[0].LightCam;
             // Not really needed, but written for compelteness. We are only interested in the World Matrix for omni directional shadow mapping.
-            commandList.UpdateBuffer(cameraProjViewBuffer, 0, camera.ViewMatrix);
-            commandList.UpdateBuffer(cameraProjViewBuffer, 64, camera.ProjectionMatrix);
+            //commandList.UpdateBuffer(cameraProjViewBuffer, 0, camera.ViewMatrix);
+            //commandList.UpdateBuffer(cameraProjViewBuffer, 64, camera.ProjectionMatrix);
 
             commandList.UpdateBuffer(cameraInfoBuffer, 0, camera.NearDistance);
             commandList.UpdateBuffer(cameraInfoBuffer, 4, camera.FarDistance);

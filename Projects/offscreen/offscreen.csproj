@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -31,6 +31,7 @@
       <Link>Shaders/Metal/%(Filename)%(Extension)</Link>
     </METAL>
   </ItemGroup>
+
 
   <Target Name="CopyFiles" BeforeTargets="Build">
   

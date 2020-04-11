@@ -44,6 +44,7 @@
     </METAL>
   </ItemGroup>
 
+
   <Target Name="CopyFiles" BeforeTargets="Build">
   
     <Copy SourceFiles="@(GLSL)" DestinationFolder="$(OutputPath)/Shaders/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />

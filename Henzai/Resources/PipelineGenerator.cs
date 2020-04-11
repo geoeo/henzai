@@ -1,6 +1,5 @@
 using Veldrid;
 using Henzai.Runtime;
-using Henzai.Effects;
 using Henzai.Core.VertexGeometry;
 
 

@@ -221,10 +221,12 @@ namespace Henzai.Runtime
         public ResourceLayout[] FillEffectsResourceSet(DisposeCollectorResourceFactory factory, SceneRuntimeDescriptor sceneRuntimeDescriptor, List<SubRenderable> childrenPre){
             var effectLayoutList = new List<ResourceLayout>();
 
-            var effectCount = RenderFlags.GetSizeOfPreEffectFlag(PreEffectsFlag)*2; // 1 for Vertex Stage 1 for Fragment
-            EffectResourceSets[RenderFlags.NORMAL_ARRAY_INDEX] = new ResourceSet[effectCount];
+            //TODO: just iterate over children and process them as Subrenderable ?
+
             if(ShadowMapEnabled){
-                var shadowMapRenderable =  childrenPre[RenderFlags.GetPreEffectArrayIndexForFlag(RenderFlags.SHADOW_MAP)] as ShadowMap;
+                var effectCount = RenderFlags.GetSizeOfPreEffectFlag(PreEffectsFlag)*2; // 1 for Vertex Stage 1 for Fragment
+                EffectResourceSets[RenderFlags.NORMAL_ARRAY_INDEX] = new ResourceSet[effectCount];
+                var shadowMapRenderable =  childrenPre[0] as ShadowMap;
                 
                 var shadowMapResourceLayout = ResourceGenerator.GenerateTextureResourceLayoutForShadowMapping(factory);
                 effectLayoutList.Add(sceneRuntimeDescriptor.LightProvViewResourceLayout);
@@ -234,14 +236,15 @@ namespace Henzai.Runtime
             }
 
             if(OmniShadowMapEnabled) {
-                var omniShadowMapRenderable =  childrenPre[RenderFlags.GetPreEffectArrayIndexForFlag(RenderFlags.OMNI_SHADOW_MAPS)] as OmniShadowMap;
+                var effectCount = 1;
+                EffectResourceSets[RenderFlags.NORMAL_ARRAY_INDEX] = new ResourceSet[effectCount];
+                //var omniShadowMapRenderable =  childrenPre[RenderFlags.GetPreEffectArrayIndexForFlag(RenderFlags.OMNI_SHADOW_MAPS)] as OmniShadowMap;
+                var omniShadowMapRenderable =  childrenPre[0] as OmniShadowMap;
                 var shadowMapResourceLayout = ResourceGenerator.GenerateTextureResourceLayoutForOmniShadowMapping(factory);
                 //TODO: this has to be an array
                 //effectLayoutList.Add(sceneRuntimeDescriptor.LightProvViewResourceLayout);
                 effectLayoutList.Add(shadowMapResourceLayout);
-
-                //EffectResourceSets[RenderFlags.NORMAL_ARRAY_INDEX][RenderFlags.GetPreEffectArrayIndexForFlag(RenderFlags.OMNI_SHADOW_MAPS)] = sceneRuntimeDescriptor.LightProjViewResourceSet;
-                EffectResourceSets[RenderFlags.NORMAL_ARRAY_INDEX][RenderFlags.GetPreEffectArrayIndexForFlag(RenderFlags.OMNI_SHADOW_MAPS)+1] = ResourceGenerator.GenerateResourceSetForShadowMapping(omniShadowMapRenderable.ShadowMapTexView,factory);
+                EffectResourceSets[RenderFlags.NORMAL_ARRAY_INDEX][0] = ResourceGenerator.GenerateResourceSetForShadowMapping(omniShadowMapRenderable.ShadowMapTexView,factory);
             }
 
 

@@ -187,12 +187,12 @@ namespace Henzai
 
             RealtimeMaterial material = modelRuntimeState.Model.GetMaterial(meshIndex);
 
-            Image<Rgba32> front = Image.Load(Path.Combine(AppContext.BaseDirectory, modelRuntimeState.Model.BaseDir, material.cubeMapFront));
-            Image<Rgba32> back = Image.Load(Path.Combine(AppContext.BaseDirectory, modelRuntimeState.Model.BaseDir, material.cubeMapBack));
-            Image<Rgba32> left = Image.Load(Path.Combine(AppContext.BaseDirectory, modelRuntimeState.Model.BaseDir, material.cubeMapLeft));
-            Image<Rgba32> right = Image.Load(Path.Combine(AppContext.BaseDirectory, modelRuntimeState.Model.BaseDir, material.cubeMapRight));
-            Image<Rgba32> top = Image.Load(Path.Combine(AppContext.BaseDirectory, modelRuntimeState.Model.BaseDir, material.cubeMapTop));
-            Image<Rgba32> bottom = Image.Load(Path.Combine(AppContext.BaseDirectory, modelRuntimeState.Model.BaseDir, material.cubeMapBottom));
+            Image<Rgba32> front = Image.Load<Rgba32>(Path.Combine(AppContext.BaseDirectory, modelRuntimeState.Model.BaseDir, material.cubeMapFront));
+            Image<Rgba32> back = Image.Load<Rgba32>(Path.Combine(AppContext.BaseDirectory, modelRuntimeState.Model.BaseDir, material.cubeMapBack));
+            Image<Rgba32> left = Image.Load<Rgba32>(Path.Combine(AppContext.BaseDirectory, modelRuntimeState.Model.BaseDir, material.cubeMapLeft));
+            Image<Rgba32> right = Image.Load<Rgba32>(Path.Combine(AppContext.BaseDirectory, modelRuntimeState.Model.BaseDir, material.cubeMapRight));
+            Image<Rgba32> top = Image.Load<Rgba32>(Path.Combine(AppContext.BaseDirectory, modelRuntimeState.Model.BaseDir, material.cubeMapTop));
+            Image<Rgba32> bottom = Image.Load<Rgba32>(Path.Combine(AppContext.BaseDirectory, modelRuntimeState.Model.BaseDir, material.cubeMapBottom));
 
             TextureView cubeMapTextureView = ResourceGenerator.CreateCubeMapTextureViewFromImages(front,
                                                                                         back,
@@ -268,10 +268,11 @@ namespace Henzai
             textureCube = factory.CreateTexture(TextureDescription.Texture2D(
                 (uint)width,
                 (uint)height,
-                6,
                 1,
-                PixelFormat.R8_G8_B8_A8_UNorm,
-                TextureUsage.Sampled | TextureUsage.Cubemap));
+                1,
+                PixelFormat.R32_Float,
+                //TextureUsage.Sampled | TextureUsage.DepthStencil));
+                TextureUsage.Sampled | TextureUsage.Cubemap | TextureUsage.DepthStencil)); // Does not seem to work
 
             textureView = factory.CreateTextureView(new TextureViewDescription(textureCube));
             return textureView;

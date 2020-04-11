@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -29,19 +29,28 @@
   </PropertyGroup>
 
   <ItemGroup>
+
+    <Content Include="../Dependencies/SDL2.dll">
+      <Link>SDL2.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+
+    <PackageReference Include="ImGui.NET" Version="1.75.0" />
     <PackageReference Include="NativeLibraryLoader" Version="1.0.12" />
-    <!-- <Reference Include="../../veldrid_fork/bin/Debug/Veldrid/netstandard2.0/*.dll"/> -->
-    <!-- <ProjectReference Include="../../veldrid_fork/src/Veldrid/Veldrid.csproj" /> -->
-    <PackageReference Include="Veldrid" Version="4.7.0" />
-    <PackageReference Include="Veldrid.ImageSharp" Version="4.7.0" />
+    <!-- <PackageReference Include="Veldrid" Version="4.7.0" /> -->
+    <!-- <PackageReference Include="Veldrid.ImageSharp" Version="4.7.0" />
     <PackageReference Include="Veldrid.Sdl2" Version="4.7.0" />
     <PackageReference Include="Veldrid.ImGui" Version="5.69.0" />
-    <PackageReference Include="Veldrid.StartupUtilities" Version="4.7.0" />
-    <!-- <ProjectReference Include="../../veldrid/src/Veldrid/Veldrid.csproj" /> -->
-    <!--<ProjectReference Include="../../veldrid/src/Veldrid.ImageSharp/Veldrid.ImageSharp.csproj"/>
-    <ProjectReference Include="../../veldrid/src/Veldrid.Sdl2/Veldrid.Sdl2.csproj" />
-    <ProjectReference Include="../../veldrid/src/Veldrid.ImGui/Veldrid.ImGui.csproj"/>
-    <ProjectReference Include="../../veldrid/src/Veldrid.StartupUtilities/Veldrid.StartupUtilities.csproj"/> -->
+    <PackageReference Include="Veldrid.StartupUtilities" Version="4.7.0" /> -->
+
+    <ProjectReference Include="C:\Users\Marc\Workspace\DotNetCore\veldrid\src\Veldrid\Veldrid.csproj" />
+    <ProjectReference Include="C:\Users\Marc\Workspace\DotNetCore\veldrid\src\Veldrid.ImageSharp\Veldrid.ImageSharp.csproj" />
+    <ProjectReference Include="C:\Users\Marc\Workspace\DotNetCore\veldrid\src\Veldrid.ImGui\Veldrid.ImGui.csproj" />
+    <ProjectReference Include="C:\Users\Marc\Workspace\DotNetCore\veldrid\src\Veldrid.SDL2\Veldrid.SDL2.csproj" />
+    <ProjectReference Include="C:\Users\Marc\Workspace\DotNetCore\veldrid\src\Veldrid.StartupUtilities\Veldrid.StartupUtilities.csproj" />
+    <ProjectReference Include="C:\Users\Marc\Workspace\DotNetCore\veldrid\src\Veldrid.Utilities\Veldrid.Utilities.csproj" />
+
+
     <ProjectReference Include="../Henzai.Core/Henzai.Core.csproj" />
     <ProjectReference Include="../HenzaiFunc.Core/HenzaiFunc.Core.fsproj" />
   </ItemGroup>
@@ -70,6 +79,8 @@
     </Content>
 
   </ItemGroup>
+
+
 
 
   <Target Name="DeleteFiles" AfterTargets="Clean">
