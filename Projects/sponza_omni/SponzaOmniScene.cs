@@ -79,8 +79,8 @@ namespace Henzai.Examples
 
 
 
-            var sponzaRuntimeState 
-                = new ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>(sponzaPNTTB,"PhongBitangentTexture","PhongBitangentTexture", VertexRuntimeTypes.VertexPositionNormalTextureTangentBitangent,PrimitiveTopology.TriangleList, new RenderDescription(RenderFlags.NORMAL | RenderFlags.OMNI_SHADOW_MAPS), new InstancingRenderDescription(RenderFlags.NONE, InstancingDataFlags.EMPTY));
+            var sponzaRuntimeState  //TOOD: Omni Fragment shader produces a runtime error
+                = new ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>(sponzaPNTTB,"PhongBitangentTextureOmni","PhongBitangentTexture", VertexRuntimeTypes.VertexPositionNormalTextureTangentBitangent,PrimitiveTopology.TriangleList, new RenderDescription(RenderFlags.NORMAL | RenderFlags.OMNI_SHADOW_MAPS), new InstancingRenderDescription(RenderFlags.NONE, InstancingDataFlags.EMPTY));
             sponzaRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPNTTB;
             sponzaRuntimeState.CallSamplerGeneration+=ResourceGenerator.GenerateTriLinearSampler;
             sponzaRuntimeState.CallTextureResourceLayoutGeneration+=ResourceGenerator.GenerateTextureResourceLayoutForNormalMapping;

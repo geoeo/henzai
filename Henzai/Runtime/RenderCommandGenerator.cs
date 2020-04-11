@@ -372,7 +372,7 @@ namespace Henzai.Runtime
                     var material = model.GetMaterial(i);
 
                     //TODO: @Investiagte this
-                    if((renderDescription.RenderModeFlag & RenderFlags.SHADOW_MAP)  == RenderFlags.SHADOW_MAP || vertexRuntimeType == VertexRuntimeTypes.VertexPositionColor)
+                    if((renderDescription.RenderModeFlag & RenderFlags.SHADOW_MAP)  == RenderFlags.SHADOW_MAP || (renderDescription.RenderModeFlag & RenderFlags.OMNI_SHADOW_MAPS)  == RenderFlags.OMNI_SHADOW_MAPS || vertexRuntimeType == VertexRuntimeTypes.VertexPositionColor)
                         RenderCommandGenerator.GenerateCommandsForMesh_Inline(
                             commandList,
                             modelState,

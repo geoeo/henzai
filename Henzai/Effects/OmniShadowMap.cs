@@ -116,10 +116,10 @@ namespace Henzai.Effects
                 _sceneRuntimeDescriptor.CameraInfoBuffer,
                 _sceneRuntimeDescriptor.OmniLights);
 
-            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionNormalTextureTangentBitangent>(_commandList, _modelPNTTBDescriptorArray, _sceneRuntimeDescriptor, new RenderDescription(RenderFlags.SHADOW_MAP), VertexRuntimeTypes.VertexPositionNormalTextureTangentBitangent);
-            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionNormal>(_commandList, _modelPNDescriptorArray, _sceneRuntimeDescriptor, new RenderDescription(RenderFlags.SHADOW_MAP), VertexRuntimeTypes.VertexPositionNormal);
-            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionTexture>(_commandList, _modelPTDescriptorArray, _sceneRuntimeDescriptor, new RenderDescription(RenderFlags.SHADOW_MAP), VertexRuntimeTypes.VertexPositionTexture);
-            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionColor>(_commandList, _modelPCDescriptorArray, _sceneRuntimeDescriptor, new RenderDescription(RenderFlags.SHADOW_MAP), VertexRuntimeTypes.VertexPositionColor);
+            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionNormalTextureTangentBitangent>(_commandList, _modelPNTTBDescriptorArray, _sceneRuntimeDescriptor, new RenderDescription(RenderFlags.OMNI_SHADOW_MAPS), VertexRuntimeTypes.VertexPositionNormalTextureTangentBitangent);
+            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionNormal>(_commandList, _modelPNDescriptorArray, _sceneRuntimeDescriptor, new RenderDescription(RenderFlags.OMNI_SHADOW_MAPS), VertexRuntimeTypes.VertexPositionNormal);
+            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionTexture>(_commandList, _modelPTDescriptorArray, _sceneRuntimeDescriptor, new RenderDescription(RenderFlags.OMNI_SHADOW_MAPS), VertexRuntimeTypes.VertexPositionTexture);
+            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionColor>(_commandList, _modelPCDescriptorArray, _sceneRuntimeDescriptor, new RenderDescription(RenderFlags.OMNI_SHADOW_MAPS), VertexRuntimeTypes.VertexPositionColor);
 
             _commandList.End();
             

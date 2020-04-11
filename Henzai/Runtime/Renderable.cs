@@ -410,7 +410,9 @@ namespace Henzai.Runtime
             modelDescriptor.InvokeVertexLayoutGeneration();
 
             var shadowMapIndex = RenderFlags.GetArrayIndexForFlag(RenderFlags.SHADOW_MAP);
+            var omniShadowMapIndex = RenderFlags.GetArrayIndexForFlag(RenderFlags.OMNI_SHADOW_MAPS);
             modelDescriptor.Pipelines[shadowMapIndex] = modelDescriptor.ShadowMapEnabled ? _factory.CreateGraphicsPipeline(PipelineGenerator.GeneratePreEffectPipeline(modelDescriptor, _childrenPre[RenderFlags.GetPreEffectArrayIndexForFlag(RenderFlags.SHADOW_MAP)].SceneRuntimeDescriptor,rasterizerStateCullFront,RenderFlags.SHADOW_MAP, _childrenPre[RenderFlags.GetPreEffectArrayIndexForFlag(RenderFlags.SHADOW_MAP)].FrameBuffer)) : null;
+            modelDescriptor.Pipelines[omniShadowMapIndex] = modelDescriptor.OmniShadowMapEnabled ? _factory.CreateGraphicsPipeline(PipelineGenerator.GeneratePreEffectPipeline(modelDescriptor, _childrenPre[0].SceneRuntimeDescriptor,rasterizerStateCullFront,RenderFlags.OMNI_SHADOW_MAPS, _childrenPre[0].FrameBuffer)) : null;
             
             
             var effectLayoutArray = modelDescriptor.FillEffectsResourceSet(_factory, sceneRuntimeDescriptor, _childrenPre);
@@ -510,8 +512,21 @@ namespace Henzai.Runtime
                 = ResourceGenerator.GenrateResourceSet(
                     _factory,
                     _sceneRuntimeState.LightProvViewResourceLayout,
-                    new BindableResource[] { _sceneRuntimeState.LightProjViewBuffer });            
-   
+                    new BindableResource[] { _sceneRuntimeState.LightProjViewBuffer });
+
+            _sceneRuntimeState.CameraInfoBuffer = _factory.CreateBuffer(new BufferDescription(2 * 8, BufferUsage.UniformBuffer));
+            _sceneRuntimeState.CameraInfoResourceLayout
+                = ResourceGenerator.GenerateResourceLayout(
+                    _factory,
+                    "cameraInfo",
+                    ResourceKind.UniformBuffer,
+                    ShaderStages.Fragment);
+            _sceneRuntimeState.CameraInfoResourceSet
+                = ResourceGenerator.GenrateResourceSet(
+                    _factory,
+                    _sceneRuntimeState.CameraInfoResourceLayout,
+                    new BindableResource[] { _sceneRuntimeState.CameraInfoBuffer });
+
         }
 
         //TODO: Maybe replace this by non virtual as it seems to always be the same

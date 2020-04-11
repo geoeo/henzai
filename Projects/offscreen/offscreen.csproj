@@ -10,9 +10,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="../../Shaders/**">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
 
     <Content Include="../../Assets/Textures/Name.png">
       <Link>Textures/Name.png</Link>
@@ -20,7 +17,7 @@
     </Content>
   </ItemGroup>
 
-    <ItemGroup>
+  <ItemGroup>
     <GLSL Include="../../Shaders/*.glsl">
       <Link>Shaders/Glsl/%(Filename)%(Extension)</Link>
     </GLSL>
@@ -31,6 +28,7 @@
       <Link>Shaders/Metal/%(Filename)%(Extension)</Link>
     </METAL>
   </ItemGroup>
+
 
 
   <Target Name="CopyFiles" BeforeTargets="Build">
