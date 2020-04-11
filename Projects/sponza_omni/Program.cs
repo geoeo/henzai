@@ -20,7 +20,7 @@ namespace Henzai.Examples
             Resolution windowSize = new Resolution(960,540);
             GraphicsDeviceOptions gdOptions = new GraphicsDeviceOptions()
             {
-                Debug = false,
+                Debug = true,
                 SwapchainDepthFormat = PixelFormat.R32_Float,
                 SyncToVerticalBlank = false,
                 ResourceBindingModel = ResourceBindingModel.Improved
@@ -48,8 +48,8 @@ namespace Henzai.Examples
             scene.SetUI(gui);
             gui.changeBackendAction += ChangeBackend;
 
-            scene.PreRender_Descriptors += BuildBVH;
-            scene.PreDraw_Time_Camera_Descriptors += EnableBVHCulling;
+            //scene.PreRender_Descriptors += BuildBVH;
+            //scene.PreDraw_Time_Camera_Descriptors += EnableBVHCulling;
 
             scene.CreateOmniShadowMap(renderResolution);
             scene.SetUp(renderResolution);

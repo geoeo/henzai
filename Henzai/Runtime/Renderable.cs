@@ -289,6 +289,7 @@ namespace Henzai.Runtime
                 // Wait untill every command list has been built
                 Task.WaitAll(buildCommandListTasks);
 
+
                 // Perform draw tasks which should be done before "main" draw e.g. shadow maps
                 for (int i = 0; i < _childrenPre.Count; i++)
                 {
@@ -300,6 +301,7 @@ namespace Henzai.Runtime
                 Task.WaitAll(drawTasksPre);
 
                 Draw();
+
 
                 PostDraw?.Invoke(prevFrameTicksInSeconds);
 

@@ -76,7 +76,7 @@ namespace Henzai.Effects
         }
 
         protected override void GenerateFramebuffer(){
-            ShadowMapTexView = ResourceGenerator.CreateEmptyCubeMapTextureView(_resolution.Horizontal, _resolution.Vertical, _factory, _graphicsDevice);
+            ShadowMapTexView = ResourceGenerator.CreateEmptyCubeMapTextureView(_resolution.Horizontal, _resolution.Vertical, _factory);
             var texture = ShadowMapTexView.Target;
 
             _frameBuffer = _factory.CreateFramebuffer(new FramebufferDescription(
@@ -108,20 +108,21 @@ namespace Henzai.Effects
             _commandList.ClearDepthStencil(1.0f);
 
 
-            //RenderCommandGenerator.GenerateCommandsForScene_Inline(
-            //    _commandList,
-            //    _sceneRuntimeDescriptor.OmniLightProjViewBuffer,
-            //    _sceneRuntimeDescriptor.LightBuffer,
-            //    _sceneRuntimeDescriptor.CameraProjViewBuffer,
-            //    _sceneRuntimeDescriptor.CameraInfoBuffer,
-            //    _sceneRuntimeDescriptor.OmniLights);
+            RenderCommandGenerator.GenerateCommandsForScene_Inline(
+                _commandList,
+                _sceneRuntimeDescriptor.OmniLightProjViewBuffer,
+                _sceneRuntimeDescriptor.LightBuffer,
+                _sceneRuntimeDescriptor.CameraProjViewBuffer,
+                _sceneRuntimeDescriptor.CameraInfoBuffer,
+                _sceneRuntimeDescriptor.OmniLights);
 
-            //RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionNormalTextureTangentBitangent>(_commandList,_modelPNTTBDescriptorArray,_sceneRuntimeDescriptor, new RenderDescription(RenderFlags.SHADOW_MAP), VertexRuntimeTypes.VertexPositionNormalTextureTangentBitangent);
-            //RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionNormal>(_commandList,_modelPNDescriptorArray,_sceneRuntimeDescriptor, new RenderDescription(RenderFlags.SHADOW_MAP), VertexRuntimeTypes.VertexPositionNormal);
-            //RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionTexture>(_commandList,_modelPTDescriptorArray,_sceneRuntimeDescriptor, new RenderDescription(RenderFlags.SHADOW_MAP), VertexRuntimeTypes.VertexPositionTexture);
-            //RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionColor>(_commandList,_modelPCDescriptorArray,_sceneRuntimeDescriptor, new RenderDescription(RenderFlags.SHADOW_MAP), VertexRuntimeTypes.VertexPositionColor);
+            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionNormalTextureTangentBitangent>(_commandList, _modelPNTTBDescriptorArray, _sceneRuntimeDescriptor, new RenderDescription(RenderFlags.SHADOW_MAP), VertexRuntimeTypes.VertexPositionNormalTextureTangentBitangent);
+            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionNormal>(_commandList, _modelPNDescriptorArray, _sceneRuntimeDescriptor, new RenderDescription(RenderFlags.SHADOW_MAP), VertexRuntimeTypes.VertexPositionNormal);
+            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionTexture>(_commandList, _modelPTDescriptorArray, _sceneRuntimeDescriptor, new RenderDescription(RenderFlags.SHADOW_MAP), VertexRuntimeTypes.VertexPositionTexture);
+            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionColor>(_commandList, _modelPCDescriptorArray, _sceneRuntimeDescriptor, new RenderDescription(RenderFlags.SHADOW_MAP), VertexRuntimeTypes.VertexPositionColor);
 
             _commandList.End();
+            
         }
     }
 }

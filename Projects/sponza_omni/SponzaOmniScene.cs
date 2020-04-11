@@ -124,11 +124,10 @@ namespace Henzai.Examples
             _modelPNTTBDescriptorList.Add(sponzaRuntimeState);
             _modelPCDescriptorList.Add(sponzaRuntimeStateColorOnly);
             _modelPDescriptorList.Add(_skyBoxRuntimeState);
-            // _modelPTDescriptorList.Add(sponzaRuntimeStateTexOnly);
-            // _modelStatesList.Add(sunRuntimeState);
+
             _modelPNDescriptorList.Add(sunRuntimeState);
             _modelPNDescriptorList.Add(modelRuntimeState);
-            //_modelPNDescriptorList.Add(planeRuntimeState);
+
 
             InstanceData[] instancingData = {InstanceData.NO_DATA};
 
