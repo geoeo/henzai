@@ -76,8 +76,8 @@ namespace Henzai.Runtime
 
             var camera =  omniLight[0].LightCam;
             // Not really needed, but written for compelteness. We are only interested in the World Matrix for omni directional shadow mapping.
-            //commandList.UpdateBuffer(cameraProjViewBuffer, 0, camera.ViewMatrix);
-            //commandList.UpdateBuffer(cameraProjViewBuffer, 64, camera.ProjectionMatrix);
+            commandList.UpdateBuffer(cameraProjViewBuffer, 0, camera.ViewMatrix);
+            commandList.UpdateBuffer(cameraProjViewBuffer, 64, camera.ProjectionMatrix);
 
             commandList.UpdateBuffer(cameraInfoBuffer, 0, camera.NearDistance);
             commandList.UpdateBuffer(cameraInfoBuffer, 4, camera.FarDistance);
@@ -255,11 +255,12 @@ namespace Henzai.Runtime
 
             var cameraProjViewBuffer = sceneRuntimeDescriptor.CameraProjViewBuffer;
             var cameraResourceSet = sceneRuntimeDescriptor.CameraResourceSet;
+            var omniResourceSet = sceneRuntimeDescriptor.OmniLightProjViewResourceSet;
 
             commandList.SetVertexBuffer(0, vertexBuffer);
             commandList.SetIndexBuffer(indexBuffer, IndexFormat.UInt16);
             commandList.UpdateBuffer(cameraProjViewBuffer, 128, mesh.World);
-            commandList.SetGraphicsResourceSet(0, cameraResourceSet); // Always after SetPipeline
+            commandList.SetGraphicsResourceSet(0, cameraResourceSet);
             for(int i = 0; i < effectResourceSets.Length; i++){
                 var resourceSet = effectResourceSets[i];
                 var resourceSetIndex = effectIndex + i;

@@ -39,6 +39,7 @@ namespace Henzai
         /// </summary>
         public Vector4 LightPos => LightCam.Position;
         public Matrix4x4 LightViewProj => LightCam.ViewProjectionMatirx;
+        public Matrix4x4 LightView => LightCam.ViewMatrix;
         /// <summary>
         /// W channel used for intensity
         /// </summary>

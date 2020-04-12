@@ -59,6 +59,7 @@ namespace Henzai.Runtime
         public Shader FragmentShader { get; private set; }
         private string _fragmentShaderName;
         public Shader[] VertexPreEffectShaders { get; private set; }
+        public Shader[] GeometryPreEffectShaders { get; private set; }
         public Shader[] FragmentPreEffectShaders { get; private set; }
         /// <summary>
         /// Defines a Higher Level Render State.
@@ -128,6 +129,7 @@ namespace Henzai.Runtime
             VertexPreEffectsInstanceLayoutGenerationList = new EventHandlerList();
 
             VertexPreEffectShaders = new Shader[RenderFlags.PRE_EFFCTS_TOTAL_COUNT];
+            GeometryPreEffectShaders = new Shader[RenderFlags.PRE_EFFCTS_TOTAL_COUNT];
             FragmentPreEffectShaders = new Shader[RenderFlags.PRE_EFFCTS_TOTAL_COUNT];
 
             // Reserve first spot for base vertex geometry
@@ -169,6 +171,7 @@ namespace Henzai.Runtime
                 var arrayIndex = RenderFlags.GetPreEffectArrayIndexForFlag(flag);
                 var name = ShaderNames.PreEffectShaderNames[arrayIndex];
                 VertexPreEffectShaders[arrayIndex] = IO.LoadShader(name, ShaderStages.Vertex, graphicsDevice);
+                GeometryPreEffectShaders[arrayIndex] = IO.LoadShader(name, ShaderStages.Geometry, graphicsDevice);
                 FragmentPreEffectShaders[arrayIndex] = IO.LoadShader(name, ShaderStages.Fragment, graphicsDevice);
             }
         }
@@ -254,6 +257,7 @@ namespace Henzai.Runtime
             {
                 var effectCount = 2;
                 EffectResourceSets[RenderFlags.NORMAL_ARRAY_INDEX] = new ResourceSet[effectCount];
+                EffectResourceSets[RenderFlags.OMNI_SHADOW_MAPS] = new ResourceSet[1];
                 //var omniShadowMapRenderable =  childrenPre[RenderFlags.GetPreEffectArrayIndexForFlag(RenderFlags.OMNI_SHADOW_MAPS)] as OmniShadowMap;
                 var omniShadowMapRenderable = childrenPre[0] as OmniShadowMap;
                 var shadowMapResourceLayout = ResourceGenerator.GenerateTextureResourceLayoutForOmniShadowMapping(factory);
@@ -262,6 +266,7 @@ namespace Henzai.Runtime
                 effectLayoutList.Add(shadowMapResourceLayout);
                 EffectResourceSets[RenderFlags.NORMAL_ARRAY_INDEX][0] = sceneRuntimeDescriptor.CameraInfoResourceSet;
                 EffectResourceSets[RenderFlags.NORMAL_ARRAY_INDEX][1] = ResourceGenerator.GenerateResourceSetForShadowMapping(shadowMapResourceLayout, omniShadowMapRenderable.ShadowMapTexView, factory);
+                EffectResourceSets[RenderFlags.OMNI_SHADOW_MAPS][0] = omniShadowMapRenderable.ShadowMatrices;
             }
 
 

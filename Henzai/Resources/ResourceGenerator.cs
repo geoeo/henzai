@@ -255,24 +255,20 @@ namespace Henzai
             return textureView;
         }
 
-        public static TextureView CreateEmptyCubeMapTextureView(int width,
+        public static TextureDescription CreateEmptyCubeMapTextureDescription(int width,
                                                                 int height,
                                                                 DisposeCollectorResourceFactory factory){
-            Texture textureCube;
-            TextureView textureView;
 
             var dim = Math.Max(width, height);
 
-            textureCube = factory.CreateTexture(TextureDescription.Texture2D(
-                (uint)dim,
-                (uint)dim,
+            return TextureDescription.Texture2D(
+                1024,
+                1024,
                 1,
-                6,
+                1,
                 PixelFormat.R32_Float,
-                TextureUsage.Sampled | TextureUsage.Cubemap | TextureUsage.DepthStencil)); // Does not seem to work
+                TextureUsage.Sampled | TextureUsage.Cubemap | TextureUsage.DepthStencil);
 
-            textureView = factory.CreateTextureView(new TextureViewDescription(textureCube));
-            return textureView;
         }
 
 

@@ -12,6 +12,7 @@ namespace Henzai.Effects
         /// Holds the texture that the framebuffer renders into
         ///</summary>
         public TextureView ShadowMapTexView {get; private set;}
+        public ResourceSet ShadowMatrices {get; private set;}
 
         // These hold the scene's geometry information
         private ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] _modelPNTTBDescriptorArray;
@@ -73,16 +74,18 @@ namespace Henzai.Effects
                     _sceneRuntimeDescriptor.CameraInfoResourceLayout,
                     new BindableResource[] { _sceneRuntimeDescriptor.CameraInfoBuffer });
 
+            ShadowMatrices = _sceneRuntimeDescriptor.OmniLightProjViewResourceSet;
+
         }
 
         protected override void GenerateFramebuffer(){
-            ShadowMapTexView = ResourceGenerator.CreateEmptyCubeMapTextureView(_resolution.Horizontal, _resolution.Vertical, _factory);
-            var texture = ShadowMapTexView.Target;
+            var textureDescription = ResourceGenerator.CreateEmptyCubeMapTextureDescription(_resolution.Horizontal, _resolution.Vertical, _factory);
 
-            _frameBuffer = _factory.CreateFramebuffer(new FramebufferDescription(
-                new FramebufferAttachmentDescription(texture, 0), Array.Empty<FramebufferAttachmentDescription>()));
+            var depthTexture = _factory.CreateTexture(textureDescription);
+            depthTexture.Name = "OmniShadowCubeTexture";
+            ShadowMapTexView = _factory.CreateTextureView(depthTexture);
 
-
+            _frameBuffer = _factory.CreateFramebuffer(new FramebufferDescription(depthTexture, Array.Empty<Texture>()));
         }
 
         public override void CreateResources(SceneRuntimeDescriptor mainSceneRuntimeDescriptor,                        
@@ -98,6 +101,8 @@ namespace Henzai.Effects
 
             _sceneRuntimeDescriptor.Light = mainSceneRuntimeDescriptor.Light;
             _sceneRuntimeDescriptor.OmniLights = mainSceneRuntimeDescriptor.OmniLights;
+
+
         
         }
 

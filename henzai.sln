@@ -140,6 +140,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shaders", "Shaders", "{6B35
 		Shaders\ViewMatInstancePhongBitangentTextureVertex.metallib = Shaders\ViewMatInstancePhongBitangentTextureVertex.metallib
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Veldrid.RenderDoc", "..\veldrid\src\Veldrid.RenderDoc\Veldrid.RenderDoc.csproj", "{2B73BA4C-0070-48C2-B6BE-442F18CC346A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -366,6 +368,18 @@ Global
 		{4160750F-F86A-4725-8791-DDB829BCAF40}.Release|x64.Build.0 = Release|Any CPU
 		{4160750F-F86A-4725-8791-DDB829BCAF40}.Release|x86.ActiveCfg = Release|Any CPU
 		{4160750F-F86A-4725-8791-DDB829BCAF40}.Release|x86.Build.0 = Release|Any CPU
+		{2B73BA4C-0070-48C2-B6BE-442F18CC346A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B73BA4C-0070-48C2-B6BE-442F18CC346A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B73BA4C-0070-48C2-B6BE-442F18CC346A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{2B73BA4C-0070-48C2-B6BE-442F18CC346A}.Debug|x64.Build.0 = Debug|Any CPU
+		{2B73BA4C-0070-48C2-B6BE-442F18CC346A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2B73BA4C-0070-48C2-B6BE-442F18CC346A}.Debug|x86.Build.0 = Debug|Any CPU
+		{2B73BA4C-0070-48C2-B6BE-442F18CC346A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B73BA4C-0070-48C2-B6BE-442F18CC346A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B73BA4C-0070-48C2-B6BE-442F18CC346A}.Release|x64.ActiveCfg = Release|Any CPU
+		{2B73BA4C-0070-48C2-B6BE-442F18CC346A}.Release|x64.Build.0 = Release|Any CPU
+		{2B73BA4C-0070-48C2-B6BE-442F18CC346A}.Release|x86.ActiveCfg = Release|Any CPU
+		{2B73BA4C-0070-48C2-B6BE-442F18CC346A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

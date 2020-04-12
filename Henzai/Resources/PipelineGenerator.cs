@@ -158,7 +158,7 @@ namespace Henzai
         }
 
         //TODO: Make this generic for all pre effects -> probably have to set shaders in a smart way
-        public static GraphicsPipelineDescription GeneratePreEffectPipeline<T>(
+        public static GraphicsPipelineDescription GenerateShadowMappingPreEffectPipeline<T>(
             ModelRuntimeDescriptor<T> modelRuntimeState, 
             SceneRuntimeDescriptor sceneRuntimeState, 
             RasterizerStateDescription rasterizerState,
@@ -167,6 +167,7 @@ namespace Henzai
 
             //TODO: Build resource layout outside and pass as parameter
             var shaderArrayIndex = RenderFlags.GetPreEffectArrayIndexForFlag(preEffectFlag);
+            var shaderArray = new Shader[] { modelRuntimeState.VertexPreEffectShaders[shaderArrayIndex], modelRuntimeState.FragmentPreEffectShaders[shaderArrayIndex] };
 
             return new GraphicsPipelineDescription(){
                 BlendState = BlendStateDescription.SingleOverrideBlend,
@@ -176,10 +177,36 @@ namespace Henzai
                 ResourceLayouts = new ResourceLayout[] {sceneRuntimeState.CameraResourceLayout},
                 ShaderSet = new ShaderSetDescription(
                     vertexLayouts: modelRuntimeState.VertexPreEffectsLayouts,
-                    shaders: new Shader[] {modelRuntimeState.VertexPreEffectShaders[shaderArrayIndex],modelRuntimeState.FragmentPreEffectShaders[shaderArrayIndex]}
+                    shaders: shaderArray
                 ),
                 Outputs = framebuffer.OutputDescription
             };
-        }        
+        }
+
+        public static GraphicsPipelineDescription GenerateOmniShadowMappingPreEffectPipeline<T>(
+            ModelRuntimeDescriptor<T> modelRuntimeState,
+            SceneRuntimeDescriptor sceneRuntimeState,
+            RasterizerStateDescription rasterizerState,
+            uint preEffectFlag,
+            Framebuffer framebuffer) where T : struct, VertexLocateable {
+
+            //TODO: Build resource layout outside and pass as parameter
+            var shaderArrayIndex = RenderFlags.GetPreEffectArrayIndexForFlag(preEffectFlag);
+            var shaderArray =
+                    new Shader[] { modelRuntimeState.VertexPreEffectShaders[shaderArrayIndex], modelRuntimeState.GeometryPreEffectShaders[shaderArrayIndex], modelRuntimeState.FragmentPreEffectShaders[shaderArrayIndex] };
+
+            return new GraphicsPipelineDescription() {
+                BlendState = BlendStateDescription.SingleOverrideBlend,
+                DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
+                RasterizerState = rasterizerState,
+                PrimitiveTopology = modelRuntimeState.PrimitiveTopology,
+                ResourceLayouts = new ResourceLayout[] { sceneRuntimeState.CameraResourceLayout, sceneRuntimeState.OmniLightProvViewResourceLayout },
+                ShaderSet = new ShaderSetDescription(
+                    vertexLayouts: modelRuntimeState.VertexPreEffectsLayouts,
+                    shaders: shaderArray
+                ),
+                Outputs = framebuffer.OutputDescription
+            };
+        }
     }
 }
