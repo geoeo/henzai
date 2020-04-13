@@ -52,17 +52,10 @@ namespace Henzai.Examples
             var model = AssimpLoader.LoadFromFileWithRealtimeMaterial<VertexPositionNormal>(AppContext.BaseDirectory, filePath, VertexPositionNormal.HenzaiType);
             var newModelTranslation = Matrix4x4.CreateTranslation(new Vector3(0,20,0));
             var modelRuntimeState 
-                = new ModelRuntimeDescriptor<VertexPositionNormal>(model,"Phong","Phong", VertexRuntimeTypes.VertexPositionNormal,PrimitiveTopology.TriangleList, new RenderDescription(RenderFlags.NORMAL | RenderFlags.OMNI_SHADOW_MAPS), new InstancingRenderDescription(RenderFlags.NONE, InstancingDataFlags.EMPTY));
+                = new ModelRuntimeDescriptor<VertexPositionNormal>(model,"PhongOmni","PhongOmni", VertexRuntimeTypes.VertexPositionNormal,PrimitiveTopology.TriangleList, new RenderDescription(RenderFlags.NORMAL | RenderFlags.OMNI_SHADOW_MAPS), new InstancingRenderDescription(RenderFlags.NONE, InstancingDataFlags.EMPTY));
             modelRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPN;
             model.SetNewWorldTransformation(ref newModelTranslation, true);
             
-            var plane = new Model<VertexPositionNormal, RealtimeMaterial>(String.Empty,GeometryFactory.GenerateQuadPN_XZ(),new RealtimeMaterial());
-            var newPlaneTranslation = Matrix4x4.CreateTranslation(new Vector3(0,10,0));
-            var newPlaneScale = Matrix4x4.CreateScale(new Vector3(30,1,30));
-            var trafo = newPlaneScale*newPlaneTranslation;
-            plane.SetNewWorldTransformation(ref trafo, true);
-            var planeRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormal>(plane,"Phong","Phong", VertexRuntimeTypes.VertexPositionNormal,PrimitiveTopology.TriangleStrip, new RenderDescription(RenderFlags.NORMAL | RenderFlags.OMNI_SHADOW_MAPS), new InstancingRenderDescription(RenderFlags.NONE, InstancingDataFlags.EMPTY));
-            planeRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPN;
             
             //TODO: Write method to remove ambient terms
             var sponzaModels = AssimpLoader.LoadRealtimeModelsFromFile(AppContext.BaseDirectory,"sponza/sponza.obj");
@@ -86,20 +79,9 @@ namespace Henzai.Examples
             sponzaRuntimeState.CallTextureResourceLayoutGeneration+=ResourceGenerator.GenerateTextureResourceLayoutForNormalMapping;
             sponzaRuntimeState.CallTextureResourceSetGeneration+=ResourceGenerator.GenerateTextureResourceSetForNormalMapping;
 
-            // var sponzaRuntimeStateTexOnly = new ModelRuntimeDescriptor<VertexPositionTexture>(sponzaPT,"Texture","Texture", VertexTypes.VertexPositionTexture,PrimitiveTopology.TriangleList);
-            // sponzaRuntimeStateTexOnly.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPT;
-            // sponzaRuntimeStateTexOnly.CallSamplerGeneration+=ResourceGenerator.GenerateTriLinearSampler;
-            // sponzaRuntimeStateTexOnly.CallTextureResourceLayoutGeneration+=ResourceGenerator.GenerateTextureResourceLayoutForDiffuseMapping;
-            // sponzaRuntimeStateTexOnly.CallTextureResourceSetGeneration+=ResourceGenerator.GenerateTextureResourceSetForDiffuseMapping;
 
             var sponzaRuntimeStateColorOnly = new ModelRuntimeDescriptor<VertexPositionColor>(sponzaPC,"Color","Color", VertexRuntimeTypes.VertexPositionColor,PrimitiveTopology.TriangleList, new RenderDescription(RenderFlags.NORMAL | RenderFlags.OMNI_SHADOW_MAPS), new InstancingRenderDescription(RenderFlags.NONE, InstancingDataFlags.EMPTY));
             sponzaRuntimeStateColorOnly.CallVertexLayoutGeneration+= ResourceGenerator.GenerateVertexLayoutForPC;
-
-            // var sunRuntimeState = new ModelRuntimeState<VertexPositionNormalTextureTangentBitangent>(sun,"PhongBitangentTexture","PhongBitangentTexture");
-            // sunRuntimeState.CallVertexLayoutGeneration+=ResourceGenerator.GenerateVertexLayoutForPNTTB;
-            // sunRuntimeState.CallSamplerGeneration+=ResourceGenerator.GenerateLinearSampler;
-            // sunRuntimeState.CallTextureResourceLayoutGeneration+=ResourceGenerator.GenerateTextureResourceLayoutForNormalMapping;
-            // sunRuntimeState.CallTextureResourceSetGeneration+=ResourceGenerator.GenerateTextureResourceSetForNormalMapping;
 
             var skyBox = new Model<VertexPosition, RealtimeMaterial>("cloudtop", GeometryFactory.GenerateCube(true), new RealtimeMaterial());
             var skyBoxMaterial = skyBox.GetMaterial(0);
@@ -183,7 +165,7 @@ namespace Henzai.Examples
             RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor(_commandList,_modelPNTTBDescriptorArray,_sceneRuntimeState, PNTTBRuntimeGeometry.MeshBVHArray, new RenderDescription(RenderFlags.NORMAL));
             RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionNormal>(_commandList,_modelPNDescriptorArray,_sceneRuntimeState, new RenderDescription(RenderFlags.NORMAL), VertexRuntimeTypes.VertexPositionNormal);
             RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionTexture>(_commandList,_modelPTDescriptorArray,_sceneRuntimeState, new RenderDescription(RenderFlags.NORMAL), VertexRuntimeTypes.VertexPositionTexture);
-            //RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionColor>(_commandList,_modelPCDescriptorArray,_sceneRuntimeState, new RenderDescription(RenderFlags.NORMAL), VertexRuntimeTypes.VertexPositionColor);
+            RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionColor>(_commandList,_modelPCDescriptorArray,_sceneRuntimeState, new RenderDescription(RenderFlags.NORMAL), VertexRuntimeTypes.VertexPositionColor);
             RenderCommandGenerator.GenerateRenderCommandsForCubeMapModelDescriptor(_commandList,_skyBoxRuntimeState,_sceneRuntimeState);
             
             _commandList.End();

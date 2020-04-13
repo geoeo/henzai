@@ -238,7 +238,7 @@ namespace Henzai.Runtime
         {
             var effectLayoutList = new List<ResourceLayout>();
 
-            //TODO: just iterate over children and process them as Subrenderable ?
+            //TODO: just iterate over children and process them as Subrenderable !!
 
             if (ShadowMapEnabled)
             {
@@ -257,7 +257,7 @@ namespace Henzai.Runtime
             {
                 var effectCount = 2;
                 EffectResourceSets[RenderFlags.NORMAL_ARRAY_INDEX] = new ResourceSet[effectCount];
-                EffectResourceSets[RenderFlags.OMNI_SHADOW_MAPS] = new ResourceSet[1];
+                EffectResourceSets[RenderFlags.OMNI_SHADOW_MAPS] = new ResourceSet[2];
                 //var omniShadowMapRenderable =  childrenPre[RenderFlags.GetPreEffectArrayIndexForFlag(RenderFlags.OMNI_SHADOW_MAPS)] as OmniShadowMap;
                 var omniShadowMapRenderable = childrenPre[0] as OmniShadowMap;
                 var shadowMapResourceLayout = ResourceGenerator.GenerateTextureResourceLayoutForOmniShadowMapping(factory);
@@ -267,6 +267,7 @@ namespace Henzai.Runtime
                 EffectResourceSets[RenderFlags.NORMAL_ARRAY_INDEX][0] = sceneRuntimeDescriptor.CameraInfoResourceSet;
                 EffectResourceSets[RenderFlags.NORMAL_ARRAY_INDEX][1] = ResourceGenerator.GenerateResourceSetForShadowMapping(shadowMapResourceLayout, omniShadowMapRenderable.ShadowMapTexView, factory);
                 EffectResourceSets[RenderFlags.OMNI_SHADOW_MAPS][0] = omniShadowMapRenderable.ShadowMatrices;
+                EffectResourceSets[RenderFlags.OMNI_SHADOW_MAPS][1] = omniShadowMapRenderable.CameraInfo;
             }
 
 

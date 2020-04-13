@@ -79,8 +79,9 @@ namespace Henzai.Runtime
             commandList.UpdateBuffer(cameraProjViewBuffer, 0, camera.ViewMatrix);
             commandList.UpdateBuffer(cameraProjViewBuffer, 64, camera.ProjectionMatrix);
 
-            commandList.UpdateBuffer(cameraInfoBuffer, 0, camera.NearDistance);
-            commandList.UpdateBuffer(cameraInfoBuffer, 4, camera.FarDistance);
+            commandList.UpdateBuffer(cameraInfoBuffer, 0, lightPos);
+            commandList.UpdateBuffer(cameraInfoBuffer, 16, camera.NearDistance);
+            commandList.UpdateBuffer(cameraInfoBuffer, 20, camera.FarDistance);
 
             for(var i = 0u; i < omniLight.Length;i++){
                 var viewProjectionMatrix = omniLight[i].LightViewProj;
@@ -255,7 +256,6 @@ namespace Henzai.Runtime
 
             var cameraProjViewBuffer = sceneRuntimeDescriptor.CameraProjViewBuffer;
             var cameraResourceSet = sceneRuntimeDescriptor.CameraResourceSet;
-            var omniResourceSet = sceneRuntimeDescriptor.OmniLightProjViewResourceSet;
 
             commandList.SetVertexBuffer(0, vertexBuffer);
             commandList.SetIndexBuffer(indexBuffer, IndexFormat.UInt16);

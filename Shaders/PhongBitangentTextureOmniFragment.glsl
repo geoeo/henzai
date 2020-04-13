@@ -46,9 +46,9 @@ float ShadowCalculation(vec3 fragPos, float l_dot_n)
 {
     vec3 fragToLight = fragPos - LightPosition.xyz;
     // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
-    float closestDepth = texture(OmniShadowCubeTexture, vec3(1,1,1)).r; 
+    float closestDepth = texture(OmniShadowCubeTexture, fragToLight).r; 
     // it is currently in linear range between [0,1]. Re-transform back to original value
-    //closestDepth *= far_plane;
+    closestDepth *= 1000;
     // now get current linear depth as the length between the fragment and light position
     float currentDepth = length(fragToLight);
     //TODO: make bias factor a uniform
@@ -58,7 +58,7 @@ float ShadowCalculation(vec3 fragPos, float l_dot_n)
     //float shadow = currentDepth - bias> closestDepth ? 1.0 : 0.0;  
     float shadow = currentDepth> closestDepth ? 1.0 : 0.0;  
 
-    return closestDepth;
+    return shadow;
 }  
 
 void main()

@@ -200,7 +200,7 @@ namespace Henzai
                 DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
                 RasterizerState = rasterizerState,
                 PrimitiveTopology = modelRuntimeState.PrimitiveTopology,
-                ResourceLayouts = new ResourceLayout[] { sceneRuntimeState.CameraResourceLayout, sceneRuntimeState.OmniLightProvViewResourceLayout },
+                ResourceLayouts = new ResourceLayout[] { sceneRuntimeState.CameraResourceLayout, sceneRuntimeState.OmniLightProvViewResourceLayout, sceneRuntimeState.CameraInfoResourceLayout },
                 ShaderSet = new ShaderSetDescription(
                     vertexLayouts: modelRuntimeState.VertexPreEffectsLayouts,
                     shaders: shaderArray

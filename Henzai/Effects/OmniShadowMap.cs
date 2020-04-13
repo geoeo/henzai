@@ -13,6 +13,7 @@ namespace Henzai.Effects
         ///</summary>
         public TextureView ShadowMapTexView {get; private set;}
         public ResourceSet ShadowMatrices {get; private set;}
+        public ResourceSet CameraInfo {get; private set;}
 
         // These hold the scene's geometry information
         private ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>[] _modelPNTTBDescriptorArray;
@@ -61,7 +62,7 @@ namespace Henzai.Effects
                     _sceneRuntimeDescriptor.LightResourceLayout,
                     new BindableResource[] { _sceneRuntimeDescriptor.LightBuffer });
 
-            _sceneRuntimeDescriptor.CameraInfoBuffer = _factory.CreateBuffer(new BufferDescription(2*8, BufferUsage.UniformBuffer));
+            _sceneRuntimeDescriptor.CameraInfoBuffer = _factory.CreateBuffer(new BufferDescription(32, BufferUsage.UniformBuffer));
             _sceneRuntimeDescriptor.CameraInfoResourceLayout
                 = ResourceGenerator.GenerateResourceLayout(
                     _factory,
@@ -75,6 +76,7 @@ namespace Henzai.Effects
                     new BindableResource[] { _sceneRuntimeDescriptor.CameraInfoBuffer });
 
             ShadowMatrices = _sceneRuntimeDescriptor.OmniLightProjViewResourceSet;
+            CameraInfo = _sceneRuntimeDescriptor.CameraInfoResourceSet;
 
         }
 
@@ -101,9 +103,6 @@ namespace Henzai.Effects
 
             _sceneRuntimeDescriptor.Light = mainSceneRuntimeDescriptor.Light;
             _sceneRuntimeDescriptor.OmniLights = mainSceneRuntimeDescriptor.OmniLights;
-
-
-        
         }
 
         public override void BuildCommandList(){
