@@ -457,7 +457,7 @@ namespace Henzai.Runtime
                     new BindableResource[] { _sceneRuntimeState.CameraProjViewBuffer });
 
             // Uniform 2 - Light
-            _sceneRuntimeState.LightBuffer = _factory.CreateBuffer(new BufferDescription(Light.SizeInBytes, BufferUsage.UniformBuffer));
+            _sceneRuntimeState.LightBuffer = _factory.CreateBuffer(new BufferDescription(Light.SizeInBytes + 16, BufferUsage.UniformBuffer));
             _sceneRuntimeState.LightResourceLayout
                 = ResourceGenerator.GenerateResourceLayout(
                     _factory,

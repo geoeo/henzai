@@ -24,10 +24,10 @@
     <Content Include="../../Assets/Models/Box.dae">
       <Link>Models/Box.dae</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content> 
+    </Content>
 
-    <Content Include="../../Dependencies/libassimp.dylib">
-      <Link>libassimp.dylib</Link>
+    <Content Include="../../Dependencies/Assimp64.dll">
+      <Link>Assimp64.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

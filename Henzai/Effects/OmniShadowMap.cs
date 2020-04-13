@@ -49,19 +49,6 @@ namespace Henzai.Effects
                     _sceneRuntimeDescriptor.OmniLightProvViewResourceLayout,
                     new BindableResource[] { _sceneRuntimeDescriptor.OmniLightProjViewBuffer });
 
-            _sceneRuntimeDescriptor.LightBuffer = _factory.CreateBuffer(new BufferDescription(Light.SizeInBytes, BufferUsage.UniformBuffer));
-            _sceneRuntimeDescriptor.LightResourceLayout
-                = ResourceGenerator.GenerateResourceLayout(
-                    _factory,
-                    "light",
-                    ResourceKind.UniformBuffer,
-                    ShaderStages.Fragment);
-            _sceneRuntimeDescriptor.LightResourceSet
-                = ResourceGenerator.GenrateResourceSet(
-                    _factory,
-                    _sceneRuntimeDescriptor.LightResourceLayout,
-                    new BindableResource[] { _sceneRuntimeDescriptor.LightBuffer });
-
             _sceneRuntimeDescriptor.CameraInfoBuffer = _factory.CreateBuffer(new BufferDescription(32, BufferUsage.UniformBuffer));
             _sceneRuntimeDescriptor.CameraInfoResourceLayout
                 = ResourceGenerator.GenerateResourceLayout(
@@ -81,7 +68,7 @@ namespace Henzai.Effects
         }
 
         protected override void GenerateFramebuffer(){
-            var textureDescription = ResourceGenerator.CreateEmptyCubeMapTextureDescription(_resolution.Horizontal, _resolution.Vertical, _factory);
+            var textureDescription = ResourceGenerator.CreateEmptyCubeMapTextureDescription(1024);
 
             var depthTexture = _factory.CreateTexture(textureDescription);
             depthTexture.Name = "OmniShadowCubeTexture";
@@ -115,7 +102,6 @@ namespace Henzai.Effects
             RenderCommandGenerator.GenerateCommandsForScene_Inline(
                 _commandList,
                 _sceneRuntimeDescriptor.OmniLightProjViewBuffer,
-                _sceneRuntimeDescriptor.LightBuffer,
                 _sceneRuntimeDescriptor.CameraProjViewBuffer,
                 _sceneRuntimeDescriptor.CameraInfoBuffer,
                 _sceneRuntimeDescriptor.OmniLights);

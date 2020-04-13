@@ -9,6 +9,8 @@ layout(std140) uniform light
     vec4 LightPosition;
     vec4 LightColor;
     vec4 LightAttenuation;
+    float near_plane;
+    float far_plane;
 };
 
 layout(std140) uniform spotlight

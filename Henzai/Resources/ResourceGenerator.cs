@@ -255,15 +255,12 @@ namespace Henzai
             return textureView;
         }
 
-        public static TextureDescription CreateEmptyCubeMapTextureDescription(int width,
-                                                                int height,
-                                                                DisposeCollectorResourceFactory factory){
+        public static TextureDescription CreateEmptyCubeMapTextureDescription(uint dim){
 
-            var dim = Math.Max(width, height);
 
             return TextureDescription.Texture2D(
-                1024,
-                1024,
+                dim,
+                dim,
                 1,
                 1,
                 PixelFormat.R32_Float,
