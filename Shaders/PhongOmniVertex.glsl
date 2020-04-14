@@ -7,11 +7,6 @@ layout(std140) uniform projViewWorld
     mat4 World;
 };
 
-layout(std140) uniform lightProjView
-{
-    mat4 LightProjView;
-};
-
 layout(location = 0)in vec3 Position;
 layout(location = 1)in vec3 Normal;
 

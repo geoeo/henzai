@@ -49,10 +49,11 @@ float ShadowCalculation(vec3 fragPos, float l_dot_n)
     float currentDepth = length(fragToLight);
     //TODO: make bias factor a uniform
     //float bias = max(0.005 * (1.0 - l_dot_n), 0.005);  // sponza
-    float bias = max(0.000005 * (1.0 - l_dot_n), 0.000005);  // lights & sponza
+    //float bias = max(0.000005 * (1.0 - l_dot_n), 0.000005);  // lights & sponza
+    float bias = 0.005;  // lights & sponza
     // check whether current frag pos is in shadow
-    float shadow = currentDepth - bias> closestDepth ? 1.0 : 0.0;  
-    //float shadow = currentDepth> closestDepth ? 1.0 : 0.0;  
+    //float shadow = currentDepth - bias> closestDepth ? 1.0 : 0.0;  
+    float shadow = currentDepth> closestDepth ? 1.0 : 0.0;  
 
     return shadow;
 }  
@@ -135,6 +136,6 @@ void main()
     // fsout_Color = vec4(attenuation,attenuation,attenuation,1.0);
     // fsout_Color = vec4(attenuation,attenuation,attenuation,1.0);
     // fsout_Color = vec4(LightColor.a,LightColor.a,LightColor.a,1.0);
-    //fsout_Color = vec4(shadow,0,0,1.0);
+    fsout_Color = vec4(shadow,0,0,1.0);
 
 }

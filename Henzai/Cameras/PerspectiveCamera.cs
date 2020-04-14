@@ -1,10 +1,11 @@
+using System;
 using System.Numerics;
 
 namespace Henzai.Cameras
 {
     public class PerspectiveCamera : Camera
     {
-        public PerspectiveCamera(float width, float height, Vector4 position, Vector4 lookDir, float far = 1000f, float moveSpeed = 10f) : base(width, height, position, lookDir, far, moveSpeed){
+        public PerspectiveCamera(float width, float height, Vector4 position, Vector4 lookDir, float far = 1000f, float fov = MathF.PI / 4, float moveSpeed = 100f) : base(width, height, position, lookDir, far, fov, moveSpeed){
         }
 
         public override void UpdateProjectionMatrix(float width, float height){

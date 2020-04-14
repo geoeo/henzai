@@ -54,6 +54,46 @@ namespace Henzai.Geometry
                 return indexed? new Mesh<VertexPosition>(cubeVerticies,generateCubeIndicies_TriangleList_CW()) : new Mesh<VertexPosition>(cubeVerticies) ;
         }
 
+        public static Mesh<VertexPositionColor> GenerateCubeColor(bool indexed, RgbaFloat color)
+        {
+            VertexPositionColor[] cubeVerticies =
+                new VertexPositionColor[]
+                {
+                    // Top
+                    new VertexPositionColor(new Vector3(-1.0f, +1.0f, -1.0f),color.ToVector4()),
+                    new VertexPositionColor(new Vector3(+1.0f, +1.0f, -1.0f),color.ToVector4()),
+                    new VertexPositionColor(new Vector3(+1.0f, +1.0f, +1.0f),color.ToVector4()),
+                    new VertexPositionColor(new Vector3(-1.0f, +1.0f, +1.0f),color.ToVector4()),
+                    // Bottom                                                             
+                    new VertexPositionColor(new Vector3(-1.0f,-1.0f, +1.0f),color.ToVector4()),
+                    new VertexPositionColor(new Vector3(+1.0f,-1.0f, +1.0f),color.ToVector4()),
+                    new VertexPositionColor(new Vector3(+1.0f,-1.0f, -1.0f),color.ToVector4()),
+                    new VertexPositionColor(new Vector3(-1.0f,-1.0f, -1.0f),color.ToVector4()),
+                    // Left                                                               
+                    new VertexPositionColor(new Vector3(-1.0f, +1.0f, -1.0f),color.ToVector4()),
+                    new VertexPositionColor(new Vector3(-1.0f, +1.0f, +1.0f),color.ToVector4()),
+                    new VertexPositionColor(new Vector3(-1.0f, -1.0f, +1.0f),color.ToVector4()),
+                    new VertexPositionColor(new Vector3(-1.0f, -1.0f, -1.0f),color.ToVector4()),
+                    // Right                                                              
+                    new VertexPositionColor(new Vector3(+1.0f, +1.0f, +1.0f),color.ToVector4()),
+                    new VertexPositionColor(new Vector3(+1.0f, +1.0f, -1.0f),color.ToVector4()),
+                    new VertexPositionColor(new Vector3(+1.0f, -1.0f, -1.0f),color.ToVector4()),
+                    new VertexPositionColor(new Vector3(+1.0f, -1.0f, +1.0f),color.ToVector4()),
+                    // Back                                                               
+                    new VertexPositionColor(new Vector3(+1.0f, +1.0f, -1.0f),color.ToVector4()),
+                    new VertexPositionColor(new Vector3(-1.0f, +1.0f, -1.0f),color.ToVector4()),
+                    new VertexPositionColor(new Vector3(-1.0f, -1.0f, -1.0f),color.ToVector4()),
+                    new VertexPositionColor(new Vector3(+1.0f, -1.0f, -1.0f),color.ToVector4()),
+                    // Front                                                              
+                    new VertexPositionColor(new Vector3(-1.0f, +1.0f, +1.0f),color.ToVector4()),
+                    new VertexPositionColor(new Vector3(+1.0f, +1.0f, +1.0f),color.ToVector4()),
+                    new VertexPositionColor(new Vector3(+1.0f, -1.0f, +1.0f),color.ToVector4()),
+                    new VertexPositionColor(new Vector3(-1.0f, -1.0f, +1.0f),color.ToVector4()),
+                };
+
+            return indexed ? new Mesh<VertexPositionColor>(cubeVerticies, generateCubeIndicies_TriangleList_CW()) : new Mesh<VertexPositionColor>(cubeVerticies);
+        }
+
         public static Mesh<VertexPositionTexture> GenerateTexturedCube(bool indexed)
         {
             VertexPositionTexture[] cubeVerticies =
@@ -139,10 +179,10 @@ namespace Henzai.Geometry
         {
 
             VertexPositionNormalTextureTangentBitangent[] quadVerticies = {
-                new VertexPositionNormalTextureTangentBitangent(new Vector3(-1.0f,1.0f,1.0f),Vector3.UnitZ,new Vector2(0,0),Vector3.UnitX,-Vector3.UnitY),
-                new VertexPositionNormalTextureTangentBitangent(new Vector3(1.0f,1.0f,1.0f),Vector3.UnitZ,new Vector2(1,0),Vector3.UnitX,-Vector3.UnitY),
-                new VertexPositionNormalTextureTangentBitangent(new Vector3(-1.0f,-1.0f,1.0f),Vector3.UnitZ,new Vector2(0,1),Vector3.UnitX,-Vector3.UnitY),
-                new VertexPositionNormalTextureTangentBitangent(new Vector3(1.0f,-1.0f,1.0f),Vector3.UnitZ,new Vector2(1,1),Vector3.UnitX,-Vector3.UnitY)
+                new VertexPositionNormalTextureTangentBitangent(new Vector3(-1.0f,1.0f,0.0f),Vector3.UnitZ,new Vector2(0,0),Vector3.UnitX,-Vector3.UnitY),
+                new VertexPositionNormalTextureTangentBitangent(new Vector3(1.0f,1.0f,0.0f),Vector3.UnitZ,new Vector2(1,0),Vector3.UnitX,-Vector3.UnitY),
+                new VertexPositionNormalTextureTangentBitangent(new Vector3(-1.0f,-1.0f,0.0f),Vector3.UnitZ,new Vector2(0,1),Vector3.UnitX,-Vector3.UnitY),
+                new VertexPositionNormalTextureTangentBitangent(new Vector3(1.0f,-1.0f,0.0f),Vector3.UnitZ,new Vector2(1,1),Vector3.UnitX,-Vector3.UnitY)
             };
 
             return new Mesh<VertexPositionNormalTextureTangentBitangent>(quadVerticies,GenerateQuadIndicies_TriangleStrip_CW());

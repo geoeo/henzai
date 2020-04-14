@@ -14,6 +14,7 @@ namespace Henzai.Core.VertexGeometry
         public readonly Vector3 Position;
         public Vector4 color;
 
+
         public VertexPositionColor(Vector3 position, Vector4 colorIn)
         {
             Position = position;

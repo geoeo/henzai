@@ -2,7 +2,7 @@
 
 uniform sampler2D DiffuseTexture;
 uniform sampler2D NormTexture;
-uniform sampler2D ShadowMap;
+uniform sampler2D ShadowMapTexture;
 
 layout(std140) uniform material
 {

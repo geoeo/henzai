@@ -29,6 +29,8 @@ out vec4 fsout_Color;
 float ShadowCalculation(vec3 fragPos, float l_dot_n)
 {
     vec3 fragToLight = fragPos - LightPosition.xyz;
+    //fragToLight.x *=-1;
+    //fragToLight.z *=-1;
     // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
     float closestDepth = texture(OmniShadowCubeTexture, fragToLight).r; 
     // it is currently in linear range between [0,1]. Re-transform back to original value
@@ -37,7 +39,8 @@ float ShadowCalculation(vec3 fragPos, float l_dot_n)
     float currentDepth = length(fragToLight);
     //TODO: make bias factor a uniform
     //float bias = max(0.005 * (1.0 - l_dot_n), 0.005);  // sponza
-    float bias = max(0.000005 * (1.0 - l_dot_n), 0.000005);  // lights & sponza
+    //float bias = max(0.000005 * (1.0 - l_dot_n), 0.000005);  // lights & sponza
+    float bias = 0.05;
     // check whether current frag pos is in shadow
     float shadow = currentDepth - bias> closestDepth ? 1.0 : 0.0;  
 

@@ -19,12 +19,13 @@ namespace Henzai
         public static Camera[] GenerateOmniCameras(Vector4 position, float width, float height){
 
             var cameras = new Camera[6];
-            cameras[(uint)FaceIndices.Right] = new PerspectiveCamera(width,height,position,Vector4.UnitX);
-            cameras[(uint)FaceIndices.Left] = new PerspectiveCamera(width,height,position,-Vector4.UnitX);
-            cameras[(uint)FaceIndices.Top] = new PerspectiveCamera(width,height,position,Vector4.UnitY);
-            cameras[(uint)FaceIndices.Bottom] = new PerspectiveCamera(width,height,position,-Vector4.UnitY);
-            cameras[(uint)FaceIndices.Back] = new PerspectiveCamera(width,height,position,Vector4.UnitZ);
-            cameras[(uint)FaceIndices.Front] = new PerspectiveCamera(width,height,position,-Vector4.UnitZ);
+            var far = 1000;
+            cameras[(uint)FaceIndices.Right] = new PerspectiveCamera(width,height,position,Vector4.UnitX, far, MathF.PI / 2);
+            cameras[(uint)FaceIndices.Left] = new PerspectiveCamera(width,height,position,-Vector4.UnitX, far, MathF.PI / 2);
+            cameras[(uint)FaceIndices.Top] = new PerspectiveCamera(width,height,position,Vector4.UnitY, far, MathF.PI / 2);
+            cameras[(uint)FaceIndices.Bottom] = new PerspectiveCamera(width,height,position,-Vector4.UnitY, far, MathF.PI / 2);
+            cameras[(uint)FaceIndices.Back] = new PerspectiveCamera(width,height,position,Vector4.UnitZ, far, MathF.PI / 2);
+            cameras[(uint)FaceIndices.Front] = new PerspectiveCamera(width,height,position,-Vector4.UnitZ, far, MathF.PI / 2);
 
             return cameras;
         }
