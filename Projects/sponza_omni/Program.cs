@@ -16,15 +16,14 @@ namespace Henzai.Examples
 
         public override void createScene(GraphicsBackend graphicsBackend, Sdl2Window contextWindow = null){
 
-            Resolution renderResolution = new Resolution(960,540);
-            Resolution windowSize = new Resolution(960,540);
+            Resolution renderResolution = new Resolution(1024, 1024);
+            Resolution windowSize = new Resolution(1024, 1024);
             GraphicsDeviceOptions gdOptions = new GraphicsDeviceOptions()
             {
                 Debug = true,
                 SwapchainDepthFormat = PixelFormat.R32_Float,
                 SyncToVerticalBlank = false,
-                ResourceBindingModel = ResourceBindingModel.Improved
-
+                ResourceBindingModel = ResourceBindingModel.Improved,
             };
 
             RenderOptions rdOptions = new RenderOptions()

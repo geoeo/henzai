@@ -29,6 +29,11 @@ out vec4 fsout_Color;
 float ShadowCalculation(vec3 fragPos, float l_dot_n)
 {
     vec3 fragToLight = fragPos - LightPosition.xyz;
+
+    // Is there a bug in Veldrid?
+    fragToLight.x *= -1;
+    fragToLight.y *= -1;
+
     // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
     float closestDepth = texture(OmniShadowCubeTexture, fragToLight).r; 
     // it is currently in linear range between [0,1]. Re-transform back to original value

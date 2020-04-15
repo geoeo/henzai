@@ -20,13 +20,14 @@ namespace Henzai
 
             var cameras = new Camera[6];
             var far = 1000;
+            var near = 0.1f;
             // TODO: Top and Bottom are skewed due to issue in rotation matrix in Camera
-            cameras[(uint)FaceIndices.Right] = new PerspectiveCamera(width,height,position,Vector4.UnitX, far, MathF.PI / 2);
-            cameras[(uint)FaceIndices.Left] = new PerspectiveCamera(width,height,position,-Vector4.UnitX, far, MathF.PI / 2);
-            cameras[(uint)FaceIndices.Top] = new PerspectiveCamera(width,height,position,Vector4.UnitY, far, MathF.PI / 2);
-            cameras[(uint)FaceIndices.Bottom] = new PerspectiveCamera(width,height,position,-Vector4.UnitY, far, MathF.PI / 2);
-            cameras[(uint)FaceIndices.Back] = new PerspectiveCamera(width,height,position,Vector4.UnitZ, far, MathF.PI / 2);
-            cameras[(uint)FaceIndices.Front] = new PerspectiveCamera(width,height,position,-Vector4.UnitZ, far, MathF.PI / 2);
+            cameras[(uint)FaceIndices.Right] = new PerspectiveCamera(width,height,position,Vector4.UnitX, far, near, MathF.PI / 2);
+            cameras[(uint)FaceIndices.Left] = new PerspectiveCamera(width,height,position,-Vector4.UnitX, far, near, MathF.PI / 2);
+            cameras[(uint)FaceIndices.Top] = new PerspectiveCamera(width,height,position,Vector4.UnitY, far, near, MathF.PI / 2);
+            cameras[(uint)FaceIndices.Bottom] = new PerspectiveCamera(width,height,position,-Vector4.UnitY, far, near, MathF.PI / 2);
+            cameras[(uint)FaceIndices.Back] = new PerspectiveCamera(width,height,position,Vector4.UnitZ, far, near, MathF.PI / 2);
+            cameras[(uint)FaceIndices.Front] = new PerspectiveCamera(width,height,position,-Vector4.UnitZ, far, near, MathF.PI / 2);
 
             return cameras;
         }

@@ -84,6 +84,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shaders", "Shaders", "{6B35
 		Shaders\PhongNoShadowFragment.glsl = Shaders\PhongNoShadowFragment.glsl
 		Shaders\PhongNoShadowFragment.metal = Shaders\PhongNoShadowFragment.metal
 		Shaders\PhongNoShadowFragment.metallib = Shaders\PhongNoShadowFragment.metallib
+		Shaders\PhongNoShadowVertex.glsl = Shaders\PhongNoShadowVertex.glsl
 		Shaders\PhongOmniFragment.glsl = Shaders\PhongOmniFragment.glsl
 		Shaders\PhongOmniVertex.glsl = Shaders\PhongOmniVertex.glsl
 		Shaders\PhongTextureFragment.glsl = Shaders\PhongTextureFragment.glsl

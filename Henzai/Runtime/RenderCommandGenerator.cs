@@ -75,8 +75,8 @@ namespace Henzai.Runtime
 
             var camera =  omniLight[0].LightCam;
             // Not really needed, but written for compelteness. We are only interested in the World Matrix for omni directional shadow mapping.
-            commandList.UpdateBuffer(cameraProjViewBuffer, 0, camera.ViewMatrix);
-            commandList.UpdateBuffer(cameraProjViewBuffer, 64, camera.ProjectionMatrix);
+            //commandList.UpdateBuffer(cameraProjViewBuffer, 0, camera.ViewMatrix);
+            //commandList.UpdateBuffer(cameraProjViewBuffer, 64, camera.ProjectionMatrix);
 
             commandList.UpdateBuffer(cameraInfoBuffer, 0, lightPos);
             commandList.UpdateBuffer(cameraInfoBuffer, 16, camera.NearDistance);

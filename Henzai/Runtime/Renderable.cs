@@ -391,7 +391,7 @@ namespace Henzai.Runtime
             }
 
             var rasterizerStateCullBack = new RasterizerStateDescription(
-                    cullMode: FaceCullMode.None,
+                    cullMode: FaceCullMode.Back,
                     fillMode: PolygonFillMode.Solid,
                     frontFace: FrontFace.Clockwise,
                     depthClipEnabled: true,
@@ -473,7 +473,7 @@ namespace Henzai.Runtime
                     _factory,
                     "light",
                     ResourceKind.UniformBuffer,
-                    ShaderStages.Vertex | ShaderStages.Fragment); // Not for OMNI shadows!
+                    ShaderStages.Vertex | ShaderStages.Fragment); // Fragment not for OMNI shadows!
             _sceneRuntimeState.LightResourceSet
                 = ResourceGenerator.GenrateResourceSet(
                     _factory,

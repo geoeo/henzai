@@ -132,6 +132,7 @@ namespace Henzai
                 MinimumLod = 0,
                 MaximumLod = 0,
                 MaximumAnisotropy = 0
+   
             });
         }
 

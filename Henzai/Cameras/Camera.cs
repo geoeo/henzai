@@ -55,10 +55,10 @@ namespace Henzai.Cameras
         public float Pitch { get => _pitch; set { _pitch = value; UpdateViewMatrix(); } }
 
 
-        public Camera(float width, float height, Vector4 position, Vector4 lookDir, float far = 1000f, float fov = MathF.PI / 4, float moveSpeed = 10f)
+        public Camera(float width, float height, Vector4 position, Vector4 lookDir, float far = 1000f, float near = 0.1f, float fov = MathF.PI / 4, float moveSpeed = 10f)
         {
             _fov = fov; // Might be redundant as GPU assumes its always 90 degrees
-            _near = 0.1f;
+            _near = near;
             _far = far;
             _position = position;
             _moveSpeed = moveSpeed;
