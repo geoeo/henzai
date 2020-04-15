@@ -40,7 +40,8 @@ out vec4 fsout_Color;
 
 float ShadowCalculation(vec3 fragPos, float l_dot_n)
 {
-    vec3 fragToLight = fragPos - LightPosition.xyz;
+    vec3 localLightPos = LightPosition.xyz;
+    vec3 fragToLight = fragPos  - localLightPos;
     // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
     float closestDepth = texture(OmniShadowCubeTexture, fragToLight).r; 
     // it is currently in linear range between [0,1]. Re-transform back to original value
@@ -50,10 +51,10 @@ float ShadowCalculation(vec3 fragPos, float l_dot_n)
     //TODO: make bias factor a uniform
     //float bias = max(0.005 * (1.0 - l_dot_n), 0.005);  // sponza
     //float bias = max(0.000005 * (1.0 - l_dot_n), 0.000005);  // lights & sponza
-    float bias = 0.005;  // lights & sponza
+    float bias = 0.05;  // lights & sponza
     // check whether current frag pos is in shadow
-    //float shadow = currentDepth - bias> closestDepth ? 1.0 : 0.0;  
-    float shadow = currentDepth> closestDepth ? 1.0 : 0.0;  
+    float shadow = currentDepth - bias> closestDepth ? 1.0 : 0.0;  
+    //float shadow = currentDepth> closestDepth ? 1.0 : 0.0;  
 
     return shadow;
 }  
@@ -121,7 +122,7 @@ void main()
 
     float gamma = 2.2;
     fsout_Color = vec4(pow(color_out.rgb, vec3(1.0/gamma)),color_out.a);
-    // fsout_Color = color_out;
+    //fsout_Color = color_out;
     // fsout_Color = vec4(fsin_NormalWorld,1.0);
     // fsout_Color = vec4(fsin_TangentWorld,1.0);
     // fsout_Color = vec4(fsin_BitangentWorld,1.0);

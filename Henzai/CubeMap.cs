@@ -20,6 +20,7 @@ namespace Henzai
 
             var cameras = new Camera[6];
             var far = 1000;
+            // TODO: Top and Bottom are skewed due to issue in rotation matrix in Camera
             cameras[(uint)FaceIndices.Right] = new PerspectiveCamera(width,height,position,Vector4.UnitX, far, MathF.PI / 2);
             cameras[(uint)FaceIndices.Left] = new PerspectiveCamera(width,height,position,-Vector4.UnitX, far, MathF.PI / 2);
             cameras[(uint)FaceIndices.Top] = new PerspectiveCamera(width,height,position,Vector4.UnitY, far, MathF.PI / 2);

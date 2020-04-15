@@ -72,7 +72,7 @@ namespace Henzai.Cameras
             var lookAtNorm = _lookDirection;
             var R = Core.Numerics.Geometry.RotationBetweenUnitVectors(DEFAULT_LOOK_DIRECTION, lookAtNorm);
             var l = new Vector4(DEFAULT_UP.X, DEFAULT_UP.Y, DEFAULT_UP.Z, 0.0f);
-            var newUp = Vector4.Transform(l,R);
+            var newUp = Vector4.Normalize(Vector4.Transform(l,R));
             _upDirection = newUp.ToVec3DiscardW();
 
             var position_Vec3 = _position.ToVec3DiscardW(); 

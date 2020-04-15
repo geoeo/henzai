@@ -123,16 +123,32 @@ namespace Henzai
         //TODO: UNIFY THIS!
         public static Sampler GenerateBiLinearSampler_Clamp(DisposeCollectorResourceFactory factory){
             return factory.CreateSampler(new SamplerDescription
-                {
-                    AddressModeU = SamplerAddressMode.Clamp,
-                    AddressModeV = SamplerAddressMode.Clamp,
-                    AddressModeW = SamplerAddressMode.Clamp,
-                    Filter = SamplerFilter.MinLinear_MagLinear_MipPoint,
-                    LodBias = 0,
-                    MinimumLod = 0,
-                    MaximumLod = 0,
-                    MaximumAnisotropy = 0,
-                });
+            {
+                AddressModeU = SamplerAddressMode.Clamp,
+                AddressModeV = SamplerAddressMode.Clamp,
+                AddressModeW = SamplerAddressMode.Clamp,
+                Filter = SamplerFilter.MinLinear_MagLinear_MipPoint,
+                LodBias = 0,
+                MinimumLod = 0,
+                MaximumLod = 0,
+                MaximumAnisotropy = 0
+            });
+        }
+
+        public static Sampler GenerateBiLinearSampler_Border(DisposeCollectorResourceFactory factory)
+        {
+            return factory.CreateSampler(new SamplerDescription
+            {
+                AddressModeU = SamplerAddressMode.Border,
+                AddressModeV = SamplerAddressMode.Border,
+                AddressModeW = SamplerAddressMode.Border,
+                Filter = SamplerFilter.MinLinear_MagLinear_MipPoint,
+                LodBias = 0,
+                MinimumLod = 0,
+                MaximumLod = 0,
+                MaximumAnisotropy = 0,
+                BorderColor = SamplerBorderColor.OpaqueBlack
+            });
         }
 
         public static ResourceSet GenerateTextureResourceSetForNormalMapping<T>(ModelRuntimeDescriptor<T> modelRuntimeState, int meshIndex, DisposeCollectorResourceFactory factory, GraphicsDevice graphicsDevice) where T : struct , VertexLocateable {
@@ -158,7 +174,7 @@ namespace Henzai
         }
 
         public static ResourceSet GenerateResourceSetForShadowMapping(ResourceLayout textureLayout, TextureView shadowMapTexView, DisposeCollectorResourceFactory factory) {
-            var sampler = ResourceGenerator.GenerateBiLinearSampler_Clamp(factory);
+            var sampler = ResourceGenerator.GenerateBiLinearSampler_Border(factory);
 
             return factory.CreateResourceSet(new ResourceSetDescription(
             textureLayout,
@@ -212,6 +228,7 @@ namespace Henzai
 
         }
 
+        //TODO: Use new Veldrid Call!
         private static unsafe TextureView CreateCubeMapTextureViewFromImages(
                                                                 Image<Rgba32> front,
                                                                 Image<Rgba32> back,

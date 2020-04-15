@@ -391,7 +391,7 @@ namespace Henzai.Runtime
             }
 
             var rasterizerStateCullBack = new RasterizerStateDescription(
-                    cullMode: FaceCullMode.Back,
+                    cullMode: FaceCullMode.None,
                     fillMode: PolygonFillMode.Solid,
                     frontFace: FrontFace.Clockwise,
                     depthClipEnabled: true,
@@ -406,12 +406,22 @@ namespace Henzai.Runtime
                     scissorTestEnabled: false
                 );
 
+           var rasterizerStateCullNone = new RasterizerStateDescription(
+               cullMode: FaceCullMode.None,
+               fillMode: PolygonFillMode.Solid,
+               frontFace: FrontFace.Clockwise,
+
+               depthClipEnabled: true,
+               scissorTestEnabled: false
+                );
+
+
             modelDescriptor.InvokeVertexLayoutGeneration();
 
             var shadowMapIndex = RenderFlags.GetArrayIndexForFlag(RenderFlags.SHADOW_MAP);
             var omniShadowMapIndex = RenderFlags.GetArrayIndexForFlag(RenderFlags.OMNI_SHADOW_MAPS);
             modelDescriptor.Pipelines[shadowMapIndex] = modelDescriptor.ShadowMapEnabled ? _factory.CreateGraphicsPipeline(PipelineGenerator.GenerateShadowMappingPreEffectPipeline(modelDescriptor, _childrenPre[RenderFlags.GetPreEffectArrayIndexForFlag(RenderFlags.SHADOW_MAP)].SceneRuntimeDescriptor,rasterizerStateCullFront,RenderFlags.SHADOW_MAP, _childrenPre[RenderFlags.GetPreEffectArrayIndexForFlag(RenderFlags.SHADOW_MAP)].FrameBuffer)) : null;
-            modelDescriptor.Pipelines[omniShadowMapIndex] = modelDescriptor.OmniShadowMapEnabled ? _factory.CreateGraphicsPipeline(PipelineGenerator.GenerateOmniShadowMappingPreEffectPipeline(modelDescriptor, _childrenPre[0].SceneRuntimeDescriptor, rasterizerStateCullFront, RenderFlags.OMNI_SHADOW_MAPS, _childrenPre[0].FrameBuffer)) : null;
+            modelDescriptor.Pipelines[omniShadowMapIndex] = modelDescriptor.OmniShadowMapEnabled ? _factory.CreateGraphicsPipeline(PipelineGenerator.GenerateOmniShadowMappingPreEffectPipeline(modelDescriptor, _childrenPre[0].SceneRuntimeDescriptor, rasterizerStateCullNone, RenderFlags.OMNI_SHADOW_MAPS, _childrenPre[0].FrameBuffer)) : null;
             
             
             var effectLayoutArray = modelDescriptor.FillEffectsResourceSet(_factory, sceneRuntimeDescriptor, _childrenPre);
@@ -463,7 +473,7 @@ namespace Henzai.Runtime
                     _factory,
                     "light",
                     ResourceKind.UniformBuffer,
-                    ShaderStages.Vertex | ShaderStages.Fragment);
+                    ShaderStages.Vertex | ShaderStages.Fragment); // Not for OMNI shadows!
             _sceneRuntimeState.LightResourceSet
                 = ResourceGenerator.GenrateResourceSet(
                     _factory,

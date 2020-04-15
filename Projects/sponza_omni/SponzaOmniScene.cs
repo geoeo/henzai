@@ -32,12 +32,12 @@ namespace Henzai.Examples
             // RgbaFloat lightColor = RgbaFloat.LightGrey;
             var lightPos = new Vector4(0,30,0,1);
             var lookAt = new Vector4(0,0,0,1)- new Vector4(0,50,0,1);
-            var lightCam = new OrthographicCamera(50.0f, 50.0f, lightPos, lookAt);
+            //var lightCam = new OrthographicCamera(50.0f, 50.0f, lightPos, lookAt);
             //_sceneRuntimeState.Light = new Light(lightCam,lightColor,0.1f);
             _sceneRuntimeState.Camera = Camera;
             _sceneRuntimeState.SpotLight = Light.NO_POINTLIGHT;
 
-            var omniCameras =  CubeMap.GenerateOmniCameras(lightPos,1024,1024);
+            var omniCameras =  CubeMap.GenerateOmniCameras(lightPos, 1024, 1024);
             _sceneRuntimeState.OmniLights = Light.GenerateOmniLights(omniCameras,lightColor,0.1f);
 
             // string filePath = Path.Combine(AppContext.BaseDirectory, "armor/armor.dae"); 
@@ -89,9 +89,11 @@ namespace Henzai.Examples
             flootMaterialZero.textureDiffuse = "pavingColor.jpg";
             flootMaterialZero.textureNormal = "pavingNorm.jpg";
             flootMaterialZero.ambient = new Vector4(0.3f, 0.3f, 0.3f, 1.0f);
-            var floorTranslation = Matrix4x4.CreateTranslation(0, 0, -50);
+            var floorTranslation = Matrix4x4.CreateTranslation(0, 100, -50);
             var floorScale = Matrix4x4.CreateScale(100.0f, 100.0f, 100.0f);
+            var floorRot = Matrix4x4.CreateRotationY(MathF.PI);
             var newTrans = Matrix4x4.Multiply(floorScale, floorTranslation);
+            var newTransb = Matrix4x4.Multiply(floorRot, newTrans);
             floor.SetNewWorldTransformation(ref newTrans, true);
             var floorRuntimeState = new ModelRuntimeDescriptor<VertexPositionNormalTextureTangentBitangent>(floor, "PhongBitangentTextureOmni", "PhongBitangentTextureOmni", VertexRuntimeTypes.VertexPositionNormalTextureTangentBitangent, PrimitiveTopology.TriangleStrip, new RenderDescription(RenderFlags.NORMAL | RenderFlags.OMNI_SHADOW_MAPS), new InstancingRenderDescription(RenderFlags.NONE, InstancingDataFlags.EMPTY));
 
@@ -143,7 +145,7 @@ namespace Henzai.Examples
 
             var _sun2 = new Model<VertexPositionNormal, RealtimeMaterial>(string.Empty, GeometryFactory.GenerateSphereNormal(100, 100, 1), new RealtimeMaterial());
             _sun2.GetMaterial(0).ambient = lightColor.ToVector4();
-            Vector3 newTranslation2 = new Vector3(0, 10, 0);
+            Vector3 newTranslation2 = new Vector3(5, -3, 0);
             _sun2.SetNewWorldTranslation(ref newTranslation2, true);
 
             var sunRuntimeState2 = new ModelRuntimeDescriptor<VertexPositionNormal>(_sun2, "PhongOmni", "PhongOmni", VertexRuntimeTypes.VertexPositionNormal, PrimitiveTopology.TriangleList, new RenderDescription(RenderFlags.NORMAL | RenderFlags.OMNI_SHADOW_MAPS), new InstancingRenderDescription(RenderFlags.NONE, InstancingDataFlags.EMPTY));
@@ -151,7 +153,7 @@ namespace Henzai.Examples
 
             var _sun3 = new Model<VertexPositionNormal, RealtimeMaterial>(string.Empty, GeometryFactory.GenerateSphereNormal(100, 100, 1), new RealtimeMaterial());
             _sun3.GetMaterial(0).ambient = lightColor.ToVector4();
-            Vector3 newTranslation3 = new Vector3(0, 30, -24);
+            Vector3 newTranslation3 = new Vector3(-10, 30, -24);
             _sun3.SetNewWorldTranslation(ref newTranslation3, true);
 
             var sunRuntimeState3 = new ModelRuntimeDescriptor<VertexPositionNormal>(_sun3, "PhongOmni", "PhongOmni", VertexRuntimeTypes.VertexPositionNormal, PrimitiveTopology.TriangleList, new RenderDescription(RenderFlags.NORMAL | RenderFlags.OMNI_SHADOW_MAPS), new InstancingRenderDescription(RenderFlags.NONE, InstancingDataFlags.EMPTY));
@@ -164,7 +166,7 @@ namespace Henzai.Examples
             _modelPNTTBDescriptorList.Add(floorRuntimeState);
             _modelPNTTBDescriptorList.Add(floorRuntimeState2);
             //_modelPCDescriptorList.Add(sponzaRuntimeStateColorOnly);
-            _modelPDescriptorList.Add(_skyBoxRuntimeState);
+            //_modelPDescriptorList.Add(_skyBoxRuntimeState);
 
             _modelPNDescriptorList.Add(sunRuntimeState);
 
@@ -228,7 +230,7 @@ namespace Henzai.Examples
             RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionNormal>(_commandList,_modelPNDescriptorArray,_sceneRuntimeState, new RenderDescription(RenderFlags.NORMAL), VertexRuntimeTypes.VertexPositionNormal);
             RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionTexture>(_commandList,_modelPTDescriptorArray,_sceneRuntimeState, new RenderDescription(RenderFlags.NORMAL), VertexRuntimeTypes.VertexPositionTexture);
             RenderCommandGenerator.GenerateRenderCommandsForModelDescriptor<VertexPositionColor>(_commandList,_modelPCDescriptorArray,_sceneRuntimeState, new RenderDescription(RenderFlags.NORMAL), VertexRuntimeTypes.VertexPositionColor);
-            RenderCommandGenerator.GenerateRenderCommandsForCubeMapModelDescriptor(_commandList,_skyBoxRuntimeState,_sceneRuntimeState);
+            //RenderCommandGenerator.GenerateRenderCommandsForCubeMapModelDescriptor(_commandList,_skyBoxRuntimeState,_sceneRuntimeState);
             
             _commandList.End();
         }
