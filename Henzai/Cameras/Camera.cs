@@ -55,7 +55,7 @@ namespace Henzai.Cameras
         public float Pitch { get => _pitch; set { _pitch = value; UpdateViewMatrix(); } }
 
 
-        public Camera(float width, float height, Vector4 position, Vector4 lookDir, float far = 1000f, float near = 0.1f, float fov = MathF.PI / 4, float moveSpeed = 10f)
+        public Camera(float width, float height, Vector4 position, Vector4 lookDir, Vector4 up, float far = 1000f, float near = 0.1f, float fov = MathF.PI /4, float moveSpeed = 10f, bool use_supplied_up = false)
         {
             _fov = fov; // Might be redundant as GPU assumes its always 90 degrees
             _near = near;
@@ -70,10 +70,17 @@ namespace Henzai.Cameras
 
             //TODO: streamline vector3-4 switching
             var lookAtNorm = _lookDirection;
-            var R = Core.Numerics.Geometry.RotationBetweenUnitVectors(DEFAULT_LOOK_DIRECTION, lookAtNorm);
-            var l = new Vector4(DEFAULT_UP.X, DEFAULT_UP.Y, DEFAULT_UP.Z, 0.0f);
-            var newUp = Vector4.Normalize(Vector4.Transform(l,R));
-            _upDirection = newUp.ToVec3DiscardW();
+            if (!use_supplied_up)
+            {
+                var R = Core.Numerics.Geometry.RotationBetweenUnitVectors(DEFAULT_LOOK_DIRECTION, lookAtNorm);
+                var l = new Vector4(DEFAULT_UP.X, DEFAULT_UP.Y, DEFAULT_UP.Z, 0.0f);
+                var newUp = Vector4.Normalize(Vector4.Transform(l, R));
+                _upDirection = newUp.ToVec3DiscardW();
+            } else
+            {
+                _upDirection = up.ToVec3DiscardW();
+            }
+
 
             var position_Vec3 = _position.ToVec3DiscardW(); 
             var posLookAt = _position + _lookDirection;

@@ -267,6 +267,7 @@ namespace Henzai
                 graphicsDevice.UpdateTexture(textureCube, (IntPtr)backPin, faceSize, 0, 0, 0, width, height, 1, 0, (uint)CubeMap.FaceIndices.Back); // +Z
                 graphicsDevice.UpdateTexture(textureCube, (IntPtr)frontPin, faceSize, 0, 0, 0, width, height, 1, 0, (uint)CubeMap.FaceIndices.Front); // -Z
 
+
                 textureView = factory.CreateTextureView(new TextureViewDescription(textureCube));
             }
 
@@ -279,7 +280,7 @@ namespace Henzai
             return TextureDescription.Texture2D(
                 dim,
                 dim,
-                1,
+                6,
                 1,
                 PixelFormat.R32_Float,
                 TextureUsage.Sampled | TextureUsage.Cubemap | TextureUsage.DepthStencil);
