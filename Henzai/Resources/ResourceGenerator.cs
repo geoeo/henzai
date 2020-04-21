@@ -280,7 +280,7 @@ namespace Henzai
             return TextureDescription.Texture2D(
                 dim,
                 dim,
-                6,
+                1,
                 1,
                 PixelFormat.R32_Float,
                 TextureUsage.Sampled | TextureUsage.Cubemap | TextureUsage.DepthStencil);
